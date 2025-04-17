@@ -1,8 +1,7 @@
 package com.ztbdz.user.service;
 
-import com.ztbdz.user.pojo.User;
+import com.ztbdz.user.web.util.Result;
 
-import java.util.Map;
 
 public interface LoginService {
 
@@ -12,13 +11,13 @@ public interface LoginService {
      * @param password
      * @return
      */
-    Map login(String username,String password);
+    Result login(String username, String password);
 
     /**
      * 登录退出
      * @param token
      * @return
      */
-    Map logout(String token);
+    Result logout(String token);
 
 }

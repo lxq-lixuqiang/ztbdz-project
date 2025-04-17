@@ -32,9 +32,9 @@ public class Account extends Model<Account> implements Serializable {
     @ApiModelProperty("企业开户行账号")
     private Long accountNumber;
     @ApiModelProperty("企业开户行名称")
-    private Long accountNumberName;
+    private String accountNumberName;
     @ApiModelProperty("企业所在地")
-    private Long accountAddress;
+    private String accountAddress;
     @ApiModelProperty("联系人")
     private String member;
     @ApiModelProperty("手机号")
@@ -50,10 +50,6 @@ public class Account extends Model<Account> implements Serializable {
     @ApiModelProperty("交易主体类型")
     private String dealType;
 
-    @ApiModelProperty("是否删除：0-未删除 1-已删除")
-    private Integer isDelete;
-    @ApiModelProperty("是否停用：0-启用 1-停用")
-    private Integer isStop;
     @ApiModelProperty("创建日期")
     private Date createDate;
     @ApiModelProperty("更新日期")
@@ -79,8 +75,6 @@ public class Account extends Model<Account> implements Serializable {
         this.setId(UUID.randomUUID().getMostSignificantBits());
         this.setCreateDate(nowDate);
         this.setUpdateDate(nowDate);
-        this.setIsDelete(0);
-        this.setIsStop(0);
     }
 
     public void update(){

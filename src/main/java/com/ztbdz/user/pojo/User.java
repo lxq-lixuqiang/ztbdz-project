@@ -23,9 +23,9 @@ public class User extends Model<User> implements Serializable {
     private String username;
     @ApiModelProperty("密码")
     private String password;
-    @ApiModelProperty("是否删除：0-未删除 1-已删除")
+    @ApiModelProperty("是否删除（0=未删除 1=已删除）")
     private Integer isDelete;
-    @ApiModelProperty("是否停用：0-启用 1-停用")
+    @ApiModelProperty("是否停用（0=启用 1=停用）")
     private Integer isStop;
     @ApiModelProperty("人员")
     @TableField(value = "member_id",el = "member.id")

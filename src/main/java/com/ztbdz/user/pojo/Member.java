@@ -1,5 +1,6 @@
 package com.ztbdz.user.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,7 +21,7 @@ public class Member extends Model<Member> implements Serializable {
     private Long id;
     @ApiModelProperty("姓名")
     private String name;
-    @ApiModelProperty("性别：0-男 1-女")
+    @ApiModelProperty("性别（0=男 1=女）")
     private Integer sex;
     @ApiModelProperty("出生日期")
     private Date birthday;
@@ -30,9 +31,15 @@ public class Member extends Model<Member> implements Serializable {
     private String email;
     @ApiModelProperty("现住地址")
     private String address;
-    @ApiModelProperty("是否删除：0-未删除 1-已删除")
+    @ApiModelProperty("角色")
+    @TableField(value = "role_id",el = "role.id")
+    private Role role;
+    @ApiModelProperty("单位")
+    @TableField(value = "account_id",el = "account.id")
+    private Account account;
+    @ApiModelProperty("是否删除（0=未删除 1=已删除）")
     private Integer isDelete;
-    @ApiModelProperty("是否停用：0-启用 1-停用")
+    @ApiModelProperty("是否停用（0=启用 1=停用）")
     private Integer isStop;
     @ApiModelProperty("创建日期")
     private Date createDate;
