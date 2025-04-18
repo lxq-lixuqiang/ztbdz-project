@@ -5,8 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import java.security.Key;
+
 
 import java.util.Date;
 import java.util.HashMap;
@@ -14,8 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class JwtUtil {
-    // 密钥（需与生成Token时一致）
-    private static final Key SECRET_KEY = Keys.hmacShaKeyFor("your-256-bit-secret-key-here".getBytes());
 
     /**
      * 用户登录成功后生成Jwt
@@ -35,7 +32,7 @@ public class JwtUtil {
 
         //创建payload的私有声明（根据特定的业务需要添加，如果要拿这个做验证，一般是需要和jwt的接收方提前沟通好验证方式的）
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
+        claims.put("id", user.getId().toString());
         claims.put("username", user.getUsername());
         claims.put("password", user.getPassword());
 
@@ -113,27 +110,4 @@ public class JwtUtil {
         return false;
     }
 
-    /**
-     * 从Token中获取剩余有效时间（毫秒）
-     */
-    public static long getRemainingExpiration(String token) {
-        try {
-            // 解析Token的Claims（不验证签名，仅用于读取过期时间）
-            Claims claims = Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody();;
-
-            // 获取过期时间
-            Date expiration = claims.getExpiration();
-            if (expiration == null) {
-                return 0; // Token无过期时间
-            }
-
-            // 计算剩余时间 = 过期时间 - 当前时间
-            return expiration.getTime() - System.currentTimeMillis();
-        } catch (Exception e) {
-            return 0; // 解析失败视为无效
-        }
-    }
 }

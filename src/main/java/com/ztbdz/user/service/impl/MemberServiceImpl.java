@@ -3,10 +3,7 @@ package com.ztbdz.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ztbdz.user.mapper.AccountMapper;
 import com.ztbdz.user.mapper.MemberMapper;
-import com.ztbdz.user.mapper.UserMapper;
-import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
@@ -16,6 +13,7 @@ import com.ztbdz.user.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -71,9 +69,9 @@ public class MemberServiceImpl implements MemberService {
         queryWrapper.orderByDesc("create_date");
         queryWrapper.eq("is_stop", Common.ENABL);
         queryWrapper.eq("is_delete", Common.ENABL);
-        if(member.getName()!=null && !"".equals(member.getName())) queryWrapper.like("name", member.getName());
-        if(member.getSex()!=null ) queryWrapper.eq("sex", member.getSex());
-        if(member.getPhone()!=null ) queryWrapper.like("phone", member.getPhone());
+        if(!StringUtils.isEmpty(member.getName())) queryWrapper.like("name", member.getName());
+        if(!StringUtils.isEmpty(member.getSex())) queryWrapper.eq("sex", member.getSex());
+        if(!StringUtils.isEmpty(member.getPhone())) queryWrapper.like("phone", member.getPhone());
         return new PageInfo(memberMapper.selectList(queryWrapper));
     }
 
@@ -81,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
     public Result get(Long id) {
         try{
             Member member = getById(id);
-            member.setAccount(accountService.getById( member.getAccount().getId()));
+//            member.setAccount(accountService.getById( member.getAccount().getId()));
             return Result.ok("查询成功！",member);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());

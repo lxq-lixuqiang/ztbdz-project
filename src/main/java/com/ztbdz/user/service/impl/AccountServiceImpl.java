@@ -10,6 +10,7 @@ import com.ztbdz.user.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -52,8 +53,8 @@ public class AccountServiceImpl implements AccountService {
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
         queryWrapper.orderByDesc("create_date");
 
-        if(account.getAccountName()!=null && !"".equals(account.getAccountName())) queryWrapper.like("account_name", account.getAccountName());
-        if(account.getAccountType()!=null ) queryWrapper.eq("account_type", account.getAccountType());
+        if(!StringUtils.isEmpty(account.getAccountName())) queryWrapper.like("account_name", account.getAccountName());
+        if(!StringUtils.isEmpty(account.getAccountType())) queryWrapper.eq("account_type", account.getAccountType());
         return new PageInfo(accountMapper.selectList(queryWrapper));
     }
 
@@ -71,8 +72,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Result list(Integer page, Integer size, Account account) {
         try{
-            PageInfo<Account> accountList = selectList(page, size, account);
-            return Result.ok("查询人员成功！",accountList);
+            PageInfo<Account> accountPage = selectList(page, size, account);
+            return Result.ok("查询人员成功！",accountPage);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
             return Result.error("查询人员异常，原因："+e.getMessage());
@@ -89,5 +90,13 @@ public class AccountServiceImpl implements AccountService {
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
             return Result.error("更新企业异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public Integer count(Account account) throws Exception {
+        QueryWrapper<Account> queryWrapper = new QueryWrapper();
+        if(!StringUtils.isEmpty(account.getAccountName())) queryWrapper.eq("account_name",account.getAccountName());
+        if(!StringUtils.isEmpty(account.getAccountCode())) queryWrapper.eq("account_code",account.getAccountCode());
+        return accountMapper.selectCount(queryWrapper);
     }
 }

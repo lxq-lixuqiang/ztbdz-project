@@ -67,4 +67,11 @@ public interface AccountService {
      * @return
      */
     Result update(Account account);
+
+    /**
+     * 企业数量
+     * @param account
+     * @return
+     */
+    Integer count(Account account) throws Exception;
 }

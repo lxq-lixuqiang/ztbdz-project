@@ -37,24 +37,27 @@ public class UserController {
 
     @ApiOperation(value = "登录退出")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "令牌", required=true,paramType = "header", dataType = "String")
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
     @CheckToken
     @PostMapping("logout")
-    public Result logout(String token) {
+    public Result logout(@RequestHeader String token) {
         return loginService.logout(token);
     }
 
 
     @ApiOperation(value = "用户注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "短信验证码", required=false, dataType = "String")
+    })
     @PostMapping("create")
-    public Result create(@RequestBody User user) {
-        return userService.create(user);
+    public Result create(@RequestBody User user,@RequestParam(required = false) String code) {
+        return userService.create(user,code);
     }
 
     @ApiOperation(value = "更新密码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "令牌", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "userId", value = "用户id", required=true, dataType = "Long"),
             @ApiImplicitParam(name = "password", value = "原密码", required=true, dataType = "String"),
             @ApiImplicitParam(name = "newPassword", value = "新密码", required=true, dataType = "String")
@@ -73,6 +76,16 @@ public class UserController {
     @PostMapping("forgetPassword")
     public Result forgetPassword(String phone, String newPassword) {
         return userService.forgetPassword(phone,newPassword);
+    }
+
+
+    @ApiOperation(value = "发送短信")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "phone", value = "手机号", required=true, dataType = "String")
+    })
+    @PostMapping("sendSMS")
+    public Result sendSMS(String phone) {
+        return userService.sendSMS(phone);
     }
 
 }

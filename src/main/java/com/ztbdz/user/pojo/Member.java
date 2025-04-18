@@ -2,6 +2,7 @@ package com.ztbdz.user.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -17,8 +19,8 @@ public class Member extends Model<Member> implements Serializable {
 
     @Getter
     private static final long serialVersionUID = 1334289778100623211L;
-    @ApiModelProperty("主键id")
-    private Long id;
+    @ApiModelProperty("人员id")
+    private String id;
     @ApiModelProperty("姓名")
     private String name;
     @ApiModelProperty("性别（0=男 1=女）")
@@ -32,28 +34,32 @@ public class Member extends Model<Member> implements Serializable {
     @ApiModelProperty("现住地址")
     private String address;
     @ApiModelProperty("角色")
-    @TableField(value = "role_id",el = "role.id")
-    private Role role;
+    @TableField(value = "roles_id",el = "roles.id")
+    private Role roles;
+    @TableField(exist = false)
+    private List<Role> roleList;
     @ApiModelProperty("单位")
     @TableField(value = "account_id",el = "account.id")
     private Account account;
-    @ApiModelProperty("是否删除（0=未删除 1=已删除）")
+    @ApiModelProperty(value = "是否删除（0=未删除 1=已删除）",hidden = true)
     private Integer isDelete;
-    @ApiModelProperty("是否停用（0=启用 1=停用）")
+    @ApiModelProperty(value = "是否停用（0=启用 1=停用）",hidden = true)
     private Integer isStop;
-    @ApiModelProperty("创建日期")
+    @ApiModelProperty(value = "创建日期",hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date createDate;
-    @ApiModelProperty("更新日期")
+    @ApiModelProperty(value = "更新日期",hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date updateDate;
-    @ApiModelProperty("扩展字段01")
+    @ApiModelProperty(value = "扩展字段01",hidden = true)
     private Integer ext1;
-    @ApiModelProperty("扩展字段02")
+    @ApiModelProperty(value = "扩展字段02",hidden = true)
     private Integer ext2;
-    @ApiModelProperty("扩展字段03")
+    @ApiModelProperty(value = "扩展字段03",hidden = true)
     private String ext3;
-    @ApiModelProperty("扩展字段04")
+    @ApiModelProperty(value = "扩展字段04",hidden = true)
     private String ext4;
-    @ApiModelProperty("扩展字段05")
+    @ApiModelProperty(value = "扩展字段05",hidden = true)
     private String ext5;
 
     @Override
@@ -63,7 +69,7 @@ public class Member extends Model<Member> implements Serializable {
 
     public void init(){
         Date nowDate = new Date();
-        this.setId(UUID.randomUUID().getMostSignificantBits());
+        this.setId(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
         this.setCreateDate(nowDate);
         this.setUpdateDate(nowDate);
         this.setIsDelete(0);

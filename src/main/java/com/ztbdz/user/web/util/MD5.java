@@ -1,8 +1,8 @@
 package com.ztbdz.user.web.util;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 
+import com.ztbdz.user.web.config.SystemConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,6 +22,16 @@ public class MD5 {
 	public static String md5String(String md5String,String md5Key){
 	    String md5Value = MD5Encoder(md5String + md5Key);
 	    return md5Value;
+	}
+
+	/**
+	 * 对字符串进行md5加密
+	 * @param md5String
+	 * @return md5加密后的密文
+	 */
+	public static String md5String(String md5String){
+		String md5Value = MD5Encoder(md5String + SystemConfig.MD5_KEY);
+		return md5Value;
 	}
 	
 	public final static String MD5Encoder(String s) {
@@ -48,20 +58,4 @@ public class MD5 {
 	        return null;
 	    }
 	}
-	
-	/**
-	 * MD5加密方式
-	 * @param str
-	 * @return
-	 */
-	public static String getMD5String(String str) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(str.getBytes());
-            return new BigInteger(1, md.digest()).toString(16);
-        } catch (Exception e) {
-        	log.error("MD5加密异常：" + e.getMessage());
-           return null;
-        }
-    }
 }

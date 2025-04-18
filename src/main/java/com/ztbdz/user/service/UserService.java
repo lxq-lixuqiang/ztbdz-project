@@ -1,7 +1,6 @@
 package com.ztbdz.user.service;
 
 import com.github.pagehelper.PageInfo;
-import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.web.util.Result;
 
@@ -11,9 +10,10 @@ public interface UserService {
     /**
      * 创建用户
      * @param user
+     * @param code
      * @return
      */
-    Result create(User user);
+    Result create(User user,String code);
 
     /**
      * 新增用户
@@ -39,6 +39,13 @@ public interface UserService {
      * @return
      */
     Result forgetPassword(String phone, String newPassword);
+
+    /**
+     * 发送短信
+     * @param phone
+     * @return
+     */
+    Result sendSMS(String phone);
 
     /**
      * 获取用户
@@ -71,5 +78,21 @@ public interface UserService {
      * @return
      */
     PageInfo<User> selectList(Integer page, Integer size, User user) throws Exception;
+
+    /**
+     * 查询用户信息
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    User select(User user) throws Exception;
+
+    /**
+     * 查询用户数量
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    Integer count(User user) throws Exception;
 
 }

@@ -8,7 +8,6 @@ import com.ztbdz.user.web.token.CheckToken;
 import com.ztbdz.user.web.token.LoginToken;
 import com.ztbdz.user.web.util.JwtUtil;
 import com.ztbdz.user.web.util.TokenBlacklistService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,10 +18,12 @@ import java.lang.reflect.Method;
 
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private TokenBlacklistService blacklistService;
+    public UserService userService;
+    public TokenBlacklistService blacklistService;
+    public AuthenticationInterceptor(UserService userService1,TokenBlacklistService blacklistService1){
+        userService = userService1;
+        blacklistService = blacklistService1;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
@@ -51,12 +52,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 if (token == null) {
                     throw new RuntimeException("无token，请重新登录");
                 }
+
                 // 获取 token 中的 user id
                 String userId;
                 try {
                     userId = JWT.decode(token).getClaim("id").asString();
                 } catch (JWTDecodeException j) {
                     throw new RuntimeException("访问异常！");
+                }
+                if(userId==null){
+                    throw new RuntimeException("token无效！");
                 }
                 User user = userService.getById(Long.valueOf(userId));
                 if (user == null) {

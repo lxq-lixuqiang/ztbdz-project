@@ -21,6 +21,7 @@ public class AccountController {
 
     @ApiOperation(value = "查询企业")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "id", value = "企业id", required=true, dataType = "Long")
     })
     @CheckToken
@@ -32,17 +33,21 @@ public class AccountController {
 
     @ApiOperation(value = "查询企业列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "页码", required=true, dataType = "Integer"),
-            @ApiImplicitParam(name = "size", value = "页大小", required=true, dataType = "Integer")
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
     })
     @CheckToken
     @PostMapping("list")
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
-                       @RequestBody Account account) {
+                       @RequestBody(required = false) Account account) {
         return accountService.list(page,size,account);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
     @ApiOperation(value = "更新企业")
     @CheckToken
     @PostMapping("update")

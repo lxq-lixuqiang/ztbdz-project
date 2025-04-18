@@ -4,24 +4,28 @@ package com.ztbdz.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ztbdz.user.mapper.AccountMapper;
-import com.ztbdz.user.mapper.MemberMapper;
-import com.ztbdz.user.mapper.RoleMapper;
 import com.ztbdz.user.mapper.UserMapper;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
+import com.ztbdz.user.web.config.SystemConfig;
 import com.ztbdz.user.web.util.Common;
 import com.ztbdz.user.web.util.MD5;
 import com.ztbdz.user.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -36,13 +40,25 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result create(User user) {
+    public Result create(User user,String code) {
         try{
-            user.setPassword(MD5.md5String(user.getPassword(),LoginServiceImpl.key));
-            roleService.insert(user.getMember().getRole());
+            //TODO 对比短信验证码
+//            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
+//            if(StrKit.isNull(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
+//            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
+
+            user.setPassword(MD5.md5String(user.getPassword()));
+            if(count(user)>0) return Result.fail("用户名已存在！");
+            if(accountService.count(user.getMember().getAccount())>0) return Result.fail("企业名称已存在！");
+            // 根据角色类型赋值角色，注册是默认是赋值一个角色
+            Role role = roleService.select(user.getMember().getRoles());
+            user.getMember().getRoles().setId(role.getId());
+
             accountService.insert(user.getMember().getAccount());
             memberService.insert(user.getMember());
             this.insert(user);
@@ -66,10 +82,10 @@ public class UserServiceImpl implements UserService {
         try{
             User user = getById(userId);
             if(user==null) return Result.fail("userId找不到对应数据！");
-            String passwordMD5 = MD5.md5String(password,LoginServiceImpl.key);
+            String passwordMD5 = MD5.md5String(password);
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("原密码错误！");
 
-            user.setPassword(MD5.md5String(newPassword,LoginServiceImpl.key));
+            user.setPassword(MD5.md5String(newPassword));
             user.update();
             updateById(user);
             return Result.ok("更新密码成功！");
@@ -91,7 +107,7 @@ public class UserServiceImpl implements UserService {
             PageInfo<User> userPage =this.selectList(1,1,user);
             if(memberPage.getTotal()<=0) return Result.fail("人员id没有查询到对应用户数据！");
             user = userPage.getList().get(0);
-            newPassword = MD5.md5String(newPassword,LoginServiceImpl.key);
+            newPassword = MD5.md5String(newPassword);
             user.setPassword(newPassword);
             this.insert(user);
             return Result.ok("更新密码成功！");
@@ -99,6 +115,20 @@ public class UserServiceImpl implements UserService {
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
             return Result.error("更新密码异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public Result sendSMS(String phone) {
+        try{
+            //@TODO 发送短信逻辑
+//            if(!redisTemplate.hasKey(phone+SystemConfig.SMS)) return Result.fail("在60秒内请勿重复发送！");
+//        redisTemplate.opsForValue().set(phone+SystemConfig.SMS, "短信验证码",60, TimeUnit.SECONDS);
+            return Result.ok("发送成功！");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            return Result.error("发送验证码异常，原因："+e.getMessage());
+        }
+
     }
 
     @Override
@@ -137,10 +167,26 @@ public class UserServiceImpl implements UserService {
         queryWrapper.orderByDesc("create_date");
         queryWrapper.eq("is_stop", Common.ENABL);
         queryWrapper.eq("is_delete", Common.ENABL);
-        if(user.getMember().getId()!=null){
-            queryWrapper.eq("member_id", user.getMember().getId());
-        }
+        if(!StringUtils.isEmpty(user.getMember().getId())) queryWrapper.eq("member_id", user.getMember().getId());
         return new PageInfo(userMapper.selectList(queryWrapper));
 
+    }
+
+    @Override
+    public User select(User user) throws Exception {
+        QueryWrapper<User> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("is_stop", Common.ENABL);
+        queryWrapper.eq("is_delete", Common.ENABL);
+        if(!StringUtils.isEmpty(user.getUsername())) queryWrapper.eq("username",user.getUsername());
+        return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public Integer count(User user) throws Exception {
+        QueryWrapper<User> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("is_stop", Common.ENABL);
+        queryWrapper.eq("is_delete", Common.ENABL);
+        if(!StringUtils.isEmpty(user.getUsername())) queryWrapper.eq("username",user.getUsername());
+        return userMapper.selectCount(queryWrapper);
     }
 }
