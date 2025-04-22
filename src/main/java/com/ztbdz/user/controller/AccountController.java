@@ -45,13 +45,13 @@ public class AccountController {
         return accountService.list(page,size,account);
     }
 
+    @ApiOperation(value = "修改企业")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
-    @ApiOperation(value = "更新企业")
     @CheckToken
     @PostMapping("update")
-    public Result list(@RequestBody Account account) {
+    public Result update(@RequestBody Account account) {
         return accountService.update(account);
     }
 

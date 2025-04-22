@@ -12,7 +12,6 @@ import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
-import com.ztbdz.user.web.config.SystemConfig;
 import com.ztbdz.user.web.util.Common;
 import com.ztbdz.user.web.util.MD5;
 import com.ztbdz.user.web.util.Result;
@@ -24,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -56,8 +53,8 @@ public class UserServiceImpl implements UserService {
             if(count(user)>0) return Result.fail("用户名已存在！");
             if(accountService.count(user.getMember().getAccount())>0) return Result.fail("企业名称已存在！");
             // 根据角色类型赋值角色，注册是默认是赋值一个角色
-            Role role = roleService.select(user.getMember().getRoles());
-            user.getMember().getRoles().setId(role.getId());
+            Role role = roleService.select(user.getMember().getRole());
+            user.getMember().getRole().setId(role.getId());
 
             accountService.insert(user.getMember().getAccount());
             memberService.insert(user.getMember());
@@ -65,14 +62,13 @@ public class UserServiceImpl implements UserService {
             return Result.ok("注册成功！");
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("注册异常，原因："+e.getMessage());
         }
     }
 
     @Override
     public Integer insert(User user) {
-        user.init();
         return userMapper.insert(user);
     }
 
@@ -86,11 +82,10 @@ public class UserServiceImpl implements UserService {
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("原密码错误！");
 
             user.setPassword(MD5.md5String(newPassword));
-            user.update();
             updateById(user);
             return Result.ok("更新密码成功！");
         }catch (Exception e){
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("更新密码异常，原因："+e.getMessage());
         }
     }
@@ -112,7 +107,7 @@ public class UserServiceImpl implements UserService {
             this.insert(user);
             return Result.ok("更新密码成功！");
         }catch (Exception e){
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("更新密码异常，原因："+e.getMessage());
         }
     }
@@ -125,7 +120,7 @@ public class UserServiceImpl implements UserService {
 //        redisTemplate.opsForValue().set(phone+SystemConfig.SMS, "短信验证码",60, TimeUnit.SECONDS);
             return Result.ok("发送成功！");
         }catch (Exception e){
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("发送验证码异常，原因："+e.getMessage());
         }
 

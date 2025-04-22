@@ -28,7 +28,7 @@ public interface RoleService {
      * @param ids
      * @return
      */
-    Integer deletes(List<String> ids) throws Exception;
+    Integer deletes(List<Long> ids) throws Exception;
 
     /**
      * 更新角色
@@ -36,13 +36,6 @@ public interface RoleService {
      * @return
      */
     Integer updateById(Role role) throws Exception;
-
-    /**
-     * 查询角色
-     * @param id
-     * @return
-     */
-    Role getById(Long id) throws Exception;
 
     /**
      * 查询多个角色
@@ -69,6 +62,14 @@ public interface RoleService {
      */
     Result list(Integer page,Integer size,Role role);
 
+
+    /**
+     * 创建角色
+     * @param role
+     * @return
+     */
+    Result create(Role role);
+
     /**
      * 更新角色
      * @param role
@@ -81,5 +82,14 @@ public interface RoleService {
      * @param ids
      * @return
      */
-    Result deleteList(List<String> ids);
+    Result deleteList(List<Long> ids);
+
+
+    /**
+     * 角色分配权限
+     * @param roleId
+     * @param meunIds
+     * @return
+     */
+    Result allocation(Long roleId, List<Long> meunIds);
 }

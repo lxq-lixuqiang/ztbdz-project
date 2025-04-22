@@ -1,5 +1,6 @@
 package com.ztbdz.user.pojo;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,8 +11,6 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 @Data
 @ApiModel("人员信息")
@@ -19,8 +18,9 @@ public class Member extends Model<Member> implements Serializable {
 
     @Getter
     private static final long serialVersionUID = 1334289778100623211L;
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("人员id")
-    private String id;
+    private Long id;
     @ApiModelProperty("姓名")
     private String name;
     @ApiModelProperty("性别（0=男 1=女）")
@@ -34,20 +34,22 @@ public class Member extends Model<Member> implements Serializable {
     @ApiModelProperty("现住地址")
     private String address;
     @ApiModelProperty("角色")
-    @TableField(value = "roles_id",el = "roles.id")
-    private Role roles;
-    @TableField(exist = false)
-    private List<Role> roleList;
+    @TableField(value = "role_id",el = "role.id")
+    private Role role;
     @ApiModelProperty("单位")
     @TableField(value = "account_id",el = "account.id")
     private Account account;
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "是否删除（0=未删除 1=已删除）",hidden = true)
     private Integer isDelete;
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "是否停用（0=启用 1=停用）",hidden = true)
     private Integer isStop;
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date createDate;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "更新日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date updateDate;
@@ -67,16 +69,4 @@ public class Member extends Model<Member> implements Serializable {
         return id;
     }
 
-    public void init(){
-        Date nowDate = new Date();
-        this.setId(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
-        this.setCreateDate(nowDate);
-        this.setUpdateDate(nowDate);
-        this.setIsDelete(0);
-        this.setIsStop(0);
-    }
-
-    public void update(){
-        this.setUpdateDate(new Date());
-    }
 }

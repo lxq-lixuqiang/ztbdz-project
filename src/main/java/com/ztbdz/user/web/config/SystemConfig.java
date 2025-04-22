@@ -23,4 +23,9 @@ public class SystemConfig {
      */
     public static String SMS = "smsList";
 
+    /**
+     * 默认密码后缀
+     */
+    public static String DEFAULT_PASSWORD = "1234";
+
 }

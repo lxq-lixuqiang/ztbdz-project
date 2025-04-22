@@ -1,5 +1,6 @@
 package com.ztbdz.user.pojo;
 
+
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -11,28 +12,24 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Data
-@ApiModel("角色信息")
-public class Role extends Model<Role> implements Serializable {
+@ApiModel("菜单权限")
+public class MenuAuthorize extends Model<MenuAuthorize> implements Serializable {
     @Getter
-    private static final long serialVersionUID = 86617709176545036L;
+    private static final long serialVersionUID = -7472846567734813500L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("角色id")
+    @ApiModelProperty("菜单权限id")
     private Long id;
-    @ApiModelProperty("默认角色类型（admin=管理员 tenderee=招标方 bidder=投标方 expert=专家）")
-    private String type;
-    @ApiModelProperty("角色名称")
-    private String typeName;
-    @ApiModelProperty("菜单权限")
-    @TableField(value = "meunAuthorize_id",el = "meunAuthorize.id")
-    private List<MenuAuthorize> meunAuthorize;
-    @ApiModelProperty("描述")
-    private String describeInfo;
-    @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("是否预设（0=是 1=否）")
-    private Integer isDefault;
+    @ApiModelProperty("名称")
+    private String name;
+    @ApiModelProperty("标识")
+    private String sign;
+    @ApiModelProperty("路径")
+    private String path;
+    @ApiModelProperty("地址")
+    private String url;
+
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
@@ -57,7 +54,4 @@ public class Role extends Model<Role> implements Serializable {
         return id;
     }
 
-    public void update(){
-        this.setUpdateDate(new Date());
-    }
 }

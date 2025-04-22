@@ -11,28 +11,27 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Data
-@ApiModel("角色信息")
-public class Role extends Model<Role> implements Serializable {
+@ApiModel("业主信息")
+public class Landlord extends Model<Landlord> implements Serializable {
+
     @Getter
-    private static final long serialVersionUID = 86617709176545036L;
+    private static final long serialVersionUID = 2676219512805137038L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("角色id")
+    @ApiModelProperty("业主id")
     private Long id;
-    @ApiModelProperty("默认角色类型（admin=管理员 tenderee=招标方 bidder=投标方 expert=专家）")
-    private String type;
-    @ApiModelProperty("角色名称")
-    private String typeName;
-    @ApiModelProperty("菜单权限")
-    @TableField(value = "meunAuthorize_id",el = "meunAuthorize.id")
-    private List<MenuAuthorize> meunAuthorize;
-    @ApiModelProperty("描述")
-    private String describeInfo;
-    @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("是否预设（0=是 1=否）")
-    private Integer isDefault;
+    @ApiModelProperty("用户名")
+    private String name;
+    @ApiModelProperty("密码")
+    private String password;
+    @ApiModelProperty("手机号")
+    private String phone;
+    @ApiModelProperty("业主单位的名称")
+    private String accountName;
+    @ApiModelProperty("联系人")
+    private String contact;
+
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
@@ -57,7 +56,21 @@ public class Role extends Model<Role> implements Serializable {
         return id;
     }
 
-    public void update(){
-        this.setUpdateDate(new Date());
+
+    // 转用户
+    public User toUser(){
+        User user = new User();
+        user.setId(this.getId());
+        user.setUsername(this.getName());
+        user.setPassword(this.getPassword());
+        user.setCreateDate(this.getCreateDate());
+        user.setUpdateDate(this.getUpdateDate());
+        user.setExt1(this.getExt1());
+        user.setExt2(this.getExt2());
+        user.setExt3(this.getExt3());
+        user.setExt4(this.getExt4());
+        user.setExt5(this.getExt5());
+        return user;
     }
+
 }

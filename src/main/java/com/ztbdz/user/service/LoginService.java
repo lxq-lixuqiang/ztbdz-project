@@ -20,4 +20,12 @@ public interface LoginService {
      */
     Result logout(String token);
 
+    /**
+     *  业主登录校验
+     * @param username
+     * @param phone
+     * @param code
+     */
+    Result loginLandlord(String username, String phone, String code);
+
 }

@@ -2,7 +2,9 @@ package com.ztbdz.user.web.interceptor;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.ztbdz.user.pojo.Landlord;
 import com.ztbdz.user.pojo.User;
+import com.ztbdz.user.service.LandlordService;
 import com.ztbdz.user.service.UserService;
 import com.ztbdz.user.web.token.CheckToken;
 import com.ztbdz.user.web.token.LoginToken;
@@ -20,9 +22,11 @@ import java.lang.reflect.Method;
 public class AuthenticationInterceptor implements HandlerInterceptor {
     public UserService userService;
     public TokenBlacklistService blacklistService;
-    public AuthenticationInterceptor(UserService userService1,TokenBlacklistService blacklistService1){
-        userService = userService1;
-        blacklistService = blacklistService1;
+    public LandlordService landlordService;
+    public AuthenticationInterceptor(UserService userService,TokenBlacklistService blacklistService,LandlordService landlordService){
+        this.userService = userService;
+        this.blacklistService = blacklistService;
+        this.landlordService = landlordService;
     }
 
     @Override
@@ -58,14 +62,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 try {
                     userId = JWT.decode(token).getClaim("id").asString();
                 } catch (JWTDecodeException j) {
-                    throw new RuntimeException("访问异常！");
+                    throw new RuntimeException("token错误！");
                 }
                 if(userId==null){
                     throw new RuntimeException("token无效！");
                 }
                 User user = userService.getById(Long.valueOf(userId));
                 if (user == null) {
-                    throw new RuntimeException("用户不存在，请重新登录");
+                    Landlord landlord = landlordService.getById(Long.valueOf(userId));
+                    if(landlord==null) throw new RuntimeException("用户不存在，请重新登录");
+                    user = landlord.toUser();
                 }
                 Boolean verify = JwtUtil.isVerify(token, user);
                 if (!verify) {

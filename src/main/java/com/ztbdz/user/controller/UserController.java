@@ -55,7 +55,7 @@ public class UserController {
         return userService.create(user,code);
     }
 
-    @ApiOperation(value = "更新密码")
+    @ApiOperation(value = "修改密码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "userId", value = "用户id", required=true, dataType = "Long"),

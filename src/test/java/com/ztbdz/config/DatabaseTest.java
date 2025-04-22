@@ -24,7 +24,7 @@ public class DatabaseTest {
         /*配置文件中配置的password*/
         standardPBEStringEncryptor.setPassword("ZTBDZ");
         /*要加密的文本*/
-        String url = standardPBEStringEncryptor.encrypt("jdbc:mysql://localhost:3306/ztbdz?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8");
+        String url = standardPBEStringEncryptor.encrypt("jdbc:mysql://127.0.0.1:3306/ztbdz?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2b8");
         String name = standardPBEStringEncryptor.encrypt("root");
         String password =standardPBEStringEncryptor.encrypt("root123_");
 

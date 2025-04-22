@@ -1,6 +1,5 @@
 package com.ztbdz.user.controller;
 
-import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.web.token.CheckToken;
@@ -47,25 +46,46 @@ public class RoleController {
         return roleService.list(page,size,role);
     }
 
+    @ApiOperation(value = "创建角色")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
-    @ApiOperation(value = "更新角色")
+    @CheckToken
+    @PostMapping("create")
+    public Result create(@RequestBody Role role) {
+        return roleService.create(role);
+    }
+
+    @ApiOperation(value = "修改角色")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
     @CheckToken
     @PostMapping("update")
-    public Result list(@RequestBody Role role) {
+    public Result update(@RequestBody Role role) {
         return roleService.update(role);
     }
 
-    @ApiOperation(value = "删除角色")
+    @ApiOperation(value = "批量删除角色")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-            @ApiImplicitParam(name = "ids", value = "删除角色id", required=true, dataType = "List")
+            @ApiImplicitParam(name = "ids", value = "删除角色id", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
     })
     @CheckToken
-    @PostMapping("delete")
-    public Result deleteList(@PathVariable List<String> ids) {
+    @PostMapping("deleteList")
+    public Result deleteList(@RequestParam(value="ids") List<Long> ids) {
         return roleService.deleteList(ids);
     }
 
+    @ApiOperation(value = "角色分配权限")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "meunIds", value = "菜单权限id", required=false, allowMultiple = true, dataType = "Long",paramType = "query"),
+            @ApiImplicitParam(name = "roleId", value = "角色id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @PostMapping("allocation")
+    public Result allocation(@RequestParam(value="ids") List<Long> meunIds, Long roleId) {
+        return roleService.allocation(roleId,meunIds);
+    }
 }

@@ -21,7 +21,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Integer insert(Account account) throws Exception {
-        account.init();
         return accountMapper.insert(account);
     }
 
@@ -34,9 +33,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Integer updateById(Account account) throws Exception {
-        account.update();
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("id", account.getId());
+        queryWrapper.eq("id", account.getId().toString());
         return accountMapper.update(account,queryWrapper);
     }
 
@@ -62,9 +60,9 @@ public class AccountServiceImpl implements AccountService {
     public Result get(Long id) {
         try{
             Account account = getById(id);
-            return Result.ok("查询企业成功！",account);
+            return Result.ok("查询成功！",account);
         }catch (Exception e){
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询企业异常，原因："+e.getMessage());
         }
     }
@@ -73,10 +71,10 @@ public class AccountServiceImpl implements AccountService {
     public Result list(Integer page, Integer size, Account account) {
         try{
             PageInfo<Account> accountPage = selectList(page, size, account);
-            return Result.ok("查询人员成功！",accountPage);
+            return Result.ok("查询成功！",accountPage);
         }catch (Exception e){
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
-            return Result.error("查询人员异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询企业列表异常，原因："+e.getMessage());
         }
     }
 
@@ -84,10 +82,10 @@ public class AccountServiceImpl implements AccountService {
     public Result update(Account account) {
         try{
             Integer num = updateById(account);
-            if(num>0) return Result.ok("更新企业成功！");
-            return Result.fail("更新企业失败！");
+            if(num>0) return Result.ok("更新成功！");
+            return Result.fail("更新失败！");
         }catch (Exception e){
-            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage());
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("更新企业异常，原因："+e.getMessage());
         }
     }

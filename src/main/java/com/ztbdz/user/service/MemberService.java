@@ -2,7 +2,10 @@ package com.ztbdz.user.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.web.util.Result;
+
+import java.util.List;
 
 public interface MemberService {
 
@@ -63,9 +66,24 @@ public interface MemberService {
 
     /**
      * 更新人员
-     * @param member
+     * @param user
      * @return
      */
-    Result update(Member member);
+    Result update(User user);
 
+
+    /**
+     * 批量删除人员
+     * @param ids
+     * @return
+     */
+    Result deleteList(List<Long> ids);
+
+
+    /**
+     * 删除角色
+     * @param ids
+     * @return
+     */
+    Integer deletes(List<Long> ids) throws Exception;
 }

@@ -1,5 +1,7 @@
 package com.ztbdz.user.pojo;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -9,7 +11,6 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.UUID;
 
 @Data
 @ApiModel("企业信息")
@@ -18,8 +19,9 @@ public class Account extends Model<Account> implements Serializable {
     @Getter
     private static final long serialVersionUID = 8478301967710403101L;
 
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("企业id")
-    private String id;
+    private Long id;
     @ApiModelProperty("企业名称")
     private String accountName;
     @ApiModelProperty("企业类型（0=供应商 1=代理机构 2=采购人）")
@@ -51,10 +53,16 @@ public class Account extends Model<Account> implements Serializable {
     private String accountCode;
     @ApiModelProperty("交易主体类型")
     private String dealType;
+    @ApiModelProperty("经营范围")
+    private String natureBusiness;
+    @ApiModelProperty("统一社会信用代码证书扫描件")
+    private String accountCodeFile; // TODO 文件存储表
 
+    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date createDate;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "更新日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date updateDate;
@@ -72,16 +80,5 @@ public class Account extends Model<Account> implements Serializable {
     @Override
     protected Serializable pkVal() {
         return id;
-    }
-
-    public void init(){
-        Date nowDate = new Date();
-        this.setId(String.valueOf(UUID.randomUUID().getMostSignificantBits()));
-        this.setCreateDate(nowDate);
-        this.setUpdateDate(nowDate);
-    }
-
-    public void update(){
-        this.setUpdateDate(new Date());
     }
 }

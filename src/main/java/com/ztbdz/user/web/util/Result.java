@@ -19,7 +19,7 @@ public class Result implements Serializable {
     private Integer status;
     @ApiModelProperty("消息")
     private String message;
-    @ApiModelProperty("数据")
+    @ApiModelProperty("返回数据")
     private Object data;
 
     public static Result ok(String msg,Object data){
