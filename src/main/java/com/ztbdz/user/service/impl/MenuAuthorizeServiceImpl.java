@@ -85,6 +85,8 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
     @Override
     public Result update(MenuAuthorize menuAuthorize) {
         try{
+            if(countBySign(menuAuthorize.getId().toString(),menuAuthorize.getSign())>0) return Result.fail("权限标识不能重复！");
+
             Integer num = this.updateById(menuAuthorize);
             if(num>0) return Result.ok("更新成功！");
             return Result.fail("更新失败！");
@@ -105,7 +107,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
     @Override
     public Result create(MenuAuthorize menuAuthorize) {
         try{
-            if(count(menuAuthorize)>0) return Result.fail("权限名称或标识不能重复！");
+            if(countBySign(null,menuAuthorize.getSign())>0) return Result.fail("权限标识不能重复！");
 
             Integer num = this.insert(menuAuthorize);
             if(num>0) return Result.ok("创建成功！");
@@ -121,5 +123,13 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
         queryWrapper.in("id", ids);
         return menuAuthorizeMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public Integer countBySign(String id, String sign) throws Exception {
+        QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
+        if(!StringUtils.isEmpty(id)) queryWrapper.ne("id", id);
+        queryWrapper.eq("sign", sign);
+        return menuAuthorizeMapper.selectCount(queryWrapper);
     }
 }

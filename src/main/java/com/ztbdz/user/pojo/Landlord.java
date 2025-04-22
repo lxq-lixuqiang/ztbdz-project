@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel("业主信息")
+@ApiModel("业主")
 public class Landlord extends Model<Landlord> implements Serializable {
 
     @Getter

@@ -110,4 +110,31 @@ public class JwtUtil {
         return false;
     }
 
+    /**
+     * 刷新token时效
+     * @param token
+     * @param user
+     * @param ttlMillis
+     * @return
+     */
+    public static String refreshToken(String token, User user,long ttlMillis){
+        //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        //生成JWT的时间
+        long nowMillis = System.currentTimeMillis();
+
+        Claims claims = parseJWT(token,user);
+        //签名秘钥，和生成的签名的秘钥一模一样
+        String key = user.getPassword();
+        return  Jwts.builder()
+                //如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
+                .setClaims(claims)
+                //iat: jwt的签发时间
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(nowMillis + ttlMillis))
+                //设置签名使用的签名算法和签名使用的秘钥
+                .signWith(signatureAlgorithm, key)
+                .compact();
+    }
+
 }

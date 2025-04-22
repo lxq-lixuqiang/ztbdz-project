@@ -1,7 +1,9 @@
 package com.ztbdz.user.service;
 
 import com.github.pagehelper.PageInfo;
+import com.ztbdz.user.pojo.MenuAuthorize;
 import com.ztbdz.user.pojo.Role;
+import com.ztbdz.user.pojo.RoleRelatedAuthorize;
 import com.ztbdz.user.web.util.Result;
 
 import java.util.List;
@@ -21,6 +23,14 @@ public interface RoleService {
      * @return
      */
     Role select(Role role) throws Exception;
+
+    /**
+     * 查询角色数量
+     * @param type
+     * @param typeName
+     * @return
+     */
+    Integer countByTypeAndTypeName(String id,String type,String typeName) throws Exception;
 
 
     /**
@@ -87,9 +97,16 @@ public interface RoleService {
 
     /**
      * 角色分配权限
-     * @param roleId
-     * @param meunIds
+     * @param roleRelatedAuthorizeList
      * @return
      */
-    Result allocation(Long roleId, List<Long> meunIds);
+    Result allocation(List<RoleRelatedAuthorize> roleRelatedAuthorizeList);
+
+
+    /**
+     * 获取角色分配的菜单权限
+     * @param roleList
+     * @throws Exception
+     */
+    void getMenuAuthorizeInfo(List<Role> roleList) throws Exception;
 }

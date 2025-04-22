@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.RoleMapper;
+import com.ztbdz.user.mapper.RoleRelatedAuthorizeMapper;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.MenuAuthorize;
 import com.ztbdz.user.pojo.Role;
+import com.ztbdz.user.pojo.RoleRelatedAuthorize;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.MenuAuthorizeService;
 import com.ztbdz.user.service.RoleService;
@@ -14,9 +16,14 @@ import com.ztbdz.user.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -29,9 +36,12 @@ public class RoleServiceImpl implements RoleService {
     private MemberService memberService;
     @Autowired
     private MenuAuthorizeService menuAuthorizeService;
+    @Autowired
+    private RoleRelatedAuthorizeMapper roleRelatedAuthorizeMapper;
 
     @Override
     public Integer insert(Role role) throws Exception {
+        role.setIsDefault(1);
         return roleMapper.insert(role);
     }
 
@@ -40,7 +50,22 @@ public class RoleServiceImpl implements RoleService {
         QueryWrapper<Role> queryWrapper = new QueryWrapper();
         if(!StringUtils.isEmpty(role.getId())) queryWrapper.eq("id", role.getId());
         if(!StringUtils.isEmpty(role.getType())) queryWrapper.eq("type", role.getType());
+        if(!StringUtils.isEmpty(role.getTypeName())) queryWrapper.eq("type_name", role.getTypeName());
         return roleMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public Integer countByTypeAndTypeName(String id,String type,String typeName) throws Exception {
+        QueryWrapper<Role> queryWrapper = new QueryWrapper();
+        if(!StringUtils.isEmpty(id)){
+            queryWrapper.ne("id", id).and(wrapper ->
+                wrapper.eq("type", type).or().eq("type_name", typeName)
+            );
+        }else{
+            queryWrapper.eq("type", type).or().eq("type_name", typeName);
+        }
+
+        return roleMapper.selectCount(queryWrapper);
     }
 
     @Override
@@ -52,7 +77,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Integer updateById(Role role) throws Exception {
-        role.update();
         QueryWrapper<Role> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", role.getId().toString());
         return roleMapper.updateById(role);
@@ -75,7 +99,10 @@ public class RoleServiceImpl implements RoleService {
         try{
             Role role = new Role();
             role.setId(id);
-            return Result.ok("查询成功",select(role));
+            List<Role> roles = new ArrayList<>();
+            roles.add(select(role));
+            this.getMenuAuthorizeInfo(roles);
+            return Result.ok("查询成功",roles.get(0));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询人员异常，原因："+e.getMessage());
@@ -87,6 +114,7 @@ public class RoleServiceImpl implements RoleService {
     public Result list(Integer page, Integer size, Role role) {
         try{
             PageInfo<Role> rolePageInfo =  selectList(page,size,role);
+            this.getMenuAuthorizeInfo(rolePageInfo.getList());
             return Result.ok("查询成功！",rolePageInfo);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -97,6 +125,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Result create(Role role) {
         try{
+            // 标识和名称不能一样
+            if(countByTypeAndTypeName(null,role.getType(),role.getTypeName())>0) return Result.fail("角色名称或角色标识不能重复！");
+
             Integer num = this.insert(role);
             if(num<=0) return Result.fail("创建失败！");
             return Result.ok("创建成功！");
@@ -109,6 +140,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Result update(Role role) {
         try{
+            // 标识和名称不能一样
+            if(countByTypeAndTypeName(role.getId().toString(),role.getType(),role.getTypeName())>0) return Result.fail("角色名称或角色标识不能重复！");
+
             Integer num = this.updateById(role);
             if(num<=0) return Result.fail("更新失败！");
             return Result.ok("更新成功！");
@@ -121,9 +155,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Result deleteList(List<Long> ids) {
         try{
-            Role role = new Role();
+            Role role;
             Member member = new Member();
             for(Long id : ids){ // 防止默认角色被删除
+                role = new Role();
                 role.setId(id);
                 Role selectRole = this.select(role);
                 if(selectRole.getIsDefault() == 0) return Result.fail("默认角色不能删除！");
@@ -141,21 +176,48 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result allocation(Long roleId, List<Long> meunIds) {
+    public Result allocation(List<RoleRelatedAuthorize> roleRelatedAuthorizeList) {
         try{
-            Role role = new Role();
-            role.setId(roleId);
-            role = this.select(role);
-
-            List<MenuAuthorize> menuAuthorizeList = menuAuthorizeService.selectByIds(meunIds);
-            role.setMeunAuthorize(menuAuthorizeList);
-            Integer num = updateById(role);
-            if(num<=0) return Result.fail("分配失败！");
+            //重新分配
+            Map<Long,Long> roleMap = new HashMap();
+            for(RoleRelatedAuthorize roleRelatedAuthorize : roleRelatedAuthorizeList){
+                roleMap.put(roleRelatedAuthorize.getRoleId(),roleRelatedAuthorize.getRoleId());
+            }
+            QueryWrapper<RoleRelatedAuthorize> queryWrapper ;
+            for(Long role : roleMap.keySet()){
+                queryWrapper = new QueryWrapper();
+                queryWrapper.eq("role_id",role.toString());
+                roleRelatedAuthorizeMapper.delete(queryWrapper);
+            }
+            for(RoleRelatedAuthorize roleRelatedAuthorize : roleRelatedAuthorizeList){
+                roleRelatedAuthorizeMapper.insert(roleRelatedAuthorize);
+            }
             return Result.ok("分配成功！");
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("分配权限异常，原因："+e.getMessage());
         }
     }
+
+    @Override
+    public void getMenuAuthorizeInfo(List<Role> roleList) throws Exception{
+        QueryWrapper<RoleRelatedAuthorize> queryWrapper ;
+        for(Role role : roleList){
+            queryWrapper = new QueryWrapper();
+            queryWrapper.eq("role_id",role.getId().toString());
+            List<RoleRelatedAuthorize> roleRelatedAuthorizeList = roleRelatedAuthorizeMapper.selectList(queryWrapper);
+            if(roleRelatedAuthorizeList!=null && roleRelatedAuthorizeList.size()>0){
+                List<Long> ids = new ArrayList();
+                for(RoleRelatedAuthorize roleRelatedAuthorize : roleRelatedAuthorizeList){
+                    ids.add(roleRelatedAuthorize.getMenuAuthorizeId());
+                }
+                role.setMeunAuthorize(menuAuthorizeService.selectByIds(ids));
+            }
+        }
+
+    }
+
 }

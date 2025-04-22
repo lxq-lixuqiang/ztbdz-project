@@ -39,7 +39,7 @@ public class LoginServiceImpl implements LoginService {
             if(!user.getUsername().equals(username)) return Result.fail("用户名不正确！");
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
 
-            String token = JwtUtil.createJWT(6000000, user);
+            String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user);
             Map returnToken = new HashMap();
             returnToken.put("token",token);
             return Result.ok("登录成功！",returnToken);
@@ -55,7 +55,7 @@ public class LoginServiceImpl implements LoginService {
             // 在 Spring Boot 中使用 JWT 实现退出登录（Logout）功能时，由于 JWT 是无状态的（服务端不存储 Token），传统的 Session 注销方式不适用
             //服务端维护 Token 黑名单
             //原理：将需失效的 Token 存入缓存（如 Redis），校验时检查黑名单
-            blacklistService.addToBlacklist(token, 6000000);
+            blacklistService.addToBlacklist(token, SystemConfig.TOKEN_VALIDITY);
 
             return Result.ok("退出成功！");
         }catch (Exception e){
@@ -69,7 +69,7 @@ public class LoginServiceImpl implements LoginService {
         try{
             //TODO 对比短信验证码
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
-//            if(StrKit.isNull(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
+//            if(!StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
 
             Landlord landlord = new Landlord();
@@ -80,7 +80,7 @@ public class LoginServiceImpl implements LoginService {
             if(!landlord.getName().equals(username)) return Result.fail("用户名不正确！");
             if(!landlord.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
 
-            String token = JwtUtil.createJWT(6000000, landlord.toUser());
+            String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, landlord.toUser());
             Map returnToken = new HashMap();
             returnToken.put("token",token);
             return Result.ok("登录成功！",returnToken);

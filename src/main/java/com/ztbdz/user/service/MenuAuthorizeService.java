@@ -90,4 +90,12 @@ public interface MenuAuthorizeService {
      * @return
      */
     List<MenuAuthorize> selectByIds(List<Long> ids) throws Exception;
+
+
+    /**
+     * 查询菜单数量
+     * @param sign
+     * @return
+     */
+    Integer countBySign(String id,String sign) throws Exception;
 }

@@ -62,6 +62,9 @@ public class LandlordController {
     }
 
     @ApiOperation(value = "修改业主")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
     @CheckToken
     @PostMapping("update")
     public Result update(@RequestBody Landlord landlord) {

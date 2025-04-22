@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel("用户信息")
+@ApiModel("用户")
 public class User extends Model<User> implements Serializable {
 
     @Getter

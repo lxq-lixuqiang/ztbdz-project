@@ -46,9 +46,10 @@ public class UserServiceImpl implements UserService {
         try{
             //TODO 对比短信验证码
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
-//            if(StrKit.isNull(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
+//            if(StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
 
+            if(user.getPassword().length()<6) return Result.fail("密码不能少于6位！");
             user.setPassword(MD5.md5String(user.getPassword()));
             if(count(user)>0) return Result.fail("用户名已存在！");
             if(accountService.count(user.getMember().getAccount())>0) return Result.fail("企业名称已存在！");
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result updatePassword(Long userId, String password, String newPassword) {
         try{
+            if(newPassword.length()<6 || newPassword.length()<6) return Result.fail("原密码或新密码不能少于6位！");
             User user = getById(userId);
             if(user==null) return Result.fail("userId找不到对应数据！");
             String passwordMD5 = MD5.md5String(password);
@@ -93,6 +95,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result forgetPassword(String phone, String newPassword) {
         try{
+            if(newPassword.length()<6) return Result.fail("密码不能少于6位！");
             Member member = new Member();
             member.setPhone(phone);
             PageInfo<Member> memberPage = memberService.selectList(1,1,member);
@@ -104,7 +107,7 @@ public class UserServiceImpl implements UserService {
             user = userPage.getList().get(0);
             newPassword = MD5.md5String(newPassword);
             user.setPassword(newPassword);
-            this.insert(user);
+            this.updateById(user);
             return Result.ok("更新密码成功！");
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -115,8 +118,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result sendSMS(String phone) {
         try{
-            //@TODO 发送短信逻辑
-//            if(!redisTemplate.hasKey(phone+SystemConfig.SMS)) return Result.fail("在60秒内请勿重复发送！");
+            //TODO 发送短信逻辑
+//            if(redisTemplate.hasKey(phone+SystemConfig.SMS)) return Result.fail("在60秒内请勿重复发送！");
 //        redisTemplate.opsForValue().set(phone+SystemConfig.SMS, "短信验证码",60, TimeUnit.SECONDS);
             return Result.ok("发送成功！");
         }catch (Exception e){
@@ -146,8 +149,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Integer delete(Long id) throws Exception {
-        User user =  getById(id);
+        User user =  new User();
         user.setIsDelete(Common.DISABLE); // 删除将状态调整了
+        user.setIsStop(Common.DISABLE); // 删除将状态调整了
         QueryWrapper<User> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", id.toString());
         queryWrapper.eq("is_stop", Common.ENABL);
@@ -173,6 +177,7 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("is_stop", Common.ENABL);
         queryWrapper.eq("is_delete", Common.ENABL);
         if(!StringUtils.isEmpty(user.getUsername())) queryWrapper.eq("username",user.getUsername());
+        if(!StringUtils.isEmpty(user.getMember()) && !StringUtils.isEmpty(user.getMember().getId())) queryWrapper.eq("member_id",user.getMember().getId());
         return userMapper.selectOne(queryWrapper);
     }
 

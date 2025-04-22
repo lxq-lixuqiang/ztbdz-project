@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.MemberMapper;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
@@ -13,12 +14,14 @@ import com.ztbdz.user.service.UserService;
 import com.ztbdz.user.web.util.Common;
 import com.ztbdz.user.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.velocity.util.ArrayListWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -54,7 +57,6 @@ public class MemberServiceImpl implements MemberService {
     public Integer updateById(Member member) throws Exception {
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", member.getId().toString());
-        queryWrapper.eq("is_stop", Common.ENABL);
         queryWrapper.eq("is_delete", Common.ENABL);
         return memberMapper.update(member,queryWrapper);
     }
@@ -63,7 +65,6 @@ public class MemberServiceImpl implements MemberService {
     public Member getById(Long id) throws Exception {
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", id.toString());
-        queryWrapper.eq("is_stop", Common.ENABL);
         queryWrapper.eq("is_delete", Common.ENABL);
         return memberMapper.selectOne(queryWrapper);
     }
@@ -73,12 +74,11 @@ public class MemberServiceImpl implements MemberService {
         PageHelper.startPage(page, size);
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
         queryWrapper.orderByDesc("create_date");
-        queryWrapper.eq("is_stop", Common.ENABL);
         queryWrapper.eq("is_delete", Common.ENABL);
         if(!StringUtils.isEmpty(member.getName())) queryWrapper.like("name", member.getName());
         if(!StringUtils.isEmpty(member.getSex())) queryWrapper.eq("sex", member.getSex());
         if(!StringUtils.isEmpty(member.getPhone())) queryWrapper.like("phone", member.getPhone());
-        if(!StringUtils.isEmpty(member.getRole()) && !StringUtils.isEmpty(member.getRole().getId())) queryWrapper.like("roles_id", member.getRole().getId());
+        if(!StringUtils.isEmpty(member.getRole()) && !StringUtils.isEmpty(member.getRole().getId())) queryWrapper.eq("role_id", member.getRole().getId());
         return new PageInfo(memberMapper.selectList(queryWrapper));
     }
 
@@ -86,6 +86,11 @@ public class MemberServiceImpl implements MemberService {
     public Result get(Long id) {
         try{
             Member member = memberMapper.selectRoleAndAccount(id);
+            List<Role> roleList = new ArrayList();
+            roleList.add(member.getRole());
+            roleService.getMenuAuthorizeInfo(roleList);
+
+            if(member==null) return Result.fail("【"+id+"】未查询到数据！",member);
             return Result.ok("查询成功！",member);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -118,7 +123,7 @@ public class MemberServiceImpl implements MemberService {
             // 更新用户信息
             Integer userNum = userService.updateById(user);
 
-            if(roleNum==0 || accountNum==0 || memberNum==0 || userNum==0){
+            if(roleNum==0 && accountNum==0 && memberNum==0 && userNum==0){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  //回滚事务
                 return Result.ok("更新人员失败！");
             }
@@ -134,10 +139,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Result deleteList(List<Long> ids) {
         try{
-            User user = new User();
+            User user ;
             Member member;
             for(Long id : ids){
-                member = this.getById(id);
+                user = new User();
+                member = memberMapper.selectRoleAndAccount(id);
+                if(member == null)  return Result.fail("【"+id+"】未查询到数据！");
                 // 删除用户
                 user.setMember(member);
                 user = userService.select(user);
@@ -159,9 +166,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Integer deletes(List<Long> ids) throws Exception {
+        Member member = new Member();
+        member.setIsDelete(Common.DISABLE); // 删除将状态调整了
+        member.setIsStop(Common.DISABLE); // 删除将状态调整了
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
-        queryWrapper.in("id",ids);
-        return memberMapper.delete(queryWrapper);
+        queryWrapper.in("id", ids);
+        queryWrapper.eq("is_delete", Common.ENABL);
+        return memberMapper.update(member,queryWrapper);
     }
 
 

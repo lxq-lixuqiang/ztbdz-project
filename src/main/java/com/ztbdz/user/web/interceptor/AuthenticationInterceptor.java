@@ -6,6 +6,7 @@ import com.ztbdz.user.pojo.Landlord;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.service.LandlordService;
 import com.ztbdz.user.service.UserService;
+import com.ztbdz.user.web.config.SystemConfig;
 import com.ztbdz.user.web.token.CheckToken;
 import com.ztbdz.user.web.token.LoginToken;
 import com.ztbdz.user.web.util.JwtUtil;
@@ -73,14 +74,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     if(landlord==null) throw new RuntimeException("用户不存在，请重新登录");
                     user = landlord.toUser();
                 }
-                Boolean verify = JwtUtil.isVerify(token, user);
+                Boolean verify = true;
+                try{
+                    verify = JwtUtil.isVerify(token, user);
+                }catch (Exception e){
+                    throw new RuntimeException("token已过期，请重新登录！");
+                }
                 if (!verify) {
                     throw new RuntimeException("非法访问！");
                 }
                 if (blacklistService.isBlacklisted(token)) {
                     throw new RuntimeException("Token已失效！");
                 }
-
+                // 刷新token时效
+                JwtUtil.refreshToken(token, user,SystemConfig.TOKEN_VALIDITY);
                 return true;
             }
         }

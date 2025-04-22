@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel("企业信息")
+@ApiModel("企业")
 public class Account extends Model<Account> implements Serializable {
 
     @Getter
@@ -56,7 +56,7 @@ public class Account extends Model<Account> implements Serializable {
     @ApiModelProperty("经营范围")
     private String natureBusiness;
     @ApiModelProperty("统一社会信用代码证书扫描件")
-    private String accountCodeFile; // TODO 文件存储表
+    private String accountCodeFileId;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

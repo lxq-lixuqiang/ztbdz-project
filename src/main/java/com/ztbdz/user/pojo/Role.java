@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@ApiModel("角色信息")
+@ApiModel("角色")
 public class Role extends Model<Role> implements Serializable {
     @Getter
     private static final long serialVersionUID = 86617709176545036L;
@@ -26,7 +26,7 @@ public class Role extends Model<Role> implements Serializable {
     @ApiModelProperty("角色名称")
     private String typeName;
     @ApiModelProperty("菜单权限")
-    @TableField(value = "meunAuthorize_id",el = "meunAuthorize.id")
+    @TableField(exist = false)
     private List<MenuAuthorize> meunAuthorize;
     @ApiModelProperty("描述")
     private String describeInfo;
@@ -55,9 +55,5 @@ public class Role extends Model<Role> implements Serializable {
     @Override
     protected Serializable pkVal() {
         return id;
-    }
-
-    public void update(){
-        this.setUpdateDate(new Date());
     }
 }

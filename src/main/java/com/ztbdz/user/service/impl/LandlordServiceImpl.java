@@ -86,7 +86,7 @@ public class LandlordServiceImpl implements LandlordService {
         try{
             //TODO 对比短信验证码
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
-//            if(StrKit.isNull(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
+//            if(StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
             landlord.setPassword(MD5.md5String(landlord.getPhone()+SystemConfig.DEFAULT_PASSWORD));
             if(count(landlord)>0) return Result.fail("用户名已存在！");
