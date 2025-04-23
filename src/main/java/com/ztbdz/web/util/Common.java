@@ -1,7 +1,5 @@
-package com.ztbdz.user.web.util;
+package com.ztbdz.web.util;
 
-
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 公共类
@@ -18,4 +16,6 @@ public interface Common {
     Integer ENABL = 0;
     /** 关闭状态：停用，已删除 */
     Integer DISABLE = 1;
+    /** 登录人员id标识 */
+    String LOGIN_MEMBER_ID = "loginMemberId";
 }

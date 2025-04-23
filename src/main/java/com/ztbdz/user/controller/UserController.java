@@ -3,9 +3,9 @@ package com.ztbdz.user.controller;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.service.LoginService;
 import com.ztbdz.user.service.UserService;
-import com.ztbdz.user.web.token.CheckToken;
-import com.ztbdz.user.web.token.LoginToken;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.token.CheckToken;
+import com.ztbdz.web.token.LoginToken;
+import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -43,6 +43,16 @@ public class UserController {
     @PostMapping("logout")
     public Result logout(@RequestHeader String token) {
         return loginService.logout(token);
+    }
+
+    @ApiOperation(value = "校验token")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("verifyLogin")
+    public Result verifyLogin(@RequestHeader String token) {
+        return loginService.verifyLogin(token);
     }
 
 

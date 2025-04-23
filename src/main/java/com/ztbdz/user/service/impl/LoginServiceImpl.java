@@ -4,9 +4,11 @@ import com.ztbdz.user.pojo.Landlord;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.service.LandlordService;
 import com.ztbdz.user.service.LoginService;
+import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.UserService;
-import com.ztbdz.user.web.config.SystemConfig;
-import com.ztbdz.user.web.util.*;
+import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.interceptor.AuthenticationInterceptor;
+import com.ztbdz.web.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,18 +29,21 @@ public class LoginServiceImpl implements LoginService {
     private LandlordService landlordService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private AuthenticationInterceptor authenticationInterceptor;
+    @Autowired
+    private MemberService memberService;
 
     @Override
     public Result login(String username, String password) {
         try{
-            User user = new User();
-            user.setUsername(username);
-            user = userService.select(user);
+            User user = userService.selectMember(username);
             String passwordMD5 = MD5.md5String(password);
             if(user == null) return Result.fail("没有查询到登录用户名！");
             if(!user.getUsername().equals(username)) return Result.fail("用户名不正确！");
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
 
+            SystemConfig.setSession(Common.LOGIN_MEMBER_ID,user.getMember().getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user);
             Map returnToken = new HashMap();
             returnToken.put("token",token);
@@ -56,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
             //服务端维护 Token 黑名单
             //原理：将需失效的 Token 存入缓存（如 Redis），校验时检查黑名单
             blacklistService.addToBlacklist(token, SystemConfig.TOKEN_VALIDITY);
-
+            SystemConfig.removeSession(Common.LOGIN_MEMBER_ID);
             return Result.ok("退出成功！");
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -80,6 +85,7 @@ public class LoginServiceImpl implements LoginService {
             if(!landlord.getName().equals(username)) return Result.fail("用户名不正确！");
             if(!landlord.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
 
+            SystemConfig.setSession(Common.LOGIN_MEMBER_ID,landlord.getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, landlord.toUser());
             Map returnToken = new HashMap();
             returnToken.put("token",token);
@@ -89,5 +95,31 @@ public class LoginServiceImpl implements LoginService {
             return Result.error("业主登录校验异常，原因："+e.getMessage());
         }
     }
+
+    @Override
+    public Result verifyLogin(String token) {
+        try{
+            authenticationInterceptor.verifyLogin(token);
+            Object memberId = SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
+            Map<String,Object> dataMap = this.getLoginInfo(Long.valueOf(memberId.toString()));
+            return Result.ok("校验成功！",dataMap);
+        }catch (Exception e){
+            return Result.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<String, Object> getLoginInfo(Long memberId) throws Exception{
+        Object objectInfo = memberService.getById(Long.valueOf(memberId));
+        String type="member";
+        if(objectInfo==null){
+            objectInfo = landlordService.getById(Long.valueOf(memberId));
+            type = "landlord";
+        }
+        Map<String,Object> dataMap = new HashMap();
+        dataMap.put(type,objectInfo);
+        return dataMap;
+    }
+
 
 }

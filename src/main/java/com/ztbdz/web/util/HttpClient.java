@@ -1,5 +1,6 @@
-package com.ztbdz.user.web.util;
+package com.ztbdz.web.util;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -12,7 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 
-
+@Slf4j
 public class HttpClient {
 
     public static String sendPost(String url, String content) {
@@ -35,8 +36,7 @@ public class HttpClient {
                 return resultStr;
             }
         } catch(Exception e) {
-//            log.error("TWL-网络错误", e);
-            return "netError";
+            log.error("发送Post请求异常，原因："+e.getMessage(), e);
         } finally {
             close(httpResponse,null, httpPost, httpClient);
         }
@@ -62,8 +62,7 @@ public class HttpClient {
                 return result;
             }
         } catch(Exception e) {
-//            log.error("TWL-网络错误", e);
-            // return "netError";
+            log.error("发送Get请求异常，原因："+e.getMessage(), e);
         } finally {
             close(httpResponse, httpGet,null, httpClient);
         }

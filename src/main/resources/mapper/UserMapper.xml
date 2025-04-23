@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.user.mapper.UserMapper">
+	<select id="selectMember" resultMap="UserAndMember">
+		select 
+			*
+		from
+		   user u
+		left join member m on u.member_id=m.id
+		WHERE
+			u.is_delete = 0
+			and u.is_stop = 0
+			and u.username = #{username}
+	</select>
+	<resultMap id="UserAndMember" type="User">
+		<result property="member.id" column="member_id"/>
+		<result property="member.name" column="name"/>
+		<result property="member.phone" column="phone"/>
+		<result property="member.sex" column="sex"/>
+		<result property="member.birthday" column="birthday"/>
+		<result property="member.email" column="email"/>
+		<result property="member.address" column="address"/>
+		<result property="member.account.id" column="account_id"/>
+		<result property="member.role.id" column="role_id"/>
+	</resultMap>
+	
+</mapper>

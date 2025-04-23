@@ -1,4 +1,4 @@
-package com.ztbdz.user.web.util;
+package com.ztbdz.web.util;
 
 import com.ztbdz.user.pojo.User;
 import io.jsonwebtoken.Claims;

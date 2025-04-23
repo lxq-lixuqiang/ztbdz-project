@@ -19,7 +19,6 @@
 		<result property="role.id" column="role_id"/>
 		<result property="role.type" column="type"/>
 		<result property="role.typeName" column="type_name"/>
-		<result property="role.meunAuthorize_id" column="meunAuthorize_id"/>
 		<result property="role.describeInfo" column="describe_info"/>
 		<result property="role.isDefault" column="is_default"/>
 

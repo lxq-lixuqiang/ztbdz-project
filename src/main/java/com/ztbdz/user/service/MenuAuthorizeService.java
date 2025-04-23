@@ -2,7 +2,7 @@ package com.ztbdz.user.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.MenuAuthorize;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.util.Result;
 
 import java.util.List;
 

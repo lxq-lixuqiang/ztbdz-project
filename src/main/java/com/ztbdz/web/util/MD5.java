@@ -1,8 +1,8 @@
-package com.ztbdz.user.web.util;
+package com.ztbdz.web.util;
 
 import java.security.MessageDigest;
 
-import com.ztbdz.user.web.config.SystemConfig;
+import com.ztbdz.web.config.SystemConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

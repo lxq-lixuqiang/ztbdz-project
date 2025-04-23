@@ -1,4 +1,4 @@
-package com.ztbdz.user.web.util;
+package com.ztbdz.web.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;

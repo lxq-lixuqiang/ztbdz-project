@@ -1,4 +1,4 @@
-package com.ztbdz.user.web.config;
+package com.ztbdz.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

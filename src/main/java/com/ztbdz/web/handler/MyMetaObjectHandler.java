@@ -1,4 +1,4 @@
-package com.ztbdz.user.web.interceptor;
+package com.ztbdz.web.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;

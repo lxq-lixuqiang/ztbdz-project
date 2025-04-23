@@ -6,7 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.MenuAuthorizeMapper;
 import com.ztbdz.user.pojo.MenuAuthorize;
 import com.ztbdz.user.service.MenuAuthorizeService;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

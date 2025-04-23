@@ -1,18 +1,18 @@
 package com.ztbdz.file.controller;
 
 import com.ztbdz.file.service.FileInfoService;
-import com.ztbdz.user.web.token.CheckToken;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.token.CheckToken;
+import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.core.io.Resource;
 
 import java.io.File;
 
@@ -29,39 +29,55 @@ public class FileInfoController {
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
     @CheckToken
-    @PostMapping(value = "uploads",consumes = "multipart/form-data")
-    public Result upload( MultipartFile multipartFile) {
-        return fileInfoService.upload(multipartFile);
+    @PostMapping(value = "upload",consumes = "multipart/form-data")
+    public Result upload( MultipartFile file) {
+        return fileInfoService.upload(file);
     }
 
 
-    @ApiOperation(value = "查看文件")
+    @ApiOperation(value = "预览文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "文件id（仅支持 txt, jpg, jpeg, png, pdf, xml）", required=true, dataType = "Long")
+    })
+    @GetMapping("preview/{id}")
+    public ResponseEntity<Resource> preview(@PathVariable Long id) {
+        return fileInfoService.preview(id);
+    }
+
+
+    @ApiOperation(value = "下载文件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "文件id", required=true, dataType = "Long")
     })
-    @GetMapping("read/{id}")
-    public Result read(@PathVariable Long id) {
-//        return fileService.read(id);
-        return null;
-    }
-
-    @ApiOperation(value = "下载文件")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-//            @ApiImplicitParam(name = "id", value = "文件id", required=true, dataType = "Long")
-//    })
-//    @CheckToken
     @GetMapping("download/{id}")
-    public HttpEntity<byte[]> download(@PathVariable Long id) {
-
-//        File file= new File(absPath, game);
-//        byte[] body=FileUtils.readFileToByteArray(file);
-//
-//        HttpHeaders headers=new HttpHeaders();
-//        headers.setContentDispositionFormData("attachment", game);
-//        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-//        return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
-//        return fileService.download(id);
-        return null;
+    public ResponseEntity<byte[]> download(@PathVariable Long id) {
+        return fileInfoService.download(id);
     }
+
+    @ApiOperation(value = "查询文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "id", value = "文件id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("get/{id}")
+    public Result get(@PathVariable Long id) {
+        return fileInfoService.get(id);
+    }
+
+    @ApiOperation(value = "PDF文件盖章")
+    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+            @ApiImplicitParam(name = "x_axis", value = "盖章位置X轴", required=false, dataType = "float"),
+            @ApiImplicitParam(name = "y_axis", value = "盖章位置Y轴", required=false, dataType = "float")
+    })
+//    @CheckToken
+    @PostMapping(value = "stampPdf",consumes = "multipart/form-data")
+    public Result stampPdf(@RequestParam("pdfFile") MultipartFile pdfFile,
+                                            @RequestParam("stampImage") MultipartFile stampImage,
+                                            Float x_axis,
+                                            Float y_axis) {
+        return fileInfoService.stampPdf(pdfFile,stampImage, x_axis, y_axis);
+    }
+
 }

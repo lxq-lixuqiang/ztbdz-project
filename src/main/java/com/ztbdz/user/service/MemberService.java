@@ -3,7 +3,7 @@ package com.ztbdz.user.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.User;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.util.Result;
 
 import java.util.List;
 

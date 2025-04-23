@@ -2,7 +2,7 @@ package com.ztbdz.user.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.User;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.util.Result;
 
 
 public interface UserService {
@@ -94,5 +94,12 @@ public interface UserService {
      * @throws Exception
      */
     Integer count(User user) throws Exception;
+
+    /**
+     * 查询用户和人员信息
+     * @param username
+     * @return
+     */
+    User selectMember(String username) throws Exception;
 
 }

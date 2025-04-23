@@ -12,9 +12,9 @@ import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
-import com.ztbdz.user.web.util.Common;
-import com.ztbdz.user.web.util.MD5;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.util.Common;
+import com.ztbdz.web.util.MD5;
+import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("原密码错误！");
 
             user.setPassword(MD5.md5String(newPassword));
-            updateById(user);
+            this.updateById(user);
             return Result.ok("更新密码成功！");
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -188,5 +188,10 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("is_delete", Common.ENABL);
         if(!StringUtils.isEmpty(user.getUsername())) queryWrapper.eq("username",user.getUsername());
         return userMapper.selectCount(queryWrapper);
+    }
+
+    @Override
+    public User selectMember(String username) throws Exception {
+        return userMapper.selectMember(username);
     }
 }

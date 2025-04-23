@@ -2,8 +2,8 @@ package com.ztbdz.user.controller;
 
 import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.service.AccountService;
-import com.ztbdz.user.web.token.CheckToken;
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.token.CheckToken;
+import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

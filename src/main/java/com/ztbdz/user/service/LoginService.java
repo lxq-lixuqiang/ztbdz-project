@@ -1,6 +1,8 @@
 package com.ztbdz.user.service;
 
-import com.ztbdz.user.web.util.Result;
+import com.ztbdz.web.util.Result;
+
+import java.util.Map;
 
 
 public interface LoginService {
@@ -28,4 +30,19 @@ public interface LoginService {
      */
     Result loginLandlord(String username, String phone, String code);
 
+
+    /**
+     * 校验token时效
+     * @param token
+     * @return
+     */
+    Result verifyLogin(String token);
+
+
+    /**
+     *
+     * @param memberId
+     * @return
+     */
+    Map<String,Object> getLoginInfo(Long memberId) throws Exception;
 }

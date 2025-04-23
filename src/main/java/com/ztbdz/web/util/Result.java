@@ -1,4 +1,4 @@
-package com.ztbdz.user.web.util;
+package com.ztbdz.web.util;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -1,4 +1,4 @@
-package com.ztbdz.user.web.token;
+package com.ztbdz.web.token;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CheckToken {
+public @interface LoginToken {
     boolean required() default true;
 }

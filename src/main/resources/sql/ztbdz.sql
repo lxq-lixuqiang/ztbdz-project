@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 21/04/2025 11:17:04
+ Date: 23/04/2025 13:49:14
 */
 
 SET NAMES utf8mb4;
@@ -38,6 +38,8 @@ CREATE TABLE `account`  (
   `account_create_date` date NULL DEFAULT NULL,
   `account_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `deal_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `nature_business` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `account_code_file_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `update_date` datetime(0) NULL DEFAULT NULL,
   `ext1` int(11) NULL DEFAULT NULL,
@@ -45,6 +47,20 @@ CREATE TABLE `account`  (
   `ext3` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `ext4` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `ext5` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for file_info
+-- ----------------------------
+DROP TABLE IF EXISTS `file_info`;
+CREATE TABLE `file_info`  (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `size` int(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `classify` int(11) NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -96,6 +112,26 @@ CREATE TABLE `member`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for menu_authorize
+-- ----------------------------
+DROP TABLE IF EXISTS `menu_authorize`;
+CREATE TABLE `menu_authorize`  (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `sign` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
+  `ext1` int(11) NULL DEFAULT NULL,
+  `ext2` int(11) NULL DEFAULT NULL,
+  `ext3` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ext4` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ext5` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for role
 -- ----------------------------
 DROP TABLE IF EXISTS `role`;
@@ -103,7 +139,6 @@ CREATE TABLE `role`  (
   `id` bigint(20) NOT NULL,
   `type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `authorize` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `describe_info` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `is_default` int(11) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
@@ -119,10 +154,26 @@ CREATE TABLE `role`  (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES (5695793173735621191, 'admin', '管理员', NULL, '管理员', 0, '2025-04-18 10:11:49', '2025-04-18 10:11:49', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `role` VALUES (5695793173735621192, 'tenderee', '招标方', NULL, '招标方', 0, '2025-04-18 13:49:46', '2025-04-18 13:49:49', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `role` VALUES (5695793173735621193, 'bidder', '投标方', NULL, '投标方', 0, '2025-04-18 13:50:24', '2025-04-18 13:50:27', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `role` VALUES (5695793173735621194, 'expert', '专家', NULL, '专家', 0, '2025-04-18 13:50:39', '2025-04-18 13:50:43', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `role` VALUES (5695793173735621191, 'admin', '管理员', '管理员', 0, '2025-04-18 10:11:49', '2025-04-22 09:40:53', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `role` VALUES (5695793173735621192, 'tenderee', '招标方', '招标方', 0, '2025-04-18 13:49:46', '2025-04-18 13:49:49', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `role` VALUES (5695793173735621193, 'bidder', '投标方', '投标方', 0, '2025-04-18 13:50:24', '2025-04-18 13:50:27', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `role` VALUES (5695793173735621194, 'expert', '专家', '专家', 0, '2025-04-18 13:50:39', '2025-04-18 13:50:43', NULL, NULL, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for role_related_authorize
+-- ----------------------------
+DROP TABLE IF EXISTS `role_related_authorize`;
+CREATE TABLE `role_related_authorize`  (
+  `role_id` bigint(20) NOT NULL,
+  `menu_authorize_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`role_id`, `menu_authorize_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of role_related_authorize
+-- ----------------------------
+INSERT INTO `role_related_authorize` VALUES (2092987228924233118, 2515335346705024151);
+INSERT INTO `role_related_authorize` VALUES (5695793173735621191, 6042679754032106167);
 
 -- ----------------------------
 -- Table structure for user
@@ -144,5 +195,6 @@ CREATE TABLE `user`  (
   `ext5` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
 
 SET FOREIGN_KEY_CHECKS = 1;
