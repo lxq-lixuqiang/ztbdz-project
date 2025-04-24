@@ -45,12 +45,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role select(Role role) throws Exception {
+    public Role selectById(Long id) throws Exception {
+        return roleMapper.selectById(id);
+    }
+
+    @Override
+    public List<Role> selectList(Role role) throws Exception {
         QueryWrapper<Role> queryWrapper = new QueryWrapper();
         if(!StringUtils.isEmpty(role.getId())) queryWrapper.eq("id", role.getId());
         if(!StringUtils.isEmpty(role.getType())) queryWrapper.eq("type", role.getType());
         if(!StringUtils.isEmpty(role.getTypeName())) queryWrapper.eq("type_name", role.getTypeName());
-        return roleMapper.selectOne(queryWrapper);
+        return roleMapper.selectList(queryWrapper);
     }
 
     @Override
@@ -85,7 +90,7 @@ public class RoleServiceImpl implements RoleService {
     public PageInfo<Role> selectList(Integer page, Integer size, Role role) throws Exception {
         PageHelper.startPage(page, size);
         QueryWrapper<Role> queryWrapper = new QueryWrapper();
-        queryWrapper.orderByDesc("create_date");
+        queryWrapper.orderByDesc("update_date");
 
         if(!StringUtils.isEmpty(role.getTypeName())) queryWrapper.like("type_name", role.getTypeName());
         if(!StringUtils.isEmpty(role.getType())) queryWrapper.eq("type", role.getType());
@@ -96,10 +101,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Result get(Long id) {
         try{
-            Role role = new Role();
-            role.setId(id);
+            Role role = this.selectById(id);
             List<Role> roles = new ArrayList<>();
-            roles.add(select(role));
+            roles.add(role);
             this.getMenuAuthorizeInfo(roles);
             return Result.ok("查询成功",roles.get(0));
         }catch (Exception e){
@@ -151,25 +155,36 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Result deleteList(List<Long> ids) {
         try{
             Role role;
             Member member = new Member();
             for(Long id : ids){ // 防止默认角色被删除
+                role = this.selectById(id);
+                if(role.getIsDefault() == 0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.fail("默认角色不能删除！");
+                }
+
                 role = new Role();
                 role.setId(id);
-                Role selectRole = this.select(role);
-                if(selectRole.getIsDefault() == 0) return Result.fail("默认角色不能删除！");
-
                 member.setRole(role);
                 PageInfo<Member> memberPageInfo = memberService.selectList(1,1,member);
-                if(memberPageInfo.getTotal() > 0) return Result.fail("角色有人员在使用，无法删除！");
+                if(memberPageInfo.getTotal() > 0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.fail("角色有人员在使用，无法删除！");
+                }
             }
 
-            if(this.deletes(ids)<=0) return Result.fail("删除失败！");
+            if(this.deletes(ids)<=0){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return Result.fail("删除失败！");
+            }
             return Result.ok("删除成功！");
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("删除角色异常，原因："+e.getMessage());
         }

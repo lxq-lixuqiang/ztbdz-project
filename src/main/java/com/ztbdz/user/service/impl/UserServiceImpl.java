@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
             if(count(user)>0) return Result.fail("用户名已存在！");
             if(accountService.count(user.getMember().getAccount())>0) return Result.fail("企业名称已存在！");
             // 根据角色类型赋值角色，注册是默认是赋值一个角色
-            Role role = roleService.select(user.getMember().getRole());
+            Role role = roleService.selectById(user.getMember().getRole().getId());
             user.getMember().getRole().setId(role.getId());
 
             accountService.insert(user.getMember().getAccount());

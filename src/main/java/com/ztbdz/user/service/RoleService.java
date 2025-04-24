@@ -18,10 +18,17 @@ public interface RoleService {
 
     /**
      * 查询角色
+     * @param id
+     * @return
+     */
+    Role selectById(Long id) throws Exception;
+
+    /**
+     * 查询角色
      * @param role
      * @return
      */
-    Role select(Role role) throws Exception;
+    List<Role> selectList(Role role) throws Exception;
 
     /**
      * 查询角色数量

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.tenderee.mapper.TendereeMapper">
+	<select id="selectProject" resultMap="TendereeAndProject">
+		select
+			*
+		from
+		   tenderee t
+		left join project p on t.project_id=p.id
+		left join type_info ti on p.type_info_id = ti.id
+		WHERE
+			 m.id = #{id}
+	</select>
+	<resultMap id="TendereeAndProject" type="Tenderee">
+		<result property="project.id" column="project_id"/>
+		<result property="project.projectName" column="project_name"/>
+		<result property="project.projectCode" column="project_code"/>
+		<result property="project.projectClassify" column="project_classify"/>
+		<result property="project.procurementMethod" column="procurement_method"/>
+		<result property="project.consortiumBidding" column="consortium_bidding"/>
+		<result property="project.bidOpeningMethod" column="bid_opening_method"/>
+		<result property="project.isPushBiddingWebsite" column="is_push_bidding_website"/>
+		<result property="project.bidWinningPriceType" column="bid_winning_price_type"/>
+		<result property="project.state" column="state"/>
+		<result property="project.bidOpeningTime" column="bid_opening_time"/>
+		<result property="project.numberReviewExpert" column="number_review_expert"/>
+		<result property="project.createDate" column="create_date"/>
+		<result property="project.updateDate" column="update_date"/>
+
+		<result property="category.id" column="category_id"/>
+	</resultMap>
+	
+</mapper>

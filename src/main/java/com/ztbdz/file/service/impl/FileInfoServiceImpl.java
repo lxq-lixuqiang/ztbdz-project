@@ -28,10 +28,10 @@ public class FileInfoServiceImpl implements FileInfoService {
 
 
     @Override
-    public Result upload(MultipartFile multipartFile) {
+    public Result upload(MultipartFile multipartFile,Integer classify) {
         try{
             if(multipartFile==null)  return Result.fail("未接收到文件！");
-            String fileId = this.upload(multipartFile,0);
+            String fileId = this.uploadFile(multipartFile,classify);
             if(StringUtils.isEmpty(fileId)) return Result.fail("上传失败！");
             return Result.ok("上传成功！",fileId);
         }catch (Exception e){
@@ -41,7 +41,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public String upload(MultipartFile multipartFile,Integer classify) throws Exception{
+    public String uploadFile(MultipartFile multipartFile,Integer classify) throws Exception{
         if(multipartFile.getSize()>0) {
             FileInfo fileInfo = new FileInfo(multipartFile.getOriginalFilename(),multipartFile.getContentType(),multipartFile.getSize());
             this.insert(fileInfo);
@@ -65,7 +65,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     public ResponseEntity<byte[]> download(Long id) {
         try{
             FileInfo fileInfo = this.getById(id);
-            File file= new File(fileInfo.getPath(), fileInfo.getId().toString());
+            File file= new File(fileInfo.path(), fileInfo.getId().toString());
             byte[] body=FileUtils.readFileToByteArray(file);
             HttpHeaders headers=new HttpHeaders();
             // 防止下载文件名乱码
@@ -86,10 +86,10 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public ResponseEntity<Resource> preview(Long id) {
+    public ResponseEntity<Object> preview(Long id) {
         try{
             FileInfo fileInfo = this.getById(id);
-            Resource resource = new FileSystemResource(SystemConfig.validateAndGetPath(fileInfo.getPath(),fileInfo.getId().toString()));
+            Resource resource = new FileSystemResource(SystemConfig.validateAndGetPath(fileInfo.path(),fileInfo.getId().toString()));
 
             String contentType = SystemConfig.determineContentType(fileInfo.getName());
 
@@ -131,10 +131,10 @@ public class FileInfoServiceImpl implements FileInfoService {
             this.insert(fileInfo);
 
             // 2. 生成输出文件路径
-            File outputPdfFile = new File(fileInfo.getPath());
+            File outputPdfFile = new File(fileInfo.path());
             if(!outputPdfFile.exists()) outputPdfFile.mkdirs();
             // 3. 调用盖章工具
-            PdfStampUtil.addStampToPdf(inputPdf.getAbsolutePath(),stampImg.getAbsolutePath(),fileInfo.getUrl(), x_axis, y_axis);
+            PdfStampUtil.addStampToPdf(inputPdf.getAbsolutePath(),stampImg.getAbsolutePath(),fileInfo.url(), x_axis, y_axis);
 
             // 删除临时文件
             if(inputPdf!=null) inputPdf.delete();

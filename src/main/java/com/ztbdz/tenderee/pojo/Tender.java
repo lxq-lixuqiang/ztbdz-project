@@ -1,4 +1,5 @@
-package com.ztbdz.user.pojo;
+package com.ztbdz.tenderee.pojo;
+
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -11,28 +12,33 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Data
-@ApiModel("角色")
-public class Role extends Model<Role> implements Serializable {
+@ApiModel("标段")
+public class Tender extends Model<Tender> implements Serializable {
     @Getter
-    private static final long serialVersionUID = 86617709176545036L;
+    private static final long serialVersionUID = 3606387046825433497L;
+
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("角色id")
+    @ApiModelProperty(value = "标段id")
     private Long id;
-    @ApiModelProperty("默认角色类型（admin=管理员 tenderee=招标方 bidder=投标方 expert=专家）")
-    private String type;
-    @ApiModelProperty("角色名称")
-    private String typeName;
-    @ApiModelProperty("菜单权限")
-    @TableField(exist = false)
-    private List<MenuAuthorize> meunAuthorize;
-    @ApiModelProperty("描述")
-    private String TypeInfo;
-    @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("是否预设（0=是 1=否）")
-    private Integer isDefault;
+    @ApiModelProperty(value = "标段名称")
+    private String tenderName;
+    @ApiModelProperty(value = "标段编号")
+    private String tenderCode;
+    @ApiModelProperty(value = "标段内容")
+    private String tenderContent;
+    @ApiModelProperty(value = "序号")
+    private Integer tenderSort;
+    @ApiModelProperty(value = "招标控制价")
+    private Double tenderSumLimit;
+    @ApiModelProperty(value = "价格备注")
+    private String priceRemark;
+    @ApiModelProperty(value = "报名费")
+    private Double registrationFee;
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
+
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")

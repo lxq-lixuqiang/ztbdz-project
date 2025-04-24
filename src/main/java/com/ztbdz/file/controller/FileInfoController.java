@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 
 @Api(tags = "文件信息")
 @RequestMapping("/file")
@@ -31,7 +30,7 @@ public class FileInfoController {
     @CheckToken
     @PostMapping(value = "upload",consumes = "multipart/form-data")
     public Result upload( MultipartFile file) {
-        return fileInfoService.upload(file);
+        return fileInfoService.upload(file,0);
     }
 
 
@@ -40,7 +39,7 @@ public class FileInfoController {
             @ApiImplicitParam(name = "id", value = "文件id（仅支持 txt, jpg, jpeg, png, pdf, xml）", required=true, dataType = "Long")
     })
     @GetMapping("preview/{id}")
-    public ResponseEntity<Resource> preview(@PathVariable Long id) {
+    public ResponseEntity<Object> preview(@PathVariable Long id) {
         return fileInfoService.preview(id);
     }
 
@@ -67,11 +66,11 @@ public class FileInfoController {
 
     @ApiOperation(value = "PDF文件盖章")
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "x_axis", value = "盖章位置X轴", required=false, dataType = "float"),
             @ApiImplicitParam(name = "y_axis", value = "盖章位置Y轴", required=false, dataType = "float")
     })
-//    @CheckToken
+    @CheckToken
     @PostMapping(value = "stampPdf",consumes = "multipart/form-data")
     public Result stampPdf(@RequestParam("pdfFile") MultipartFile pdfFile,
                                             @RequestParam("stampImage") MultipartFile stampImage,

@@ -35,7 +35,7 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
     @ApiModelProperty("显示文件大小")
     @TableField(exist = false)
     private String fileSize;
-    @ApiModelProperty(value = "文件分类（0=file 1=document 3=img）")
+    @ApiModelProperty(value = "文件分类（0=公共文件 1=内部文档）")
     private Integer classify;
 
     @TableField(fill = FieldFill.INSERT)
@@ -62,7 +62,7 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
      * 获取文件的地址
      * @return
      */
-    public String getPath(){
+    public String path(){
         String uploadFileUrl = SystemConfig.UPLOAD_FILE_URL;
         if(StringUtils.isEmpty(uploadFileUrl)) uploadFileUrl = System.getProperty("user.dir")+File.separator+"uploads";
         String nowDate = new SimpleDateFormat("yyyy-MM-dd").format(this.createDate);
@@ -74,8 +74,8 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
      * 获取文件的完整地址
      * @return
      */
-    public String getUrl(){
-        return getPath()+ File.separator+this.id;
+    public String url(){
+        return this.path()+ File.separator+this.id;
     }
 
     public void convertSize(){

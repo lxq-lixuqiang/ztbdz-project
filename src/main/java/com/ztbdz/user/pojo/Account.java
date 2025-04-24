@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ztbdz.file.pojo.FileInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
-import sun.reflect.FieldInfo;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @ApiModel("企业")
@@ -57,11 +56,9 @@ public class Account extends Model<Account> implements Serializable {
     private String dealType;
     @ApiModelProperty("经营范围")
     private String natureBusiness;
-    @ApiModelProperty("统一社会信用代码证书扫描件id")
-    private String accountCodeFileId;
     @ApiModelProperty("统一社会信用代码证书扫描件文件")
-    @TableField(exist = false)
-    private List<FieldInfo> accountCodeFile;
+    @TableField(value = "account_code_file_id",el = "accountCodeFile.id")
+    private FileInfo accountCodeFile;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

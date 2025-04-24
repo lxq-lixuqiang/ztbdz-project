@@ -6,7 +6,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 
 public interface FileInfoService {
 
@@ -15,7 +14,7 @@ public interface FileInfoService {
      * @param multipartFile
      * @return
      */
-    Result upload(MultipartFile multipartFile);
+    Result upload(MultipartFile multipartFile,Integer classify);
 
     /**
      * 上传文件
@@ -23,7 +22,7 @@ public interface FileInfoService {
      * @param classify
      * @return
      */
-    String upload(MultipartFile file,Integer classify) throws Exception;
+    String uploadFile(MultipartFile file,Integer classify) throws Exception;
 
     /**
      * 保存文件
@@ -52,7 +51,7 @@ public interface FileInfoService {
      * @param id
      * @return
      */
-    ResponseEntity<Resource> preview(Long id);
+    ResponseEntity<Object> preview(Long id);
 
     /**
      * 查询文件
