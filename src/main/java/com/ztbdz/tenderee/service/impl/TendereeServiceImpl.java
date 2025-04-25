@@ -8,6 +8,9 @@ import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.tenderee.service.ProjectService;
 import com.ztbdz.tenderee.service.TenderService;
 import com.ztbdz.tenderee.service.TendereeService;
+import com.ztbdz.user.pojo.Member;
+import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +115,8 @@ public class TendereeServiceImpl implements TendereeService {
 
     @Override
     public Integer insert(Tenderee tenderee) throws Exception {
+        // 创建人默认赋值
+        tenderee.setMember(SystemConfig.getCreateMember());
         return tendereeMapper.insert(tenderee);
     }
 

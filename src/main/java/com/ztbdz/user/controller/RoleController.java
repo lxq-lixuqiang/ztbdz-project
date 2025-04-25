@@ -87,4 +87,14 @@ public class RoleController {
     public Result allocation(@RequestBody List<RoleRelatedAuthorize> roleRelatedAuthorizeList) {
         return roleService.allocation(roleRelatedAuthorizeList);
     }
+
+    @ApiOperation(value = "角色分配人员")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("allocationMember")
+    public Result allocationMember(@RequestBody Role role) {
+        return roleService.allocationMember(role);
+    }
 }

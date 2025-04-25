@@ -35,7 +35,9 @@ public class TendereeInform extends Model<TendereeInform> implements Serializabl
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date createDate;
     @ApiModelProperty(value = "类型（0=公告文件 1=磋商文件 2=澄清与答疑文件）")
-    private String type;
+    private Integer type;
+    @ApiModelProperty(value = "是否公布（0=未公布 1=公布）")
+    private Integer isPublic;
 
     @Override
     protected Serializable pkVal() {

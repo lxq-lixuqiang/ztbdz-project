@@ -28,8 +28,11 @@ public class Role extends Model<Role> implements Serializable {
     @ApiModelProperty("菜单权限")
     @TableField(exist = false)
     private List<MenuAuthorize> meunAuthorize;
+    @ApiModelProperty("人员")
+    @TableField(exist = false)
+    private List<Member> member;
     @ApiModelProperty("描述")
-    private String TypeInfo;
+    private String describeInfo;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("是否预设（0=是 1=否）")
     private Integer isDefault;
@@ -56,4 +59,14 @@ public class Role extends Model<Role> implements Serializable {
     protected Serializable pkVal() {
         return id;
     }
+
+    public Role(){}
+
+    public Role(String type,String typeName,String describeInfo,Integer isDefault){
+        this.type = type;
+        this.typeName = typeName;
+        this.describeInfo = describeInfo;
+        this.isDefault = isDefault;
+    }
+
 }

@@ -50,4 +50,18 @@ public interface EvaluationCriteriaService {
      * @return
      */
     Integer deleteById(Long id) throws Exception;
+
+    /**
+     * 创建评标标准
+     * @param evaluationCriteriaList
+     * @return
+     */
+    Result create(List<EvaluationCriteria> evaluationCriteriaList);
+
+    /**
+     * 添加评标标准
+     * @param evaluationCriteria
+     * @return
+     */
+    Integer insert(EvaluationCriteria evaluationCriteria);
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "业主信息")
+@Api(tags = "业主信息（登录）")
 @RequestMapping("/landlord")
 @RestController
 public class LandlordController {

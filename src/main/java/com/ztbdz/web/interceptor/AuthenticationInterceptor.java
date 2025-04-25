@@ -14,6 +14,7 @@ import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.JwtUtil;
 import com.ztbdz.web.util.TokenBlacklistService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -59,9 +60,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (checkToken.required()) {
                 // 校验token
                 User user = this.verifyLogin(token);
+                Object member = SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
+                if(StringUtils.isEmpty(member)) throw new RuntimeException("token失效，请重新登录");
                 // 刷新token时效
                 JwtUtil.refreshToken(token, user,SystemConfig.TOKEN_VALIDITY);
-                SystemConfig.setSession(Common.LOGIN_MEMBER_ID,SystemConfig.getSession(Common.LOGIN_MEMBER_ID)); // 存储当前登录人id
+                SystemConfig.setSession(Common.LOGIN_MEMBER_ID,member); // 存储当前登录人id
                 return true;
             }
         }

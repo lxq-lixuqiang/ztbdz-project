@@ -49,6 +49,9 @@ public class Project extends Model<Project> implements Serializable {
     @ApiModelProperty(value = "评标标准")
     @TableField(exist = false)
     private List<EvaluationCriteria> evaluationCriterias;
+    @ApiModelProperty(value = "项目报名")
+    @TableField(exist = false)
+    private ProjectRegister projectRegisters;
 
     @ApiModelProperty(value = "项目状态（0=进行中的项目 1=已完成的项目 2=待重新招标的项目）")
     private Integer state;

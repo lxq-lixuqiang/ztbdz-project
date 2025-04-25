@@ -1,11 +1,10 @@
 package com.ztbdz.user.service.impl;
 
 import com.ztbdz.user.pojo.Landlord;
+import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.pojo.User;
-import com.ztbdz.user.service.LandlordService;
-import com.ztbdz.user.service.LoginService;
-import com.ztbdz.user.service.MemberService;
-import com.ztbdz.user.service.UserService;
+import com.ztbdz.user.service.*;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.interceptor.AuthenticationInterceptor;
 import com.ztbdz.web.util.*;
@@ -13,8 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -33,6 +35,8 @@ public class LoginServiceImpl implements LoginService {
     private AuthenticationInterceptor authenticationInterceptor;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public Result login(String username, String password) {
@@ -110,11 +114,15 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map<String, Object> getLoginInfo(Long memberId) throws Exception{
-        Object objectInfo = memberService.getById(Long.valueOf(memberId));
+        Object objectInfo = memberService.selectRoleAndAccount(Long.valueOf(memberId));
         String type="member";
         if(objectInfo==null){
             objectInfo = landlordService.getById(Long.valueOf(memberId));
             type = "landlord";
+        }else{
+            List<Role> roleList = new ArrayList();
+            roleList.add(((Member)objectInfo).getRole());
+            roleService.getMenuAuthorizeInfo(roleList);
         }
         Map<String,Object> dataMap = new HashMap();
         dataMap.put(type,objectInfo);

@@ -46,7 +46,7 @@ public class MemberController {
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
                         @RequestParam(required = false, defaultValue = "20") Integer size,
                         @RequestBody(required = false) Member member) {
-        return memberService.list(page,size,member);
+        return memberService.page(page,size,member);
     }
 
     @ApiOperation(value = "修改人员")
@@ -55,7 +55,7 @@ public class MemberController {
     })
     @CheckToken
     @PostMapping("update")
-    public Result list(@RequestBody User user) {
+    public Result update(@RequestBody User user) {
         return memberService.update(user);
     }
 

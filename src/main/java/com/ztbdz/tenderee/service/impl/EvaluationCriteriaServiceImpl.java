@@ -8,6 +8,8 @@ import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -69,5 +71,29 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
     @Override
     public Integer deleteById(Long id) throws Exception {
         return evaluationCriteriaMapper.deleteById(id);
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result create(List<EvaluationCriteria> evaluationCriteriaList) {
+        try{
+            for(EvaluationCriteria evaluationCriteria : evaluationCriteriaList){
+                if(this.insert(evaluationCriteria)<=0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.fail("添加失败！");
+                }
+            }
+            return Result.ok("添加成功！");
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("添加评标标准异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Integer insert(EvaluationCriteria evaluationCriteria) {
+        return evaluationCriteriaMapper.insert(evaluationCriteria);
     }
 }

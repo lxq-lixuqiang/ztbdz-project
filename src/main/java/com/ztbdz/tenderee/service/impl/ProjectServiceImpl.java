@@ -43,7 +43,7 @@ public class ProjectServiceImpl  implements ProjectService {
     }
 
     @Override
-    public Result list(Integer page, Integer size, Project project) {
+    public Result page(Integer page, Integer size, Project project) {
         try{
             return Result.ok("查询成功！",selectList(page,size,project));
         }catch (Exception e){
@@ -101,5 +101,11 @@ public class ProjectServiceImpl  implements ProjectService {
         return projectMapper.selectById(id);
     }
 
+    @Override
+    public List<Project> selectByIds(List<Long> ids) throws Exception {
+        QueryWrapper<Project> queryWrapper = new QueryWrapper();
+        queryWrapper.in("id",ids);
+        return projectMapper.selectList(queryWrapper);
+    }
 
 }

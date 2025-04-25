@@ -110,6 +110,14 @@ public interface RoleService {
 
 
     /**
+     * 角色分配人员
+     * @param role
+     * @return
+     */
+    Result allocationMember(Role role);
+
+
+    /**
      * 获取角色分配的菜单权限
      * @param roleList
      * @throws Exception

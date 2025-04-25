@@ -5,6 +5,8 @@ import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.user.pojo.Role;
 import com.ztbdz.web.util.Result;
 
+import java.util.List;
+
 public interface ProjectService {
 
     /**
@@ -21,7 +23,7 @@ public interface ProjectService {
      * @param project
      * @return
      */
-    Result list( Integer page, Integer size, Project project);
+    Result page( Integer page, Integer size, Project project);
 
     /**
      * 查询项目列表
@@ -60,4 +62,12 @@ public interface ProjectService {
      * @return
      */
     Project selectById(Long id) throws Exception;
+
+    /**
+     * 查询多项目
+     * @param ids
+     * @return
+     * @throws Exception
+     */
+    List<Project> selectByIds(List<Long> ids) throws Exception;
 }

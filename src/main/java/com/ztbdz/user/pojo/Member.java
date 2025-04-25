@@ -21,6 +21,8 @@ public class Member extends Model<Member> implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("人员id")
     private Long id;
+    @ApiModelProperty("头像")
+    private Long headImg;
     @ApiModelProperty("姓名")
     private String name;
     @ApiModelProperty("性别（0=男 1=女）")

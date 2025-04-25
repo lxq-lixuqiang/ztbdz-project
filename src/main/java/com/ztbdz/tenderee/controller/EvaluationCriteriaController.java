@@ -2,7 +2,6 @@ package com.ztbdz.tenderee.controller;
 
 
 import com.ztbdz.tenderee.pojo.EvaluationCriteria;
-import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.service.EvaluationCriteriaService;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
@@ -13,14 +12,14 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "评标标准")
 @RequestMapping("/evaluation")
 @RestController
 public class EvaluationCriteriaController {
     @Autowired
     private EvaluationCriteriaService evaluationCriteriaService;
-
-
 
     @ApiOperation(value = "查询评标标准列表")
     @ApiImplicitParams({
@@ -30,6 +29,16 @@ public class EvaluationCriteriaController {
     @PostMapping("select")
     public Result select(@RequestBody(required = false) EvaluationCriteria evaluationCriteria) {
         return evaluationCriteriaService.select(evaluationCriteria);
+    }
+
+    @ApiOperation(value = "新增评标标准")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("create")
+    public Result create(@RequestBody List<EvaluationCriteria> evaluationCriteriaList) {
+        return evaluationCriteriaService.create(evaluationCriteriaList);
     }
 
 

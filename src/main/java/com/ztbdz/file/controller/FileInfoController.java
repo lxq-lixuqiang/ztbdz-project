@@ -12,8 +12,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.core.io.Resource;
-
 
 @Api(tags = "文件信息")
 @RequestMapping("/file")
@@ -31,6 +29,16 @@ public class FileInfoController {
     @PostMapping(value = "upload",consumes = "multipart/form-data")
     public Result upload( MultipartFile file) {
         return fileInfoService.upload(file,0);
+    }
+
+    @ApiOperation(value = "上传图片")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping(value = "uploadImg",consumes = "multipart/form-data")
+    public Result uploadImg( MultipartFile file) {
+        return fileInfoService.upload(file,2);
     }
 
 

@@ -39,13 +39,27 @@ public interface MemberService {
     Member getById(Long id) throws Exception;
 
     /**
-     * 查询多人员
+     * 查询人员信息和角色菜单信息
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    Member selectRoleAndAccount(Long id) throws Exception;
+
+    /**
+     * 分页查询多人员
      * @param page
      * @param size
      * @param member
      * @return
      */
-    PageInfo<Member> selectList(Integer page, Integer size,Member member) throws Exception;
+    PageInfo<Member> selectPage(Integer page, Integer size,Member member) throws Exception;
+    /**
+     * 查询多人员
+     * @param member
+     * @return
+     */
+    List<Member> selectList(Member member) throws Exception;
 
     /**
      * 查询人员信息
@@ -61,7 +75,7 @@ public interface MemberService {
      * @param member
      * @return
      */
-    Result list(Integer page,Integer size,Member member);
+    Result page(Integer page,Integer size,Member member);
 
 
     /**

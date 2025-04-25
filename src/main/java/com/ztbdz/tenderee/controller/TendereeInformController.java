@@ -42,4 +42,14 @@ public class TendereeInformController {
         return tendereeInformService.update(tendereeInform);
     }
 
+    @ApiOperation(value = "更新发布公告")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("isPublic")
+    public Result isPublic(@RequestBody TendereeInform tendereeInform) {
+        return tendereeInformService.update(tendereeInform);
+    }
+
 }

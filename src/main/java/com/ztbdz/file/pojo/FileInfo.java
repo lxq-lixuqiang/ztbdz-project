@@ -35,7 +35,7 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
     @ApiModelProperty("显示文件大小")
     @TableField(exist = false)
     private String fileSize;
-    @ApiModelProperty(value = "文件分类（0=公共文件 1=内部文档）")
+    @ApiModelProperty(value = "文件分类（0=文件 1=内部文档 2=图片）")
     private Integer classify;
 
     @TableField(fill = FieldFill.INSERT)

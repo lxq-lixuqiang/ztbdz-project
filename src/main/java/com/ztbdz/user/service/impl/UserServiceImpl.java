@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 
 
 @Slf4j
@@ -45,17 +46,19 @@ public class UserServiceImpl implements UserService {
     public Result create(User user,String code) {
         try{
             //TODO 对比短信验证码
+//            if(code.equals("-1")){
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
 //            if(StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
+//            }
 
             if(user.getPassword().length()<6) return Result.fail("密码不能少于6位！");
             user.setPassword(MD5.md5String(user.getPassword()));
             if(count(user)>0) return Result.fail("用户名已存在！");
             if(accountService.count(user.getMember().getAccount())>0) return Result.fail("企业名称已存在！");
             // 根据角色类型赋值角色，注册是默认是赋值一个角色
-            Role role = roleService.selectById(user.getMember().getRole().getId());
-            user.getMember().getRole().setId(role.getId());
+            List<Role> roleList = roleService.selectList(user.getMember().getRole());
+            user.getMember().getRole().setId(roleList.get(0).getId());
 
             accountService.insert(user.getMember().getAccount());
             memberService.insert(user.getMember());
@@ -98,12 +101,12 @@ public class UserServiceImpl implements UserService {
             if(newPassword.length()<6) return Result.fail("密码不能少于6位！");
             Member member = new Member();
             member.setPhone(phone);
-            PageInfo<Member> memberPage = memberService.selectList(1,1,member);
-            if(memberPage.getTotal()<=0) return Result.fail("手机号没有查询到对应人员数据！");
+            List<Member> memberList = memberService.selectList(member);
+            if(memberList.size()<=0) return Result.fail("手机号没有查询到对应人员数据！");
             User user = new User();
-            user.setMember(memberPage.getList().get(0));
+            user.setMember(memberList.get(0));
             PageInfo<User> userPage =this.selectList(1,1,user);
-            if(memberPage.getTotal()<=0) return Result.fail("人员id没有查询到对应用户数据！");
+            if(memberList.size()<=0) return Result.fail("人员id没有查询到对应用户数据！");
             user = userPage.getList().get(0);
             newPassword = MD5.md5String(newPassword);
             user.setPassword(newPassword);

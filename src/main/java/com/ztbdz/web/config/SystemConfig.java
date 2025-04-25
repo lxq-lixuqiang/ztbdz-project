@@ -1,5 +1,7 @@
 package com.ztbdz.web.config;
 
+import com.ztbdz.user.pojo.Member;
+import com.ztbdz.web.util.Common;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -102,6 +104,16 @@ public class SystemConfig {
             case "pdf": return "application/pdf";
             default: return MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
+    }
+
+    /**
+     * 创建人默认赋值
+     * @return
+     */
+    public static Member getCreateMember(){
+        Member member = new Member();
+        member.setId(Long.valueOf(SystemConfig.getSession(Common.LOGIN_MEMBER_ID).toString()));
+        return member;
     }
 
     // 校验文件名并获取安全路径

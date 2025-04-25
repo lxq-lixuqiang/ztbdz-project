@@ -69,8 +69,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public PageInfo<Member> selectList(Integer page, Integer size, Member member) throws Exception {
+    public Member selectRoleAndAccount(Long id) throws Exception {
+        return memberMapper.selectRoleAndAccount(id);
+    }
+
+    @Override
+    public PageInfo<Member> selectPage(Integer page, Integer size, Member member) throws Exception {
         PageHelper.startPage(page, size);
+        return new PageInfo(this.selectList(member));
+    }
+
+    @Override
+    public List<Member> selectList( Member member) throws Exception {
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
         queryWrapper.orderByDesc("create_date");
         queryWrapper.eq("is_delete", Common.ENABL);
@@ -78,7 +88,7 @@ public class MemberServiceImpl implements MemberService {
         if(!StringUtils.isEmpty(member.getSex())) queryWrapper.eq("sex", member.getSex());
         if(!StringUtils.isEmpty(member.getPhone())) queryWrapper.like("phone", member.getPhone());
         if(!StringUtils.isEmpty(member.getRole()) && !StringUtils.isEmpty(member.getRole().getId())) queryWrapper.eq("role_id", member.getRole().getId());
-        return new PageInfo(memberMapper.selectList(queryWrapper));
+        return memberMapper.selectList(queryWrapper);
     }
 
     @Override
@@ -98,9 +108,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Result list(Integer page, Integer size, Member member) {
+    public Result page(Integer page, Integer size, Member member) {
         try{
-            PageInfo<Member> memberList = selectList(page, size, member);
+            PageInfo<Member> memberList = this.selectPage(page, size, member);
             return Result.ok("查询人员成功！",memberList);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);

@@ -171,8 +171,8 @@ public class RoleServiceImpl implements RoleService {
                 role = new Role();
                 role.setId(id);
                 member.setRole(role);
-                PageInfo<Member> memberPageInfo = memberService.selectList(1,1,member);
-                if(memberPageInfo.getTotal() > 0){
+                List<Member> memberList = memberService.selectList(member);
+                if(memberList.size() > 0){
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return Result.fail("角色有人员在使用，无法删除！");
                 }
@@ -217,19 +217,38 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Result allocationMember(Role role) {
+        try{
+            List<Member> memberList = role.getMember();
+            for(Member member : memberList){
+                member.setRole(role);
+               memberService.updateById(member);
+            }
+            return Result.ok("分配成功！");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("分配人员异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
     public void getMenuAuthorizeInfo(List<Role> roleList) throws Exception{
         QueryWrapper<RoleRelatedAuthorize> queryWrapper ;
         for(Role role : roleList){
             queryWrapper = new QueryWrapper();
             queryWrapper.eq("role_id",role.getId().toString());
             List<RoleRelatedAuthorize> roleRelatedAuthorizeList = roleRelatedAuthorizeMapper.selectList(queryWrapper);
-            if(roleRelatedAuthorizeList!=null && roleRelatedAuthorizeList.size()>0){
+            if(roleRelatedAuthorizeList!=null && roleRelatedAuthorizeList.size()>0){ //菜单权限
                 List<Long> ids = new ArrayList();
                 for(RoleRelatedAuthorize roleRelatedAuthorize : roleRelatedAuthorizeList){
                     ids.add(roleRelatedAuthorize.getMenuAuthorizeId());
                 }
                 role.setMeunAuthorize(menuAuthorizeService.selectByIds(ids));
             }
+            // 分配人员
+            Member member = new Member();
+            member.setRole(role);
+            role.setMember(memberService.selectList(member));
         }
 
     }

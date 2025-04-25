@@ -1,7 +1,9 @@
 package com.ztbdz.tenderee.controller;
 
+
 import com.ztbdz.tenderee.pojo.Project;
-import com.ztbdz.tenderee.service.ProjectService;
+import com.ztbdz.tenderee.pojo.ProjectRegister;
+import com.ztbdz.tenderee.service.ProjectRegisterService;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -11,16 +13,25 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "项目信息")
-@RequestMapping("/project")
+@Api(tags = "项目报名")
+@RequestMapping("/projectRegister")
 @RestController
-public class ProjectController {
+public class ProjectRegisterController {
 
     @Autowired
-    private ProjectService projectService;
+    private ProjectRegisterService projectRegisterService;
 
+    @ApiOperation(value = "在线报名")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("create")
+    public Result create(@RequestBody ProjectRegister projectRegister) {
+        return projectRegisterService.create(projectRegister);
+    }
 
-    @ApiOperation(value = "查询项目列表")
+    @ApiOperation(value = "查询项目报名列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
@@ -31,19 +42,6 @@ public class ProjectController {
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
                        @RequestBody(required = false) Project project) {
-        return projectService.page(page,size,project);
+        return projectRegisterService.page(page,size,project);
     }
-
-
-    @ApiOperation(value = "查询项目")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-            @ApiImplicitParam(name = "id", value = "项目id", required=true, dataType = "Long")
-    })
-    @CheckToken
-    @GetMapping("get/{id}")
-    public Result get(@PathVariable Long id) {
-        return projectService.get(id);
-    }
-
 }
