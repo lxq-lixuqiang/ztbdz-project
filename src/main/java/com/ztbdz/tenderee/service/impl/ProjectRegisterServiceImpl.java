@@ -8,6 +8,10 @@ import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.tenderee.service.ProjectRegisterService;
 import com.ztbdz.tenderee.service.ProjectService;
+import com.ztbdz.user.pojo.BidderInfo;
+import com.ztbdz.user.pojo.ExpertInfo;
+import com.ztbdz.user.service.BidderInfoService;
+import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     private ProjectRegisterMapper projectRegisterMapper;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private BidderInfoService bidderInfoService;
 
 
     @Override
@@ -81,8 +87,26 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public List<ProjectRegister> selectByCountProjectId() {
+    public List<ProjectRegister> selectByCountProjectId() throws Exception {
         return projectRegisterMapper.selectByCountProjectId();
+    }
+
+    @Override
+    public Result checkAptitude(Long memberId) {
+        try{
+            BidderInfo bidderInfo = bidderInfoService.selectByMemberId(memberId);
+            if(bidderInfo.getQualificationCertificate01()==null ||
+                    bidderInfo.getQualificationCertificate02()==null ||
+                    bidderInfo.getQualificationCertificate03()==null ||
+                    bidderInfo.getQualificationCertificate04()==null ||
+                    bidderInfo.getQualificationCertificate05()==null){
+                return Result.fail("校验失败！");
+            }
+            return Result.ok("校验成功！");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("校验报名资质异常，原因："+e.getMessage());
+        }
     }
 
 

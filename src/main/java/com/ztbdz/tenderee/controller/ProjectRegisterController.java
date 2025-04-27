@@ -31,6 +31,17 @@ public class ProjectRegisterController {
         return projectRegisterService.create(projectRegister);
     }
 
+    @ApiOperation(value = "校验报名资质")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "memberId", value = "人员id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @PostMapping("checkAptitude/{memberId}")
+    public Result checkAptitude(Long memberId) {
+        return projectRegisterService.checkAptitude(memberId);
+    }
+
     @ApiOperation(value = "查询项目报名列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),

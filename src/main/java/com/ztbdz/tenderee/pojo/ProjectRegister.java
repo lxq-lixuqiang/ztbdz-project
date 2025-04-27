@@ -10,20 +10,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
-import org.apache.ibatis.mapping.FetchType;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel("项目报名")
+@ApiModel("投标报名")
 public class ProjectRegister extends Model<ProjectRegister> implements Serializable {
 
     @Getter
     private static final long serialVersionUID = 7975316725026196398L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "项目报名id")
+    @ApiModelProperty(value = "投标报名id")
     private Long id;
     @ApiModelProperty(value = "项目id")
     @TableField(value = "project_id",el = "project.id")
