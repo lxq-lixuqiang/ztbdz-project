@@ -3,10 +3,11 @@ package com.ztbdz.tenderee.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Category;
 import com.ztbdz.web.util.Result;
+import com.ztbdz.web.util.TreeNode;
 
 import java.util.List;
 
-public interface TypeInfoService {
+public interface CategoryService {
 
     /**
      * 新增类别
@@ -66,7 +67,14 @@ public interface TypeInfoService {
      * @param category
      * @return
      */
-    PageInfo<Category> selectList(Integer page, Integer size, Category category) throws Exception;
+    PageInfo<Category> selectPage(Integer page, Integer size, Category category) throws Exception;
+
+    /**
+     * 查询类别以树形图列表展示
+     * @param categoryClassify
+     * @return
+     */
+    Result getTreeNode (String categoryClassify);
 
     /**
      *  查询类别
@@ -82,7 +90,7 @@ public interface TypeInfoService {
      * @param category
      * @return
      */
-    Result list(Integer page,Integer size,Category category);
+    Result page(Integer page,Integer size,Category category);
 
 
     /**
@@ -106,6 +114,15 @@ public interface TypeInfoService {
      */
     Result deleteList(List<Long> ids);
 
+    /**
+     * 查询分类
+     * @return
+     */
+    Result classify();
 
-
+    /**
+     * 查询分类
+     * @return
+     */
+    List<Category> getGroupByClassify();
 }

@@ -29,20 +29,15 @@ public class BidderInfo extends Model<BidderInfo> implements Serializable {
     @ApiModelProperty(value = "投标方编号")
     private String bidderCode;
     @ApiModelProperty(value = "资质证明文件01")
-    @TableField(value = "qualification_certificate_01",el = "file_info.id")
-    private FileInfo qualificationCertificate01;
+    private Long qualificationCertificate01;
     @ApiModelProperty(value = "资质证明文件02")
-    @TableField(value = "qualification_certificate_02",el = "file_info.id")
-    private FileInfo qualificationCertificate02;
+    private Long qualificationCertificate02;
     @ApiModelProperty(value = "资质证明文件03")
-    @TableField(value = "qualification_certificate_03",el = "file_info.id")
-    private FileInfo qualificationCertificate03;
+    private Long qualificationCertificate03;
     @ApiModelProperty(value = "资质证明文件04")
-    @TableField(value = "qualification_certificate_04",el = "file_info.id")
-    private FileInfo qualificationCertificate04;
+    private Long qualificationCertificate04;
     @ApiModelProperty(value = "资质证明文件05")
-    @TableField(value = "qualification_certificate_05",el = "file_info.id")
-    private FileInfo qualificationCertificate05;
+    private Long qualificationCertificate05;
 
 
     @TableField(fill = FieldFill.INSERT)

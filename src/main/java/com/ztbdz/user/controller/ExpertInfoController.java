@@ -31,7 +31,7 @@ public class ExpertInfoController {
         return expertInfoService.getMemberInfo(memberId);
     }
 
-    @ApiOperation(value = "更新投标方")
+    @ApiOperation(value = "更新专家")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })

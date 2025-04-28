@@ -31,8 +31,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
                 expertInfo.setMemberId(memberId);
                 this.insert(expertInfo);
             }
-            Member member = memberService.getById(memberId);
-            expertInfo.setMember(member);
+            expertInfo.setMember(memberService.getById(memberId));
             return Result.ok("查询成功！",expertInfo);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -46,12 +45,10 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
             if(expertInfo.getMember()!=null) memberService.updateById(expertInfo.getMember());
             Integer num = this.updateById(expertInfo);
             if(num<=0){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  //回滚事务
                 return Result.fail("更新失败！");
             }
             return Result.ok("更新成功！");
         }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  //回滚事务
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("更新专家方异常，原因："+e.getMessage());
         }

@@ -14,29 +14,29 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel("类别")
-public class Category extends Model<Tenderee> implements Serializable{
-
+@ApiModel("专业要求")
+public class Speciality extends Model<Speciality> implements Serializable {
     @Getter
-    private static final long serialVersionUID = -2964770934932383907L;
+    private static final long serialVersionUID = 3120131873835324831L;
+
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "类别id")
+    @ApiModelProperty(value = "专业id")
     private Long id;
-    @ApiModelProperty(value = "类别名称")
-    private String categoryName;
-    @ApiModelProperty(value = "类别序号")
-    private Integer categorySort;
-    @ApiModelProperty(value = "类别分类")
-    private String categoryClassify;
-    @ApiModelProperty(value = "类别代码")
-    private String categoryCode;
-    @ApiModelProperty(value = "类别路径")
-    private String categoryPath;
-    @ApiModelProperty(value = "父Id")
-    private Long parentId;
-    @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "是否使用（0=未使用 1=使用）")
-    private Integer isUse;
+    @ApiModelProperty(value = "评审信息id")
+    private Long reviewInfoId;
+    @ApiModelProperty(value = "序号")
+    private Integer sort;
+    @ApiModelProperty(value = "专业")
+    private String specialityInfo;
+    @ApiModelProperty(value = "计划抽取人数")
+    private Integer planNum;
+    @ApiModelProperty(value = "准备人数")
+    private Integer num;
+    @ApiModelProperty(value = "评审区域")
+    private String reviewArea;
+    @ApiModelProperty(value = "专家类型")
+    private String expertType;
+
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")

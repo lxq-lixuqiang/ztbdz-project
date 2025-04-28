@@ -32,8 +32,7 @@ public class BidderInfoServiceImpl implements BidderInfoService {
                 bidderInfo.setMemberId(memberId);
                 this.insert(bidderInfo);
             }
-            Member member = memberService.getById(memberId);
-            bidderInfo.setMember(member);
+            bidderInfo.setMember(memberService.getById(memberId));
             return Result.ok("查询成功！",bidderInfo);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);

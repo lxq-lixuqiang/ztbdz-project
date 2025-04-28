@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "项目报名")
+@Api(tags = "投标报名")
 @RequestMapping("/projectRegister")
 @RestController
 public class ProjectRegisterController {

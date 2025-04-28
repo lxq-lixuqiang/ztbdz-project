@@ -2,7 +2,7 @@ package com.ztbdz.tenderee.controller;
 
 
 import com.ztbdz.tenderee.pojo.Category;
-import com.ztbdz.tenderee.service.TypeInfoService;
+import com.ztbdz.tenderee.service.CategoryService;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -20,7 +20,7 @@ import java.util.List;
 public class CategoryController {
 
     @Autowired
-    private TypeInfoService typeInfoService;
+    private CategoryService categoryService;
 
     @ApiOperation(value = "查询类别")
     @ApiImplicitParams({
@@ -30,7 +30,7 @@ public class CategoryController {
     @CheckToken
     @GetMapping("get/{id}")
     public Result get(@PathVariable Long id) {
-        return typeInfoService.get(id);
+        return categoryService.get(id);
     }
 
     @ApiOperation(value = "查询类别列表")
@@ -40,11 +40,32 @@ public class CategoryController {
             @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
     })
     @CheckToken
-    @PostMapping("list")
-    public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
+    @PostMapping("page")
+    public Result page(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
                        @RequestBody(required = false) Category category) {
-        return typeInfoService.list(page,size, category);
+        return categoryService.page(page,size, category);
+    }
+
+    @ApiOperation(value = "查询所有分类")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("classify")
+    public Result classify() {
+        return categoryService.classify();
+    }
+
+    @ApiOperation(value = "查询类别树形列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "categoryClassify", value = "类别分类", required=true, dataType = "String"),
+    })
+    @CheckToken
+    @PostMapping("getTreeNode ")
+    public Result getTreeNode (String categoryClassify) {
+        return categoryService.getTreeNode(categoryClassify);
     }
 
     @ApiOperation(value = "创建类别")
@@ -54,7 +75,7 @@ public class CategoryController {
     @CheckToken
     @PostMapping("create")
     public Result create(@RequestBody Category category) {
-        return typeInfoService.create(category);
+        return categoryService.create(category);
     }
 
     @ApiOperation(value = "修改类别")
@@ -64,18 +85,18 @@ public class CategoryController {
     @CheckToken
     @PostMapping("update")
     public Result update(@RequestBody Category category) {
-        return typeInfoService.update(category);
+        return categoryService.update(category);
     }
 
     @ApiOperation(value = "批量删除类别")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-            @ApiImplicitParam(name = "ids", value = "删除类别id", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
+            @ApiImplicitParam(name = "ids", value = "类别id", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
     })
     @CheckToken
     @PostMapping("deleteList")
     public Result deleteList(@RequestParam(value="ids") List<Long> ids) {
-        return typeInfoService.deleteList(ids);
+        return categoryService.deleteList(ids);
     }
 
 

@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -70,12 +72,14 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             List<Project> projectList = new ArrayList();
             if(projectIds.size()>0){
                 projectList = projectService.selectByIds(projectIds);
+                Map<String,ProjectRegister> mapProjectRegister = new HashMap();
+                for (ProjectRegister projectRegister : projectRegisterList) {
+                    mapProjectRegister.put(projectRegister.getId().toString(),projectRegister);
+                }
                 for(Project project1 : projectList) {
-                    for (ProjectRegister projectRegister : projectRegisterList) {
-                        if(project1.getId() == projectRegister.getId()){
-                            project1.setProjectRegisters(projectRegister);
-                            break;
-                        }
+                    ProjectRegister projectRegister = mapProjectRegister.get(project1.getId().toString());
+                    if(projectRegister!=null){
+                        project1.setProjectRegisters(projectRegister);
                     }
                 }
             }

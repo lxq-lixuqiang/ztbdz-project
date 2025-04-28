@@ -59,7 +59,7 @@ public class Tenderee extends Model<Tenderee> implements Serializable {
     private Date answerEndDate;
     @ApiModelProperty(value = "招标时间")
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-    private Date TendereeDate;
+    private Date tendereeDate;
 
     @ApiModelProperty("创建人")
     @TableField(value = "member_id",el = "member.id")

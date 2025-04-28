@@ -51,24 +51,18 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     private String emergencyPhone;
     @ApiModelProperty(value = "备注")
     private String description;
-    @ApiModelProperty(value = "身份证正面")
-    @TableField(value = "id_card_front",el = "file_info.id")
-    private FileInfo idCardFront;
-    @ApiModelProperty(value = "身份证反面")
-    @TableField(value = "id_card_back",el = "file_info.id")
-    private FileInfo idCardBack;
-    @TableField(value = "certificate",el = "file_info.id")
-    @ApiModelProperty(value = "专家证书")
-    private FileInfo certificate;
-    @ApiModelProperty(value = "年检证明")
-    @TableField(value = "annual_certificate",el = "file_info.id")
-    private FileInfo annualCertificate;
-    @ApiModelProperty(value = "专业领域")
-    @TableField(value = "professional_field",el = "file_info.id")
-    private FileInfo professionalField;
-    @ApiModelProperty(value = "评标经验")
-    @TableField(value = "bid_evaluation_experience",el = "file_info.id")
-    private FileInfo bidEvaluationExperience;
+    @ApiModelProperty(value = "身份证正面文件id")
+    private Long idCardFront;
+    @ApiModelProperty(value = "身份证反面文件id")
+    private Long idCardBack;
+    @ApiModelProperty(value = "专家证书文件id")
+    private Long certificate;
+    @ApiModelProperty(value = "年检证明文件id")
+    private Long annualCertificate;
+    @ApiModelProperty(value = "专业领域文件id")
+    private Long professionalField;
+    @ApiModelProperty(value = "评标经验文件id")
+    private Long bidEvaluationExperience;
     @ApiModelProperty(value = "参加工作日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date workDate;

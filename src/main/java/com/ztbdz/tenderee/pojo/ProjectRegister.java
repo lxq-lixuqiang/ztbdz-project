@@ -33,7 +33,6 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "报名状态（0=正在报名 1=报名结束）")
     private Integer state;
     @ApiModelProperty(value = "报名数量")
-    @TableField(exist = false)
     private Integer num;
     @ApiModelProperty(value = "保证金金额")
     private double earnestMoney;
