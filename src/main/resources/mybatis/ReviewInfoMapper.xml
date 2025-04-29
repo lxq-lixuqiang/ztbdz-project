@@ -25,27 +25,32 @@
         select
         *
         from
-          member m
+        expert_info e
+        left join member m on e.member_id=m.id
         left join account a on m.account_id=a.id
-        left join expertp_info e on e.member_id=m.id
         WHERE
           1=1
-        <if test="hideExperts != null and hideExperts.length() >0">
+        <if test="hideExperts != null and hideExperts.length >0">
           and m.name not in
             <foreach collection='hideExperts' item='item' open='(' separator=',' close=')'>
                 #{item}
             </foreach>
         </if>
 
-        <if test="hideAccounts != null and hideAccounts.length() >0">
+        <if test="hideAccounts != null and hideAccounts.length >0">
             and a.account_name not in
             <foreach collection='hideAccounts' item='item' open='(' separator=',' close=')'>
                 #{item}
             </foreach>
         </if>
 
-        <if test="speciality != null and speciality.specialityInfo != null and speciality.specialityInfo.length() >0">
-            and e.expert_type == #{speciality.specialityInfo}
+        <if test="speciality != null">
+            <if test="speciality.specialityInfo != null and speciality.specialityInfo.length() >0">
+                and e.expert_type == #{speciality.specialityInfo}
+            </if>
+            <if test="speciality.reviewArea != null and speciality.reviewArea.length() >0">
+                and e.region == #{speciality.reviewArea}
+            </if>
         </if>
         ORDER BY RAND()
         LIMIT #{speciality.planNum};

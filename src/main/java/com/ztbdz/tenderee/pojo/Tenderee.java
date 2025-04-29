@@ -22,7 +22,7 @@ public class Tenderee extends Model<Tenderee> implements Serializable {
     @Getter
     private static final long serialVersionUID = 6199551224611535701L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "招标id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "招标方名称")
     private String tendereeName;

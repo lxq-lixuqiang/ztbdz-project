@@ -2,12 +2,8 @@ package com.ztbdz.tenderee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.TendereeMapper;
-import com.ztbdz.tenderee.pojo.Project;
-import com.ztbdz.tenderee.pojo.Tender;
-import com.ztbdz.tenderee.pojo.Tenderee;
-import com.ztbdz.tenderee.service.ProjectService;
-import com.ztbdz.tenderee.service.TenderService;
-import com.ztbdz.tenderee.service.TendereeService;
+import com.ztbdz.tenderee.pojo.*;
+import com.ztbdz.tenderee.service.*;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
@@ -18,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,6 +27,10 @@ public class TendereeServiceImpl implements TendereeService {
     private ProjectService projectService;
     @Autowired
     private TenderService tenderService;
+    @Autowired
+    private ProjectRegisterService projectRegisterService;
+    @Autowired
+    private EvaluationCriteriaService evaluationCriteriaService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -111,6 +113,34 @@ public class TendereeServiceImpl implements TendereeService {
     @Override
     public Tenderee selectProject(Long id) throws Exception {
         return tendereeMapper.selectProject(id);
+    }
+
+    @Override
+    public Result getWinBidResult(Long id) {
+        try{
+            // 招标信息和项目信息
+            Tenderee tenderee = this.selectProject(id);
+            ProjectRegister projectRegister = new ProjectRegister();
+            projectRegister.setProject(tenderee.getProject());
+            projectRegister.setWinBidState(1);
+            // 获取到中标投标方和得分结果
+            List<ProjectRegister> projectRegisterList = projectRegisterService.selectList(projectRegister);
+            if(projectRegisterList==null || projectRegisterList.size()==0) return Result.fail("此招标项目还未公布中标结果!!!");
+            EvaluationCriteria evaluationCriteria;
+            for(ProjectRegister projectRegister1 : projectRegisterList){
+                evaluationCriteria = new EvaluationCriteria();
+                evaluationCriteria.setProjectRegisterId(projectRegister1.getId());
+                // 获取项目的评分标准
+                projectRegister1.setEvaluationCriterias(evaluationCriteriaService.selectList(evaluationCriteria));
+            }
+            Map<String,Object> resultMap = new HashMap();
+            resultMap.put("tenderee",tenderee); // 招标信息和项目信息
+            resultMap.put("projectRegister",projectRegisterList); // 获取到中标投标方和得分结果 评分标准
+            return Result.ok("查询成功！",resultMap);
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询中标结果异常，原因："+e.getMessage());
+        }
     }
 
     @Override

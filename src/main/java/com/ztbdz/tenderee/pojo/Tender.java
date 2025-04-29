@@ -20,7 +20,7 @@ public class Tender extends Model<Tender> implements Serializable {
     private static final long serialVersionUID = 3606387046825433497L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "标段id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "标段名称")
     private String tenderName;

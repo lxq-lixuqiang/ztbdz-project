@@ -19,7 +19,7 @@ public class Member extends Model<Member> implements Serializable {
     @Getter
     private static final long serialVersionUID = 1334289778100623211L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("人员id")
+    @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("头像")
     private Long headImg;

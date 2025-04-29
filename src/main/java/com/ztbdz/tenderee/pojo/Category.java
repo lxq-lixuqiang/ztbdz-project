@@ -20,7 +20,7 @@ public class Category extends Model<Tenderee> implements Serializable{
     @Getter
     private static final long serialVersionUID = -2964770934932383907L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "类别id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "类别名称")
     private String categoryName;

@@ -19,7 +19,7 @@ public class Landlord extends Model<Landlord> implements Serializable {
     @Getter
     private static final long serialVersionUID = 2676219512805137038L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("业主id")
+    @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("用户名")
     private String name;

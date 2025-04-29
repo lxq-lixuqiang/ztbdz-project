@@ -6,8 +6,10 @@ import com.ztbdz.tenderee.pojo.TendereeInform;
 import com.ztbdz.tenderee.service.TendereeInformService;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -56,6 +58,40 @@ public class TendereeInformServiceImpl implements TendereeInformService {
     @Override
     public Integer updateById(TendereeInform tendereeInform) throws Exception {
         return tendereeInformMapper.updateById(tendereeInform);
+    }
+
+    @Override
+    public Result list(TendereeInform tendereeInform) {
+        try{
+            return Result.ok("查询成功！",this.select(tendereeInform));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询公告列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public List<TendereeInform> select(TendereeInform tendereeInform) throws Exception {
+        QueryWrapper<TendereeInform> queryWrapper = new QueryWrapper();
+        queryWrapper.orderByAsc("create_date");
+        queryWrapper.eq("is_public","1");
+        if(!StringUtils.isEmpty(tendereeInform.getProjectName())) queryWrapper.like("project_name", tendereeInform.getProjectName());
+        return tendereeInformMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public Result get(Long id) {
+        try{
+            return Result.ok("查询成功！",this.selectById(id));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询公告异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public TendereeInform selectById(Long id) throws Exception {
+        return tendereeInformMapper.selectById(id);
     }
 
 }

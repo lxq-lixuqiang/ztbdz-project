@@ -21,7 +21,7 @@ public class TendereeInform extends Model<TendereeInform> implements Serializabl
     private static final long serialVersionUID = 2262965491235147490L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "公告id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "公告名称")
     private String projectName;

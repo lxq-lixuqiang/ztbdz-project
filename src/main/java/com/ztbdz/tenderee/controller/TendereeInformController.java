@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "招标公告")
 @RequestMapping("/tendereeInfo")
@@ -42,14 +39,19 @@ public class TendereeInformController {
         return tendereeInformService.update(tendereeInform);
     }
 
-    @ApiOperation(value = "更新发布公告")
+    @ApiOperation(value = "展示已发布公告")
+    @PostMapping("list")
+    public Result list(@RequestBody TendereeInform tendereeInform) {
+        return tendereeInformService.list(tendereeInform);
+    }
+
+    @ApiOperation(value = "公告详情")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+            @ApiImplicitParam(name = "id", value = "公告id", required=true, dataType = "Long")
     })
-    @CheckToken
-    @PostMapping("isPublic")
-    public Result isPublic(@RequestBody TendereeInform tendereeInform) {
-        return tendereeInformService.update(tendereeInform);
+    @GetMapping("get/{id}")
+    public Result get(@PathVariable Long id) {
+        return tendereeInformService.get(id);
     }
 
 }

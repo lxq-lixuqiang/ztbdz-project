@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 25/04/2025 17:12:19
+ Date: 29/04/2025 16:49:27
 */
 
 SET NAMES utf8mb4;
@@ -51,17 +51,36 @@ CREATE TABLE `account`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for bidder_info
+-- ----------------------------
+DROP TABLE IF EXISTS `bidder_info`;
+CREATE TABLE `bidder_info`  (
+  `id` bigint(20) NOT NULL,
+  `member_id` bigint(20) NULL DEFAULT NULL,
+  `bidder_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `qualification_certificate_01` bigint(20) NULL DEFAULT NULL,
+  `qualification_certificate_02` bigint(20) NULL DEFAULT NULL,
+  `qualification_certificate_03` bigint(20) NULL DEFAULT NULL,
+  `qualification_certificate_04` bigint(20) NULL DEFAULT NULL,
+  `qualification_certificate_05` bigint(20) NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for category
 -- ----------------------------
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category`  (
   `id` bigint(20) NOT NULL,
   `category_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `category_sort` int(11) NULL DEFAULT NULL,
   `category_classify` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `category_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `category_path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `param_id` bigint(20) NULL DEFAULT NULL,
-  `is_user` int(1) NULL DEFAULT NULL,
+  `parent_id` bigint(20) NULL DEFAULT NULL,
+  `is_use` int(1) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `update_date` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
@@ -79,9 +98,44 @@ CREATE TABLE `evaluation_criteria`  (
   `evaluation_way` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `score_setting` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `score` int(11) NULL DEFAULT NULL,
-  `isSubjective` int(11) NULL DEFAULT NULL,
+  `is_subjective` int(11) NULL DEFAULT NULL,
   `evaluation_criteria_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `project_id` bigint(20) NULL DEFAULT NULL,
+  `project_register_id` bigint(20) NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for expert_info
+-- ----------------------------
+DROP TABLE IF EXISTS `expert_info`;
+CREATE TABLE `expert_info`  (
+  `id` bigint(20) NOT NULL,
+  `member_id` bigint(20) NULL DEFAULT NULL,
+  `id_card` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_code` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_card` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `work_state` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `educational` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `nation` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `political_status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_state` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `emergency_phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `id_card_front` bigint(20) NULL DEFAULT NULL,
+  `id_card_back` bigint(20) NULL DEFAULT NULL,
+  `bid_evaluation_experience` bigint(20) NULL DEFAULT NULL,
+  `project_register_id` bigint(20) NULL DEFAULT NULL,
+  `professional_field` bigint(20) NULL DEFAULT NULL,
+  `certificate` bigint(20) NULL DEFAULT NULL,
+  `annual_certificate` bigint(20) NULL DEFAULT NULL,
+  `work_date` date NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -205,12 +259,39 @@ CREATE TABLE `project_register`  (
   `id` bigint(20) NOT NULL,
   `project_id` bigint(20) NULL DEFAULT NULL,
   `member_id` bigint(20) NULL DEFAULT NULL,
+  `bid_document_id` bigint(20) NULL DEFAULT NULL,
+  `contract_imprint` bigint(20) NULL DEFAULT NULL,
   `state` int(11) NULL DEFAULT NULL,
+  `score` int(11) NULL DEFAULT NULL,
+  `num` int(11) NULL DEFAULT NULL,
+  `win_bid_state` int(11) NULL DEFAULT NULL,
+  `bid_evaluation_report` bigint(20) NULL DEFAULT NULL,
+  `bid_money` double(20, 0) NULL DEFAULT NULL,
   `earnest_money` double(20, 0) NULL DEFAULT NULL,
   `earnest_money_state` int(11) NULL DEFAULT NULL,
   `earnest_money_account_date` datetime(0) NULL DEFAULT NULL,
   `earnest_money_refund_date` datetime(0) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for review_info
+-- ----------------------------
+DROP TABLE IF EXISTS `review_info`;
+CREATE TABLE `review_info`  (
+  `id` bigint(20) NOT NULL,
+  `project_id` bigint(20) NULL DEFAULT NULL,
+  `number` int(11) NULL DEFAULT NULL,
+  `state` int(11) NULL DEFAULT NULL,
+  `duration` int(11) NULL DEFAULT NULL,
+  `review_date` date NULL DEFAULT NULL,
+  `hide_expert` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `hide_account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -242,6 +323,24 @@ CREATE TABLE `role_related_authorize`  (
   `role_id` bigint(20) NOT NULL,
   `menu_authorize_id` bigint(20) NOT NULL,
   PRIMARY KEY (`role_id`, `menu_authorize_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for speciality
+-- ----------------------------
+DROP TABLE IF EXISTS `speciality`;
+CREATE TABLE `speciality`  (
+  `id` bigint(20) NOT NULL,
+  `review_info_id` bigint(20) NULL DEFAULT NULL,
+  `sort` int(11) NULL DEFAULT NULL,
+  `speciality_info` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `plan_num` int(11) NULL DEFAULT NULL,
+  `num` int(11) NULL DEFAULT NULL,
+  `review_area` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -309,7 +408,7 @@ CREATE TABLE `tenderee_inform`  (
   `id` bigint(20) NOT NULL,
   `tenderee_id` bigint(20) NULL DEFAULT NULL,
   `project_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `tenderee_inform_field_id` bigint(20) NULL DEFAULT NULL,
+  `tenderee_inform_field` bigint(20) NULL DEFAULT NULL,
   `type` int(11) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `is_public` int(11) NULL DEFAULT NULL,
@@ -335,6 +434,16 @@ CREATE TABLE `user`  (
   `ext4` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `ext5` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for win_bid
+-- ----------------------------
+DROP TABLE IF EXISTS `win_bid`;
+CREATE TABLE `win_bid`  (
+  `member_id` bigint(20) NOT NULL,
+  `win_bid_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`member_id`, `win_bid_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

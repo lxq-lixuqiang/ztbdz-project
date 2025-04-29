@@ -44,4 +44,32 @@ public interface TendereeInformService {
      */
     Integer updateById(TendereeInform tendereeInform) throws Exception;
 
+    /**
+     * 查询公告列表
+     * @param tendereeInform
+     * @return
+     */
+    Result list(TendereeInform tendereeInform);
+
+    /**
+     * 查询公告列表
+     * @param tendereeInform
+     * @return
+     */
+    List<TendereeInform> select(TendereeInform tendereeInform) throws Exception;
+
+
+    /**
+     * 获取公告
+     * @param id
+     * @return
+     */
+    Result get(Long id);
+
+    /**
+     * 根据id获取公告
+     * @param id
+     * @return
+     */
+    TendereeInform selectById(Long id) throws Exception;
 }

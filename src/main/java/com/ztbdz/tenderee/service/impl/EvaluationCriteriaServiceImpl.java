@@ -34,9 +34,10 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
     @Override
     public List<EvaluationCriteria> selectList(EvaluationCriteria evaluationCriteria) throws Exception {
         QueryWrapper<EvaluationCriteria> queryWrapper = new QueryWrapper();
-        queryWrapper.orderByDesc("sort");
+        queryWrapper.orderByAsc("sort");
 
-        if(!StringUtils.isEmpty(evaluationCriteria.getProjectId())) queryWrapper.like("project_id", evaluationCriteria.getProjectId());
+        if(!StringUtils.isEmpty(evaluationCriteria.getProjectId())) queryWrapper.eq("project_id", evaluationCriteria.getProjectId());
+        if(!StringUtils.isEmpty(evaluationCriteria.getProjectRegisterId())) queryWrapper.eq("project_register_id", evaluationCriteria.getProjectRegisterId());
         if(!StringUtils.isEmpty(evaluationCriteria.getEvaluationCriteriaType())) queryWrapper.eq("evaluation_criteria_type", evaluationCriteria.getEvaluationCriteriaType());
         return evaluationCriteriaMapper.selectList(queryWrapper);
     }

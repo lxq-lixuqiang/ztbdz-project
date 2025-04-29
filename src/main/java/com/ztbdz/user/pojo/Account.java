@@ -21,7 +21,7 @@ public class Account extends Model<Account> implements Serializable {
     private static final long serialVersionUID = 8478301967710403101L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("企业id")
+    @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("企业名称")
     private String accountName;

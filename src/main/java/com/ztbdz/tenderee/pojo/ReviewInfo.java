@@ -21,7 +21,7 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     @Getter
     private static final long serialVersionUID = 100867934119363498L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "评审id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "项目")
     @TableField(value = "project_id",el = "project.id")

@@ -2,7 +2,7 @@ package com.ztbdz.tenderee.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ztbdz.tenderee.pojo.Tenderee;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository

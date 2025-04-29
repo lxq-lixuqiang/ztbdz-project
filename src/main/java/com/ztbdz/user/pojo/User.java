@@ -19,7 +19,7 @@ public class User extends Model<User> implements Serializable {
     @Getter
     private static final long serialVersionUID = 6159714078966572284L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("用户id")
+    @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("用户名")
     private String username;

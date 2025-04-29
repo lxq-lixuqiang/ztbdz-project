@@ -20,7 +20,7 @@ public class Project extends Model<Project> implements Serializable {
     private static final long serialVersionUID = -5549757568868991272L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "项目id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "项目名称")
     private String projectName;
@@ -49,7 +49,7 @@ public class Project extends Model<Project> implements Serializable {
     @ApiModelProperty(value = "评标标准")
     @TableField(exist = false)
     private List<EvaluationCriteria> evaluationCriterias;
-    @ApiModelProperty(value = "项目报名")
+    @ApiModelProperty(value = "投标报名")
     @TableField(exist = false)
     private ProjectRegister projectRegisters;
 

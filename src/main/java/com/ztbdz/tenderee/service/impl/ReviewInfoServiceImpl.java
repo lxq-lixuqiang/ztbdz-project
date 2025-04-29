@@ -134,6 +134,7 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
             }
             List<Member> winBidMemberList = new ArrayList();
             for(Speciality speciality : specialityList){
+                speciality.setReviewInfoId(id);
                 winBidMemberList.addAll(reviewInfoMapper.randomExpert(hideExperts,hideAccounts,speciality));
                 specialityService.insert(speciality);
             }

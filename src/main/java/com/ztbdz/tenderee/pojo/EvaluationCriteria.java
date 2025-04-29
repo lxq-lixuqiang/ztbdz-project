@@ -19,7 +19,7 @@ public class EvaluationCriteria  extends Model<EvaluationCriteria> implements Se
     private static final long serialVersionUID = 2471516643524243464L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "招标id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "序号")
     private Integer sort;
@@ -39,6 +39,8 @@ public class EvaluationCriteria  extends Model<EvaluationCriteria> implements Se
     private String evaluationCriteriaType;
     @ApiModelProperty(value = "项目id")
     private Long projectId;
+    @ApiModelProperty(value = "投标报名id")
+    private Long projectRegisterId;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

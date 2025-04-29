@@ -13,6 +13,7 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel("投标报名")
@@ -22,7 +23,7 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private static final long serialVersionUID = 7975316725026196398L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "投标报名id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "项目id")
     @TableField(value = "project_id",el = "project.id")
@@ -38,6 +39,18 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private double earnestMoney;
     @ApiModelProperty(value = "保证金状态（0=不收取 1=收取）")
     private double earnestMoneyState;
+    @ApiModelProperty(value = "总分数")
+    private Integer score;
+    @ApiModelProperty(value = "标书")
+    private Long bidDocumentId;
+    @ApiModelProperty(value = "中标金额")
+    private Double bidMoney;
+    @ApiModelProperty(value = "合同盖章文件")
+    private Long contractImprint;
+    @ApiModelProperty(value = "评标报告文件")
+    private Long bidEvaluationReport;
+    @ApiModelProperty(value = "中标情况（0=未公布 1=中标 2=未中标）")
+    private Integer winBidState;
     @ApiModelProperty(value = "保证金到账时间")
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date earnestMoneyAccountDate;
@@ -48,6 +61,10 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "创建时间",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private Date createDate;
+
+    @ApiModelProperty("评标标准")
+    @TableField(exist = false)
+    private List<EvaluationCriteria> evaluationCriterias;
 
     @Override
     protected Serializable pkVal() {

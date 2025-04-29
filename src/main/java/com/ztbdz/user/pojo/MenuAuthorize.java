@@ -19,7 +19,7 @@ public class MenuAuthorize extends Model<MenuAuthorize> implements Serializable 
     @Getter
     private static final long serialVersionUID = -7472846567734813500L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("菜单权限id")
+    @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("名称")
     private String name;

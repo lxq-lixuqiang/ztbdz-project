@@ -64,4 +64,10 @@ public interface TendereeService {
      */
     Tenderee selectProject(Long id) throws Exception;
 
+    /**
+     * 获取中标结果
+     * @param id
+     * @return
+     */
+    Result getWinBidResult( Long id);
 }

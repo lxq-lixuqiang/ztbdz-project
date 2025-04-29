@@ -52,5 +52,16 @@ public class TendereeController {
         return tendereeService.delete(id);
     }
 
+    @ApiOperation(value = "公示评标结果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "id", value = "招标id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("getWinBidResult/{id}")
+    public Result getWinBidResult(@PathVariable Long id) {
+        return tendereeService.getWinBidResult(id);
+    }
+
 
 }

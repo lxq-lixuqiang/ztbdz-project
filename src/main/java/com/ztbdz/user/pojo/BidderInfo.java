@@ -19,7 +19,7 @@ public class BidderInfo extends Model<BidderInfo> implements Serializable {
     @Getter
     private static final long serialVersionUID = 3784542354294997198L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "投标方信息id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "人员id")
     private Long memberId;

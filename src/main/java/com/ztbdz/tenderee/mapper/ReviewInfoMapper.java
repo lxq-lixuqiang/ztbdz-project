@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ztbdz.tenderee.pojo.ReviewInfo;
 import com.ztbdz.tenderee.pojo.Speciality;
 import com.ztbdz.user.pojo.Member;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,5 +15,7 @@ public interface ReviewInfoMapper extends BaseMapper<ReviewInfo> {
     List<ReviewInfo> selectByProjectName(@Param("projectName") String projectName);
 
 
-    List<Member> randomExpert(@Param("hideExperts") String[] hideExperts,@Param("hideAccounts") String[] hideAccounts,@Param("speciality") Speciality speciality);
+    List<Member> randomExpert(@Param("hideExperts") String[] hideExperts,
+                              @Param("hideAccounts") String[] hideAccounts,
+                              @Param("speciality") Speciality speciality);
 }

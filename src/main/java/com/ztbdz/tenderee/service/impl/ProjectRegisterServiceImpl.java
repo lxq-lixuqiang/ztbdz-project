@@ -4,20 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.ProjectRegisterMapper;
+import com.ztbdz.tenderee.pojo.EvaluationCriteria;
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
+import com.ztbdz.tenderee.pojo.WinBid;
+import com.ztbdz.tenderee.service.EvaluationCriteriaService;
 import com.ztbdz.tenderee.service.ProjectRegisterService;
 import com.ztbdz.tenderee.service.ProjectService;
+import com.ztbdz.tenderee.service.WinBidService;
 import com.ztbdz.user.pojo.BidderInfo;
-import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.user.service.BidderInfoService;
-import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +38,10 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     private ProjectService projectService;
     @Autowired
     private BidderInfoService bidderInfoService;
+    @Autowired
+    private EvaluationCriteriaService evaluationCriteriaService;
+    @Autowired
+    private WinBidService winBidService;
 
 
     @Override
@@ -49,14 +58,18 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
 
     @Override
     public Integer insert(ProjectRegister projectRegister) throws Exception {
+        projectRegister.setWinBidState(0); // 默认未公布
         return projectRegisterMapper.insert(projectRegister);
     }
 
     @Override
     public List<ProjectRegister> selectList(ProjectRegister projectRegister) throws Exception {
         QueryWrapper<ProjectRegister> queryWrapper = new QueryWrapper();
-        if(!StringUtils.isEmpty(projectRegister.getProject())) queryWrapper.eq("project_id",projectRegister.getProject().toString());
+        if(!StringUtils.isEmpty(projectRegister.getProject()) && !StringUtils.isEmpty(projectRegister.getProject().getId())){
+            queryWrapper.eq("project_id",projectRegister.getProject().getId().toString());
+        }
         if(!StringUtils.isEmpty(projectRegister.getMember())) queryWrapper.eq("member_id",projectRegister.getMember().toString());
+        if(!StringUtils.isEmpty(projectRegister.getWinBidState())) queryWrapper.eq("win_bid_state",projectRegister.getWinBidState().toString());
         return projectRegisterMapper.selectList(queryWrapper);
     }
 
@@ -111,6 +124,132 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("校验报名资质异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public Result contractImprint(Long id, Long contractImprint) {
+        try{
+            ProjectRegister projectRegister = new ProjectRegister();
+            projectRegister.setId(id);
+            projectRegister.setContractImprint(contractImprint);
+            Integer num = this.updateById(projectRegister);
+            if(num<=0) return Result.fail("上传合同盖章失败");
+            return Result.ok("上传合同盖章成功");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("上传合同盖章异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result get(Long id) {
+        try{
+            return Result.ok("查询成功",this.selectById(id));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询投标异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public ProjectRegister selectById(Long id) throws Exception {
+        return projectRegisterMapper.selectById(id);
+    }
+
+    @Override
+    public Integer updateById(ProjectRegister projectRegister) throws Exception {
+        return projectRegisterMapper.updateById(projectRegister);
+    }
+
+
+    @Override
+    public Integer updateWinBidState(List<Long> ids,ProjectRegister projectRegister) throws Exception {
+        QueryWrapper<ProjectRegister> queryWrapper = new QueryWrapper();
+        queryWrapper.in("id",ids);
+        return projectRegisterMapper.update(projectRegister,queryWrapper);
+    }
+
+    @Override
+    public Result getProject(Long projectId) {
+        try{
+            ProjectRegister projectRegister = new ProjectRegister();
+            Project project = new Project();
+            project.setId(projectId);
+            projectRegister.setProject(project);
+            return Result.ok("查询成功",this.selectList(projectRegister));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("根据项目id查询投标异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result countScore(Long id,Long fileId) {
+        try{
+            EvaluationCriteria evaluationCriteria = new EvaluationCriteria();
+            evaluationCriteria.setProjectRegisterId(id);
+            List<EvaluationCriteria> evaluationCriteriaList = evaluationCriteriaService.selectList(evaluationCriteria);
+            BigDecimal scoreBD = new BigDecimal("0");
+            for(EvaluationCriteria evaluationCriteria1 : evaluationCriteriaList){
+                BigDecimal getScoreBD = new BigDecimal(evaluationCriteria1.getScore());
+                scoreBD=scoreBD.add(getScoreBD);
+            }
+            ProjectRegister projectRegister = new ProjectRegister();
+            projectRegister.setId(id);
+            projectRegister.setScore(scoreBD.intValue());
+            projectRegister.setBidEvaluationReport(fileId);
+            this.updateById(projectRegister);
+            return Result.ok("计算成功",scoreBD.intValue());
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("统计投标总分数异常，原因："+e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result winBid(List<Long> ids) {
+        try{
+            List<ProjectRegister> projectRegisterList = this.selectListById(ids.get(0),ids);
+            List<Long> notBidIds = new ArrayList();
+            for(ProjectRegister projectRegister : projectRegisterList){
+                notBidIds.add(projectRegister.getId());
+            }
+            // 保存中标信息
+            List<ProjectRegister> winBidProjectRegisterList = this.selectMemberProjectByIds(ids);
+            winBidService.delete(winBidProjectRegisterList.get(0).getProject().getId());
+            for(ProjectRegister projectRegister : winBidProjectRegisterList){
+                WinBid winBid = new WinBid();
+                winBid.setWinBidId(projectRegister.getProject().getId());
+                winBid.setMemberId(projectRegister.getMember().getId());
+                winBidService.insert(winBid);
+            }
+
+            ProjectRegister projectRegister = new ProjectRegister();
+            // 更新已中标状态
+            projectRegister.setWinBidState(1);
+            this.updateWinBidState(ids,projectRegister);
+            // 更新未中标状态
+            if(notBidIds.size()>0){
+                projectRegister.setWinBidState(2);
+                this.updateWinBidState(notBidIds,projectRegister);
+            }
+            return Result.ok("中标成功");
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("更新中标投标异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ProjectRegister> selectListById(Long id, List<Long> notIds) throws Exception {
+        return projectRegisterMapper.selectListById(id, notIds);
+    }
+
+    @Override
+    public List<ProjectRegister> selectMemberProjectByIds(List<Long> ids) throws Exception {
+        return projectRegisterMapper.selectMemberProjectByIds(ids);
     }
 
 

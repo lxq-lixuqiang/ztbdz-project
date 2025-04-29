@@ -9,9 +9,9 @@
 		from
 		   tenderee t
 		left join project p on t.project_id=p.id
-		left join type_info ti on p.type_info_id = ti.id
+		left join category cy on p.category_id = cy.id
 		WHERE
-			 m.id = #{id}
+			 t.id = #{id}
 	</select>
 	<resultMap id="TendereeAndProject" type="Tenderee">
 		<result property="project.id" column="project_id"/>

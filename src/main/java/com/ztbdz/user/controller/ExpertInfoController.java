@@ -1,7 +1,6 @@
 package com.ztbdz.user.controller;
 
 
-import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.web.token.CheckToken;

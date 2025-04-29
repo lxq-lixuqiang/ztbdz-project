@@ -24,7 +24,7 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
     private static final long serialVersionUID = -7553919406996194012L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "文件id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "文件名称")
     private String name;

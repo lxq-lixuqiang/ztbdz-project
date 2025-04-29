@@ -19,7 +19,7 @@ public class Role extends Model<Role> implements Serializable {
     @Getter
     private static final long serialVersionUID = 86617709176545036L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("角色id")
+    @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("默认角色类型（admin=管理员 tenderee=招标方 bidder=投标方 expert=专家）")
     private String type;

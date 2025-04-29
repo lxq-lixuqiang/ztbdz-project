@@ -20,7 +20,7 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     @Getter
     private static final long serialVersionUID = -1818102567495388210L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "专家信息id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "人员id")
     private Long memberId;

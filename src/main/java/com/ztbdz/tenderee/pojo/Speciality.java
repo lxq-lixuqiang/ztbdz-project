@@ -20,7 +20,7 @@ public class Speciality extends Model<Speciality> implements Serializable {
     private static final long serialVersionUID = 3120131873835324831L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "专业id")
+    @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "评审信息id")
     private Long reviewInfoId;
