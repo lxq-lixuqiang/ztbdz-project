@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface ReviewInfoMapper extends BaseMapper<ReviewInfo> {
 
-    List<ReviewInfo> selectByProjectName(@Param("projectName") String projectName);
+    List<ReviewInfo> selectByProjectName(@Param("projectName") String projectName,
+                                         @Param("ids") List<Long> ids);
 
 
     List<Member> randomExpert(@Param("hideExperts") String[] hideExperts,

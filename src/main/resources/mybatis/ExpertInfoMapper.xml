@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.user.mapper.ExpertInfoMapper">
+    <select id="selectMember" resultMap="ExpertInfoAndMember">
+		select
+			*
+		from
+		   expert_info e
+		left join member m on e.member_id = m.id
+		WHERE
+			1=1
+        <if test="expertInfo != null">
+            <if test="expertInfo.isCheck != null">
+                and e.is_check = #{expertInfo.isCheck}
+            </if>
+        </if>
+        order by e.update_date
+	</select>
+    <resultMap id="ExpertInfoAndMember" type="ExpertInfo">
+        <result property="member.id" column="member_id"/>
+        <result property="member.name" column="name"/>
+    </resultMap>
+
+</mapper>
+

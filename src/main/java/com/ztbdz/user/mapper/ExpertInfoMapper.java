@@ -2,9 +2,13 @@ package com.ztbdz.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ztbdz.user.pojo.ExpertInfo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ExpertInfoMapper  extends BaseMapper<ExpertInfo> {
+import java.util.List;
 
+@Repository
+public interface ExpertInfoMapper extends BaseMapper<ExpertInfo> {
+
+    List<ExpertInfo> selectMember(@Param("expertInfo") ExpertInfo expertInfo);
 }

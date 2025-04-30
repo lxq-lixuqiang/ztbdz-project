@@ -30,7 +30,7 @@ public class DataInitializer {
             if(roleService.countByTypeAndTypeName(null,"expert","专家")==0) roleService.insert(new Role("expert","专家","专家",0));
 
             //初始化 管理员
-            if(userService.selectMember("admin")==null){
+            if(userService.selectMember(null,"admin")==null){
                 User user = new User();
                 user.setUsername("admin");
                 user.setPassword("123456");

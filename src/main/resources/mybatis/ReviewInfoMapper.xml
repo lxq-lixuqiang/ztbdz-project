@@ -14,6 +14,12 @@
         <if test="projectName != null and projectName.length() >0">
             and p.project_name like concat('%',#{projectName},'%')
         </if>
+        <if test="ids != null and ids.size() >0">
+            and r.id in
+            <foreach collection='ids' item='item' open='(' separator=',' close=')'>
+                #{item}
+            </foreach>
+        </if>
 	</select>
     <resultMap id="ReviewInfoAndproject" type="ReviewInfo">
         <result property="project.id" column="project_id"/>

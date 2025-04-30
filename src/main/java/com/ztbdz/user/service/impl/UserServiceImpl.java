@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User selectMember(String username) throws Exception {
-        return userMapper.selectMember(username);
+    public User selectMember(Long id,String username) throws Exception {
+        return userMapper.selectMember(id,username);
     }
 }

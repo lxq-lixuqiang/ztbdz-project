@@ -11,6 +11,8 @@ import com.ztbdz.tenderee.service.ReviewInfoService;
 import com.ztbdz.tenderee.service.SpecialityService;
 import com.ztbdz.tenderee.service.WinBidService;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +82,7 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     @Override
     public Result page(Integer page, Integer size, String projectName) {
         try{
-            return Result.ok("查询成功！",this.selectPage(page,size,projectName));
+            return Result.ok("查询成功！",this.selectPage(page,size,projectName,null));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询评审信息异常，原因："+e.getMessage());
@@ -88,10 +90,11 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     }
 
     @Override
-    public PageInfo<ReviewInfo> selectPage(Integer page, Integer size, String projectName) throws Exception {
+    public PageInfo<ReviewInfo> selectPage(Integer page, Integer size, String projectName, List<Long> ids) throws Exception {
         PageHelper.startPage(page, size);
-        return new PageInfo(reviewInfoMapper.selectByProjectName(projectName));
+        return new PageInfo(reviewInfoMapper.selectByProjectName(projectName,ids));
     }
+
 
     @Override
     public Result deleteList(List<Long> ids) {
@@ -151,6 +154,22 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("专家抽取异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result expertReviewInfoList(Integer page, Integer size, String projectName) {
+        try{
+            Long memberId = (Long)SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
+            List<WinBid> winBidList = winBidService.selectList(memberId,null);
+            List<Long> ids = new ArrayList();
+            for(WinBid winBid : winBidList){
+                ids.add(winBid.getWinBidId());
+            }
+            return Result.ok("查询成功！",this.selectPage(page,size,projectName,ids));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询专家评审列表异常，原因："+e.getMessage());
         }
     }
 }

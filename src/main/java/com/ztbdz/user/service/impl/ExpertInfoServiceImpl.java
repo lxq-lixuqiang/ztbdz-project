@@ -1,16 +1,21 @@
 package com.ztbdz.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.ExpertInfoMapper;
-import com.ztbdz.user.pojo.ExpertInfo;
-import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.*;
 import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.user.service.MemberService;
+import com.ztbdz.user.service.UserService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -20,7 +25,39 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     private ExpertInfoMapper expertInfoMapper;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private UserService userService;
 
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result create(ExpertInfo expertInfo) {
+        try{
+            // 手机号不能为空
+            if(StringUtils.isEmpty(expertInfo.getMember()) || StringUtils.isEmpty(expertInfo.getMember().getPhone())){
+                return Result.fail("专家手机号不能为空！");
+            }
+            User user = new User();
+            Role role = new Role();
+            role.setType("expert");
+            expertInfo.getMember().setRole(role);
+            user.setMember(expertInfo.getMember());
+            user.setUsername(expertInfo.getMember().getPhone());
+            user.setPassword(expertInfo.getMember().getPhone()+SystemConfig.DEFAULT_PASSWORD);
+            userService.create(user,null);
+            expertInfo.setMemberId(user.getMember().getId());
+            Integer num = this.insert(expertInfo);
+            if(num<=0){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return Result.fail("添加失败！");
+            }
+            return Result.ok("添加成功！");
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("添加专家异常，原因："+e.getMessage());
+        }
+    }
 
     @Override
     public Result getMemberInfo(Long memberId) {
@@ -68,6 +105,23 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
 
     @Override
     public Integer insert(ExpertInfo expertInfo) throws Exception {
+        expertInfo.setIsCheck(0);
         return expertInfoMapper.insert(expertInfo);
+    }
+
+    @Override
+    public Result list(Integer page, Integer size, ExpertInfo expertInfo) {
+        try{
+            return Result.ok("查询成功！",this.page(page, size, expertInfo));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询未审核专家异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public PageInfo<ExpertInfo> page(Integer page, Integer size, ExpertInfo expertInfo) throws Exception {
+        PageHelper.startPage(page, size);
+        return new PageInfo(expertInfoMapper.selectMember(expertInfo));
     }
 }

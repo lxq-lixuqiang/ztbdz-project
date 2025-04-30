@@ -63,6 +63,14 @@ public interface ProjectRegisterService {
     Result contractImprint(Long id, Long contractImprint);
 
     /**
+     * 上传标书
+     * @param id
+     * @param bidDocumentId
+     * @return
+     */
+    Result bidDocument(Long id, Long bidDocumentId);
+
+    /**
      * 查询投标
      * @param id
      * @return

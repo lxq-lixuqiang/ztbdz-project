@@ -12,7 +12,12 @@
 		WHERE
 			u.is_delete = 0
 			and u.is_stop = 0
+		<if test="username != null and username.length() >0">
 			and u.username = #{username}
+		</if>
+		<if test="id != null">
+			and u.id = #{id}
+		</if>
 	</select>
 	<resultMap id="UserAndMember" type="User">
 		<result property="member.id" column="member_id"/>
@@ -25,5 +30,4 @@
 		<result property="member.account.id" column="account_id"/>
 		<result property="member.role.id" column="role_id"/>
 	</resultMap>
-	
 </mapper>

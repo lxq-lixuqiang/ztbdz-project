@@ -56,6 +56,18 @@ public class ProjectRegisterController {
         return projectRegisterService.contractImprint(id,contractImprint);
     }
 
+    @ApiOperation(value = "上传标书")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "id", value = "投标id", required=true, dataType = "Long"),
+            @ApiImplicitParam(name = "bidDocumentId", value = "上传标书id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @PostMapping("bidDocument")
+    public Result bidDocument(@RequestParam(required = true) Long id,@RequestParam(required = true) Long bidDocumentId) {
+        return projectRegisterService.bidDocument(id,bidDocumentId);
+    }
+
     @ApiOperation(value = "计算投标总分和评标报告")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),

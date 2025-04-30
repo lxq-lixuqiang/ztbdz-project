@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * JWT登录工具类
+ */
 public class JwtUtil {
 
     /**

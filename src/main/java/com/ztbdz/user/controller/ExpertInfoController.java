@@ -19,6 +19,17 @@ public class ExpertInfoController {
     @Autowired
     private ExpertInfoService expertInfoService;
 
+    @ApiOperation(value = "添加专家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("create")
+    public Result create(@RequestBody ExpertInfo expertInfo) {
+        return expertInfoService.create(expertInfo);
+    }
+
+
     @ApiOperation(value = "查询专家")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
@@ -40,6 +51,20 @@ public class ExpertInfoController {
         return expertInfoService.update(expertInfo);
     }
 
+    @ApiOperation(value = "查询未审核专家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("list")
+    public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
+                         @RequestParam(required = false, defaultValue = "20") Integer size,
+                         @RequestBody(required = false) ExpertInfo expertInfo) {
+        expertInfo.setIsCheck(0);
+        return expertInfoService.list(page,size,expertInfo);
+    }
 
 
 }

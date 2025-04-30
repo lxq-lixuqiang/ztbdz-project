@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.TendereeMapper;
 import com.ztbdz.tenderee.pojo.*;
 import com.ztbdz.tenderee.service.*;
-import com.ztbdz.user.pojo.Member;
 import com.ztbdz.web.config.SystemConfig;
-import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +35,9 @@ public class TendereeServiceImpl implements TendereeService {
     @Override
     public Result create(Tenderee tenderee) {
         try{
+            // 判断 投标报名，截止时间，开标时间 必填
+            if(StringUtils.isEmpty(tenderee.getSenrollStartDate()) || StringUtils.isEmpty(tenderee.getEnrollEndDate()))  return Result.fail("投标开始时间和投标截止时间不能为空！");
+            if(StringUtils.isEmpty(tenderee.getProject().getBidOpeningTime()))  return Result.fail("开标时间不能为空！");
             // 项目信息
             Project project = tenderee.getProject();
             projectService.insert(project);

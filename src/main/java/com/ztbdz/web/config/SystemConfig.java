@@ -46,8 +46,9 @@ public class SystemConfig {
      * 文件上传地址
      */
     public static String UPLOAD_FILE_URL;
-    @Value("${upload.file.url}")
+    @Value("${ztbdz.upload.file.url}")
     private String uploadFileUrl;
+
     /**
      * 临时文件地址
      */
@@ -57,9 +58,9 @@ public class SystemConfig {
      */
     public static float X_AXIS;
     public static float Y_AXIS;
-    @Value("${pdf.stamp.x}")
+    @Value("${ztbdz.pdf.stamp.x}")
     private float x_axis;
-    @Value("${pdf.stamp.y}")
+    @Value("${ztbdz.pdf.stamp.y}")
     private float y_axis;
 
     @PostConstruct

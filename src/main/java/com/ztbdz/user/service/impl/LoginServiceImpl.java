@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +40,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Result login(String username, String password) {
         try{
-            User user = userService.selectMember(username);
+            User user = userService.selectMember(null,username);
             String passwordMD5 = MD5.md5String(password);
             if(user == null) return Result.fail("没有查询到登录用户名！");
             if(!user.getUsername().equals(username)) return Result.fail("用户名不正确！");

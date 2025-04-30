@@ -1,11 +1,19 @@
 package com.ztbdz.user.service;
 
+import com.github.pagehelper.PageInfo;
+import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.util.Result;
 
 public interface ExpertInfoService {
 
+    /**
+     * 添加专家
+     * @param expertInfo
+     * @return
+     */
+    Result create(ExpertInfo expertInfo);
 
     /**
      * 查询专家
@@ -42,4 +50,21 @@ public interface ExpertInfoService {
      */
     Integer insert(ExpertInfo expertInfo) throws Exception;
 
+    /**
+     * 查询多专家
+     * @param page
+     * @param size
+     * @param expertInfo
+     * @return
+     */
+    Result list(Integer page,Integer size,ExpertInfo expertInfo);
+
+    /**
+     * 查询多专家
+     * @param page
+     * @param size
+     * @param expertInfo
+     * @return
+     */
+    PageInfo<ExpertInfo> page(Integer page, Integer size, ExpertInfo expertInfo) throws Exception;
 }

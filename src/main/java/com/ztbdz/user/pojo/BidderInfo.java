@@ -28,6 +28,10 @@ public class BidderInfo extends Model<BidderInfo> implements Serializable {
     private Member member;
     @ApiModelProperty(value = "投标方编号")
     private String bidderCode;
+    @ApiModelProperty(value = "是否审核通过（0=等待审核 1=审核通过 1=未通过）")
+    private Integer isCheck;
+    @ApiModelProperty(value = "审核不通过原因")
+    private String notCheckShow;
     @ApiModelProperty(value = "资质证明文件01")
     private Long qualificationCertificate01;
     @ApiModelProperty(value = "资质证明文件02")

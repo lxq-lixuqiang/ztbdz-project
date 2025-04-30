@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.user.mapper.BidderInfoMapper">
+    <select id="selectMember" resultMap="BidderInfoAndMember">
+		select
+			*
+		from
+		   bidder_info b
+		left join member m on b.member_id = m.id
+		WHERE
+			1=1
+        <if test="bidderInfo != null">
+            <if test="bidderInfo.isCheck != null">
+                and b.is_check = #{bidderInfo.isCheck}
+            </if>
+        </if>
+        order by b.update_date
+	</select>
+    <resultMap id="BidderInfoAndMember" type="BidderInfo">
+        <result property="member.id" column="member_id"/>
+        <result property="member.name" column="name"/>
+    </resultMap>
+
+</mapper>
+

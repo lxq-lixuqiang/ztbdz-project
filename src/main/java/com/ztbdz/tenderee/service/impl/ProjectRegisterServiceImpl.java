@@ -4,14 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.ProjectRegisterMapper;
-import com.ztbdz.tenderee.pojo.EvaluationCriteria;
-import com.ztbdz.tenderee.pojo.Project;
-import com.ztbdz.tenderee.pojo.ProjectRegister;
-import com.ztbdz.tenderee.pojo.WinBid;
-import com.ztbdz.tenderee.service.EvaluationCriteriaService;
-import com.ztbdz.tenderee.service.ProjectRegisterService;
-import com.ztbdz.tenderee.service.ProjectService;
-import com.ztbdz.tenderee.service.WinBidService;
+import com.ztbdz.tenderee.pojo.*;
+import com.ztbdz.tenderee.service.*;
 import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.service.BidderInfoService;
 import com.ztbdz.web.util.Result;
@@ -23,10 +17,8 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,11 +34,20 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     private EvaluationCriteriaService evaluationCriteriaService;
     @Autowired
     private WinBidService winBidService;
+    @Autowired
+    private TendereeService tendereeService;
 
 
     @Override
     public Result create(ProjectRegister projectRegister) {
         try{
+            // 判断是否在 报名时间 范围内
+            Tenderee tenderee = tendereeService.selectByProjectId(projectRegister.getProject().getId());
+            long nowDate = new Date().getTime();
+            long startDate = tenderee.getSenrollStartDate().getTime(); // 开始时间
+            long endDate =tenderee.getEnrollEndDate().getTime(); // 截止时间
+            if(!(nowDate>startDate && endDate>nowDate)) return Result.fail("报名日期【"+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(tenderee.getSenrollStartDate())+" - "+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(tenderee.getEnrollEndDate())+"】，请在报名时间内报名！");
+
             Integer num = this.insert(projectRegister);
             if(num<=0) return Result.fail("报名失败");
             return Result.ok("报名成功");
@@ -138,6 +139,21 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("上传合同盖章异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result bidDocument(Long id, Long bidDocumentId) {
+        try{
+            ProjectRegister projectRegister = new ProjectRegister();
+            projectRegister.setId(id);
+            projectRegister.setBidDocumentId(bidDocumentId);
+            Integer num = this.updateById(projectRegister);
+            if(num<=0) return Result.fail("上传标书失败");
+            return Result.ok("上传标书成功");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("上传标书异常，原因："+e.getMessage());
         }
     }
 

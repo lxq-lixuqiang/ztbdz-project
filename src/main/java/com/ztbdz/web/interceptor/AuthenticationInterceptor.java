@@ -60,11 +60,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (checkToken.required()) {
                 // 校验token
                 User user = this.verifyLogin(token);
-                Object member = SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
-                if(StringUtils.isEmpty(member)) throw new RuntimeException("token失效，请重新登录");
                 // 刷新token时效
                 JwtUtil.refreshToken(token, user,SystemConfig.TOKEN_VALIDITY);
-                SystemConfig.setSession(Common.LOGIN_MEMBER_ID,member); // 存储当前登录人id
+                SystemConfig.setSession(Common.LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
                 return true;
             }
         }
@@ -93,7 +91,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if(userId==null){
             throw new RuntimeException("token无效！");
         }
-        User user = userService.getById(Long.valueOf(userId));
+        User user = userService.selectMember(Long.valueOf(userId),null);
         if (user == null) {
             Landlord landlord = landlordService.getById(Long.valueOf(userId));
             if(landlord==null) throw new RuntimeException("用户不存在，请重新登录");

@@ -69,7 +69,7 @@ public interface ReviewInfoService {
      * @return
      * @throws Exception
      */
-    PageInfo<ReviewInfo> selectPage(Integer page, Integer size, String projectName) throws Exception;
+    PageInfo<ReviewInfo> selectPage(Integer page, Integer size, String projectName, List<Long> ids) throws Exception;
 
     /**
      * 批量删除
@@ -96,4 +96,10 @@ public interface ReviewInfoService {
      * @return
      */
     Result randomExpert(Long id,String hideExpert, String hideAccount, List<Speciality> specialityList);
+
+    /**
+     * 获取专家评审列表
+     * @return
+     */
+    Result expertReviewInfoList(Integer page, Integer size, String projectName);
 }

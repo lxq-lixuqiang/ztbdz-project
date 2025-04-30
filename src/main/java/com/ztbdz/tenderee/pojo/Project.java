@@ -29,8 +29,7 @@ public class Project extends Model<Project> implements Serializable {
     @ApiModelProperty(value = "行业分类")
     private String projectClassify;
     @ApiModelProperty(value = "项目分类")
-    @TableField(value = "category_id",el = "category.id")
-    private Category category;
+    private Long categoryId;
     @ApiModelProperty(value = "采购方式")
     private String procurementMethod;
     @ApiModelProperty(value = "联合体投标（0=支持 1=不支持）")

@@ -97,9 +97,10 @@ public interface UserService {
 
     /**
      * 查询用户和人员信息
+     * @param id
      * @param username
      * @return
      */
-    User selectMember(String username) throws Exception;
+    User selectMember(Long id,String username) throws Exception;
 
 }

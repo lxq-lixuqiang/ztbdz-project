@@ -1,8 +1,11 @@
 package com.ztbdz.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.BidderInfoMapper;
 import com.ztbdz.user.pojo.BidderInfo;
+import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.service.BidderInfoService;
 import com.ztbdz.user.service.MemberService;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -72,6 +76,23 @@ public class BidderInfoServiceImpl implements BidderInfoService {
 
     @Override
     public Integer insert(BidderInfo bidderInfo) throws Exception {
+        bidderInfo.setIsCheck(0);
         return bidderInfoMapper.insert(bidderInfo);
+    }
+
+    @Override
+    public Result list(Integer page, Integer size, BidderInfo bidderInfo) {
+        try{
+            return Result.ok("查询成功！",this.page(page, size, bidderInfo));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询未审核投标方异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public PageInfo<BidderInfo> page(Integer page, Integer size, BidderInfo bidderInfo) throws Exception {
+        PageHelper.startPage(page, size);
+        return new PageInfo(bidderInfoMapper.selectMember(bidderInfo));
     }
 }

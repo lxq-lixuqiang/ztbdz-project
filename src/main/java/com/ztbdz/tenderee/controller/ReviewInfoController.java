@@ -4,6 +4,7 @@ package com.ztbdz.tenderee.controller;
 import com.ztbdz.tenderee.pojo.ReviewInfo;
 import com.ztbdz.tenderee.pojo.Speciality;
 import com.ztbdz.tenderee.service.ReviewInfoService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.midi.SysexMessage;
 import java.util.List;
 
 @Api(tags = "评审信息")
@@ -93,6 +95,21 @@ public class ReviewInfoController {
     @PostMapping("randomExpert")
     public Result randomExpert(@RequestParam(required = true) Long id,@RequestParam String hideExpert, @RequestParam String hideAccount,@RequestBody List<Speciality> specialityList) {
         return reviewInfoService.randomExpert(id,hideExpert,hideAccount,specialityList);
+    }
+
+    @ApiOperation(value = "专家评审列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "projectName", value = "项目名称", required=false, dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("expertReviewInfoList")
+    public Result expertReviewInfoList(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                                       @RequestParam(required = false) String projectName) {
+        return reviewInfoService.expertReviewInfoList( page,  size,  projectName);
     }
 
 }

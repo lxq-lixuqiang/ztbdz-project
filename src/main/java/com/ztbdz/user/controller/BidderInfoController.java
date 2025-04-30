@@ -41,7 +41,20 @@ public class BidderInfoController {
         return bidderInfoService.update(bidderInfo);
     }
 
-
+    @ApiOperation(value = "查询未审核投标方")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("list")
+    public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestBody(required = false) BidderInfo bidderInfo) {
+        bidderInfo.setIsCheck(0);
+        return bidderInfoService.list(page,size,bidderInfo);
+    }
 
 
 
