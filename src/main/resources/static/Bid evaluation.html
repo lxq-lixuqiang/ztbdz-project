@@ -78,6 +78,8 @@
 <script>
     // 切换评审阶段
     function setReviewStage(stage) {
+        console.log('切换评审阶段:', stage);
+        
         // 更新进度条
         document.querySelectorAll('.progress-step').forEach(step => {
             step.classList.remove('active');
@@ -90,9 +92,15 @@
         });
         document.getElementById(`criteria-${stage}`).classList.add('active');
         
-        // 如果是评分页，初始化评分表单
-        if (stage === 'scoring') {
-            initScoringPage();
+        // 特殊处理不同评审阶段
+        switch(stage) {
+            case 'compliance':
+                console.log('初始化符合性评审');
+                setTimeout(generateComplianceSuppliers, 100); // 延迟确保DOM更新
+                break;
+            case 'scoring':
+                initScoringPage();
+                break;
         }
     }
     
@@ -213,6 +221,33 @@
         window.open(pdfPath, '_blank');
     }
     
+    // 切换废标按钮状态
+    function toggleDisqualify() {
+        const enough = document.getElementById('enoughSuppliers');
+        const notEnough = document.getElementById('notEnoughSuppliers');
+        const disqualifyBtn = document.getElementById('disqualifyBtn');
+        
+        // 互斥选择
+        if (enough.checked) {
+            notEnough.checked = false;
+            disqualifyBtn.disabled = true;
+            disqualifyBtn.style.opacity = '0.6';
+            disqualifyBtn.style.cursor = 'not-allowed';
+        } else if (notEnough.checked) {
+            enough.checked = false;
+            disqualifyBtn.disabled = false;
+            disqualifyBtn.style.opacity = '1';
+            disqualifyBtn.style.cursor = 'pointer';
+        }
+    }
+
+    // 废标操作
+    function disqualifyProject() {
+        if (confirm('确定要废标吗？此操作不可撤销！')) {
+            window.open('bid-invalid.html', '_blank');
+        }
+    }
+
     // 设置所有供应商资格评审状态
     function setAllQualification(status) {
         const form = document.getElementById('supplierEvaluationForm');
@@ -227,6 +262,8 @@
         // 自动勾选"够3家"如果全部通过
         if (status === 'pass') {
             document.getElementById('enoughSuppliers').checked = true;
+            document.getElementById('notEnoughSuppliers').checked = false;
+            document.getElementById('disqualifyBtn').disabled = true;
         }
     }
 
@@ -234,31 +271,54 @@
     function submitQualificationReview() {
         const form = document.getElementById('supplierEvaluationForm');
         const enoughSuppliers = document.getElementById('enoughSuppliers').checked;
+        const notEnoughSuppliers = document.getElementById('notEnoughSuppliers').checked;
         
-        // 验证表单
-        let valid = true;
-        const radios = form.querySelectorAll('input[type="radio"]:required');
+        // 统计通过评审的供应商数量
+        let passedCount = 0;
+        const radios = form.querySelectorAll('input[type="radio"]:checked');
         radios.forEach(radio => {
-            const name = radio.name;
-            if (!form.querySelector(`input[name="${name}"]:checked`)) {
-                valid = false;
-                return;
+            if (radio.value === 'pass') {
+                passedCount++;
             }
         });
         
-        if (!valid) {
-            alert('请为所有供应商选择通过或不通过！');
+        // 检查供应商数量
+        if (notEnoughSuppliers) {
+            if (!confirm('确认不足3家供应商通过资格评审，是否继续废标？')) {
+                return;
+            }
+            disqualifyProject();
             return;
         }
         
-        if (!enoughSuppliers) {
-            alert('请确认本项目是否够3家供应商！');
+        if (!enoughSuppliers || passedCount < 3) {
+            alert('通过资格评审的供应商不足3家，请重新评审或选择"不足3家"进行废标！');
             return;
         }
         
         // 跳转到符合（实质性）标签页
         setReviewStage('compliance');
-        alert('资格评审已提交，请继续实质性符合评审！');
+        alert(`资格评审已提交，${passedCount}家供应商通过评审，请继续实质性符合评审！`);
+    }
+
+    // 切换符合性评审废标按钮状态
+    function toggleComplianceDisqualify() {
+        const enough = document.getElementById('enoughCompliantSuppliers');
+        const notEnough = document.getElementById('notEnoughCompliantSuppliers');
+        const disqualifyBtn = document.getElementById('complianceDisqualifyBtn');
+        
+        // 互斥选择
+        if (enough.checked) {
+            notEnough.checked = false;
+            disqualifyBtn.disabled = true;
+            disqualifyBtn.style.opacity = '0.6';
+            disqualifyBtn.style.cursor = 'not-allowed';
+        } else if (notEnough.checked) {
+            enough.checked = false;
+            disqualifyBtn.disabled = false;
+            disqualifyBtn.style.opacity = '1';
+            disqualifyBtn.style.cursor = 'pointer';
+        }
     }
 
     // 设置所有供应商符合性评审状态
@@ -272,9 +332,11 @@
             }
         });
         
-        // 自动勾选"是否满足3家"如果全部通过
+        // 自动勾选"够3家"如果全部通过
         if (status === 'pass') {
             document.getElementById('enoughCompliantSuppliers').checked = true;
+            document.getElementById('notEnoughCompliantSuppliers').checked = false;
+            document.getElementById('complianceDisqualifyBtn').disabled = true;
         }
     }
 
@@ -282,31 +344,50 @@
     function submitComplianceReview() {
         const form = document.getElementById('complianceEvaluationForm');
         const enoughCompliantSuppliers = document.getElementById('enoughCompliantSuppliers').checked;
+        const notEnoughCompliantSuppliers = document.getElementById('notEnoughCompliantSuppliers').checked;
         
-        // 验证表单
+        // 验证表单 - 只检查显示的供应商
         let valid = true;
-        const radios = form.querySelectorAll('input[type="radio"]:required');
-        radios.forEach(radio => {
-            const name = radio.name;
-            if (!form.querySelector(`input[name="${name}"]:checked`)) {
+        let passedCount = 0;
+        const supplierDivs = document.querySelectorAll('#complianceSuppliersList > div');
+        
+        supplierDivs.forEach(div => {
+            const id = div.querySelector('.supplier-name').dataset.id;
+            const radio = form.querySelector(`input[name="supplier${id}_compliance"]:checked`);
+            
+            if (!radio) {
                 valid = false;
                 return;
+            }
+            
+            if (radio.value === 'pass') {
+                passedCount++;
             }
         });
         
         if (!valid) {
-            alert('请为所有供应商选择通过或不通过！');
+            alert('请为所有显示的供应商选择通过或不通过！');
             return;
         }
         
-        if (!enoughCompliantSuppliers) {
-            alert('请确认是否满足3家供应商通过实质性符合评审！');
+        // 检查供应商数量
+        if (notEnoughCompliantSuppliers) {
+            if (!confirm('确认不足3家供应商通过实质性符合评审，是否继续废标？')) {
+                return;
+            }
+            disqualifyProject();
             return;
         }
         
-        // 跳转到评分标签页
+        if (!enoughCompliantSuppliers || passedCount < 3) {
+            alert('通过实质性符合评审的供应商不足3家，请重新评审或选择"不足3家"进行废标！');
+            return;
+        }
+        
+        // 跳转到评分标签页并初始化
         setReviewStage('scoring');
-        alert('实质性符合评审已提交，请继续评分评审！');
+        initScoringPage();
+        alert(`实质性符合评审已提交，${passedCount}家供应商通过评审，请继续评分！`);
     }
 
     // 计算分数并显示在汇总表
@@ -375,12 +456,18 @@
         container.innerHTML = '';
         summaryTable.innerHTML = '';
         
-        // 获取通过符合性评审的供应商
+        // 获取资格和符合性都通过的供应商
         const passedSuppliers = [];
         document.querySelectorAll('.supplier-name').forEach(supplierEl => {
             const id = supplierEl.dataset.id;
-            const radio = document.querySelector(`input[name="supplier${id}_compliance"]:checked`);
-            if (radio && radio.value === 'pass') {
+            
+            // 检查资格评审是否通过
+            const qualificationRadio = document.querySelector(`input[name="supplier${id}"]:checked`);
+            if (!qualificationRadio || qualificationRadio.value !== 'pass') return;
+            
+            // 检查符合性评审是否通过
+            const complianceRadio = document.querySelector(`input[name="supplier${id}_compliance"]:checked`);
+            if (complianceRadio && complianceRadio.value === 'pass') {
                 passedSuppliers.push({
                     id: id,
                     name: supplierEl.dataset.name
@@ -586,7 +673,7 @@
                             <form id="supplierEvaluationForm">
                                 <!-- 供应商1 -->
                                 <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5>供应商1：ABC科技有限公司</h5>
+                                    <h5 class="supplier-name" data-id="1" data-name="ABC科技有限公司">供应商1：ABC科技有限公司</h5>
                                     <div style="margin:10px 0;">
                                         <label style="margin-right:15px;">
                                             <input type="radio" name="supplier1" value="pass" required> 通过
@@ -603,7 +690,7 @@
                                 
                                 <!-- 供应商2 -->
                                 <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5>供应商2：XYZ电子有限公司</h5>
+                                    <h5 class="supplier-name" data-id="2" data-name="XYZ电子有限公司">供应商2：XYZ电子有限公司</h5>
                                     <div style="margin:10px 0;">
                                         <label style="margin-right:15px;">
                                             <input type="radio" name="supplier2" value="pass" required> 通过
@@ -620,7 +707,7 @@
                                 
                                 <!-- 供应商3 -->
                                 <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5>供应商3：123系统工程公司</h5>
+                                    <h5 class="supplier-name" data-id="3" data-name="123系统工程公司">供应商3：123系统工程公司</h5>
                                     <div style="margin:10px 0;">
                                         <label style="margin-right:15px;">
                                             <input type="radio" name="supplier3" value="pass" required> 通过
@@ -637,7 +724,7 @@
                                 
                                 <!-- 供应商4 -->
                                 <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5>供应商4：456信息技术有限公司</h5>
+                                    <h5 class="supplier-name" data-id="4" data-name="456信息技术有限公司">供应商4：456信息技术有限公司</h5>
                                     <div style="margin:10px 0;">
                                         <label style="margin-right:15px;">
                                             <input type="radio" name="supplier4" value="pass" required> 通过
@@ -696,80 +783,77 @@
                         <div style="margin-top:30px;">
                             <h4>供应商实质性符合评审</h4>
                             <form id="complianceEvaluationForm">
-                                <!-- 供应商1 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="1" data-name="ABC科技有限公司">供应商1：ABC科技有限公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier1_compliance" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier1_compliance" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier1_compliance_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- 供应商2 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="2" data-name="XYZ电子有限公司">供应商2：XYZ电子有限公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier2_compliance" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier2_compliance" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier2_compliance_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- 供应商3 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="3" data-name="123系统工程公司">供应商3：123系统工程公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier3_compliance" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier3_compliance" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier3_compliance_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- 供应商4 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="4" data-name="456信息技术有限公司">供应商4：456信息技术有限公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier4_compliance" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier4_compliance" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier4_compliance_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
+                                <!-- 供应商列表将通过JavaScript动态生成 -->
+                                <div id="complianceSuppliersList"></div>
+                                <script>
+                                    // 动态生成符合性评审供应商列表
+                                    function generateComplianceSuppliers() {
+                                        const container = document.getElementById('complianceSuppliersList');
+                                        container.innerHTML = '';
+                                        
+                                        // 获取资格评审通过的供应商
+                                        const passedSuppliers = [];
+                                        document.querySelectorAll('.supplier-name').forEach(supplierEl => {
+                                            const id = supplierEl.dataset.id;
+                                            const qualificationRadio = document.querySelector(`input[name="supplier${id}"]:checked`);
+                                            if (qualificationRadio && qualificationRadio.value === 'pass') {
+                                                passedSuppliers.push({
+                                                    id: id,
+                                                    name: supplierEl.dataset.name
+                                                });
+                                            }
+                                        });
+                                        
+                                        // 为每个供应商生成评审表单
+                                        passedSuppliers.forEach(supplier => {
+                                            const supplierDiv = document.createElement('div');
+                                            supplierDiv.style.marginBottom = '20px';
+                                            supplierDiv.style.padding = '15px';
+                                            supplierDiv.style.border = '1px solid #eee';
+                                            supplierDiv.style.borderRadius = '4px';
+                                            
+                                            supplierDiv.innerHTML = `
+                                                <h5 class="supplier-name" data-id="${supplier.id}" data-name="${supplier.name}">供应商${supplier.id}：${supplier.name}</h5>
+                                                <div style="margin:10px 0;">
+                                                    <label style="margin-right:15px;">
+                                                        <input type="radio" name="supplier${supplier.id}_compliance" value="pass" required> 通过
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="supplier${supplier.id}_compliance" value="fail"> 不通过
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <label style="display:block; margin-bottom:5px;">评审说明：</label>
+                                                    <textarea name="supplier${supplier.id}_compliance_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
+                                                </div>
+                                            `;
+                                            
+                                            container.appendChild(supplierDiv);
+                                        });
+                                    }
+                                    
+                                    // 初始化事件监听
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        console.log('DOM加载完成，绑定事件监听');
+                                        const complianceTab = document.getElementById('step-compliance');
+                                        if (complianceTab) {
+                                            complianceTab.addEventListener('click', function() {
+                                                console.log('点击符合性评审标签');
+                                                setTimeout(generateComplianceSuppliers, 50);
+                                            });
+                                        }
+                                    });
+                                </script>
                                 
                                 <!-- 是否满足3家 -->
                                 <div style="margin:20px 0; padding:15px; background:#f9f9f9; border-radius:4px;">
-                                    <label>
-                                        <input type="checkbox" id="enoughCompliantSuppliers" required> 本项目够3家
+                                    <label style="display:block; margin-bottom:10px;">
+                                        <input type="checkbox" id="enoughCompliantSuppliers" onchange="toggleComplianceDisqualify()"> 本项目够3家
                                     </label>
-                                    <p style="font-size:12px; color:#666; margin-top:5px;">* 请确认至少有3家供应商通过实质性符合评审</p>
+                                    <label>
+                                        <input type="checkbox" id="notEnoughCompliantSuppliers" onchange="toggleComplianceDisqualify()"> 本项目不足3家
+                                    </label>
+                                    <p style="font-size:12px; color:#666; margin-top:5px;">* 请确认供应商数量是否符合要求</p>
                                 </div>
                                 
                                 <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -781,9 +865,14 @@
                                     </button>
                                 </div>
                                 
-                                <button type="button" onclick="submitComplianceReview()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
-                                    继续评审
-                                </button>
+                                <div style="display:flex; gap:10px;">
+                                    <button type="button" onclick="submitComplianceReview()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
+                                        继续评审
+                                    </button>
+                                    <button type="button" id="complianceDisqualifyBtn" onclick="disqualifyProject()" style="padding:10px 20px; background:#f44336; color:white; border:none; cursor:not-allowed; font-size:16px; opacity:0.6;" disabled>
+                                        废标
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>

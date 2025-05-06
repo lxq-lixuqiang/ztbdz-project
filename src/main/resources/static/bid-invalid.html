@@ -1,0 +1,86 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>无标题文档</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px); padding:20px;">
+        <h2 style="text-align:center; margin-bottom:30px;">政府采购废标报告</h2>
+        
+        <div style="margin-bottom:30px;">
+            <textarea id="reportContent" style="width:100%; height:500px; padding:15px; border:1px solid #ddd; font-family:Arial; font-size:14px; line-height:1.5;">
+一、项目基本信息
+项目编号：[具体项目编号]
+项目名称：[详细项目名称]
+采购人：[采购单位全称]
+采购代理机构：四川轩辕招标代理有限公司
+采购方式：[公开招标/邀请招标/竞争性谈判/竞争性磋商/单一来源采购/询价等]
+采购预算：[具体金额]元
+公告发布日期：[发布采购公告的日期]
+开标日期：[原定开标日期]
+废标日期：[确定废标的日期]
+
+二、采购项目概况
+简要描述本次政府采购项目的背景、目的、采购内容及主要技术规格、服务要求等关键信息。
+
+三、废标原因
+详细说明导致本次采购项目废标的具体原因，依据相关法律法规条款进行阐述。
+
+四、评审小组组成及评审过程概述
+（一）评审小组组成
+（二）评审过程概述
+
+五、处理意见及后续工作计划
+（一）处理意见
+（二）后续工作计划
+
+六、附件
+1. 评审小组签到表
+2. 评审报告
+3. 供应商投标文件评审情况记录表
+4. 废标通知书（样本）
+5. 其他相关证明材料
+
+四川轩辕招标代理有限公司
+[报告日期]
+            </textarea>
+        </div>
+        
+        <div style="text-align:center;">
+            <button onclick="submitReport()" style="padding:10px 30px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
+                提交废标报告
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function submitReport() {
+            const content = document.getElementById('reportContent').value;
+            if(confirm('确定提交废标报告吗？')) {
+                alert('废标报告已提交！');
+                // 这里可以添加实际提交逻辑
+            }
+        }
+    </script>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>
