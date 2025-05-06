@@ -1,0 +1,120 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>报名详细页</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px); padding:20px;">
+        <div style="max-width:800px; margin:0 auto;">
+            <!-- 项目信息 -->
+            <div style="margin-bottom:30px; border:1px solid #ddd; padding:20px; border-radius:5px;">
+                <h2 style="margin-bottom:15px;">项目信息</h2>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <div>
+                        <p><strong>项目名称：</strong>AI评标系统开发项目</p>
+                        <p><strong>项目编号：</strong>AI2023001</p>
+                        <p><strong>项目金额：</strong>¥50,000.00</p>
+                    </div>
+                    <div>
+                        <p><strong>报名截止：</strong>2023-12-31</p>
+                        <p><strong>项目周期：</strong>90天</p>
+                        <p><strong>项目状态：</strong>报名中</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 付款信息 -->
+            <div style="margin-bottom:30px; border:1px solid #ddd; padding:20px; border-radius:5px;">
+                <h2 style="margin-bottom:15px;">付款信息</h2>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                    <div>
+                        <p><strong>收款账户：</strong>轩辕科技有限公司</p>
+                        <p><strong>银行账号：</strong>6225 8888 6666 3333</p>
+                        <p><strong>开户银行：</strong>中国工商银行北京分行</p>
+                        <p><strong>付款金额：</strong>¥500.00（报名费）</p>
+                    </div>
+                    <div style="text-align:center;">
+                        <p><strong>扫码支付</strong></p>
+                        <img src="images/payment-qr.png" alt="付款二维码" style="width:150px; height:150px; border:1px solid #eee; margin-top:10px;">
+                        <p style="font-size:12px; color:#666;">请使用支付宝/微信扫码支付</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上传凭证 -->
+            <div style="margin-bottom:30px; border:1px solid #ddd; padding:20px; border-radius:5px;">
+                <h2 style="margin-bottom:15px;">上传付款凭证</h2>
+                <div style="margin-bottom:15px;">
+                    <input type="file" id="paymentProof" accept="image/*,.pdf" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+                    <p style="font-size:12px; color:#666; margin-top:5px;">支持JPG/PNG/PDF格式，大小不超过5MB</p>
+                </div>
+                <div id="previewArea" style="display:none; margin-top:15px;">
+                    <p>已上传凭证：<span id="fileName"></span></p>
+                    <button onclick="removeFile()" style="padding:5px 10px; background:#f44336; color:white; border:none; border-radius:3px; margin-top:5px; cursor:pointer;">删除</button>
+                </div>
+            </div>
+
+            <!-- 确认报名 -->
+            <div style="margin-bottom:30px; border:1px solid #ddd; padding:20px; border-radius:5px;">
+                <div style="display:flex; align-items:center; margin-bottom:15px;">
+                    <input type="checkbox" id="confirmCheck" style="margin-right:10px;">
+                    <label for="confirmCheck">我已阅读并同意《项目报名协议》</label>
+                </div>
+                <button id="submitBtn" disabled style="width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;">确认报名</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 文件上传处理
+        document.getElementById('paymentProof').addEventListener('change', function(e) {
+            if(e.target.files.length > 0) {
+                document.getElementById('fileName').textContent = e.target.files[0].name;
+                document.getElementById('previewArea').style.display = 'block';
+            }
+        });
+
+        function removeFile() {
+            document.getElementById('paymentProof').value = '';
+            document.getElementById('previewArea').style.display = 'none';
+        }
+
+        // 确认勾选处理
+        document.getElementById('confirmCheck').addEventListener('change', function(e) {
+            document.getElementById('submitBtn').disabled = !e.target.checked;
+        });
+
+        // 提交处理
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            if(!document.getElementById('paymentProof').files.length) {
+                alert('请先上传付款凭证！');
+                return;
+            }
+            if(confirm('确认提交报名信息吗？')) {
+                alert('报名成功！');
+                // 这里可以添加实际提交逻辑
+            }
+        });
+    </script>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

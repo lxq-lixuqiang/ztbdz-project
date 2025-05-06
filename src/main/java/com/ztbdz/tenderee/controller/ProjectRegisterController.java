@@ -108,7 +108,7 @@ public class ProjectRegisterController {
             @ApiImplicitParam(name = "memberId", value = "人员id", required=true, dataType = "Long")
     })
     @CheckToken
-    @PostMapping("checkAptitude/{memberId}")
+    @GetMapping("checkAptitude/{memberId}")
     public Result checkAptitude(Long memberId) {
         return projectRegisterService.checkAptitude(memberId);
     }

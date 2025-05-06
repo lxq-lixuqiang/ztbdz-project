@@ -1,0 +1,470 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>投标人管理</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+<style>
+    .container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+    .nav-menu {
+        width: 140px;
+        background: #f5f5f5;
+        padding: 10px;
+    }
+    .nav-item {
+        padding: 8px;
+        cursor: pointer;
+        border-bottom: 1px solid #ddd;
+    }
+    .nav-submenu {
+        display: none;
+        padding-left: 9px;
+    }
+    .nav-submenu-item {
+        padding: 5px;
+        cursor: pointer;
+    }
+    .content-area {
+        flex: 1;
+        padding: 20px;
+    }
+    .tab-header {
+        display: flex;
+        border-bottom: 1px solid #ddd;
+    }
+    .tab-item {
+        padding: 10px 20px;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        margin-right: 5px;
+        background: #f5f5f5;
+    }
+    .tab-item.active {
+        background: #fff;
+        border-bottom: 1px solid #fff;
+    }
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-top: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+</style>
+<script>
+    function showTab(tabId) {
+        // 隐藏所有标签内容
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        // 取消所有标签项的active类
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        // 显示选中的标签内容
+        const content = document.getElementById(tabId);
+        content.classList.add('active');
+        // 激活对应的标签项
+        document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
+    }
+
+    // 为所有标签项添加点击事件
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.addEventListener('click', function() {
+                showTab(this.dataset.tab);
+            });
+        });
+
+        // 添加项目选择事件
+        document.querySelectorAll('.project-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const applyBtn = this.closest('tr').querySelector('.apply-btn');
+                applyBtn.disabled = !this.checked;
+            });
+        });
+
+        // 添加报名按钮事件
+        document.querySelectorAll('.apply-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const projectId = this.closest('tr').querySelector('.project-checkbox').dataset.project;
+                window.location.href = 'Application.html?project=' + encodeURIComponent(projectId);
+            });
+        });
+    });
+
+    function showAffairTabs() {
+        // 显示综合事务标签页
+        document.querySelectorAll('.tab-item').forEach(item => {
+            const tabId = item.dataset.tab;
+            item.style.display = (tabId === 'project1' || tabId === 'project2' || tabId === 'project3') ? 'none' : 'block';
+        });
+        // 默认显示可以报名项目
+        showTab('available');
+    }
+
+    function showApplicationTabs() {
+        // 显示项目报名相关标签页
+        document.querySelectorAll('.tab-item').forEach(item => {
+            const tabId = item.dataset.tab;
+            item.style.display = (tabId === 'available' || tabId === 'applying') ? 'block' : 'none';
+        });
+        // 默认显示可以报名项目
+        showTab('available');
+    }
+
+    function showProfileTab() {
+        // 显示我的信息标签页
+        document.querySelectorAll('.tab-item').forEach(item => {
+            const tabId = item.dataset.tab;
+            item.style.display = (tabId === 'profile') ? 'block' : 'none';
+        });
+        showTab('profile');
+    }
+
+    function showProjectTabs() {
+        // 显示项目相关标签页
+        document.querySelectorAll('.tab-item').forEach(item => {
+            const tabId = item.dataset.tab;
+            item.style.display = (tabId === 'project1' || tabId === 'project2' || tabId === 'project3') ? 'block' : 'none';
+        });
+        showTab('project1');
+    }
+
+    // 启用编辑模式
+    function enableEditMode() {
+        // 从显示区域获取当前值
+        document.getElementById('editCompanyName').value = document.getElementById('companyName').textContent;
+        document.getElementById('editCreditCode').value = document.getElementById('creditCode').textContent;
+        document.getElementById('editContactPerson').value = document.getElementById('contactPerson').textContent;
+        document.getElementById('editContactPhone').value = document.getElementById('contactPhone').textContent;
+        document.getElementById('editContactEmail').value = document.getElementById('contactEmail').textContent;
+        
+        // 切换显示/编辑模式
+        document.getElementById('companyInfoDisplay').style.display = 'none';
+        document.getElementById('companyInfoForm').style.display = 'block';
+    }
+
+    // 取消编辑
+    function cancelEdit() {
+        document.getElementById('companyInfoDisplay').style.display = 'block';
+        document.getElementById('companyInfoForm').style.display = 'none';
+    }
+
+    // 显示上传对话框
+    function showUploadDialog() {
+        document.getElementById('certificateUpload').click();
+    }
+
+    // 处理文件选择
+    document.getElementById('certificateUpload').addEventListener('change', function(e) {
+        const files = e.target.files;
+        const fileList = document.getElementById('uploadedFilesList');
+        
+        if(files.length > 0) {
+            fileList.innerHTML = '';
+            for(let i = 0; i < files.length; i++) {
+                const fileItem = document.createElement('div');
+                fileItem.textContent = `${i+1}. ${files[i].name} (${(files[i].size/1024).toFixed(2)} KB)`;
+                fileList.appendChild(fileItem);
+            }
+        } else {
+            fileList.innerHTML = '<p>未选择文件</p>';
+        }
+    });
+
+    // 提交企业信息
+    function submitCompanyInfo() {
+        // 更新显示区域的值
+        document.getElementById('companyName').textContent = document.getElementById('editCompanyName').value;
+        document.getElementById('creditCode').textContent = document.getElementById('editCreditCode').value;
+        document.getElementById('contactPerson').textContent = document.getElementById('editContactPerson').value;
+        document.getElementById('contactPhone').textContent = document.getElementById('editContactPhone').value;
+        document.getElementById('contactEmail').textContent = document.getElementById('editContactEmail').value;
+        
+        // 更新已上传文件显示
+        const files = document.getElementById('certificateUpload').files;
+        const certificateFilesDiv = document.getElementById('certificateFiles');
+        
+        if(files.length > 0) {
+            certificateFilesDiv.innerHTML = '';
+            for(let i = 0; i < files.length; i++) {
+                const fileItem = document.createElement('p');
+                fileItem.textContent = `${i+1}. ${files[i].name}`;
+                certificateFilesDiv.appendChild(fileItem);
+            }
+        } else {
+            certificateFilesDiv.innerHTML = '<p>暂无上传文件</p>';
+        }
+        
+        // 切换回显示模式
+        document.getElementById('companyInfoDisplay').style.display = 'block';
+        document.getElementById('companyInfoForm').style.display = 'none';
+        
+        alert('企业信息更新成功！');
+        // 这里可以添加实际提交到服务器的逻辑
+    }
+
+    // 初始化显示事务相关标签页
+    window.onload = function() {
+        showAffairTabs();
+        // 确保各内容区域独立
+        document.getElementById('profile').innerHTML = document.getElementById('profile').innerHTML;
+    };
+</script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px);">
+        <div class="container">
+            <div class="nav-menu">
+                <div class="nav-item" onclick="showAffairTabs()">我的事务
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-item" onclick="showAffairTabs()">综合事务</div>
+                        <div class="nav-submenu-item" onclick="showApplicationTabs()">项目报名</div>
+                        <div class="nav-submenu-item" onclick="showProfileTab()">我的信息</div>
+                    </div>
+                </div>
+                <div class="nav-item" onclick="showProjectTabs()">我的项目</div>
+            </div>
+            <div class="content-area">
+                <div class="tab-header">
+                    <div class="tab-item active" data-tab="available">可以报名项目</div>
+                    <div class="tab-item" data-tab="applying">正在报名项目</div>
+                    <div class="tab-item" data-tab="profile">我的信息</div>
+                    <div class="tab-item" data-tab="project1">已报名项目</div>
+                    <div class="tab-item" data-tab="project2">正在进行项目</div>
+                    <div class="tab-item" data-tab="project3">评审结束项目</div>
+                </div>
+                <div class="tab-content active" id="available">
+                    <h3>可以报名项目</h3>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#f5f5f5;">
+                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">截止时间</th>
+                                <th style="padding:10px; border:1px solid #ddd;">预算</th>
+                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">智慧校园建设项目</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-12-20</td>
+                                <td style="padding:10px; border:1px solid #ddd;">¥120,000</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <a href="application.html?project=智慧校园建设项目" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">政务云平台升级</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-12-25</td>
+                                <td style="padding:10px; border:1px solid #ddd;">¥80,000</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <a href="application.html?project=政务云平台升级" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-content" id="applying">
+                    <h3>正在报名项目</h3>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#f5f5f5;">
+                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
+                                <th style="padding:10px; border:1px solid #ddd;">状态</th>
+                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">智慧交通系统</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-11-28</td>
+                                <td style="padding:10px; border:1px solid #ddd;">资料审核中</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-content" id="profile">
+                    <h3>企业注册信息</h3>
+                    <div id="companyInfoDisplay" style="margin-bottom:20px;">
+                        <p><strong>企业名称：</strong><span id="companyName">XXX公司</span></p>
+                        <p><strong>统一社会信用代码：</strong><span id="creditCode">XXXXXX</span></p>
+                        <p><strong>联系人：</strong><span id="contactPerson">张经理</span></p>
+                        <p><strong>联系电话：</strong><span id="contactPhone">13800138000</span></p>
+                        <p><strong>电子邮箱：</strong><span id="contactEmail">contact@xxx.com</span></p>
+                        
+                        <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
+                            <h4>资质文件</h4>
+                            <div id="certificateFiles">
+                                <p>暂无上传文件</p>
+                            </div>
+                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传新文件</button>
+                        </div>
+                        
+                        <button onclick="enableEditMode()" style="padding:8px 16px; background:#2196F3; color:white; border:none; cursor:pointer; margin-top:15px;">更改信息</button>
+                    </div>
+                    <form id="companyInfoForm" style="max-width:600px; display:none;" enctype="multipart/form-data">
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">企业名称</label>
+                            <input type="text" id="editCompanyName" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">统一社会信用代码</label>
+                            <input type="text" id="editCreditCode" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">联系人</label>
+                            <input type="text" id="editContactPerson" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">联系电话</label>
+                            <input type="tel" id="editContactPhone" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">电子邮箱</label>
+                            <input type="email" id="editContactEmail" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+
+                        <div style="margin:20px 0; border-top:1px solid #eee; padding-top:15px;">
+                            <h4>资质文件上传</h4>
+                            <input type="file" id="certificateUpload" name="certificateFiles" style="margin-bottom:10px;" multiple>
+                            <div id="uploadedFilesList" style="margin-top:10px;">
+                                <p>未选择文件</p>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" onclick="submitCompanyInfo()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">保存</button>
+                            <button type="button" onclick="cancelEdit()" style="padding:10px 20px; background:#f44336; color:white; border:none; cursor:pointer;">取消</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- 空的application标签页已移除 -->
+                <div class="tab-content" id="project1">
+                    <h3>已报名项目</h3>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#f5f5f5;">
+                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
+                                <th style="padding:10px; border:1px solid #ddd;">状态</th>
+                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">项目A</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-11-15</td>
+                                <td style="padding:10px; border:1px solid #ddd;">已报名</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看详情</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">项目B</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-11-20</td>
+                                <td style="padding:10px; border:1px solid #ddd;">评审中</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看详情</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-content" id="project2">
+                    <h3>正在进行项目</h3>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#f5f5f5;">
+                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">开始时间</th>
+                                <th style="padding:10px; border:1px solid #ddd;">状态</th>
+                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">智慧城市建设项目</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-11-01</td>
+                                <td style="padding:10px; border:1px solid #ddd;">评审中</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">医院信息化系统</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-11-10</td>
+                                <td style="padding:10px; border:1px solid #ddd;">技术评审</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-content" id="project3">
+                    <h3>评审结束项目</h3>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#f5f5f5;">
+                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">结束时间</th>
+                                <th style="padding:10px; border:1px solid #ddd;">结果</th>
+                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">智慧校园建设项目</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-10-15</td>
+                                <td style="padding:10px; border:1px solid #ddd;">已中标</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">政务云平台</td>
+                                <td style="padding:10px; border:1px solid #ddd;">2023-09-30</td>
+                                <td style="padding:10px; border:1px solid #ddd;">未中标</td>
+                                <td style="padding:10px; border:1px solid #ddd;">
+                                    <button style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer;">查看详情</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>
