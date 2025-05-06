@@ -1,6 +1,7 @@
 package com.ztbdz.web.config;
 
 import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
+import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -16,14 +17,26 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwaggerBootstrapUI
 public class SwaggerConfig {
     @Bean
-    public Docket createRestApi() {
+    public Docket member() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("人员管理")
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.ztbdz"))
+                .apis(Predicates.or(RequestHandlerSelectors.basePackage("com.ztbdz.user")))
                 .paths(PathSelectors.any())
                 .build();
     }
+    @Bean
+    public Docket tenderingBidding() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("招标投标")
+                .apiInfo(apiInfo())
+                .select()
+                .apis(Predicates.or(RequestHandlerSelectors.basePackage("com.ztbdz.tenderee"),RequestHandlerSelectors.basePackage("com.ztbdz.file")))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
 
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder().build();
