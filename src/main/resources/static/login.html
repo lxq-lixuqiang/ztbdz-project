@@ -1,11 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
-    <meta charset="UTF-8">
-    <title>登录页面</title>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>无标题文档</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
 </head>
+
 <body>
-    <h1>登录页面</h1>
-    <a href="/index.html">跳转首页</a>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px); display:flex; justify-content:center; align-items:center;">
+        <div style="width:500px; padding:30px; background:#f5f5f5; border-radius:10px;">
+            <h2 style="text-align:center; margin-bottom:30px;">用户登录</h2>
+            <form action="login" method="post" onsubmit="return handleLogin()">
+            <script>
+                function handleLogin() {
+                    // 这里应该添加实际的登录逻辑
+                    // 登录成功后设置cookie并跳转
+                    document.cookie = "token=logged_in; path=/";
+                    document.cookie = "username=" + encodeURIComponent(document.querySelector('input[type="text"]').value) + "; path=/";
+                    return true;
+                }
+            </script>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px;">用户名</label>
+                    <input type="text" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px;">密码</label>
+                    <input type="password" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;">
+                </div>
+                <button type="submit" style="width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">登录</button>
+            </form>
+        </div>
+    </div>
+    <!-- InstanceEndEditable -->
 </body>
-</html>
+<!-- InstanceEnd --></html>

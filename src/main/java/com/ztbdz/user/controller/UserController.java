@@ -60,8 +60,8 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "短信验证码", required=false, dataType = "String")
     })
-    @PostMapping("create")
-    public Result create(@RequestBody User user,@RequestParam(required = false) String code) {
+    @PostMapping("register")
+    public Result register(@RequestBody User user,@RequestParam(required = false) String code) {
         return userService.create(user,code);
     }
 
