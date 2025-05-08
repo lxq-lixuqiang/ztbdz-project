@@ -232,7 +232,12 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void getMenuAuthorizeInfo(List<Role> roleList) throws Exception{
+    public void getMenuAuthorizeInfo(List<Role> roleList) throws Exception {
+        this.getMenuAuthorizeInfo(roleList,true);
+    }
+
+    @Override
+    public void getMenuAuthorizeInfo(List<Role> roleList,boolean isMember) throws Exception{
         QueryWrapper<RoleRelatedAuthorize> queryWrapper ;
         for(Role role : roleList){
             queryWrapper = new QueryWrapper();
@@ -245,10 +250,12 @@ public class RoleServiceImpl implements RoleService {
                 }
                 role.setMeunAuthorize(menuAuthorizeService.selectByIds(ids));
             }
-            // 分配人员
-            Member member = new Member();
-            member.setRole(role);
-            role.setMember(memberService.selectList(member));
+            if(isMember){
+                // 分配人员
+                Member member = new Member();
+                member.setRole(role);
+                role.setMember(memberService.selectList(member));
+            }
         }
 
     }

@@ -59,6 +59,7 @@ public class ProjectServiceImpl  implements ProjectService {
         queryWrapper.orderByDesc("update_date");
 
         if(!StringUtils.isEmpty(project.getProjectName())) queryWrapper.like("project_name", project.getProjectName());
+        if(!StringUtils.isEmpty(project.getState())) queryWrapper.eq("state", project.getState());
         if(!StringUtils.isEmpty(project.getProjectClassify())) queryWrapper.eq("project_classify", project.getProjectClassify());
         if(!StringUtils.isEmpty(project.getProcurementMethod())) queryWrapper.eq("procurement_method", project.getProcurementMethod());
         return new PageInfo(projectMapper.selectList(queryWrapper));

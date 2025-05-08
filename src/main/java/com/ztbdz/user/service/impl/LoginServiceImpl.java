@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Result login(String username, String password) {
         try{
+            if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) return Result.fail("用户名和密码不能为空！");
             User user = userService.selectMember(null,username);
             String passwordMD5 = MD5.md5String(password);
             if(user == null) return Result.fail("没有查询到登录用户名！");
@@ -121,7 +123,7 @@ public class LoginServiceImpl implements LoginService {
         }else{
             List<Role> roleList = new ArrayList();
             roleList.add(((Member)objectInfo).getRole());
-            roleService.getMenuAuthorizeInfo(roleList);
+            roleService.getMenuAuthorizeInfo(roleList,false);
         }
         Map<String,Object> dataMap = new HashMap();
         dataMap.put(type,objectInfo);

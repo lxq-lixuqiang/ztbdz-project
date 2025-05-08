@@ -123,4 +123,11 @@ public interface RoleService {
      * @throws Exception
      */
     void getMenuAuthorizeInfo(List<Role> roleList) throws Exception;
+
+    /**
+     * 获取角色分配的菜单权限
+     * @param roleList
+     * @throws Exception
+     */
+    void getMenuAuthorizeInfo(List<Role> roleList,boolean isMember) throws Exception;
 }
