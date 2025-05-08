@@ -542,7 +542,7 @@
             });
 
             $("#certificateUpload").on('change', function () {
-                var fileId = uploadFileWithJQuery(this.files[0]);
+                var fileId = uploadFile(this.files[0]);
                 var data = {"id":JSON.parse(getMember()).account.id,"accountCodeFileId":fileId}
                 updateAccount(data);
                 $("#certificateFiles p").text(this.files[0].name);

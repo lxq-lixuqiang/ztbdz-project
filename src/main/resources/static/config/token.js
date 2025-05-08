@@ -39,10 +39,12 @@ function verifyLogin(){
                 setMember(JSON.stringify(e.data.member));
             }else{
                 alert("校验token失败："+e.message);
+                removeToken();
                 location.href = "/login.html";
             }
         },error:function(e) {
             alert("token失效，请重新登陆！");
+            removeToken();
             location.href = "/login.html";
         }
     });
@@ -63,8 +65,30 @@ $("body").on("click", "a:contains('退出')", function() {
     removeToken();
 });
 
+// 上传图片
+function uploadImg(file) {
+    var formData = new FormData();
+    formData.append('file', file); // 'file'是后端接收的文件参数名
+    var fileId = "";
+    $.ajax({
+        url: '/file/uploadImg',
+        type: 'POST',
+        data: formData,
+        async: false,
+        contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+        processData: false, // 告诉jQuery不要去处理发送的数据
+        success: function (e) {
+            fileId = e.data;
+        },
+        error: function () {
+            alert("上传图片失败！")
+        }
+    });
+    return fileId;
+}
+
 // 上传文件
-function uploadFileWithJQuery(file) {
+function uploadFile(file) {
     var formData = new FormData();
     formData.append('file', file); // 'file'是后端接收的文件参数名
     var fileId = "";

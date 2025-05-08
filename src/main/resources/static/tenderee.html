@@ -113,6 +113,7 @@
         if(confirm('确认发布项目信息吗？')) {
             alert('项目发布成功！');
             // 这里可以添加实际提交逻辑
+            saveData();
         }
     }
 
@@ -158,15 +159,15 @@
                     <form id="publishForm" style="max-width:800px;">
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">项目名称</label>
-                            <input type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                            <input id="projectName" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">项目编号</label>
-                            <input type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                            <input id="projectCode" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">采购类型</label>
-                            <select style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                            <select id="procurementMethod" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                                 <option value="">请选择采购类型</option>
                                 <option value="公开招标">公开招标</option>
                                 <option value="磋商">磋商</option>
@@ -191,7 +192,7 @@
                         </div>
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">上传采购文件</label>
-                            <input type="file" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                            <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <button type="button" onclick="submitPublishForm()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">确认发布条件</button>
                     </form>
@@ -205,13 +206,44 @@
     </div>
     <!-- InstanceEndEditable -->
     <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
-    <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
-    <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
     <script src="config/token.js" type="text/javascript"></script>
     <script>
+        function saveData(){
+            var projectName = $("#projectName").val();
+            var projectCode = $("#projectCode").val();
+            var procurementMethod = $("#procurementMethod").find("option:selected").val();
+
+            var fileId = $("#fileUpload").attr("data-file-id");
+            var currentTime = new Date().toLocaleString().replaceAll("/","-"); // 截止时间，开标时间，开始时间
+            var tender={"tenderName":projectName};
+            var tenders=[tender];
+            var project = {"bidOpeningTime":currentTime,"projectCode":projectCode,"projectName":projectName,"procurementMethod":procurementMethod,"tenders":tenders,"ext3":fileId,"state":1};
+            var data = {"senrollStartDate":currentTime,"tendereeCode":projectCode,"tendereeName":projectName,"answerEndDate":currentTime,"enrollEndDate":currentTime,"project":project};
+            updateProject(data);
+        }
+        function updateProject(data){
+            $.ajax({
+                url: "/tenderee/create",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status != 200){
+                        alert("发布项目失败："+e.message);
+                    }
+                }
+            });
+        }
+
         $(function() {
-                // 初始化
-                verifyLogin();
+            // 初始化
+            verifyLogin();
+
+            $("#fileUpload").on('change', function () {
+                var fileId = uploadFile(this.files[0]);
+                $("#fileUpload").attr("data-file-id",fileId);
+            });
+
         });
     </script>
 </body>

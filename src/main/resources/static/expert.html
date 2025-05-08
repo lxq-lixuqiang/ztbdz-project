@@ -155,28 +155,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style="padding:10px; border:1px solid #ddd; text-align:center;">
-                                    <input type="checkbox">
-                                </td>
-                                <td style="padding:10px; border:1px solid #ddd;">项目A</td>
-                                <td style="padding:10px; border:1px solid #ddd;">2023-12-31</td>
-                                <td style="padding:10px; border:1px solid #ddd;">
-                                    <a href="Bid evaluation.html">
-                                    <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
-                                </a>                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding:10px; border:1px solid #ddd; text-align:center;">
-                                    <input type="checkbox">
-                                </td>
-                                <td style="padding:10px; border:1px solid #ddd;">项目B</td>
-                                <td style="padding:10px; border:1px solid #ddd;">2023-12-15</td>
-                                <td style="padding:10px; border:1px solid #ddd;">
-                                    <a href="Bid evaluation.html">
-                                    <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
-                                </a>                                </td>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -192,14 +171,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style="padding:10px; border:1px solid #ddd;">项目C</td>
-                                <td style="padding:10px; border:1px solid #ddd;">2023-11-01</td>
-                                <td style="padding:10px; border:1px solid #ddd;">60%</td>
-                                <td style="padding:10px; border:1px solid #ddd;">
-                                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">继续评审</button>
-                                </td>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -214,22 +186,67 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style="padding:10px; border:1px solid #ddd;">项目D</td>
-                                <td style="padding:10px; border:1px solid #ddd;">2023-10-15</td>
-                                <td style="padding:10px; border:1px solid #ddd;">通过</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:10px; border:1px solid #ddd;">项目E</td>
-                                <td style="padding:10px; border:1px solid #ddd;">2023-09-30</td>
-                                <td style="padding:10px; border:1px solid #ddd;">未通过</td>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    <script id="project1Template" type="text/x-handlebars-template">
+        {{#if list}}
+        {{#each list}}
+        <tr>
+            <td style="padding:10px; border:1px solid #ddd; text-align:center;">
+                <input type="checkbox">
+            </td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">
+                <a href="Bid evaluation.html">
+                    <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
+                </a>                                </td>
+        </tr>
+        {{/each}}
+        {{else}}
+        <tr>
+            <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有可评审项目列表</td>
+        </tr>
+        {{/if}}
+    </script>
+    <script id="project2Template" type="text/x-handlebars-template">
+        {{#if list}}
+        {{#each list}}
+        <tr>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">60%</td>
+            <td style="padding:10px; border:1px solid #ddd;">
+                <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">继续评审</button>
+            </td>
+        </tr>
+        {{/each}}
+        {{else}}
+        <tr>
+            <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有正在评审项目</td>
+        </tr>
+        {{/if}}
+    </script>
+    <script id="project3Template" type="text/x-handlebars-template">
+        {{#if list}}
+        {{#each list}}
+        <tr>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">通过</td>
+        </tr>
+        {{/each}}
+        {{else}}
+        <tr>
+            <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有评审结束项目</td>
+        </tr>
+        {{/if}}
+    </script>
     <!-- InstanceEndEditable -->
     <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
@@ -239,6 +256,34 @@
         $(function() {
             // 初始化
             verifyLogin();
+            availableInit(3,$("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+
+            $("body").on("click", "div[data-tab=project1]", function() {
+                availableInit(3,$("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+            });
+            $("body").on("click", "div[data-tab=project2]", function() {
+                availableInit(4,$("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
+            });
+            $("body").on("click", "div[data-tab=project3]", function() {
+                availableInit(5,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
+            });
+            function availableInit(state,tbody,template){
+                $.ajax({
+                    url: "/project/list",
+                    type: "POST",
+                    data: JSON.stringify({"state":state}),
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var newTemplate = template(e.data);
+                            tbody.html(newTemplate);
+                        }else{
+                            alert("获取项目列表失败："+e.message);
+                        }
+                    }
+                });
+            }
+
         });
     </script>
 </body>

@@ -28,16 +28,16 @@
             <!-- 项目信息 -->
             <div style="margin-bottom:30px; border:1px solid #ddd; padding:20px; border-radius:5px;">
                 <h2 style="margin-bottom:15px;">项目信息</h2>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                <div id="projectInfo" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
                     <div>
-                        <p><strong>项目名称：</strong>AI评标系统开发项目</p>
-                        <p><strong>项目编号：</strong>AI2023001</p>
-                        <p><strong>项目金额：</strong>¥50,000.00</p>
+                        <p><strong>项目名称：</strong><span>AI评标系统开发项目</span></p>
+                        <p><strong>项目编号：</strong><span>AI2023001</span></p>
+                        <p><strong>项目金额：</strong>¥<span>50,000.00</span></p>
                     </div>
                     <div>
-                        <p><strong>报名截止：</strong>2023-12-31</p>
-                        <p><strong>项目周期：</strong>90天</p>
-                        <p><strong>项目状态：</strong>报名中</p>
+                        <p><strong>报名截止：</strong><span>2023-12-31</span></p>
+                        <p><strong>项目周期：</strong><span>90天</span></p>
+                        <p><strong>项目状态：</strong><span>报名中</span></p>
                     </div>
                 </div>
             </div>
@@ -112,9 +112,69 @@
             if(confirm('确认提交报名信息吗？')) {
                 alert('报名成功！');
                 // 这里可以添加实际提交逻辑
+                saveData();
             }
         });
     </script>
     <!-- InstanceEndEditable -->
+    <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="config/token.js" type="text/javascript"></script>
+    <script>
+        function saveData(){
+            var fileId = $("#paymentProof").attr("data-file-id");
+            var project = {"id":new URLSearchParams(window.location.search).get("id"),"state":2,"ext4":fileId};
+            var data = {"project":project};
+            updateProject(data);
+        }
+
+        function updateProject(data){
+            $.ajax({
+                url: "/tenderee/update",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        location.href = "/bider.html";
+                    }else{
+                        alert("发布项目失败："+e.message);
+                    }
+                }
+            });
+        }
+
+        $(function() {
+            // 初始化
+            verifyLogin();
+            initData();
+
+            function initData(){
+                $.ajax({
+                    url: "/project/get/"+new URLSearchParams(window.location.search).get("id"),
+                    type: "GET",
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            projectData(e.data.project);
+                        }else{
+                            alert("获取项目信息失败："+e.message);
+                        }
+                    }
+                });
+            }
+            function projectData(data){
+                var infos = $("#projectInfo span");
+                $(infos[0]).text(data.projectName);
+                $(infos[1]).text(data.projectCode);
+                $(infos[2]).text(20000000);
+            }
+            $("#paymentProof").on('change', function () {
+                var fileId = uploadImg(this.files[0]);
+                $("#paymentProof").attr("data-file-id",fileId);
+                alert("文件id:"+fileId);
+            });
+
+        });
+    </script>
 </body>
 <!-- InstanceEnd --></html>

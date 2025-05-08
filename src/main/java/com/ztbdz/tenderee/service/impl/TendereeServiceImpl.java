@@ -63,18 +63,24 @@ public class TendereeServiceImpl implements TendereeService {
         try{
             //更新项目信息
             Project project = tenderee.getProject();
-            projectService.updateById(project);
-            //更新标段,可能有新增或删除情况，所以采用先删除再添加
-            List<Tender> tenderList = project.getTenders();
-            tenderService.deleteByProjectId(project.getId());
-            for(Tender tender : tenderList){
-                tenderService.insert(tender);
+            if(!(StringUtils.isEmpty(tenderee) || StringUtils.isEmpty(tenderee.getProject()) || StringUtils.isEmpty(tenderee.getProject().getId()))) {
+                projectService.updateById(project);
+                //更新标段,可能有新增或删除情况，所以采用先删除再添加
+                List<Tender> tenderList = project.getTenders();
+                if(!StringUtils.isEmpty(tenderList)) {
+                    tenderService.deleteByProjectId(project.getId());
+                    for (Tender tender : tenderList) {
+                        tenderService.insert(tender);
+                    }
+                }
             }
             //更新招标信息
-            Integer num = this.updateById(tenderee);
-            if(num<=0){
-                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                return Result.fail("更新失败！");
+            if(!(StringUtils.isEmpty(tenderee) || StringUtils.isEmpty(tenderee.getId()))){
+                Integer num = this.updateById(tenderee);
+                if(num<=0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.fail("更新失败！");
+                }
             }
             return Result.ok("更新成功！");
         }catch (Exception e){
