@@ -24,11 +24,15 @@ function removeToken() {
 
 // 校验token是否有效
 function verifyLogin(){
+    $.ajaxSetup({
+        headers: {
+            'token': getToken()
+        }
+    });
     $.ajax({
         url: "/user/verifyLogin",
         type: "POST",
         async: false,
-        headers: {'token': getToken()},
         contentType: "application/json",
         success:function(e) {
             if(e.status == 200){
@@ -46,12 +50,9 @@ function verifyLogin(){
 
 // 退出登录
 $("body").on("click", "a:contains('退出')", function() {
-    var token = getToken();
-    removeToken();
     $.ajax({
         url: "/user/logout",
         type: "POST",
-        headers: {'token': token},
         contentType: "application/json",
         success:function(e) {
             if(e.status != 200){
@@ -59,6 +60,7 @@ $("body").on("click", "a:contains('退出')", function() {
             }
         }
     });
+    removeToken();
 });
 
 // 上传文件
@@ -69,7 +71,6 @@ function uploadFileWithJQuery(file) {
     $.ajax({
         url: '/file/upload',
         type: 'POST',
-        headers: {'token': getToken()},
         data: formData,
         async: false,
         contentType: false, // 告诉jQuery不要去设置Content-Type请求头

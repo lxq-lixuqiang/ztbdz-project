@@ -518,7 +518,6 @@
                         url: "/file/get/"+account.accountCodeFileId,
                         type: "GET",
                         async: false,
-                        headers: {'token': getToken()},
                         contentType: "application/json",
                         success:function(e) {
                             if(e.status == 200){
@@ -554,7 +553,6 @@
                 $.ajax({
                     url: "/account/update",
                     type: "POST",
-                    headers: {'token': getToken()},
                     data: JSON.stringify(data),
                     contentType: "application/json",
                     success:function(e) {
@@ -580,7 +578,6 @@
                 $.ajax({
                     url: "/project/list",
                     type: "POST",
-                    headers: {'token': getToken()},
                     data: JSON.stringify({"state":state}),
                     contentType: "application/json",
                     success:function(e) {
