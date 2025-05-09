@@ -514,14 +514,23 @@
                 var account = JSON.parse(getMember()).account;
                 var fileName = "";
                 if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
+                    var ids = account.accountCodeFileId.split(",");
+                    var datas = ""
+                    for(var i=0;i<ids.length;i++){
+                        if(datas.length>0) datas+="&"
+                        datas+="ids="+ids[i];
+                    }
                     $.ajax({
-                        url: "/file/get/"+account.accountCodeFileId,
-                        type: "GET",
+                        url: "/file/list?"+datas,
+                        type: "POST",
                         async: false,
                         contentType: "application/json",
                         success:function(e) {
                             if(e.status == 200){
-                                fileName = e.data.name;
+                                for(var i=0;i<e.data.length;i++){
+                                    if(fileName.length>0) fileName+=",";
+                                    fileName += e.data[i].name;
+                                }
                             }else{
                                 alert("获取文件信息失败："+e.message);
                             }
@@ -542,11 +551,16 @@
             });
 
             $("#certificateUpload").on('change', function () {
-                var fileId = uploadFile(this.files[0]);
+                var fileId = uploadFile(this.files);
                 var data = {"id":JSON.parse(getMember()).account.id,"accountCodeFileId":fileId}
                 updateAccount(data);
-                $("#certificateFiles p").text(this.files[0].name);
-                $("#uploadedFilesList p").text(this.files[0].name);
+                var fileName = "";
+                for(var i=0;i<this.files.length;i++){
+                    if(i!=0) fileName+=",";
+                    fileName+=this.files[i].name;
+                }
+                $("#certificateFiles p").text(fileName);
+                $("#uploadedFilesList p").text(fileName);
             });
 
             function updateAccount(data){

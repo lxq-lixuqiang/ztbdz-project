@@ -240,7 +240,7 @@
             verifyLogin();
 
             $("#fileUpload").on('change', function () {
-                var fileId = uploadFile(this.files[0]);
+                var fileId = uploadFile(this.files);
                 $("#fileUpload").attr("data-file-id",fileId);
             });
 

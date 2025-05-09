@@ -671,74 +671,10 @@
                         <div style="margin-top:30px;">
                             <h4>供应商资格评审</h4>
                             <form id="supplierEvaluationForm">
-                                <!-- 供应商1 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="1" data-name="ABC科技有限公司">供应商1：ABC科技有限公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier1" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier1" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier1_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
+                                <div id="gys">
+
                                 </div>
-                                
-                                <!-- 供应商2 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="2" data-name="XYZ电子有限公司">供应商2：XYZ电子有限公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier2" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier2" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier2_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- 供应商3 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="3" data-name="123系统工程公司">供应商3：123系统工程公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier3" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier3" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier3_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
-                                
-                                <!-- 供应商4 -->
-                                <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                                    <h5 class="supplier-name" data-id="4" data-name="456信息技术有限公司">供应商4：456信息技术有限公司</h5>
-                                    <div style="margin:10px 0;">
-                                        <label style="margin-right:15px;">
-                                            <input type="radio" name="supplier4" value="pass" required> 通过
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="supplier4" value="fail"> 不通过
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                                        <textarea name="supplier4_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
-                                    </div>
-                                </div>
-                                
+
                                 <!-- 是否够3家 -->
                                 <div style="margin:20px 0; padding:15px; background:#f9f9f9; border-radius:4px;">
                                     <label style="display:block; margin-bottom:10px;">
@@ -933,5 +869,50 @@
         </div>
     </div>
     <!-- InstanceEndEditable -->
+    <script id="gysTemplate" type="text/x-handlebars-template">
+        {{#each list}}
+            <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
+                <h5 class="supplier-name" data-id="1" data-name="ABC科技有限公司">供应商1：{{name}}</h5>
+                <div style="margin:10px 0;">
+                    <label style="margin-right:15px;">
+                        <input type="radio" name="supplier{{@index}}" value="pass" required> 通过
+                    </label>
+                    <label>
+                        <input type="radio" name="supplier{{@index}}" value="fail"> 不通过
+                    </label>
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:5px;">评审说明：</label>
+                    <textarea name="supplier1_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
+                </div>
+            </div>
+        {{/each}}
+    </script>
+    <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+    <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+    <script src="config/token.js" type="text/javascript"></script>
+    <script>
+        $(function() {
+            // 初始化
+            verifyLogin();
+            var data={"role":{"id":JSON.parse(getMember()).role.id}};
+            $.ajax({
+                url: "/member/list",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        var newTemplate = Handlebars.compile($("#gysTemplate").html())(e.data);
+                        $("div#gys").html(newTemplate);
+                    }else{
+                        alert("获取投标方失败："+e.message);
+                    }
+                }
+            });
+
+        });
+    </script>
 </body>
 <!-- InstanceEnd --></html>

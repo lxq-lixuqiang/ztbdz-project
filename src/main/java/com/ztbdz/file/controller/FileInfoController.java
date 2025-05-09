@@ -12,6 +12,8 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 @Api(tags = "文件信息")
 @RequestMapping("/file")
@@ -27,8 +29,8 @@ public class FileInfoController {
     })
     @CheckToken
     @PostMapping(value = "upload",consumes = "multipart/form-data")
-    public Result upload( MultipartFile file) {
-        return fileInfoService.upload(file,0);
+    public Result upload( @RequestParam("files") List<MultipartFile> files) {
+        return fileInfoService.upload(files,0);
     }
 
     @ApiOperation(value = "上传图片")
@@ -37,8 +39,8 @@ public class FileInfoController {
     })
     @CheckToken
     @PostMapping(value = "uploadImg",consumes = "multipart/form-data")
-    public Result uploadImg( MultipartFile file) {
-        return fileInfoService.upload(file,2);
+    public Result uploadImg(@RequestParam("files") List<MultipartFile> files) {
+        return fileInfoService.upload(files,2);
     }
 
 
@@ -59,6 +61,17 @@ public class FileInfoController {
     @GetMapping("download/{id}")
     public ResponseEntity<byte[]> download(@PathVariable Long id) {
         return fileInfoService.download(id);
+    }
+
+    @ApiOperation(value = "查询文件列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "ids", value = "文件ids", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
+    })
+    @CheckToken
+    @PostMapping("list")
+    public Result list(@RequestParam("ids") List<Long> ids) {
+        return fileInfoService.list(ids);
     }
 
     @ApiOperation(value = "查询文件")

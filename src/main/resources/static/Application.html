@@ -169,7 +169,7 @@
                 $(infos[2]).text(20000000);
             }
             $("#paymentProof").on('change', function () {
-                var fileId = uploadImg(this.files[0]);
+                var fileId = uploadImg(this.files);
                 $("#paymentProof").attr("data-file-id",fileId);
                 alert("文件id:"+fileId);
             });

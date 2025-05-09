@@ -57,7 +57,7 @@ public class Account extends Model<Account> implements Serializable {
     @ApiModelProperty("经营范围")
     private String natureBusiness;
     @ApiModelProperty("统一社会信用代码证书扫描件文件id")
-    private Long accountCodeFileId;
+    private String accountCodeFileId;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

@@ -44,9 +44,8 @@ public class LoginServiceImpl implements LoginService {
             if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) return Result.fail("用户名和密码不能为空！");
             User user = userService.selectMember(null,username);
             String passwordMD5 = MD5.md5String(password);
-            if(user == null) return Result.fail("没有查询到登录用户名！");
-            if(!user.getUsername().equals(username)) return Result.fail("用户名不正确！");
-            if(!user.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
+            if(user == null) return Result.fail("用户名错误！");
+            if(!user.getPassword().equals(passwordMD5)) return Result.fail("密码错误！");
 
             SystemConfig.setSession(Common.LOGIN_MEMBER_ID,user.getMember().getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user);

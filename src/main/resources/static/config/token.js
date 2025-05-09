@@ -66,9 +66,11 @@ $("body").on("click", "a:contains('退出')", function() {
 });
 
 // 上传图片
-function uploadImg(file) {
+function uploadImg(files) {
     var formData = new FormData();
-    formData.append('file', file); // 'file'是后端接收的文件参数名
+    for(var i=0;i<files.length;i++){
+        formData.append('files', files[i]); // 'file'是后端接收的文件参数名
+    }
     var fileId = "";
     $.ajax({
         url: '/file/uploadImg',
@@ -88,9 +90,11 @@ function uploadImg(file) {
 }
 
 // 上传文件
-function uploadFile(file) {
+function uploadFile(files) {
     var formData = new FormData();
-    formData.append('file', file); // 'file'是后端接收的文件参数名
+    for(var i=0;i<files.length;i++){
+        formData.append('files', files[i]); // 'file'是后端接收的文件参数名
+    }
     var fileId = "";
     $.ajax({
         url: '/file/upload',

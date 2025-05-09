@@ -1,8 +1,10 @@
 package com.ztbdz.file.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.file.mapper.FileInfoMapper;
 import com.ztbdz.file.pojo.FileInfo;
 import com.ztbdz.file.service.FileInfoService;
+import com.ztbdz.user.pojo.Role;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.PdfStampUtil;
 import com.ztbdz.web.util.Result;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.net.URLEncoder;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -28,12 +31,16 @@ public class FileInfoServiceImpl implements FileInfoService {
 
 
     @Override
-    public Result upload(MultipartFile multipartFile,Integer classify) {
+    public Result upload(List<MultipartFile> fileList, Integer classify) {
         try{
-            if(multipartFile==null)  return Result.fail("未接收到文件！");
-            String fileId = this.uploadFile(multipartFile,classify);
-            if(StringUtils.isEmpty(fileId)) return Result.fail("上传失败！");
-            return Result.ok("上传成功！",fileId);
+            if(fileList==null || fileList.size()==0)  return Result.fail("未接收到文件！");
+            StringBuilder fileSB = new StringBuilder();
+            for(MultipartFile file : fileList){
+                if(fileSB.length()>0) fileSB.append(",");
+                fileSB.append(this.uploadFile(file,classify));
+            }
+            if(fileSB.length()==0) return Result.fail("上传失败！");
+            return Result.ok("上传成功！",fileSB);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("上传文件异常，原因："+e.getMessage());
@@ -101,6 +108,27 @@ public class FileInfoServiceImpl implements FileInfoService {
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @Override
+    public Result list(List<Long> ids) {
+        try{
+            List<FileInfo> fileInfoList = this.listByIds(ids);
+            for(FileInfo fileInfo :fileInfoList){
+                fileInfo.convertSize();
+            }
+            return Result.ok("查询成功！",fileInfoList);
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询文件列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public List<FileInfo> listByIds(List<Long> ids) throws Exception {
+        QueryWrapper<FileInfo> queryWrapper = new QueryWrapper();
+        queryWrapper.in("id", ids);
+        return fileMapper.selectList(queryWrapper);
     }
 
     @Override
