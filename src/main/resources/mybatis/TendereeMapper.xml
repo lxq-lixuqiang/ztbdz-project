@@ -23,13 +23,36 @@
 		<result property="project.bidOpeningMethod" column="bid_opening_method"/>
 		<result property="project.isPushBiddingWebsite" column="is_push_bidding_website"/>
 		<result property="project.bidWinningPriceType" column="bid_winning_price_type"/>
+		<result property="project.projectOverview" column="project_overview"/>
 		<result property="project.state" column="state"/>
 		<result property="project.bidOpeningTime" column="bid_opening_time"/>
 		<result property="project.numberReviewExpert" column="number_review_expert"/>
+		<result property="project.answerEndDate" column="answer_end_date"/>
+		<result property="project.enrollEndDate" column="enroll_end_date"/>
+		<result property="project.senrollStartDate" column="senroll_start_date"/>
 		<result property="project.createDate" column="create_date"/>
 		<result property="project.updateDate" column="update_date"/>
 
 		<result property="category.id" column="category_id"/>
 	</resultMap>
+
+	<select id="selectListProject" resultMap="TendereeAndProject">
+		select
+			*
+		from
+		   tenderee t
+		left join project p on t.project_id=p.id
+		left join category cy on p.category_id = cy.id
+		WHERE
+			 t.member_id = #{member.id}
+			<if test="tendereeName !=null and tendereeName.length() >0">
+				and t.tenderee_name like concat('%',#{tendereeName},'%')
+			</if>
+			<if test="project !=null and project.projectName() >0">
+				and p.project_name like concat('%',#{projectName},'%')
+			</if>
+	  	order by
+			t.update_date desc
+	</select>
 	
 </mapper>

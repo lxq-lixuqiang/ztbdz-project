@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.tenderee.mapper.ProjectMapper">
+	<select id="listAvailable" resultType="Project">
+		select 
+			*
+		from
+			project p
+	  	where
+			1=1
+			<if test="project != null">
+				<if test="project.state != null">
+					and p.state = #{project.state}
+				</if>
+			</if>
+		<if test="state==-1">
+			and p.id
+			not in (
+			select project_id
+			from project_register
+			where member_id = #{memberId}
+			and (state =0 or state=1)
+			)
+		</if>
+		<if test="state==1">
+			and p.id in (
+			select project_id
+			from project_register
+			where member_id = #{memberId}
+			and state = #{state}
+			)
+		</if>
+		<if test="state==0">
+			and p.id in (
+			select project_id
+			from project_register
+			where member_id = #{memberId}
+			and state = #{state}
+			)
+		</if>
+	  	order by
+	  		p.update_date desc
+	</select>
+</mapper>

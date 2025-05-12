@@ -1,250 +1,559 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
-<meta charset="utf-8">
-<!-- InstanceBeginEditable name="doctitle" -->
-<title>招标人管理页面</title>
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="head" -->
-<script src="/js/db-connection.js"></script>
-<style>
-    .container {
-        display: flex;
-        width: 100%;
-        height: 100%;
-    }
-    .nav-menu {
-        width: 140px;
-        background: #f5f5f5;
-        padding: 10px;
-    }
-    .nav-item {
-        padding: 8px;
-        cursor: pointer;
-        border-bottom: 1px solid #ddd;
-    }
-    .nav-submenu {
-        display: none;
-        padding-left: 9px;
-    }
-    .nav-submenu-item {
-        padding: 5px;
-        cursor: pointer;
-    }
-    .content-area {
-        flex: 1;
-        padding: 20px;
-    }
-    .tab-header {
-        display: flex;
-        border-bottom: 1px solid #ddd;
-    }
-    .tab-item {
-        padding: 10px 20px;
-        cursor: pointer;
-        border: 1px solid #ddd;
-        margin-right: 5px;
-        background: #f5f5f5;
-    }
-    .tab-item.active {
-        background: #fff;
-        border-bottom: 1px solid #fff;
-    }
-    .tab-content {
-        display: none;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-top: none;
-    }
-    .tab-content.active {
-        display: block;
-    }
-</style>
-<script>
-    function showTab(tabId) {
-        // 隐藏所有标签内容
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        // 取消所有标签项的active类
-        document.querySelectorAll('.tab-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        // 显示选中的标签内容
-        const content = document.getElementById(tabId);
-        content.classList.add('active');
-        // 更新内容区域提示信息
-        if(tabId === 'application') {
-            content.textContent = '这里是项目报名信息';
+    <meta charset="utf-8">
+    <!-- InstanceBeginEditable name="doctitle" -->
+    <title>招标人管理页面</title>
+    <!-- InstanceEndEditable -->
+    <!-- InstanceBeginEditable name="head" -->
+    <script src="/js/db-connection.js"></script>
+    <style>
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
         }
-        // 激活对应的标签项
-        document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
-    }
+        .nav-menu {
+            width: 140px;
+            background: #f5f5f5;
+            padding: 10px;
+        }
+        .nav-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-submenu {
+            display: none;
+            padding-left: 9px;
+        }
+        .nav-submenu-item {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .content-area {
+            flex: 1;
+            padding: 20px;
+        }
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            margin-right: 5px;
+            background: #f5f5f5;
+        }
+        .tab-item.active {
+            background: #fff;
+            border-bottom: 1px solid #fff;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <script>
+        function showTab(tabId) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+        });
+            // 取消所有标签项的active类
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+        });
+            // 显示选中的标签内容
+            const content = document.getElementById(tabId);
+            content.classList.add('active');
+            // 更新内容区域提示信息
+            if(tabId === 'application') {
+                // 保留原有表格结构，不覆盖内容
+                loadApplicationData();
+            }
+            // 激活对应的标签项
+            document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
+        }
 
-    // 为所有标签项添加点击事件
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.tab-item').forEach(item => {
-            item.addEventListener('click', function() {
+        // 为所有标签项添加点击事件
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.addEventListener('click', function() {
                 showTab(this.dataset.tab);
             });
         });
-    });
+        });
 
-    function showAffairTabs() {
-        // 显示事务相关标签页
-        document.querySelectorAll('.tab-item').forEach(item => {
-            const tabId = item.dataset.tab;
+        function showAffairTabs() {
+            // 显示事务相关标签页
+            document.querySelectorAll('.tab-item').forEach(item => {
+                const tabId = item.dataset.tab;
             item.style.display = (tabId === 'overview' || tabId === 'publish' || tabId === 'application') ? 'block' : 'none';
         });
-        showTab('overview');
-    }
+            showTab('overview');
+        }
 
-    function showProjectTabs() {
-        // 显示项目相关标签页
-        document.querySelectorAll('.tab-item').forEach(item => {
-            const tabId = item.dataset.tab;
+        function showProjectTabs() {
+            // 显示项目相关标签页
+            document.querySelectorAll('.tab-item').forEach(item => {
+                const tabId = item.dataset.tab;
             item.style.display = (tabId === 'project1' || tabId === 'project2' || tabId === 'project3') ? 'block' : 'none';
         });
-        showTab('project1');
-    }
-
-    // 提交发布表单
-    function submitPublishForm() {
-        if(confirm('确认发布项目信息吗？')) {
-            alert('项目发布成功！');
-            // 这里可以添加实际提交逻辑
-            saveData();
+            showTab('project1');
         }
-    }
 
-    // 初始化显示事务相关标签页
-    window.onload = function() {
-        showAffairTabs();
-    };
-</script>
-<!-- InstanceEndEditable -->
+        // 提交发布表单
+        function submitPublishForm() {
+            if(confirm('确认发布项目信息吗？')) {
+                // 这里可以添加实际提交逻辑
+                saveData();
+            }
+        }
+
+        // 初始化显示事务相关标签页
+        window.onload = function() {
+            showAffairTabs();
+        };
+    </script>
+    <!-- InstanceEndEditable -->
 </head>
 
 <body>
-    <!-- 不可编辑的顶部区域 -->
-    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
-        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
-        <div style="display:flex; gap:30px;">
-            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
-            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
-            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
-        </div>
+<!-- 不可编辑的顶部区域 -->
+<div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+    <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+    <div style="display:flex; gap:30px;">
+        <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+        <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+        <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
     </div>
-    
-    <!-- 可编辑的主要内容区域 -->
-    <!-- InstanceBeginEditable name="content" -->
-    <div style="width:1040px; min-height:calc(100vh - 120px);">
-        <div class="container">
-            <div class="nav-menu">
-                <div class="nav-item" onclick="showAffairTabs()">我的事务</div>
-                <div class="nav-item" onclick="showProjectTabs()">我的项目</div>
-            </div>
-            <div class="content-area">
-                <div class="tab-header">
-                    <div class="tab-item active" data-tab="overview">综合</div>
-                    <div class="tab-item" data-tab="publish">发布项目</div>
-                    <div class="tab-item" data-tab="application">项目报名</div>
-                    <div class="tab-item" data-tab="project1">已报名项目</div>
-                    <div class="tab-item" data-tab="project2">正在进行项目</div>
-                    <div class="tab-item" data-tab="project3">评审结束项目</div>
-                </div>
-                <div class="tab-content active" id="overview">这里是综合信息概览</div>
-                <div class="tab-content" id="publish">
-                    <h3>发布新项目</h3>
-                    <form id="publishForm" style="max-width:800px;">
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">项目名称</label>
-                            <input id="projectName" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">项目编号</label>
-                            <input id="projectCode" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">采购类型</label>
-                            <select id="procurementMethod" style="width:100%; padding:8px; border:1px solid #ddd;" required>
-                                <option value="">请选择采购类型</option>
-                                <option value="公开招标">公开招标</option>
-                                <option value="磋商">磋商</option>
-                                <option value="比选">比选</option>
-                                <option value="谈判">谈判</option>
-                                <option value="询价">询价</option>
-                                <option value="单一来源">单一来源</option>
-                                <option value="其他">其他</option>
-                            </select>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">项目资格条件</label>
-                            <textarea style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">项目符合性条件</label>
-                            <textarea style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">项目打分要求</label>
-                            <textarea style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">上传采购文件</label>
-                            <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;" required>
-                        </div>
-                        <button type="button" onclick="submitPublishForm()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">确认发布条件</button>
-                    </form>
-                </div>
-                <div class="tab-content" id="application">这里是项目报名信息</div>
-                <div class="tab-content" id="project1">这里是已报名项目列表</div>
-                <div class="tab-content" id="project2">这里是正在进行项目列表</div>
-                <div class="tab-content" id="project3">这里是评审结束项目列表</div>
-            </div>
-        </div>
-    </div>
-    <!-- InstanceEndEditable -->
-    <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
-    <script src="config/token.js" type="text/javascript"></script>
-    <script>
-        function saveData(){
-            var projectName = $("#projectName").val();
-            var projectCode = $("#projectCode").val();
-            var procurementMethod = $("#procurementMethod").find("option:selected").val();
+</div>
 
-            var fileId = $("#fileUpload").attr("data-file-id");
-            var currentTime = new Date().toLocaleString().replaceAll("/","-"); // 截止时间，开标时间，开始时间
-            var tender={"tenderName":projectName};
-            var tenders=[tender];
-            var project = {"bidOpeningTime":currentTime,"projectCode":projectCode,"projectName":projectName,"procurementMethod":procurementMethod,"tenders":tenders,"ext3":fileId,"state":1};
-            var data = {"senrollStartDate":currentTime,"tendereeCode":projectCode,"tendereeName":projectName,"answerEndDate":currentTime,"enrollEndDate":currentTime,"project":project};
-            updateProject(data);
+<!-- 可编辑的主要内容区域 -->
+<!-- InstanceBeginEditable name="content" -->
+<div style="width:1040px; min-height:calc(100vh - 120px);">
+    <div class="container">
+        <div class="nav-menu">
+            <div class="nav-item" onclick="showAffairTabs()">我的事务</div>
+            <div class="nav-item" onclick="showProjectTabs()">我的项目</div>
+        </div>
+        <div class="content-area">
+            <div class="tab-header">
+                <div class="tab-item active" data-tab="overview">综合</div>
+                <div class="tab-item" data-tab="publish">发布项目</div>
+                <div class="tab-item" data-tab="application">项目已报名</div>
+                <div class="tab-item" data-tab="project1">已发布项目</div>
+                <div class="tab-item" data-tab="project2">正在进行项目</div>
+                <div class="tab-item" data-tab="project3">评审结束项目</div>
+            </div>
+            <div class="tab-content active" id="overview">这里是综合信息概览</div>
+            <div class="tab-content" id="publish">
+                <h3>发布新项目</h3>
+                <form id="publishForm" style="max-width:800px;">
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目名称</label>
+                        <input id="projectName" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目编号</label>
+                        <input id="projectCode" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">采购类型</label>
+                        <select id="procurementMethod" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                            <option value="">请选择采购类型</option>
+                            <option value="公开招标">公开招标</option>
+                            <option value="磋商">磋商</option>
+                            <option value="比选">比选</option>
+                            <option value="谈判">谈判</option>
+                            <option value="询价">询价</option>
+                            <option value="单一来源">单一来源</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目资格条件</label>
+                        <textarea id="projectQualificationConditions" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目符合性条件</label>
+                        <textarea id="projectComplianceConditions" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目打分要求</label>
+                        <textarea id="projectScoringRequirements" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目概况</label>
+                        <textarea id="projectOverview" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">上传采购文件</label>
+                        <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">招标方名称</label>
+                        <input id="tendereeName" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目预算</label>
+                        <input id="money" type="number" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">投标报名开始时间</label>
+                        <input id="senrollStartDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">投标报名截止时间</label>
+                        <input id="enrollEndDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">招标时间</label>
+                        <input id="tendereeDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <button type="button" onclick="submitPublishForm()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">确认发布条件</button>
+                </form>
+            </div>
+            <div class="tab-content" id="application">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>项目报名情况</h3>
+                    <button onclick="loadApplicationData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新数据</button>
+                </div>
+                <div id="applicationLoading" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
+                <div id="applicationEmpty" style="text-align:center; padding:20px; display:none;">暂无报名数据</div>
+                <table id="applicationTable" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                    <tr style="background:#f5f5f5;">
+                        <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                        <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
+                        <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                        <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                        <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-content" id="project1">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>已发布项目列表</h3>
+                    <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
+                </div>
+                <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
+                <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">暂无已发布项目</div>
+                <table id="publishedProjects" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                    <tr style="background:#f5f5f5;">
+                        <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                        <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
+                        <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                        <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                        <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-content" id="project2">这里是正在进行项目列表</div>
+            <div class="tab-content" id="project3">这里是评审结束项目列表</div>
+        </div>
+    </div>
+</div>
+<script id="projectsTemplate" type="text/x-handlebars-template">
+    {{#if data}}
+    {{#each data}}
+    <!-- 模拟数据1 -->
+    <tr style="border:1px solid #ddd;">
+        <td style="padding:10px;">{{project.projectName}}</td>
+        <td style="padding:10px;">{{project.enrollEndDate}}</td>
+        <td style="padding:10px;">{{tendereeName}}</td>
+        <td style="padding:10px;">{{project.projectOverview}}</td>
+        <td style="padding:10px;">
+            <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
+        </td>
+    </tr>
+    {{/each}}
+    {{else}}
+    <tr>
+        <td colspan="5" style="padding:10px; border:1px solid #ddd;">暂无项目</td>
+    </tr>
+    {{/if}}
+</script>
+<script id="projects2Template" type="text/x-handlebars-template">
+    {{#if list}}
+    {{#each list}}
+    <!-- 模拟数据1 -->
+    <tr style="border:1px solid #ddd;">
+        <td style="padding:10px;">{{projectName}}</td>
+        <td style="padding:10px;">{{enrollEndDate}}</td>
+        <td style="padding:10px;">{{tendereeName}}</td>
+        <td style="padding:10px;">{{projectOverview}}</td>
+        <td style="padding:10px;">
+            <button onclick="showApplicationModal('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
+        </td>
+    </tr>
+    {{/each}}
+    {{else}}
+    <tr>
+        <td colspan="5" style="padding:10px; border:1px solid #ddd;">暂无项目</td>
+    </tr>
+    {{/if}}
+</script>
+<!-- InstanceEndEditable -->
+<script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+<script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+<script src="config/token.js" type="text/javascript"></script>
+<script>
+    function saveData(){
+        var projectName = $("#projectName").val();
+        var projectCode = $("#projectCode").val();
+        var money = $("#money").val();
+        var projectQualificationConditions = $("#projectQualificationConditions").val();
+        var projectComplianceConditions = $("#projectComplianceConditions").val();
+        var projectScoringRequirements = $("#projectScoringRequirements").val();
+        var projectOverview = $("#projectOverview").val();
+        var procurementMethod = $("#procurementMethod").find("option:selected").val();
+        var senrollStartDate = $("#senrollStartDate").val();
+        var enrollEndDate = $("#enrollEndDate").val();
+
+        var fileId = $("#fileUpload").attr("data-file-id");
+        var currentTime = new Date().toLocaleString().replaceAll("/","-"); // 统一使用ISO格式
+        var tender={"tenderName":projectName};
+        var tenders=[tender];
+        var project = {
+            "bidOpeningTime": currentTime,
+            "projectCode": projectCode,
+            "projectName": projectName,
+            "procurementMethod": procurementMethod,
+            "tenders": tenders,
+            "projectOverview": projectOverview,
+            "money": money,
+            "projectQualificationConditions": projectQualificationConditions,
+            "projectComplianceConditions": projectComplianceConditions,
+            "projectScoringRequirements": projectScoringRequirements,
+            "procurementMethod": procurementMethod,
+            "procurementDocuments": fileId,
+            "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
+            "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
+            "answerEndDate": currentTime, // 已经是ISO格式
+            "state": 1
+        };
+        var tendereeName = $("#tendereeName").val();
+        var tendereeDate = $("#tendereeDate").val();
+
+        // 验证必填字段
+        if(!senrollStartDate || !enrollEndDate || !tendereeName || !tendereeDate || !money) {
+            alert("请填写所有必填字段");
+            return;
         }
-        function updateProject(data){
-            $.ajax({
-                url: "/tenderee/create",
-                type: "POST",
-                data: JSON.stringify(data),
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status != 200){
-                        alert("发布项目失败："+e.message);
-                    }
+
+        // 统一所有日期为ISO格式
+        var data = {
+            "tendereeCode": projectCode,
+            "tendereeName": tendereeName,
+            "tendereeDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"),
+            "project": project
+        };
+        console.log("最终提交数据:", JSON.stringify(data, null, 2));
+        updateProject(data);
+    }
+    function updateProject(data){
+        console.log("提交数据:", JSON.stringify(data, null, 2));
+        $.ajax({
+            url: "/tenderee/create",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function(response) {
+                if(response.status == 200) {
+                    alert("项目发布成功！");
+                    loadPublishedProjects(); // 刷新项目列表
+                } else {
+                    alert("发布项目失败：" + (response.message || "未知错误"));
                 }
-            });
-        }
-
-        $(function() {
-            // 初始化
-            verifyLogin();
-
-            $("#fileUpload").on('change', function () {
-                var fileId = uploadFile(this.files);
-                $("#fileUpload").attr("data-file-id",fileId);
-            });
-
+            },
+            error: function(xhr) {
+                let errorMsg = "请求失败: ";
+                if(xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg += xhr.responseJSON.message;
+                } else if(xhr.statusText) {
+                    errorMsg += xhr.statusText;
+                } else {
+                    errorMsg += "未知错误";
+                }
+                console.error("详细错误:", xhr);
+                alert(errorMsg);
+            }
         });
-    </script>
+    }
+
+    $(function() {
+        // 初始化
+        verifyLogin();
+
+        $("#fileUpload").on('change', function () {
+            var fileId = uploadFile(this.files);
+            $("#fileUpload").attr("data-file-id",fileId);
+        });
+
+        // 加载已发布项目列表
+        loadPublishedProjects();
+    });
+
+    // 加载已发布项目列表
+    function loadApplicationData() {
+        $("#applicationLoading").show();
+        $("#applicationEmpty").hide();
+        $("#applicationTable").hide();
+
+        $.ajax({
+            url: "/projectRegister/list",
+            type: "POST",
+            data: JSON.stringify({"state":0}),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    $("#applicationTable tbody").html(Handlebars.compile($("#projects2Template").html())(e.data));
+                    $("#applicationLoading").hide();
+                    $("#applicationTable").show();
+                }else{
+                    alert("获取项目列表失败："+e.message);
+                }
+            }
+        });
+
+    }
+
+    function loadPublishedProjects() {
+        // 直接显示静态数据，不发起请求
+        $("#loadingMessage").show();
+        $("#emptyMessage").hide();
+        $("#publishedProjects").hide();
+
+        $.ajax({
+            url: "/tenderee/list",
+            type: "POST",
+            data: JSON.stringify({"state":1}),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(e));
+                    $("#loadingMessage").hide();
+                    $("#publishedProjects").show();
+                }else{
+                    alert("获取项目列表失败："+e.message);
+                }
+            }
+        });
+    }
+</script>
+<!-- 报名情况弹窗 -->
+<div id="applicationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 id="modalTitle">项目报名情况</h3>
+            <button onclick="closeModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+            <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
+                <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
+            </tr>
+            </thead>
+            <tbody id="modalApplicationTable">
+            <!-- 模拟数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+        <div style="text-align:center; margin-top:20px;">
+            <button onclick="closeModal()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
+        </div>
+    </div>
+</div>
+<script>
+    // 显示报名情况弹窗
+    function showApplicationModal(projectName,id) {
+
+        $.ajax({
+            url: "/projectRegister/list",
+            type: "POST",
+            data: JSON.stringify({"state":1,"id":id}),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    // 设置弹窗标题
+                    document.getElementById('modalTitle').textContent = projectName + ' - 报名情况';
+
+                    // 填充模拟数据
+                    const tbody = document.getElementById('modalApplicationTable');
+                    tbody.innerHTML = '';
+
+                    // 模拟3个报名单位
+                    var companies = [{name: '暂无报名信息'}];
+                    if(e.data.list.length>0){
+                        companies = [];
+                        for(var i=0;i<e.data.list.length;i++){
+                            var accountName = "";
+                            var contact = "";
+                            var phone = "";
+                            var createDate = "";
+                            var account = e.data.list[i].projectRegisters.member.account;
+                            if(account!=null){
+                                if(account.accountName!=null){
+                                    accountName =account.accountName;
+                                }
+                                if(account.member!=null){
+                                    contact =account.member;
+                                }
+                                if(account.phone!=null){
+                                    phone =account.phone;
+                                }
+                            }
+                            companies.push({name: accountName, contact: contact, phone: phone, time: e.data.list[i].projectRegisters.createDate})
+                        }
+                    }
+                    companies.forEach(company => {
+                        const row = document.createElement('tr');
+                        row.style.border = '1px solid #ddd';
+                        row.innerHTML = `<td colspan="5" style="padding:10px;">暂无报名信息</td>`;
+                        if(e.data.list.length>0){
+                            row.innerHTML = `
+                                <td style="padding:10px;">${company.name}</td>
+                                <td style="padding:10px;">${company.contact}</td>
+                                <td style="padding:10px;">${company.phone}</td>
+                                <td style="padding:10px;">${company.time}</td>
+                            `;
+                        }
+                    tbody.appendChild(row);
+                });
+                    // 显示弹窗
+                    document.getElementById('applicationModal').style.display = 'block';
+                }else{
+                    alert("获取项目列表失败："+e.message);
+                }
+            }
+        });
+
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+        document.getElementById('applicationModal').style.display = 'none';
+    }
+</script>
 </body>
 <!-- InstanceEnd --></html>

@@ -108,7 +108,7 @@ public class SystemConfig {
     }
 
     /**
-     * 创建人默认赋值
+     * 当前登录人默认赋值
      * @return
      */
     public static Member getCreateMember(){

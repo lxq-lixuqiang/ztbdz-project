@@ -3,6 +3,8 @@ package com.ztbdz.tenderee.service;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.web.util.Result;
 
+import java.util.List;
+
 public interface TendereeService {
 
     /**
@@ -70,4 +72,18 @@ public interface TendereeService {
      * @return
      */
     Result getWinBidResult( Long id);
+
+    /**
+     * 查询招标信息
+     * @param tenderee
+     * @return
+     */
+    Result list(Tenderee tenderee);
+
+    /**
+     * 查询招标信息
+     * @param tenderee
+     * @return
+     */
+    List<Tenderee> selectList(Tenderee tenderee) throws Exception;
 }

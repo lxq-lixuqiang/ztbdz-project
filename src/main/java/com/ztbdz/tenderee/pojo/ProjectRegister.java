@@ -31,35 +31,37 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "投标人id")
     @TableField(value = "member_id",el = "member.id")
     private Member member;
-    @ApiModelProperty(value = "报名状态（0=正在报名 1=报名结束）")
+    @ApiModelProperty(value = "报名状态（0=报名中 1=已报名）")
     private Integer state;
     @ApiModelProperty(value = "报名数量")
     private Integer num;
     @ApiModelProperty(value = "保证金金额")
     private double earnestMoney;
     @ApiModelProperty(value = "保证金状态（0=不收取 1=收取）")
-    private double earnestMoneyState;
+    private Integer earnestMoneyState;
     @ApiModelProperty(value = "总分数")
     private Integer score;
     @ApiModelProperty(value = "标书")
-    private Long bidDocumentId;
+    private String bidDocumentId;
     @ApiModelProperty(value = "中标金额")
     private Double bidMoney;
     @ApiModelProperty(value = "合同盖章文件")
-    private Long contractImprint;
+    private String contractImprint;
     @ApiModelProperty(value = "评标报告文件")
-    private Long bidEvaluationReport;
+    private String bidEvaluationReport;
+    @ApiModelProperty(value = "付款凭证")
+    private String paymentVoucher;
     @ApiModelProperty(value = "中标情况（0=未公布 1=中标 2=未中标）")
     private Integer winBidState;
     @ApiModelProperty(value = "保证金到账时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date earnestMoneyAccountDate;
     @ApiModelProperty(value = "保证金退款时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date earnestMoneyRefundDate;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建时间",hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
 
     @ApiModelProperty("评标标准")

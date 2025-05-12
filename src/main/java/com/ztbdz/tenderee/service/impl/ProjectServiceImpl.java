@@ -12,6 +12,7 @@ import com.ztbdz.tenderee.service.ProjectService;
 import com.ztbdz.tenderee.service.TenderService;
 import com.ztbdz.tenderee.service.TendereeInformService;
 import com.ztbdz.tenderee.service.TendereeService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,24 @@ public class ProjectServiceImpl  implements ProjectService {
 
     @Override
     public Integer insert(Project project) throws Exception {
+        project.setMemberId(SystemConfig.getCreateMember().getId());
         return projectMapper.insert(project);
     }
 
     @Override
-    public Result page(Integer page, Integer size, Project project) {
+    public Result page(Integer page, Integer size, Project project,Integer states) {
         try{
-            return Result.ok("查询成功！",selectList(page,size,project));
+            PageInfo<Project> pageDate = null;
+            if(states == 1){
+                pageDate = selectList(page,size,project);
+            }else if(states == 2){
+                pageDate = this.listAvailable(page,size,project,-1);
+            }else if(states == 3){
+                pageDate = this.listAvailable(page,size,project,1);
+            }else if(states == 4){
+                pageDate = this.listAvailable(page,size,project,0);
+            }
+            return Result.ok("查询成功！",pageDate);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询项目列表异常，原因："+e.getMessage());
@@ -62,8 +74,15 @@ public class ProjectServiceImpl  implements ProjectService {
             if(!StringUtils.isEmpty(project.getState())) queryWrapper.eq("state", project.getState());
             if(!StringUtils.isEmpty(project.getProjectClassify())) queryWrapper.eq("project_classify", project.getProjectClassify());
             if(!StringUtils.isEmpty(project.getProcurementMethod())) queryWrapper.eq("procurement_method", project.getProcurementMethod());
+            if(!StringUtils.isEmpty(project.getMemberId())) queryWrapper.eq("member_id", project.getMemberId());
         }
         return new PageInfo(projectMapper.selectList(queryWrapper));
+    }
+
+    @Override
+    public PageInfo<Project> listAvailable(Integer page, Integer size, Project project,Integer state) throws Exception {
+        PageHelper.startPage(page, size);
+        return new PageInfo(projectMapper.listAvailable(project,SystemConfig.getCreateMember().getId(),state));
     }
 
     @Override

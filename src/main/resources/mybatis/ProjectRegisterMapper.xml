@@ -3,17 +3,54 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ztbdz.tenderee.mapper.ProjectRegisterMapper">
-	<select id="selectByCountProjectId" resultMap="ProjectRegisterAndProject">
+	<select id="selectByCountProjectId" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select 
-			p.*,pr.project_id
+			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone
 		from
 		   project_register pr
 		left join project p on pr.project_id=p.id
+		left join member m on m.id=pr.member_id
+		left join account a on a.id=m.account_id
+		where
+			1=1
+		<if test="project != null">
+			<if test="project.id != null">
+				and p.id=#{project.id}
+			</if>
+		</if>
+		<if test="memberId != null">
+			and pr.member_id = #{memberId}
+		</if>
 		group by pr.project_id
 	</select>
-	<resultMap id="ProjectRegisterAndProject" type="ProjectRegister">
+	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">
 		<result property="project.id" column="project_id"/>
+		<result property="project_register.create_date" column="createDate"/>
+
+		<result property="member.id" column="prMemberId"/>
+
+		<result property="member.account.id" column="account_id"/>
+
+		<result property="member.account.accountName" column="unitName"/>
+		<result property="member.account.member" column="member"/>
+		<result property="member.account.phone" column="aPhone"/>
 	</resultMap>
+
+	<select id="getProject" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
+		select
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone
+		from
+		project_register pr
+		left join project p on pr.project_id=p.id
+		left join member m on m.id=pr.member_id
+		left join account a on a.id=m.account_id
+		where
+		1=1
+		<if test="projectId != null">
+			and p.id=#{projectId}
+		</if>
+		group by pr.project_id
+	</select>
 
 
 	<select id="selectListById" resultType="ProjectRegister">

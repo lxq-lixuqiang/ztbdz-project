@@ -30,13 +30,13 @@
                 <h2 style="margin-bottom:15px;">项目信息</h2>
                 <div id="projectInfo" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
                     <div>
-                        <p><strong>项目名称：</strong><span>AI评标系统开发项目</span></p>
-                        <p><strong>项目编号：</strong><span>AI2023001</span></p>
-                        <p><strong>项目金额：</strong>¥<span>50,000.00</span></p>
+                        <p><strong>项目名称：</strong><span></span></p>
+                        <p><strong>项目编号：</strong><span></span></p>
+                        <p><strong>项目金额：</strong>¥<span></span></p>
                     </div>
                     <div>
-                        <p><strong>报名截止：</strong><span>2023-12-31</span></p>
-                        <p><strong>项目周期：</strong><span>90天</span></p>
+                        <p><strong>报名截止：</strong><span></span></p>
+                        <p><strong>项目周期：</strong><span></span></p>
                         <p><strong>项目状态：</strong><span>报名中</span></p>
                     </div>
                 </div>
@@ -110,7 +110,6 @@
                 return;
             }
             if(confirm('确认提交报名信息吗？')) {
-                alert('报名成功！');
                 // 这里可以添加实际提交逻辑
                 saveData();
             }
@@ -122,19 +121,20 @@
     <script>
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");
-            var project = {"id":new URLSearchParams(window.location.search).get("id"),"state":2,"ext4":fileId};
-            var data = {"project":project};
-            updateProject(data);
+            var project = {"id":new URLSearchParams(window.location.search).get("id")};
+            var data = {"project":project,"paymentVoucher":fileId,"earnestMoney":500,"earnestMoneyState":1};
+            projectRegister(data);
         }
 
-        function updateProject(data){
+        function projectRegister(data){
             $.ajax({
-                url: "/tenderee/update",
+                url: "/projectRegister/create",
                 type: "POST",
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){
+                        alert('报名成功！');
                         location.href = "/bider.html";
                     }else{
                         alert("发布项目失败："+e.message);
@@ -166,12 +166,13 @@
                 var infos = $("#projectInfo span");
                 $(infos[0]).text(data.projectName);
                 $(infos[1]).text(data.projectCode);
-                $(infos[2]).text(20000000);
+                $(infos[2]).text(data.money);
+                $(infos[3]).text(data.enrollEndDate);
+                $(infos[4]).text(daysBetweenDates(new Date(data.senrollStartDate),new Date(data.enrollEndDate)));
             }
             $("#paymentProof").on('change', function () {
                 var fileId = uploadImg(this.files);
                 $("#paymentProof").attr("data-file-id",fileId);
-                alert("文件id:"+fileId);
             });
 
         });

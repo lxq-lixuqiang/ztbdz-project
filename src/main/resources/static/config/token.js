@@ -112,3 +112,16 @@ function uploadFile(files) {
     });
     return fileId;
 }
+
+// 计算天数
+function daysBetweenDates(startDate, endDate) {
+    if(!(startDate || endDate)){
+        return "";
+    }
+    // 将日期转换为毫秒
+    var timeDiff = Math.abs(startDate.getTime() - endDate.getTime());
+    // 计算天数差
+    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return diffDays;
+}
+

@@ -4,6 +4,7 @@ package com.ztbdz.tenderee.controller;
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.tenderee.service.TendereeService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -40,6 +41,18 @@ public class TendereeController {
     public Result update(@RequestBody Tenderee tenderee) {
         return tendereeService.update(tenderee);
     }
+
+    @ApiOperation(value = "查询招标")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("list")
+    public Result list(@RequestBody Tenderee tenderee) {
+        tenderee.setMember(SystemConfig.getCreateMember());
+        return tendereeService.list(tenderee);
+    }
+
 
     @ApiOperation(value = "删除招标")
     @ApiImplicitParams({

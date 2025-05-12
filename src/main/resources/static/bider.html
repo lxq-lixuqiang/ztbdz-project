@@ -399,8 +399,8 @@
         {{#each list}}
             <tr>
                 <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
-                <td style="padding:10px; border:1px solid #ddd;">2025-10-01</td>
-                <td style="padding:10px; border:1px solid #ddd;">¥20000000</td>
+                <td style="padding:10px; border:1px solid #ddd;">{{enrollEndDate}}</td>
+                <td style="padding:10px; border:1px solid #ddd;">{{money}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">
                     <a href="application.html?id={{id}}" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</a>
                 </td>
@@ -417,8 +417,8 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">资料审核中</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#eq  projectRegisters.state 0}}资料审核中{{else}}审核已通过{{/eq}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
             </td>
@@ -435,7 +435,7 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">已报名</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看详情</button>
@@ -499,16 +499,16 @@
                 availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
             });
             $("body").on("click", "div[data-tab=applying]", function() {
-                availableInit(2,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
+                applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
             });
             $("body").on("click", "div[data-tab=project1]", function() {
-                availableInit(3,$("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+                project1Init(1,$("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
             });
             $("body").on("click", "div[data-tab=project2]", function() {
-                availableInit(4,$("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
+                projectInit(2,$("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
             });
             $("body").on("click", "div[data-tab=project3]", function() {
-                availableInit(5,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
+                projectInit(3,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
             });
             $("body").on("click", "div[data-tab=profile]", function() {
                 var account = JSON.parse(getMember()).account;
@@ -588,7 +588,24 @@
                 $("#uploadedFilesList p").text(fileName);
             }
 
-            function availableInit(state,tbody,template){
+            function applyingInit(state,tbody,template){
+                $.ajax({
+                    url: "/projectRegister/listApplying",
+                    type: "POST",
+                    data: JSON.stringify({"state":state}),
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var newTemplate = template(e.data);
+                            tbody.html(newTemplate);
+                        }else{
+                            alert("获取正在报名项目列表失败："+e.message);
+                        }
+                    }
+                });
+            }
+
+            function projectInit(state,tbody,template){
                 $.ajax({
                     url: "/project/list",
                     type: "POST",
@@ -600,6 +617,40 @@
                             tbody.html(newTemplate);
                         }else{
                             alert("获取项目列表失败："+e.message);
+                        }
+                    }
+                });
+            }
+
+            function project1Init(state,tbody,template){
+                $.ajax({
+                    url: "/project/listProject1",
+                    type: "POST",
+                    data: JSON.stringify({"state":state}),
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var newTemplate = template(e.data);
+                            tbody.html(newTemplate);
+                        }else{
+                            alert("获取已报名项目列表失败："+e.message);
+                        }
+                    }
+                });
+            }
+
+            function availableInit(state,tbody,template){
+                $.ajax({
+                    url: "/project/listAvailable",
+                    type: "POST",
+                    data: JSON.stringify({"state":state}),
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var newTemplate = template(e.data);
+                            tbody.html(newTemplate);
+                        }else{
+                            alert("获取可以报名项目列表失败："+e.message);
                         }
                     }
                 });

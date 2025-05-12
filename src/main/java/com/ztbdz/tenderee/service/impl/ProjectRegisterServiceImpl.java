@@ -8,6 +8,7 @@ import com.ztbdz.tenderee.pojo.*;
 import com.ztbdz.tenderee.service.*;
 import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.service.BidderInfoService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,11 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     public Result create(ProjectRegister projectRegister) {
         try{
             // 判断是否在 报名时间 范围内
-            Tenderee tenderee = tendereeService.selectByProjectId(projectRegister.getProject().getId());
+            Project project = projectService.selectById(projectRegister.getProject().getId());
             long nowDate = new Date().getTime();
-            long startDate = tenderee.getSenrollStartDate().getTime(); // 开始时间
-            long endDate =tenderee.getEnrollEndDate().getTime(); // 截止时间
-            if(!(nowDate>startDate && endDate>nowDate)) return Result.fail("报名日期【"+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(tenderee.getSenrollStartDate())+" - "+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(tenderee.getEnrollEndDate())+"】，请在报名时间内报名！");
+            long startDate = project.getSenrollStartDate().getTime(); // 开始时间
+            long endDate =project.getEnrollEndDate().getTime(); // 截止时间
+            if(!(nowDate>startDate && endDate>nowDate)) return Result.fail("报名日期【"+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(project.getSenrollStartDate())+" - "+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(project.getEnrollEndDate())+"】，请在报名时间内报名！");
 
             Integer num = this.insert(projectRegister);
             if(num<=0) return Result.fail("报名失败");
@@ -75,10 +76,12 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public Result page(Integer page, Integer size, Project project) {
+    public Result page(Integer page, Integer size, Project project,Integer state) {
         try{
             PageHelper.startPage(page, size);
-            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId();
+            Long memberId = null;
+            if(state ==1) memberId = SystemConfig.getCreateMember().getId();
+            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,memberId);
             List<Long> projectIds = new ArrayList();
             for(ProjectRegister projectRegister : projectRegisterList){
                 projectIds.add(projectRegister.getProject().getId());
@@ -88,7 +91,9 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                 projectList = projectService.selectByIds(projectIds);
                 Map<String,ProjectRegister> mapProjectRegister = new HashMap();
                 for (ProjectRegister projectRegister : projectRegisterList) {
-                    mapProjectRegister.put(projectRegister.getId().toString(),projectRegister);
+                    String projectId = projectRegister.getProject().getId().toString();
+                    projectRegister.setProject(null);
+                    mapProjectRegister.put(projectId,projectRegister);
                 }
                 for(Project project1 : projectList) {
                     ProjectRegister projectRegister = mapProjectRegister.get(project1.getId().toString());
@@ -105,8 +110,8 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public List<ProjectRegister> selectByCountProjectId() throws Exception {
-        return projectRegisterMapper.selectByCountProjectId();
+    public List<ProjectRegister> selectByCountProjectId(Project project,Long memberId) throws Exception {
+        return projectRegisterMapper.selectByCountProjectId(project,memberId);
     }
 
     @Override
@@ -128,7 +133,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public Result contractImprint(Long id, Long contractImprint) {
+    public Result contractImprint(Long id, String contractImprint) {
         try{
             ProjectRegister projectRegister = new ProjectRegister();
             projectRegister.setId(id);
@@ -143,7 +148,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public Result bidDocument(Long id, Long bidDocumentId) {
+    public Result bidDocument(Long id, String bidDocumentId) {
         try{
             ProjectRegister projectRegister = new ProjectRegister();
             projectRegister.setId(id);
@@ -188,11 +193,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public Result getProject(Long projectId) {
         try{
-            ProjectRegister projectRegister = new ProjectRegister();
-            Project project = new Project();
-            project.setId(projectId);
-            projectRegister.setProject(project);
-            return Result.ok("查询成功",this.selectList(projectRegister));
+            return Result.ok("查询成功",projectRegisterMapper.getProject(projectId));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("根据项目id查询投标异常，原因："+e.getMessage());
@@ -200,7 +201,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public Result countScore(Long id,Long fileId) {
+    public Result countScore(Long id,String fileId) {
         try{
             EvaluationCriteria evaluationCriteria = new EvaluationCriteria();
             evaluationCriteria.setProjectRegisterId(id);

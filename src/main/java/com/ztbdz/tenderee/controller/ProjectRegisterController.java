@@ -4,6 +4,7 @@ package com.ztbdz.tenderee.controller;
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.tenderee.service.ProjectRegisterService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -30,6 +31,8 @@ public class ProjectRegisterController {
     @CheckToken
     @PostMapping("create")
     public Result create(@RequestBody ProjectRegister projectRegister) {
+        projectRegister.setState(0);
+        projectRegister.setMember(SystemConfig.getCreateMember());
         return projectRegisterService.create(projectRegister);
     }
 
@@ -52,7 +55,7 @@ public class ProjectRegisterController {
     })
     @CheckToken
     @PostMapping("contractImprint")
-    public Result contractImprint(@RequestParam(required = true) Long id,@RequestParam(required = true) Long contractImprint) {
+    public Result contractImprint(@RequestParam(required = true) Long id,@RequestParam(required = true) String contractImprint) {
         return projectRegisterService.contractImprint(id,contractImprint);
     }
 
@@ -64,7 +67,7 @@ public class ProjectRegisterController {
     })
     @CheckToken
     @PostMapping("bidDocument")
-    public Result bidDocument(@RequestParam(required = true) Long id,@RequestParam(required = true) Long bidDocumentId) {
+    public Result bidDocument(@RequestParam(required = true) Long id,@RequestParam(required = true) String bidDocumentId) {
         return projectRegisterService.bidDocument(id,bidDocumentId);
     }
 
@@ -76,7 +79,7 @@ public class ProjectRegisterController {
     })
     @CheckToken
     @PostMapping("countScore")
-    public Result countScore(@RequestParam(required = true) Long id,@RequestParam(required = true) Long fileId) {
+    public Result countScore(@RequestParam(required = true) Long id,@RequestParam(required = true) String fileId) {
         return projectRegisterService.countScore(id,fileId);
     }
 
@@ -97,7 +100,7 @@ public class ProjectRegisterController {
             @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
     })
     @CheckToken
-    @GetMapping("getProject/{projectId}")
+    @PostMapping("getProject")
     public Result getProject(@RequestParam(required = true) Long projectId) {
         return projectRegisterService.getProject(projectId);
     }
@@ -120,10 +123,24 @@ public class ProjectRegisterController {
             @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
     })
     @CheckToken
+    @PostMapping("listApplying")
+    public Result listApplying(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestBody(required = false) Project project) {
+        return projectRegisterService.page(page,size,project,1);
+    }
+
+    @ApiOperation(value = "查询投标报名列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
     @PostMapping("list")
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
                        @RequestBody(required = false) Project project) {
-        return projectRegisterService.page(page,size,project);
+        return projectRegisterService.page(page,size,project,0);
     }
 }

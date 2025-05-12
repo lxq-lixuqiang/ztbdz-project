@@ -48,17 +48,8 @@ public class Tenderee extends Model<Tenderee> implements Serializable {
     @ApiModelProperty(value = "招标公告")
     @TableField(exist = false)
     private List<TendereeInform> tendereeInforms;
-    @ApiModelProperty(value = "投标报名开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-    private Date senrollStartDate;
-    @ApiModelProperty(value = "投标报名截止时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-    private Date enrollEndDate;
-    @ApiModelProperty(value = "答疑截止时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-    private Date answerEndDate;
     @ApiModelProperty(value = "招标时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date tendereeDate;
 
     @ApiModelProperty("创建人")
@@ -66,11 +57,11 @@ public class Tenderee extends Model<Tenderee> implements Serializable {
     private Member member;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "更新日期",hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date updateDate;
     @ApiModelProperty(value = "扩展字段01",hidden = true)
     private Integer ext1;

@@ -2,6 +2,7 @@ package com.ztbdz.tenderee.controller;
 
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.service.ProjectService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -31,9 +32,50 @@ public class ProjectController {
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
                        @RequestBody(required = false) Project project) {
-        return projectService.page(page,size,project);
+        return projectService.page(page,size,project,1);
     }
 
+    @ApiOperation(value = "可报名项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("listAvailable")
+    public Result listAvailable(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestBody(required = false) Project project) {
+        return projectService.page(page,size,project,2);
+    }
+
+    @ApiOperation(value = "已报名项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("listProject1")
+    public Result listProject1(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestBody(required = false) Project project) {
+        return projectService.page(page,size,project,3);
+    }
+
+    @ApiOperation(value = "正在报名项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("listApplyingInit")
+    public Result listApplyingInit(@RequestParam(required = false, defaultValue = "1") Integer page,
+                               @RequestParam(required = false, defaultValue = "20") Integer size,
+                               @RequestBody(required = false) Project project) {
+        return projectService.page(page,size,project,4);
+    }
 
     @ApiOperation(value = "查询项目")
     @ApiImplicitParams({

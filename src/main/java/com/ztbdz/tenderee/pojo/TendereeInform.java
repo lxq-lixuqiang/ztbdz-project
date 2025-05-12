@@ -31,7 +31,7 @@ public class TendereeInform extends Model<TendereeInform> implements Serializabl
     private Long tendereeInformField;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "上传时间",hidden = true)
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
     @ApiModelProperty(value = "类型（0=公告文件 1=磋商文件 2=澄清与答疑文件）")
     private Integer type;

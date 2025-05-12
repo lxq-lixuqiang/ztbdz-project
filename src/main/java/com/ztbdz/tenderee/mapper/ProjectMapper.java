@@ -1,9 +1,16 @@
 package com.ztbdz.tenderee.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Project;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface ProjectMapper extends BaseMapper<Project> {
+
+    List<Project> listAvailable(@Param("project")Project project, @Param("memberId")Long memberId,@Param("state")Integer state);
+
 }

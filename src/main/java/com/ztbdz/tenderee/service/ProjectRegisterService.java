@@ -38,13 +38,13 @@ public interface ProjectRegisterService {
      * @param project
      * @return
      */
-    Result page(Integer page,Integer size,Project project);
+    Result page(Integer page,Integer size,Project project,Integer state);
 
     /**
      * 查询项目报名列表
      * @return
      */
-    List<ProjectRegister> selectByCountProjectId()throws Exception;
+    List<ProjectRegister> selectByCountProjectId(Project project,Long memberId)throws Exception;
 
     /**
      * 校验报名资质
@@ -60,7 +60,7 @@ public interface ProjectRegisterService {
      * @param contractImprint
      * @return
      */
-    Result contractImprint(Long id, Long contractImprint);
+    Result contractImprint(Long id, String contractImprint);
 
     /**
      * 上传标书
@@ -68,7 +68,7 @@ public interface ProjectRegisterService {
      * @param bidDocumentId
      * @return
      */
-    Result bidDocument(Long id, Long bidDocumentId);
+    Result bidDocument(Long id, String bidDocumentId);
 
     /**
      * 查询投标
@@ -112,7 +112,7 @@ public interface ProjectRegisterService {
      * @param fileId
      * @return
      */
-    Result countScore(Long id,Long fileId);
+    Result countScore(Long id,String fileId);
 
     /**
      * 更新中标状态

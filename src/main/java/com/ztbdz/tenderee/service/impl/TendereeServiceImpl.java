@@ -36,7 +36,7 @@ public class TendereeServiceImpl implements TendereeService {
     public Result create(Tenderee tenderee) {
         try{
             // 判断 投标报名，截止时间，开标时间 必填
-            if(StringUtils.isEmpty(tenderee.getSenrollStartDate()) || StringUtils.isEmpty(tenderee.getEnrollEndDate()))  return Result.fail("投标开始时间和投标截止时间不能为空！");
+            if(StringUtils.isEmpty(tenderee.getProject().getSenrollStartDate()) || StringUtils.isEmpty(tenderee.getProject().getEnrollEndDate()))  return Result.fail("投标开始时间和投标截止时间不能为空！");
             if(StringUtils.isEmpty(tenderee.getProject().getBidOpeningTime()))  return Result.fail("开标时间不能为空！");
             // 项目信息
             Project project = tenderee.getProject();
@@ -149,6 +149,21 @@ public class TendereeServiceImpl implements TendereeService {
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询中标结果异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public Result list(Tenderee tenderee) {
+        try{
+            return Result.ok("查询成功！",this.selectList(tenderee));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询招标列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Tenderee> selectList(Tenderee tenderee) throws Exception {
+        return tendereeMapper.selectListProject(tenderee);
     }
 
     @Override
