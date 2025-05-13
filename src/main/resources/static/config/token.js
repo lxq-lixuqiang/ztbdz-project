@@ -26,7 +26,8 @@ function removeToken() {
 function verifyLogin(){
     $.ajaxSetup({
         headers: {
-            'token': getToken()
+            'token': getToken(),
+            'url' : window.location.pathname
         }
     });
     $.ajax({
@@ -36,10 +37,10 @@ function verifyLogin(){
         contentType: "application/json",
         success:function(e) {
             if(e.status == 200){
+                setToken(e.data.token); // 刷新token保持活跃状态
                 setMember(JSON.stringify(e.data.member));
             }else{
-                alert("校验token失败："+e.message);
-                removeToken();
+                alert(e.message);
                 location.href = "/login.html";
             }
         },error:function(e) {

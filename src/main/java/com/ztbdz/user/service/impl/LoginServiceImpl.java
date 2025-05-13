@@ -1,9 +1,6 @@
 package com.ztbdz.user.service.impl;
 
-import com.ztbdz.user.pojo.Landlord;
-import com.ztbdz.user.pojo.Member;
-import com.ztbdz.user.pojo.Role;
-import com.ztbdz.user.pojo.User;
+import com.ztbdz.user.pojo.*;
 import com.ztbdz.user.service.*;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.interceptor.AuthenticationInterceptor;
@@ -101,11 +98,16 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Result verifyLogin(String token) {
+    public Result verifyLogin(String token,String url) {
         try{
-            authenticationInterceptor.verifyLogin(token);
+            User user = authenticationInterceptor.verifyLogin(token);
             Object memberId = SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
             Map<String,Object> dataMap = this.getLoginInfo(Long.valueOf(memberId.toString()));
+            // 校验 当前人员是否有访问权限
+            if(roleService.verifyAuthority(url)){
+                return Result.fail("账号没有权限，请切换对应账号访问！");
+            }
+            dataMap.put("token",JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user));
             return Result.ok("校验成功！",dataMap);
         }catch (Exception e){
             return Result.fail(e.getMessage());

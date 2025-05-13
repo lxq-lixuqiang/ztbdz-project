@@ -1,9 +1,8 @@
 package com.ztbdz.web.interceptor;
 
-import com.ztbdz.user.pojo.Account;
-import com.ztbdz.user.pojo.Member;
-import com.ztbdz.user.pojo.Role;
-import com.ztbdz.user.pojo.User;
+import com.github.pagehelper.PageInfo;
+import com.ztbdz.user.pojo.*;
+import com.ztbdz.user.service.MenuAuthorizeService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +11,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Component
 @Slf4j
 public class DataInitializer {
@@ -19,6 +23,8 @@ public class DataInitializer {
     private RoleService roleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MenuAuthorizeService menuAuthorizeService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initData() {
@@ -43,6 +49,49 @@ public class DataInitializer {
                 user.setMember(member);
                 userService.create(user,"-1");
             }
+
+            // 初始化菜单权限 并 关联角色
+            PageInfo<MenuAuthorize> menuPage =  menuAuthorizeService.selectList(1,1,new MenuAuthorize());
+            if(menuPage.getTotal()<=0){
+                List<Role> roleList = roleService.selectList(new Role());
+                Map<String,Long> roleMap = new HashMap();
+                for(Role role :roleList){
+                    roleMap.put(role.getType(),role.getId());
+                }
+                Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
+                // 管理员
+                List<MenuAuthorize> adminMenuList = new ArrayList();
+                saveDataMap.put("admin",adminMenuList);
+                // 招标方
+                List<MenuAuthorize> tendereeMenuList = new ArrayList();
+                tendereeMenuList.add(new MenuAuthorize("招标方管理页面","tenderee","tenderee.html"));
+                saveDataMap.put("tenderee",tendereeMenuList);
+                // 投标方
+                List<MenuAuthorize> bidderMenuList = new ArrayList();
+                bidderMenuList.add(new MenuAuthorize("投标方管理页面","bider","bider.html"));
+                bidderMenuList.add(new MenuAuthorize("投标方报名详情页","application","application.html"));
+                saveDataMap.put("bidder",bidderMenuList);
+                // 专家
+                List<MenuAuthorize> expertMenuList = new ArrayList();
+                expertMenuList.add(new MenuAuthorize("专家管理页面","expert","expert.html"));
+                expertMenuList.add(new MenuAuthorize("专家评审页面","Bid evaluation","Bid evaluation.html"));
+                saveDataMap.put("expert",expertMenuList);
+                // 财务
+                List<MenuAuthorize> treasurerMenuList = new ArrayList();
+                saveDataMap.put("treasurer",treasurerMenuList);
+
+                for(String key :saveDataMap.keySet()){
+                    List<MenuAuthorize> menuList = saveDataMap.get(key);
+                    List<RoleRelatedAuthorize> roleRelatedAuthorizeList = new ArrayList();
+                    for(MenuAuthorize menuAuthorize :menuList){
+                        menuAuthorizeService.insert(menuAuthorize);
+                        RoleRelatedAuthorize roleRelatedAuthorize = new RoleRelatedAuthorize(roleMap.get(key),menuAuthorize.getId());
+                        roleRelatedAuthorizeList.add(roleRelatedAuthorize);
+                    }
+                    roleService.allocation(roleRelatedAuthorizeList);
+                }
+            }
+
         }catch (Exception e) {
             log.error("初始化数据异常！", e);
         }

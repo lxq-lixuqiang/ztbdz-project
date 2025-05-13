@@ -47,12 +47,13 @@ public class UserController {
 
     @ApiOperation(value = "校验token")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "url", value = "url", required=true,paramType = "header", dataType = "String")
     })
     @CheckToken
     @PostMapping("verifyLogin")
-    public Result verifyLogin(@RequestHeader String token) {
-        return loginService.verifyLogin(token);
+    public Result verifyLogin(@RequestHeader String token,@RequestHeader String url) {
+        return loginService.verifyLogin(token,url);
     }
 
 

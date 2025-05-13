@@ -43,8 +43,17 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
     @Override
     public MenuAuthorize select(MenuAuthorize menuAuthorize) throws Exception {
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("id", menuAuthorize.getId().toString());
+        if(!StringUtils.isEmpty(menuAuthorize.getId())) queryWrapper.eq("id", menuAuthorize.getId().toString());
+        if(!StringUtils.isEmpty(menuAuthorize.getSign())) queryWrapper.eq("sign", menuAuthorize.getSign());
         return menuAuthorizeMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public List<MenuAuthorize> selectList(MenuAuthorize menuAuthorize) throws Exception {
+        QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
+        if(!StringUtils.isEmpty(menuAuthorize.getName())) queryWrapper.eq("name", menuAuthorize.getName());
+        if(!StringUtils.isEmpty(menuAuthorize.getSign())) queryWrapper.eq("sign", menuAuthorize.getSign());
+        return menuAuthorizeMapper.selectList(queryWrapper);
     }
 
     @Override

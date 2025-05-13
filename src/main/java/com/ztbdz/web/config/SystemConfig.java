@@ -32,6 +32,16 @@ public class SystemConfig {
      * 短信标识
      */
     public static String SMS = "smsList";
+
+    /**
+     * 角色与菜单关联标识
+     */
+    public static String ROLE_AND_MENU = "roleAndMenu";
+    /**
+     * 全部菜单标识
+     */
+    public static String ALL_MENU = "allMenu";
+
     /**
      * 默认密码后缀
      */

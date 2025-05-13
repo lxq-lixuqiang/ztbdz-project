@@ -49,6 +49,14 @@ public class MenuAuthorize extends Model<MenuAuthorize> implements Serializable 
     @ApiModelProperty(value = "扩展字段05",hidden = true)
     private String ext5;
 
+    public MenuAuthorize(){}
+
+    public MenuAuthorize(String name,String sign,String url){
+        this.name=name;
+        this.sign=sign;
+        this.url=url;
+    }
+
     @Override
     protected Serializable pkVal() {
         return id;

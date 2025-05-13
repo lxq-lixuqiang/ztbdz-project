@@ -130,4 +130,11 @@ public interface RoleService {
      * @throws Exception
      */
     void getMenuAuthorizeInfo(List<Role> roleList,boolean isMember) throws Exception;
+
+    /**
+     * 校验权限
+     * @param url 访问的页面地址
+     * @return
+     */
+    boolean verifyAuthority(String url) throws Exception;
 }

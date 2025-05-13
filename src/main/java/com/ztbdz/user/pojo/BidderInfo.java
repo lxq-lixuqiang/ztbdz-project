@@ -33,15 +33,15 @@ public class BidderInfo extends Model<BidderInfo> implements Serializable {
     @ApiModelProperty(value = "审核不通过原因")
     private String notCheckShow;
     @ApiModelProperty(value = "资质证明文件01")
-    private Long qualificationCertificate01;
+    private String qualificationCertificate01;
     @ApiModelProperty(value = "资质证明文件02")
-    private Long qualificationCertificate02;
+    private String qualificationCertificate02;
     @ApiModelProperty(value = "资质证明文件03")
-    private Long qualificationCertificate03;
+    private String qualificationCertificate03;
     @ApiModelProperty(value = "资质证明文件04")
-    private Long qualificationCertificate04;
+    private String qualificationCertificate04;
     @ApiModelProperty(value = "资质证明文件05")
-    private Long qualificationCertificate05;
+    private String qualificationCertificate05;
 
 
     @TableField(fill = FieldFill.INSERT)

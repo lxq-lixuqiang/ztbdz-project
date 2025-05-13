@@ -6,14 +6,15 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.RoleMapper;
 import com.ztbdz.user.mapper.RoleRelatedAuthorizeMapper;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.MenuAuthorize;
 import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.pojo.RoleRelatedAuthorize;
-import com.ztbdz.user.service.MemberService;
-import com.ztbdz.user.service.MenuAuthorizeService;
-import com.ztbdz.user.service.RoleService;
+import com.ztbdz.user.service.*;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -32,11 +33,15 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleMapper roleMapper;
     @Autowired
+    private LoginService loginService;
+    @Autowired
     private MemberService memberService;
     @Autowired
     private MenuAuthorizeService menuAuthorizeService;
     @Autowired
     private RoleRelatedAuthorizeMapper roleRelatedAuthorizeMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Integer insert(Role role) throws Exception {
@@ -257,7 +262,52 @@ public class RoleServiceImpl implements RoleService {
                 role.setMember(memberService.selectList(member));
             }
         }
+    }
 
+    public boolean verifyAuthority(String url)  throws Exception{
+        try{
+            Map<String,Object> dataMap = loginService.getLoginInfo(SystemConfig.getCreateMember().getId());
+            Object roleAndMenu = redisTemplate.opsForValue().get(SystemConfig.ROLE_AND_MENU);
+            if(roleAndMenu==null){
+                List<Role> roleList = this.selectList(new Role());
+                this.getMenuAuthorizeInfo(roleList,false);
+                Map<String,Role> roleMap = new HashMap();
+                for(Role role :roleList){
+                    roleMap.put(role.getType(),role);
+                }
+                redisTemplate.opsForValue().set(SystemConfig.ROLE_AND_MENU,roleMap);
+                roleAndMenu = roleMap;
+            }
+            Object allMenu = redisTemplate.opsForValue().get(SystemConfig.ALL_MENU);
+            if(allMenu==null){
+                List<MenuAuthorize> menuAuthorizeList = menuAuthorizeService.selectList(new MenuAuthorize());
+                redisTemplate.opsForValue().set(SystemConfig.ALL_MENU,menuAuthorizeList);
+                allMenu = menuAuthorizeList;
+            }
+            List<MenuAuthorize> allMenuAuthorizeList = (List<MenuAuthorize>)allMenu;
+            Map<String,MenuAuthorize> menuMap = new HashMap();
+            for(MenuAuthorize menuAuthorize : allMenuAuthorizeList){
+                menuMap.put(menuAuthorize.getUrl(),menuAuthorize);
+            }
+            Map<String,Role> roleAndMenuMap = (Map)roleAndMenu;
+            if(dataMap.get("member")!=null && menuMap.get(url)!=null){
+                Member member = (Member)dataMap.get("member");
+                Role role = roleAndMenuMap.get(member.getRole().getType());
+                List<MenuAuthorize> menuAuthorizeList = role.getMeunAuthorize();
+                boolean isNoAuthority = true;
+                for(MenuAuthorize menuAuthorize : menuAuthorizeList){
+                    if(menuAuthorize.getUrl().equals(url)){
+                        isNoAuthority = false;
+                        break;
+                    }
+                }
+                return isNoAuthority;
+            }
+            return false;
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+        }
+        return false;
     }
 
 }

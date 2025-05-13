@@ -18,26 +18,27 @@
 		<if test="state==-1">
 			and p.id
 			not in (
-			select project_id
-			from project_register
-			where member_id = #{memberId}
-			and (state =0 or state=1)
+				select project_id
+				from project_register
+				where member_id = #{memberId}
+				and (state =0 or state=1)
 			)
+			and (Now() BETWEEN p.senroll_start_date AND p.enroll_end_date)
 		</if>
 		<if test="state==1">
 			and p.id in (
-			select project_id
-			from project_register
-			where member_id = #{memberId}
-			and state = #{state}
+				select project_id
+				from project_register
+				where member_id = #{memberId}
+				and state = #{state}
 			)
 		</if>
 		<if test="state==0">
 			and p.id in (
-			select project_id
-			from project_register
-			where member_id = #{memberId}
-			and state = #{state}
+				select project_id
+				from project_register
+				where member_id = #{memberId}
+				and state = #{state}
 			)
 		</if>
 	  	order by

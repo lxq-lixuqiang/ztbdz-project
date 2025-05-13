@@ -60,8 +60,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (checkToken.required()) {
                 // 校验token
                 User user = this.verifyLogin(token);
-                // 刷新token时效
-                JwtUtil.refreshToken(token, user,SystemConfig.TOKEN_VALIDITY);
                 SystemConfig.setSession(Common.LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
                 return true;
             }

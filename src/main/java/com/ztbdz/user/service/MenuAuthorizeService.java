@@ -36,6 +36,14 @@ public interface MenuAuthorizeService {
      */
     MenuAuthorize select(MenuAuthorize menuAuthorize) throws Exception;
 
+
+    /**
+     * 查询权限
+     * @param menuAuthorize
+     * @return
+     */
+    List<MenuAuthorize> selectList(MenuAuthorize menuAuthorize) throws Exception;
+
     /**
      * 查询权限列表
      * @param page

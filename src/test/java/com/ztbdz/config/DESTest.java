@@ -17,7 +17,7 @@ public class DESTest {
      */
     @Test
     public void desTest() {
-        String temp = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJseHEiLCJwYXNzd29yZCI6ImQ1MjA1ZThlNjRmZDcxOTc3NGNhMDAzOWY1ZTlkMTE5IiwiaWQiOiI1MDk0MTI5OTg2NjY4MzQ4MTAxIiwiZXhwIjoxNzQ1OTkzMjgzLCJpYXQiOjE3NDU5OTE0ODMsImp0aSI6ImVjYmYxZWRiLTBiM2YtNDNmMi05MWZlLTZkZDViMDM0MzA0MiIsInVzZXJuYW1lIjoibHhxIn0.YYgr04UMQQ5rRIA2s1Ujzqr97HTUsr1bs1ZIM112x-4";
+        String temp = "12345";
         // 加密
         String str = DESUtil.getEncryptString(temp);
         System.out.println("加密后：" + str);

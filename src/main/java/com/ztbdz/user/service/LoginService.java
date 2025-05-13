@@ -36,7 +36,7 @@ public interface LoginService {
      * @param token
      * @return
      */
-    Result verifyLogin(String token);
+    Result verifyLogin(String token,String url);
 
 
     /**

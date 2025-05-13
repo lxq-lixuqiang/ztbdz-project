@@ -70,19 +70,19 @@ public class Project extends Model<Project> implements Serializable {
     private Tenderee tenderee;
 
     @ApiModelProperty(value = "投标报名开始时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date senrollStartDate;
     @ApiModelProperty(value = "投标报名截止时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date enrollEndDate;
     @ApiModelProperty(value = "答疑截止时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date answerEndDate;
 
     @ApiModelProperty(value = "项目状态（1=可以报名项目 2=正在进行项目 3=评审结束项目）")
     private Integer state;
     @ApiModelProperty(value = "开标时间")
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date bidOpeningTime;
     @ApiModelProperty(value = "评审专家人数")
     private Integer numberReviewExpert;

@@ -20,6 +20,13 @@ public class RoleRelatedAuthorize extends Model<RoleRelatedAuthorize> implements
     @ApiModelProperty("菜单权限id")
     private Long menuAuthorizeId;
 
+    public RoleRelatedAuthorize(){}
+
+    public RoleRelatedAuthorize(Long roleId,Long menuAuthorizeId){
+        this.roleId = roleId;
+        this.menuAuthorizeId = menuAuthorizeId;
+    }
+
     @Override
     protected Serializable pkVal() {
         return roleId+menuAuthorizeId;
