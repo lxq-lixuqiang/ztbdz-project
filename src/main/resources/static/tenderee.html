@@ -297,7 +297,7 @@
     <tr style="border:1px solid #ddd;">
         <td style="padding:10px;">{{projectName}}</td>
         <td style="padding:10px;">{{enrollEndDate}}</td>
-        <td style="padding:10px;">{{tendereeName}}</td>
+        <td style="padding:10px;">{{projectRegisters.project.tenderee.tendereeName}}</td>
         <td style="padding:10px;">{{projectOverview}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
@@ -380,6 +380,7 @@
                 if(response.status == 200) {
                     alert("项目发布成功！");
                     loadPublishedProjects(); // 刷新项目列表
+                    showProjectTabs();
                 } else {
                     alert("发布项目失败：" + (response.message || "未知错误"));
                 }
@@ -421,7 +422,6 @@
         $.ajax({
             url: "/projectRegister/list",
             type: "POST",
-            data: JSON.stringify({"state":0}),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
@@ -489,9 +489,8 @@
     function showApplicationModal(projectName,id) {
 
         $.ajax({
-            url: "/projectRegister/list",
-            type: "POST",
-            data: JSON.stringify({"state":1,"id":id}),
+            url: "/projectRegister/getProject/"+id,
+            type: "GET",
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
@@ -504,14 +503,14 @@
 
                     // 模拟3个报名单位
                     var companies = [{name: '暂无报名信息'}];
-                    if(e.data.list.length>0){
+                    if(e.data.length>0){
                         companies = [];
-                        for(var i=0;i<e.data.list.length;i++){
+                        for(var i=0;i<e.data.length;i++){
                             var accountName = "";
                             var contact = "";
                             var phone = "";
                             var createDate = "";
-                            var account = e.data.list[i].projectRegisters.member.account;
+                            var account = e.data[i].member.account;
                             if(account!=null){
                                 if(account.accountName!=null){
                                     accountName =account.accountName;
@@ -523,14 +522,14 @@
                                     phone =account.phone;
                                 }
                             }
-                            companies.push({name: accountName, contact: contact, phone: phone, time: e.data.list[i].projectRegisters.createDate})
+                            companies.push({name: accountName, contact: contact, phone: phone, time: e.data[i].createDate})
                         }
                     }
                     companies.forEach(company => {
                         const row = document.createElement('tr');
                         row.style.border = '1px solid #ddd';
                         row.innerHTML = `<td colspan="5" style="padding:10px;">暂无报名信息</td>`;
-                        if(e.data.list.length>0){
+                        if(e.data.length>0){
                             row.innerHTML = `
                                 <td style="padding:10px;">${company.name}</td>
                                 <td style="padding:10px;">${company.contact}</td>

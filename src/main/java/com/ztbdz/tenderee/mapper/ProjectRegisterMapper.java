@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ProjectRegisterMapper extends BaseMapper<ProjectRegister> {
 
-    List<ProjectRegister> selectByCountProjectId(@Param("project")Project project,@Param("memberId")Long memberId);
+    List<ProjectRegister> selectByCountProjectId(@Param("project")Project project,@Param("memberId")Long memberId,@Param("state")Integer state);
 
     List<ProjectRegister> selectListById(@Param("id") Long id,@Param("notIds") List<Long> notIds);
 

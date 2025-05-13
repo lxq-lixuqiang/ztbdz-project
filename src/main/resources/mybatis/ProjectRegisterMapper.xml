@@ -5,10 +5,11 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.ProjectRegisterMapper">
 	<select id="selectByCountProjectId" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select 
-			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone
+			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name
 		from
 		   project_register pr
 		left join project p on pr.project_id=p.id
+		left join tenderee t on t.project_id=p.id
 		left join member m on m.id=pr.member_id
 		left join account a on a.id=m.account_id
 		where
@@ -18,19 +19,24 @@
 				and p.id=#{project.id}
 			</if>
 		</if>
-		<if test="memberId != null">
+		<if test="state==0 and memberId != null">
 			and pr.member_id = #{memberId}
 		</if>
+		<if test="state==1 and memberId != null">
+			and t.member_id = #{memberId}
+		</if>
 		group by pr.project_id
+		order by p.update_date
 	</select>
 	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">
 		<result property="project.id" column="project_id"/>
+		<result property="project.tenderee.id" column="tid"/>
+		<result property="project.tenderee.tendereeName" column="tenderee_name"/>
 		<result property="project_register.create_date" column="createDate"/>
 
 		<result property="member.id" column="prMemberId"/>
 
 		<result property="member.account.id" column="account_id"/>
-
 		<result property="member.account.accountName" column="unitName"/>
 		<result property="member.account.member" column="member"/>
 		<result property="member.account.phone" column="aPhone"/>
@@ -38,10 +44,11 @@
 
 	<select id="getProject" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id
+		left join tenderee t on t.project_id=p.id
 		left join member m on m.id=pr.member_id
 		left join account a on a.id=m.account_id
 		where
@@ -49,7 +56,7 @@
 		<if test="projectId != null">
 			and p.id=#{projectId}
 		</if>
-		group by pr.project_id
+		order by pr.create_date
 	</select>
 
 

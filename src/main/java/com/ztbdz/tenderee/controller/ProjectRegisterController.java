@@ -90,7 +90,7 @@ public class ProjectRegisterController {
     })
     @CheckToken
     @GetMapping("get/{id}")
-    public Result get(@RequestParam(required = true) Long id) {
+    public Result get(@PathVariable Long id) {
         return projectRegisterService.get(id);
     }
 
@@ -100,8 +100,8 @@ public class ProjectRegisterController {
             @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
     })
     @CheckToken
-    @PostMapping("getProject")
-    public Result getProject(@RequestParam(required = true) Long projectId) {
+    @GetMapping("getProject/{projectId}")
+    public Result getProject(@PathVariable Long projectId) {
         return projectRegisterService.getProject(projectId);
     }
 
@@ -112,11 +112,11 @@ public class ProjectRegisterController {
     })
     @CheckToken
     @GetMapping("checkAptitude/{memberId}")
-    public Result checkAptitude(Long memberId) {
+    public Result checkAptitude(@PathVariable Long memberId) {
         return projectRegisterService.checkAptitude(memberId);
     }
 
-    @ApiOperation(value = "查询投标报名列表")
+    @ApiOperation(value = "查询正在报名项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
@@ -127,7 +127,7 @@ public class ProjectRegisterController {
     public Result listApplying(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
                        @RequestBody(required = false) Project project) {
-        return projectRegisterService.page(page,size,project,1);
+        return projectRegisterService.page(page,size,project,0);
     }
 
     @ApiOperation(value = "查询投标报名列表")
@@ -141,6 +141,6 @@ public class ProjectRegisterController {
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false, defaultValue = "20") Integer size,
                        @RequestBody(required = false) Project project) {
-        return projectRegisterService.page(page,size,project,0);
+        return projectRegisterService.page(page,size,project,1);
     }
 }

@@ -44,7 +44,7 @@ public interface ProjectRegisterService {
      * 查询项目报名列表
      * @return
      */
-    List<ProjectRegister> selectByCountProjectId(Project project,Long memberId)throws Exception;
+    List<ProjectRegister> selectByCountProjectId(Project project,Long memberId,Integer state)throws Exception;
 
     /**
      * 校验报名资质

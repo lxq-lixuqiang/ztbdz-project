@@ -79,9 +79,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     public Result page(Integer page, Integer size, Project project,Integer state) {
         try{
             PageHelper.startPage(page, size);
-            Long memberId = null;
-            if(state ==1) memberId = SystemConfig.getCreateMember().getId();
-            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,memberId);
+            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
             List<Long> projectIds = new ArrayList();
             for(ProjectRegister projectRegister : projectRegisterList){
                 projectIds.add(projectRegister.getProject().getId());
@@ -92,7 +90,6 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                 Map<String,ProjectRegister> mapProjectRegister = new HashMap();
                 for (ProjectRegister projectRegister : projectRegisterList) {
                     String projectId = projectRegister.getProject().getId().toString();
-                    projectRegister.setProject(null);
                     mapProjectRegister.put(projectId,projectRegister);
                 }
                 for(Project project1 : projectList) {
@@ -110,8 +107,8 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public List<ProjectRegister> selectByCountProjectId(Project project,Long memberId) throws Exception {
-        return projectRegisterMapper.selectByCountProjectId(project,memberId);
+    public List<ProjectRegister> selectByCountProjectId(Project project,Long memberId,Integer state) throws Exception {
+        return projectRegisterMapper.selectByCountProjectId(project,memberId,state);
     }
 
     @Override
