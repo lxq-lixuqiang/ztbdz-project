@@ -13,4 +13,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
 
     List<Project> listAvailable(@Param("project")Project project, @Param("memberId")Long memberId,@Param("state")Integer state);
 
+    List<Project> runProject(@Param("project")Project project, @Param("memberId")Long memberId,@Param("state")Integer state);
+
 }

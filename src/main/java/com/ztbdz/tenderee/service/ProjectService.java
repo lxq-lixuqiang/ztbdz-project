@@ -47,6 +47,16 @@ public interface ProjectService {
     PageInfo<Project> listAvailable(Integer page, Integer size, Project project,Integer state) throws Exception;
 
     /**
+     * 查询进行中的项目列表
+     * @param page
+     * @param size
+     * @param project
+     * @return
+     * @throws Exception
+     */
+    PageInfo<Project> runProject(Integer page, Integer size, Project project,Integer state) throws Exception;
+
+    /**
      * 查询项目
      * @param id
      * @return

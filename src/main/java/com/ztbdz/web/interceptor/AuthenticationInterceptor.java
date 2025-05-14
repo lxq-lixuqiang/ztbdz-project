@@ -60,7 +60,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (checkToken.required()) {
                 // 校验token
                 User user = this.verifyLogin(token);
-                SystemConfig.setSession(Common.LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
+                SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
                 return true;
             }
         }

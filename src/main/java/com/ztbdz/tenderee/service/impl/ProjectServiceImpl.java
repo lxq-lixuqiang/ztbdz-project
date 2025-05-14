@@ -56,6 +56,12 @@ public class ProjectServiceImpl  implements ProjectService {
                 pageDate = this.listAvailable(page,size,project,1);
             }else if(states == 4){
                 pageDate = this.listAvailable(page,size,project,0);
+            }else if(states == 5){
+                pageDate = this.runProject(page,size,project,0);
+            }else if(states == 6){
+                pageDate = this.runProject(page,size,project,1);
+            }else if(states == 7){
+                pageDate = this.runProject(page,size,project,2);
             }
             return Result.ok("查询成功！",pageDate);
         }catch (Exception e){
@@ -83,6 +89,19 @@ public class ProjectServiceImpl  implements ProjectService {
     public PageInfo<Project> listAvailable(Integer page, Integer size, Project project,Integer state) throws Exception {
         PageHelper.startPage(page, size);
         return new PageInfo(projectMapper.listAvailable(project,SystemConfig.getCreateMember().getId(),state));
+    }
+
+    @Override
+    public PageInfo<Project> runProject(Integer page, Integer size, Project project,Integer state) throws Exception {
+        PageHelper.startPage(page, size);
+        List<Project> projectList = projectMapper.runProject(project,SystemConfig.getCreateMember().getId(),state);
+        for(Project project1 : projectList){
+            if(project1.getState() == 1){
+                project1.setState(2); // 将可报名项目 更新为 正在进行项目
+                this.updateById(project1);
+            }
+        }
+        return new PageInfo(projectList);
     }
 
     @Override

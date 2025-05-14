@@ -86,6 +86,8 @@ public class Project extends Model<Project> implements Serializable {
     private Date bidOpeningTime;
     @ApiModelProperty(value = "评审专家人数")
     private Integer numberReviewExpert;
+    @ApiModelProperty(value = "评审进度")
+    private Integer reviewProgress;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

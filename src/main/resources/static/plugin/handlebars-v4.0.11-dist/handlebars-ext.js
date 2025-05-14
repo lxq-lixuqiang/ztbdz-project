@@ -67,10 +67,13 @@ Handlebars.registerHelper("formatDate", function(date, pattern) {
     return moment(date).format(pattern);
 });
 
-//货币格式化
-//number,         precision, thousand, decimal
-//number, symbol, precision, thousand, decimal, format
-//0      "$",     2,         ",",      ".",     "%s%v"
-Handlebars.registerHelper("formatNumber", function(number, precision) {
-    return accounting.formatNumber(number, precision);
+//是否大于当前日期 比较器
+Handlebars.registerHelper("gtNowDate", function(v1, options) {
+    var nowDate = new Date().getTime();
+    var v1Date = new Date(v1).getTime();
+    if(v1Date >= nowDate){
+        return options.fn(this);
+    }else {
+        return options.inverse(this);
+    }
 });

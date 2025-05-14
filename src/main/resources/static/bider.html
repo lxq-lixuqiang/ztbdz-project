@@ -418,7 +418,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{#eq  projectRegisters.state 0}}资料审核中{{else}}审核已通过{{/eq}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#eq  projectRegisters.state 0}}审核中{{else}}已通过{{/eq}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
             </td>
@@ -454,7 +454,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">评审中</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#gtNowDate bidOpeningTime}}等待评审{{else}}评审中{{/gtNowDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
             </td>
@@ -502,10 +502,10 @@
                 applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
             });
             $("body").on("click", "div[data-tab=project1]", function() {
-                project1Init(1,$("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+                project1Init($("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
             });
             $("body").on("click", "div[data-tab=project2]", function() {
-                projectInit(2,$("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
+                runProjectInit($("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
             });
             $("body").on("click", "div[data-tab=project3]", function() {
                 projectInit(3,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
@@ -622,11 +622,26 @@
                 });
             }
 
-            function project1Init(state,tbody,template){
+            function runProjectInit(tbody,template){
+                $.ajax({
+                    url: "/project/runProject",
+                    type: "POST",
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var newTemplate = template(e.data);
+                            tbody.html(newTemplate);
+                        }else{
+                            alert("获取项目列表失败："+e.message);
+                        }
+                    }
+                });
+            }
+
+            function project1Init(tbody,template){
                 $.ajax({
                     url: "/project/listProject1",
                     type: "POST",
-                    data: JSON.stringify({"state":state}),
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){

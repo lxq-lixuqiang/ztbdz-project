@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
             if(user == null) return Result.fail("用户名错误！");
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("密码错误！");
 
-            SystemConfig.setSession(Common.LOGIN_MEMBER_ID,user.getMember().getId().toString());
+            SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user);
             Map returnToken = new HashMap();
             returnToken.put("token",token);
@@ -62,7 +62,7 @@ public class LoginServiceImpl implements LoginService {
             //服务端维护 Token 黑名单
             //原理：将需失效的 Token 存入缓存（如 Redis），校验时检查黑名单
             blacklistService.addToBlacklist(token, SystemConfig.TOKEN_VALIDITY);
-            SystemConfig.removeSession(Common.LOGIN_MEMBER_ID);
+            SystemConfig.removeSession(Common.SESSION_LOGIN_MEMBER_ID);
             return Result.ok("退出成功！");
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -86,7 +86,7 @@ public class LoginServiceImpl implements LoginService {
             if(!landlord.getName().equals(username)) return Result.fail("用户名不正确！");
             if(!landlord.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
 
-            SystemConfig.setSession(Common.LOGIN_MEMBER_ID,landlord.getId().toString());
+            SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,landlord.getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, landlord.toUser());
             Map returnToken = new HashMap();
             returnToken.put("token",token);
@@ -101,8 +101,19 @@ public class LoginServiceImpl implements LoginService {
     public Result verifyLogin(String token,String url) {
         try{
             User user = authenticationInterceptor.verifyLogin(token);
-            Object memberId = SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
-            Map<String,Object> dataMap = this.getLoginInfo(Long.valueOf(memberId.toString()));
+            Object memberId = SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
+            Object redisObject = redisTemplate.opsForValue().get(SystemConfig.REDIS_LOGIN_INFO);
+            if(redisObject==null || ((Map<String,Object>)redisObject).get(memberId.toString())==null){
+                Map<String,Map<String,Object>> redisDataMap  = (Map<String,Map<String,Object>>)redisObject;
+                if(redisDataMap==null) redisDataMap = new HashMap();
+                if(redisDataMap.get(memberId.toString())==null){
+                    Map<String,Object> dataMap = this.getLoginInfo(Long.valueOf(memberId.toString()));
+                    redisDataMap.put(memberId.toString(),dataMap);
+                    redisTemplate.opsForValue().set(SystemConfig.REDIS_LOGIN_INFO,redisDataMap);
+                    redisObject = redisDataMap;
+                }
+            }
+            Map<String,Object> dataMap = ((Map<String,Map<String,Object>>) redisObject).get(memberId.toString());
             // 校验 当前人员是否有访问权限
             if(roleService.verifyAuthority(url)){
                 return Result.fail("账号没有权限，请切换对应账号访问！");

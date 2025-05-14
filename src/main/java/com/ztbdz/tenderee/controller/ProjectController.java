@@ -35,6 +35,48 @@ public class ProjectController {
         return projectService.page(page,size,project,1);
     }
 
+    @ApiOperation(value = "查询正在进行项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("runProject")
+    public Result runProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestBody(required = false) Project project) {
+        return projectService.page(page,size,project,5);
+    }
+
+    @ApiOperation(value = "查询可评审项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("reviewProject")
+    public Result reviewProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestBody(required = false) Project project) {
+        return projectService.page(page,size,project,6);
+    }
+
+    @ApiOperation(value = "查询正在评审项目项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("runReviewProject")
+    public Result runReviewProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestBody(required = false) Project project) {
+        return projectService.page(page,size,project,7);
+    }
+
     @ApiOperation(value = "可报名项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),

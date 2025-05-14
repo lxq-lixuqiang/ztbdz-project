@@ -34,13 +34,18 @@ public class SystemConfig {
     public static String SMS = "smsList";
 
     /**
-     * 角色与菜单关联标识
+     * redis缓存标识 - 登录信息
      */
-    public static String ROLE_AND_MENU = "roleAndMenu";
+    public static String REDIS_LOGIN_INFO = "loginInfo";
+
     /**
-     * 全部菜单标识
+     * redis缓存标识 - 角色与菜单关联标识
      */
-    public static String ALL_MENU = "allMenu";
+    public static String REDIS_ROLE_AND_MENU = "roleAndMenu";
+    /**
+     * redis缓存标识 - 全部菜单标识
+     */
+    public static String REDIS_ALL_MENU = "allMenu";
 
     /**
      * 默认密码后缀
@@ -123,7 +128,7 @@ public class SystemConfig {
      */
     public static Member getCreateMember(){
         Member member = new Member();
-        member.setId(Long.valueOf(SystemConfig.getSession(Common.LOGIN_MEMBER_ID).toString()));
+        member.setId(Long.valueOf(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID).toString()));
         return member;
     }
 

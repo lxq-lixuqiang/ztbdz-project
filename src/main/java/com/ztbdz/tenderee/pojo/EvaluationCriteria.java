@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ztbdz.user.pojo.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,6 +42,17 @@ public class EvaluationCriteria  extends Model<EvaluationCriteria> implements Se
     private Long projectId;
     @ApiModelProperty(value = "投标报名id")
     private Long projectRegisterId;
+    @ApiModelProperty(value = "评审人员id")
+    @TableField(value = "member_id",el = "member.id")
+    private Member member;
+    @ApiModelProperty(value = "评审类型（0=其他 1=资格评审标准 2=实质性符合标准 3=评分标准）")
+    private Integer reviewType;
+    @ApiModelProperty(value = "是否通过（0=通过 1=不通过）")
+    private Integer isPass;
+    @ApiModelProperty(value = "评审说明")
+    private String reviewDescription;
+    @ApiModelProperty(value = "扣分理由")
+    private String deductionReason;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

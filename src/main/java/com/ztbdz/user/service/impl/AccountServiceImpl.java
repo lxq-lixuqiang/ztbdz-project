@@ -6,9 +6,11 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.AccountMapper;
 import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.service.AccountService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,6 +20,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountMapper accountMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Integer insert(Account account) throws Exception {
@@ -33,6 +37,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Integer updateById(Account account) throws Exception {
+        redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", account.getId().toString());
         return accountMapper.update(account,queryWrapper);

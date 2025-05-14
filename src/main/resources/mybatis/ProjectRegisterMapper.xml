@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.ProjectRegisterMapper">
 	<select id="selectByCountProjectId" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select 
-			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name
+			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents
 		from
 		   project_register pr
 		left join project p on pr.project_id=p.id
@@ -30,6 +30,8 @@
 	</select>
 	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">
 		<result property="project.id" column="project_id"/>
+		<result property="project.procurementDocuments" column="procurement_documents"/>
+
 		<result property="project.tenderee.id" column="tid"/>
 		<result property="project.tenderee.tendereeName" column="tenderee_name"/>
 		<result property="project_register.create_date" column="createDate"/>
@@ -44,7 +46,7 @@
 
 	<select id="getProject" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id

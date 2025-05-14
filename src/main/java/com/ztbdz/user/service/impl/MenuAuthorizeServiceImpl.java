@@ -6,9 +6,11 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.MenuAuthorizeMapper;
 import com.ztbdz.user.pojo.MenuAuthorize;
 import com.ztbdz.user.service.MenuAuthorizeService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -20,14 +22,18 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
 
     @Autowired
     private MenuAuthorizeMapper menuAuthorizeMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Integer insert(MenuAuthorize menuAuthorize) throws Exception {
+        redisTemplate.delete(SystemConfig.REDIS_ALL_MENU);
         return menuAuthorizeMapper.insert(menuAuthorize);
     }
 
     @Override
     public Integer delete(Long id) throws Exception {
+        redisTemplate.delete(SystemConfig.REDIS_ALL_MENU);
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", id.toString());
         return menuAuthorizeMapper.delete(queryWrapper);
@@ -35,6 +41,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
 
     @Override
     public Integer updateById(MenuAuthorize menuAuthorize) throws Exception {
+        redisTemplate.delete(SystemConfig.REDIS_ALL_MENU);
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", menuAuthorize.getId().toString());
         return menuAuthorizeMapper.update(menuAuthorize,queryWrapper);

@@ -131,11 +131,11 @@
         if (window.location.protocol === 'file:') {
             // 本地文件系统路径处理
             const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-            pdfPath = basePath + '/test.pdf';
+            pdfPath = basePath + "/file/preview/"+$("#pdf-viewer").attr("data-fileId");
             console.log('本地文件模式，PDF路径:', pdfPath);
         } else {
             // 服务器路径处理
-            pdfPath = './test.pdf';
+            pdfPath = "/file/preview/"+$("#pdf-viewer").attr("data-fileId");
             console.log('服务器模式，PDF路径:', pdfPath);
         }
         
@@ -215,8 +215,8 @@
     // 弹出窗口查看
     function openInNewWindow() {
         const pdfPath = window.location.protocol === 'file:' 
-            ? new URL('test.pdf', window.location.href).href
-            : './test.pdf';
+            ? new URL("/file/preview/"+$("#pdf-viewer").attr("data-fileId"), window.location.href).href
+            : "/file/preview/"+$("#pdf-viewer").attr("data-fileId");
         console.log('弹出窗口PDF路径:', pdfPath);
         window.open(pdfPath, '_blank');
     }
@@ -295,6 +295,30 @@
             alert('通过资格评审的供应商不足3家，请重新评审或选择"不足3家"进行废标！');
             return;
         }
+
+        var e = JSON.parse(localStorage.getItem('data'));
+        // 保存评审数据
+        var saveDataList = [];
+        var projectId = new URLSearchParams(window.location.search).get("id");
+        for(var i=0;i<e.data.length;i++){
+            var data = e.data[i];
+            var isPass = $("input[name='supplier"+data.id+"']:checked").val()=='pass'?0:1;
+            var reviewDescription = $("textarea[name='supplier1_comment"+data.id+"']").val();
+            var saveData={"sort":i+1,"evaluationCriteriaName":"资格评审标准","reviewType":"1","isPass":isPass,"reviewDescription":reviewDescription,"projectId":projectId,"projectRegisterId":data.id};
+            saveDataList.push(saveData);
+        }
+        $.ajax({
+            url: "/evaluation/create",
+            type: "POST",
+            data: JSON.stringify(saveDataList),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status != 200){
+                    alert("资格评审提交失败："+e.message);
+                }
+            }
+        });
+
         
         // 跳转到符合（实质性）标签页
         setReviewStage('compliance');
@@ -398,7 +422,7 @@
         
         // 获取所有通过评审的供应商
         const passedSuppliers = [];
-        document.querySelectorAll('.supplier-name').forEach(supplierEl => {
+        document.querySelectorAll('#complianceSuppliersList .supplier-name').forEach(supplierEl => {
             passedSuppliers.push({
                 id: supplierEl.dataset.id,
                 name: supplierEl.dataset.name
@@ -458,7 +482,7 @@
         
         // 获取资格和符合性都通过的供应商
         const passedSuppliers = [];
-        document.querySelectorAll('.supplier-name').forEach(supplierEl => {
+        document.querySelectorAll('#complianceSuppliersList .supplier-name').forEach(supplierEl => {
             const id = supplierEl.dataset.id;
             
             // 检查资格评审是否通过
@@ -568,7 +592,7 @@
 
         // 收集所有供应商评分数据
         const scores = [];
-        document.querySelectorAll('.supplier-name').forEach(supplierEl => {
+        document.querySelectorAll('#complianceSuppliersList .supplier-name').forEach(supplierEl => {
             const id = supplierEl.dataset.id;
             const name = supplierEl.dataset.name;
             const price = parseInt(form.querySelector(`input[name="supplier${id}_price"]`).value) || 0;
@@ -607,9 +631,9 @@
         
         // 初始化评审界面
         setReviewStage('qualification');
-        
+
         // 最后初始化PDF查看器
-        initPDFViewer();
+        // initPDFViewer();
     };
 </script>
 <!-- InstanceEndEditable -->
@@ -739,7 +763,7 @@
                                                 });
                                             }
                                         });
-                                        
+                                        var num=0;
                                         // 为每个供应商生成评审表单
                                         passedSuppliers.forEach(supplier => {
                                             const supplierDiv = document.createElement('div');
@@ -747,9 +771,8 @@
                                             supplierDiv.style.padding = '15px';
                                             supplierDiv.style.border = '1px solid #eee';
                                             supplierDiv.style.borderRadius = '4px';
-                                            
                                             supplierDiv.innerHTML = `
-                                                <h5 class="supplier-name" data-id="${supplier.id}" data-name="${supplier.name}">供应商${supplier.id}：${supplier.name}</h5>
+                                                <h5 class="supplier-name" data-id="${supplier.id}" data-name="${supplier.name}">供应商${++num}：${supplier.name}</h5>
                                                 <div style="margin:10px 0;">
                                                     <label style="margin-right:15px;">
                                                         <input type="radio" name="supplier${supplier.id}_compliance" value="pass" required> 通过
@@ -870,20 +893,20 @@
     </div>
     <!-- InstanceEndEditable -->
     <script id="gysTemplate" type="text/x-handlebars-template">
-        {{#each list}}
+        {{#each data}}
             <div style="margin-bottom:20px; padding:15px; border:1px solid #eee; border-radius:4px;">
-                <h5 class="supplier-name" data-id="1" data-name="ABC科技有限公司">供应商1：{{name}}</h5>
+                <h5 class="supplier-name" data-id="{{id}}" data-name="{{member.account.accountName}}">供应商{{#addition @index 1 }}{{/addition}}：{{member.account.accountName}}</h5>
                 <div style="margin:10px 0;">
                     <label style="margin-right:15px;">
-                        <input type="radio" name="supplier{{@index}}" value="pass" required> 通过
+                        <input type="radio" name="supplier{{id}}" value="pass" required> 通过
                     </label>
                     <label>
-                        <input type="radio" name="supplier{{@index}}" value="fail"> 不通过
+                        <input type="radio" name="supplier{{id}}" value="fail"> 不通过
                     </label>
                 </div>
                 <div>
                     <label style="display:block; margin-bottom:5px;">评审说明：</label>
-                    <textarea name="supplier1_comment" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
+                    <textarea name="supplier1_comment{{id}}" style="width:100%; height:60px; padding:8px; border:1px solid #ddd;"></textarea>
                 </div>
             </div>
         {{/each}}
@@ -896,21 +919,50 @@
         $(function() {
             // 初始化
             verifyLogin();
-            var data={"role":{"id":JSON.parse(getMember()).role.id}};
+
             $.ajax({
-                url: "/member/list",
-                type: "POST",
-                data: JSON.stringify(data),
+                url: "/projectRegister/getProject/"+new URLSearchParams(window.location.search).get("id"),
+                type: "GET",
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){
-                        var newTemplate = Handlebars.compile($("#gysTemplate").html())(e.data);
+                        localStorage.setItem('data', JSON.stringify(e)); //缓存数据 方便后面查询
+                        var fileId = e.data[0].project.procurementDocuments;
+                        $("#pdf-viewer").attr("data-fileId",fileId);
+
+                        var newTemplate = Handlebars.compile($("#gysTemplate").html())(e);
                         $("div#gys").html(newTemplate);
+                        // 最后初始化PDF查看器
+                        initPDFViewer();
+                        initData();
                     }else{
                         alert("获取投标方失败："+e.message);
                     }
                 }
             });
+
+            function initData(){
+                var data = {'projectId':new URLSearchParams(window.location.search).get("id"),'reviewType':1};
+                $.ajax({
+                    url: "/evaluation/select",
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            for(var i=0;i<e.data.length;i++){
+                                var data = e.data[i];
+                                $("input[name='supplier"+data.projectRegisterId+"'][value="+(data.isPass==0?'pass':'fail')+"]").prop("checked",true);
+                                $("textarea[name='supplier1_comment"+data.projectRegisterId+"']").val(data.reviewDescription);
+                            }
+                        }else{
+                            alert("获取资格评审标准失败："+e.message);
+                        }
+                    }
+                });
+            }
+
+
 
         });
     </script>

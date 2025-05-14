@@ -20,8 +20,8 @@ public class DeleteRedisDataTest {
      */
     @Test
     public void databaseEncoder() {
-        redisTemplate.delete(SystemConfig.ROLE_AND_MENU); // 角色和菜单关联信息
-        redisTemplate.delete(SystemConfig.ALL_MENU); // 全部菜单信息
+        redisTemplate.delete(SystemConfig.REDIS_ROLE_AND_MENU); // 角色和菜单关联信息
+        redisTemplate.delete(SystemConfig.REDIS_ALL_MENU); // 全部菜单信息
         System.out.println("删除redis缓存成功！");
     }
 }

@@ -86,6 +86,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Integer updateById(Role role) throws Exception {
+        redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
+        redisTemplate.delete(SystemConfig.REDIS_ROLE_AND_MENU);
         QueryWrapper<Role> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", role.getId().toString());
         return roleMapper.updateById(role);
@@ -199,6 +201,8 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Result allocation(List<RoleRelatedAuthorize> roleRelatedAuthorizeList) {
         try{
+            redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
+            redisTemplate.delete(SystemConfig.REDIS_ROLE_AND_MENU);
             //重新分配
             Map<Long,Long> roleMap = new HashMap();
             for(RoleRelatedAuthorize roleRelatedAuthorize : roleRelatedAuthorizeList){
@@ -267,7 +271,7 @@ public class RoleServiceImpl implements RoleService {
     public boolean verifyAuthority(String url)  throws Exception{
         try{
             Map<String,Object> dataMap = loginService.getLoginInfo(SystemConfig.getCreateMember().getId());
-            Object roleAndMenu = redisTemplate.opsForValue().get(SystemConfig.ROLE_AND_MENU);
+            Object roleAndMenu = redisTemplate.opsForValue().get(SystemConfig.REDIS_ROLE_AND_MENU);
             if(roleAndMenu==null){
                 List<Role> roleList = this.selectList(new Role());
                 this.getMenuAuthorizeInfo(roleList,false);
@@ -275,13 +279,13 @@ public class RoleServiceImpl implements RoleService {
                 for(Role role :roleList){
                     roleMap.put(role.getType(),role);
                 }
-                redisTemplate.opsForValue().set(SystemConfig.ROLE_AND_MENU,roleMap);
+                redisTemplate.opsForValue().set(SystemConfig.REDIS_ROLE_AND_MENU,roleMap);
                 roleAndMenu = roleMap;
             }
-            Object allMenu = redisTemplate.opsForValue().get(SystemConfig.ALL_MENU);
+            Object allMenu = redisTemplate.opsForValue().get(SystemConfig.REDIS_ALL_MENU);
             if(allMenu==null){
                 List<MenuAuthorize> menuAuthorizeList = menuAuthorizeService.selectList(new MenuAuthorize());
-                redisTemplate.opsForValue().set(SystemConfig.ALL_MENU,menuAuthorizeList);
+                redisTemplate.opsForValue().set(SystemConfig.REDIS_ALL_MENU,menuAuthorizeList);
                 allMenu = menuAuthorizeList;
             }
             List<MenuAuthorize> allMenuAuthorizeList = (List<MenuAuthorize>)allMenu;

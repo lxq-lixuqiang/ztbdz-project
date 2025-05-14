@@ -52,11 +52,19 @@ public interface EvaluationCriteriaService {
     Integer deleteById(Long id) throws Exception;
 
     /**
+     * 删除评标标准
+     * @param projectId
+     * @param reviewType
+     * @return
+     */
+    Integer deleteByProjectIdAndReviewType(Long projectId,Integer reviewType) throws Exception;
+
+    /**
      * 创建评标标准
      * @param evaluationCriteriaList
      * @return
      */
-    Result create(List<EvaluationCriteria> evaluationCriteriaList);
+    Result create(List<EvaluationCriteria> evaluationCriteriaList,boolean isDelete);
 
     /**
      * 添加评标标准

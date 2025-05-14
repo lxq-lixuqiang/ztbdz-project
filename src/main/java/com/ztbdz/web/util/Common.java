@@ -16,6 +16,6 @@ public interface Common {
     Integer ENABL = 0;
     /** 关闭状态：停用，已删除 */
     Integer DISABLE = 1;
-    /** 登录人员id标识 */
-    String LOGIN_MEMBER_ID = "loginMemberId";
+    /** session缓存标识 - 登录人员id标识 */
+    String SESSION_LOGIN_MEMBER_ID = "loginMemberId";
 }

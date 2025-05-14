@@ -11,10 +11,12 @@ import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -34,6 +36,8 @@ public class MemberServiceImpl implements MemberService {
     private AccountService accountService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     @Override
@@ -54,6 +58,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Integer updateById(Member member) throws Exception {
+        redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", member.getId().toString());
         queryWrapper.eq("is_delete", Common.ENABL);
@@ -123,6 +128,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Result update(User user) {
         try{
+            redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
             // 更新角色信息
             Integer roleNum = roleService.updateById(user.getMember().getRole());
             // 更新企业信息

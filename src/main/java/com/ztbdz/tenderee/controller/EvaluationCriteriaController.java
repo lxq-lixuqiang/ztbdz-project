@@ -27,7 +27,7 @@ public class EvaluationCriteriaController {
     })
     @CheckToken
     @PostMapping("select")
-    public Result select(@RequestBody(required = false) EvaluationCriteria evaluationCriteria) {
+    public Result select(@RequestBody EvaluationCriteria evaluationCriteria) {
         return evaluationCriteriaService.select(evaluationCriteria);
     }
 
@@ -38,7 +38,7 @@ public class EvaluationCriteriaController {
     @CheckToken
     @PostMapping("create")
     public Result create(@RequestBody List<EvaluationCriteria> evaluationCriteriaList) {
-        return evaluationCriteriaService.create(evaluationCriteriaList);
+        return evaluationCriteriaService.create(evaluationCriteriaList,true);
     }
 
 

@@ -160,7 +160,7 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     @Override
     public Result expertReviewInfoList(Integer page, Integer size, String projectName) {
         try{
-            Long memberId = (Long)SystemConfig.getSession(Common.LOGIN_MEMBER_ID);
+            Long memberId = (Long)SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
             List<WinBid> winBidList = winBidService.selectList(memberId,null);
             List<Long> ids = new ArrayList();
             for(WinBid winBid : winBidList){
