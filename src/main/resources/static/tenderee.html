@@ -207,6 +207,10 @@
                         <input id="money" type="number" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">报名费</label>
+                        <input id="registrationFee" type="number" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">投标报名开始时间</label>
                         <input id="senrollStartDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
@@ -271,8 +275,8 @@
     </div>
 </div>
 <script id="projectsTemplate" type="text/x-handlebars-template">
-    {{#if data}}
-    {{#each data}}
+    {{#if list}}
+    {{#each list}}
     <!-- 模拟数据1 -->
     <tr style="border:1px solid #ddd;">
         <td style="padding:10px;">{{project.projectName}}</td>
@@ -327,6 +331,7 @@
         var procurementMethod = $("#procurementMethod").find("option:selected").val();
         var senrollStartDate = $("#senrollStartDate").val();
         var enrollEndDate = $("#enrollEndDate").val();
+        var registrationFee = $("#registrationFee").val();
 
         var fileId = $("#fileUpload").attr("data-file-id");
         var currentTime = new Date().toLocaleString().replaceAll("/","-"); // 统一使用ISO格式
@@ -348,6 +353,7 @@
             "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
             "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
             "answerEndDate": currentTime, // 已经是ISO格式
+            "registrationFee":registrationFee,
             "state": 1
         };
         var tendereeName = $("#tendereeName").val();
@@ -443,13 +449,12 @@
         $("#publishedProjects").hide();
 
         $.ajax({
-            url: "/tenderee/list",
+            url: "/tenderee/page",
             type: "POST",
-            data: JSON.stringify({"state":1}),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(e));
+                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(e.data));
                     $("#loadingMessage").hide();
                     $("#publishedProjects").show();
                 }else{

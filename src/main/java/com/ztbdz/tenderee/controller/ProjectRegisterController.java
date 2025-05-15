@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,16 @@ public class ProjectRegisterController {
         projectRegister.setState(0);
         projectRegister.setMember(SystemConfig.getCreateMember());
         return projectRegisterService.create(projectRegister);
+    }
+
+    @ApiOperation(value = "更新报名状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("update")
+    public Result update(@RequestBody ProjectRegister projectRegister) {
+        return projectRegisterService.update(projectRegister);
     }
 
     @ApiOperation(value = "中标投标方")
@@ -102,7 +113,18 @@ public class ProjectRegisterController {
     @CheckToken
     @GetMapping("getProject/{projectId}")
     public Result getProject(@PathVariable Long projectId) {
-        return projectRegisterService.getProject(projectId);
+        return projectRegisterService.getProject(projectId,null);
+    }
+
+    @ApiOperation(value = "查询项目报名成功的投标")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("getProjectSuccess/{projectId}")
+    public Result getProjectSuccess(@PathVariable Long projectId) {
+        return projectRegisterService.getProject(projectId,1);
     }
 
     @ApiOperation(value = "校验报名资质")
@@ -125,8 +147,9 @@ public class ProjectRegisterController {
     @CheckToken
     @PostMapping("listApplying")
     public Result listApplying(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectRegisterService.page(page,size,project,0);
     }
 
@@ -139,8 +162,24 @@ public class ProjectRegisterController {
     @CheckToken
     @PostMapping("list")
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectRegisterService.page(page,size,project,1);
+    }
+
+    @ApiOperation(value = "查询投标报名审核状态列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("auditList")
+    public Result auditList(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false) Integer size,
+                       @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return projectRegisterService.page(page,size,project,3);
     }
 }

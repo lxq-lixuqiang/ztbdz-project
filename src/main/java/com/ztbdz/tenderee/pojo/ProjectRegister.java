@@ -31,7 +31,7 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "投标人id")
     @TableField(value = "member_id",el = "member.id")
     private Member member;
-    @ApiModelProperty(value = "报名状态（0=报名中 1=已报名）")
+    @ApiModelProperty(value = "审核状态（0=未审核 1=通过 2=不通过）")
     private Integer state;
     @ApiModelProperty(value = "报名数量")
     private Integer num;
@@ -49,9 +49,11 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private String contractImprint;
     @ApiModelProperty(value = "评标报告文件")
     private String bidEvaluationReport;
+    @ApiModelProperty(value = "报名费")
+    private Long paymentMoney;
     @ApiModelProperty(value = "付款凭证")
     private String paymentVoucher;
-    @ApiModelProperty(value = "中标情况（0=未公布 1=中标 2=未中标）")
+    @ApiModelProperty(value = "中标情况（0=未公布 1=已中标 2=未中标）")
     private Integer winBidState;
     @ApiModelProperty(value = "保证金到账时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

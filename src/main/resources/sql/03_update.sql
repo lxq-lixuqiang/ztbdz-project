@@ -20,3 +20,15 @@ ADD COLUMN `review_progress` int(11) NULL AFTER `answer_end_date`;
 # 调整评标标准
 ALTER TABLE `evaluation_criteria`
 ADD COLUMN `deduction_reason` varchar(1000) NULL AFTER `review_type`;
+
+# 项目信息添加报名费
+ALTER TABLE `project`
+ADD COLUMN `registration_fee` int(11) NULL AFTER `answer_end_date`;
+
+# 投标报名添加报名费
+ALTER TABLE `project_register`
+ADD COLUMN `payment_money` int(11) NULL AFTER `num`;
+
+# 项目信息添加评审结束时间
+ALTER TABLE `project`
+ADD COLUMN `review_end_date` datetime(0) NULL AFTER `review_progress`;

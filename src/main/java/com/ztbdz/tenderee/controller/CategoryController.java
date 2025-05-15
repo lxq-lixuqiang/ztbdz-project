@@ -3,6 +3,7 @@ package com.ztbdz.tenderee.controller;
 
 import com.ztbdz.tenderee.pojo.Category;
 import com.ztbdz.tenderee.service.CategoryService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,8 +44,9 @@ public class CategoryController {
     @CheckToken
     @PostMapping("page")
     public Result page(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Category category) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return categoryService.page(page,size, category);
     }
 

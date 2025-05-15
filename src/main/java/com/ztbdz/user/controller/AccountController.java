@@ -2,6 +2,7 @@ package com.ztbdz.user.controller;
 
 import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.service.AccountService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "企业信息")
@@ -40,8 +42,9 @@ public class AccountController {
     @CheckToken
     @PostMapping("list")
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Account account) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return accountService.list(page,size,account);
     }
 

@@ -1,5 +1,6 @@
 package com.ztbdz.tenderee.service;
 
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.web.util.Result;
 
@@ -78,12 +79,12 @@ public interface TendereeService {
      * @param tenderee
      * @return
      */
-    Result list(Tenderee tenderee);
+    Result page(Integer page, Integer size,Tenderee tenderee);
 
     /**
      * 查询招标信息
      * @param tenderee
      * @return
      */
-    List<Tenderee> selectList(Tenderee tenderee) throws Exception;
+    PageInfo<Tenderee> selectList(Integer page, Integer size,Tenderee tenderee) throws Exception;
 }

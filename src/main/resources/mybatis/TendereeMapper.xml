@@ -44,7 +44,10 @@
 		left join project p on t.project_id=p.id
 		left join category cy on p.category_id = cy.id
 		WHERE
-			 t.member_id = #{member.id}
+			1=1
+			<if test="member !=null and member.id !=null">
+			 	and t.member_id = #{member.id}
+			</if>
 			<if test="tendereeName !=null and tendereeName.length() >0">
 				and t.tenderee_name like concat('%',#{tendereeName},'%')
 			</if>

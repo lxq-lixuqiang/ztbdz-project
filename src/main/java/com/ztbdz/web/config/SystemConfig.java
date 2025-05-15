@@ -78,12 +78,20 @@ public class SystemConfig {
     @Value("${ztbdz.pdf.stamp.y}")
     private float y_axis;
 
+    /**
+     * 默认页码大小
+     */
+    public static Integer PAGE_SIZE;
+    @Value("${ztbdz.default.page.size}")
+    private Integer pageSize;
+
     @PostConstruct
     public void init() {
         UPLOAD_FILE_URL = uploadFileUrl;
         UPLOAD_FILE_TEMP = uploadFileUrl+"/temp";
         X_AXIS = x_axis;
         Y_AXIS= y_axis;
+        PAGE_SIZE = pageSize;
 
         // 创建临时文件目录
         File uploadFile = new File(SystemConfig.UPLOAD_FILE_TEMP);

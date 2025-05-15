@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sound.midi.SysexMessage;
@@ -67,8 +68,9 @@ public class ReviewInfoController {
     @CheckToken
     @PostMapping("page")
     public Result page(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestParam(required = false) String projectName) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return reviewInfoService.page(page,size, projectName);
     }
 
@@ -107,8 +109,9 @@ public class ReviewInfoController {
     @CheckToken
     @PostMapping("expertReviewInfoList")
     public Result expertReviewInfoList(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                                       @RequestParam(required = false) Integer size,
                                        @RequestParam(required = false) String projectName) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return reviewInfoService.expertReviewInfoList( page,  size,  projectName);
     }
 

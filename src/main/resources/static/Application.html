@@ -50,7 +50,7 @@
                         <p><strong>收款账户：</strong>轩辕科技有限公司</p>
                         <p><strong>银行账号：</strong>6225 8888 6666 3333</p>
                         <p><strong>开户银行：</strong>中国工商银行北京分行</p>
-                        <p><strong>付款金额：</strong>¥500.00（报名费）</p>
+                        <p><strong>付款金额：</strong>¥<span id="registrationFee"></span>（报名费）</p>
                     </div>
                     <div style="text-align:center;">
                         <p><strong>扫码支付</strong></p>
@@ -122,7 +122,7 @@
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");
             var project = {"id":new URLSearchParams(window.location.search).get("id")};
-            var data = {"project":project,"paymentVoucher":fileId,"earnestMoney":500,"earnestMoneyState":1};
+            var data = {"project":project,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text()};
             projectRegister(data);
         }
 
@@ -169,6 +169,9 @@
                 $(infos[2]).text(data.money);
                 $(infos[3]).text(data.enrollEndDate);
                 $(infos[4]).text(daysBetweenDates(new Date(data.senrollStartDate),new Date(data.enrollEndDate)));
+                $("#registrationFee").text(data.registrationFee);
+
+                registrationFee
             }
             $("#paymentProof").on('change', function () {
                 var fileId = uploadImg(this.files);

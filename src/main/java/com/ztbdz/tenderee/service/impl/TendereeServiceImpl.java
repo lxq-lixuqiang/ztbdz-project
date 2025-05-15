@@ -1,6 +1,8 @@
 package com.ztbdz.tenderee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.TendereeMapper;
 import com.ztbdz.tenderee.pojo.*;
 import com.ztbdz.tenderee.service.*;
@@ -152,9 +154,9 @@ public class TendereeServiceImpl implements TendereeService {
     }
 
     @Override
-    public Result list(Tenderee tenderee) {
+    public Result page(Integer page, Integer size,Tenderee tenderee) {
         try{
-            return Result.ok("查询成功！",this.selectList(tenderee));
+            return Result.ok("查询成功！",this.selectList( page, size,tenderee));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询招标列表异常，原因："+e.getMessage());
@@ -162,8 +164,9 @@ public class TendereeServiceImpl implements TendereeService {
     }
 
     @Override
-    public List<Tenderee> selectList(Tenderee tenderee) throws Exception {
-        return tendereeMapper.selectListProject(tenderee);
+    public PageInfo<Tenderee> selectList(Integer page, Integer size, Tenderee tenderee) throws Exception {
+        PageHelper.startPage(page, size);
+        return new PageInfo(tendereeMapper.selectListProject(tenderee));
     }
 
     @Override

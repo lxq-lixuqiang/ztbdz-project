@@ -418,7 +418,11 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{#eq  projectRegisters.state 0}}审核中{{else}}已通过{{/eq}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">
+                {{#eq  projectRegisters.state 0}}审核中{{/eq}}
+                {{#eq  projectRegisters.state 1}}已通过{{/eq}}
+                {{#eq  projectRegisters.state 2}}不通过{{/eq}}
+            </td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
             </td>
@@ -471,7 +475,7 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{reviewEndDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">已中标</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>

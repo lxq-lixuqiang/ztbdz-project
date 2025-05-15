@@ -407,6 +407,31 @@
             alert('通过实质性符合评审的供应商不足3家，请重新评审或选择"不足3家"进行废标！');
             return;
         }
+
+        // 保存评审数据
+        var e = JSON.parse(localStorage.getItem('data'));
+        var saveDataList = [];
+        var projectId = new URLSearchParams(window.location.search).get("id");
+        for(var i=0;i<e.data.length;i++){
+            var data = e.data[i];
+            var isPass = $("input[name='supplier"+data.id+"_compliance']:checked").val()=='pass'?0:1;
+            var reviewDescription = $("textarea[name='supplier"+data.id+"_compliance_comment']").val();
+            if(reviewDescription){
+                var saveData={"sort":i+1,"evaluationCriteriaName":"实质性符合标准","reviewType":"2","isPass":isPass,"reviewDescription":reviewDescription,"projectId":projectId,"projectRegisterId":data.id};
+                saveDataList.push(saveData);
+            }
+        }
+        $.ajax({
+            url: "/evaluation/create",
+            type: "POST",
+            data: JSON.stringify(saveDataList),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status != 200){
+                    alert("资格评审提交失败："+e.message);
+                }
+            }
+        });
         
         // 跳转到评分标签页并初始化
         setReviewStage('scoring');
@@ -428,7 +453,8 @@
                 name: supplierEl.dataset.name
             });
         });
-        
+
+        var isError = false;
         // 计算并更新汇总显示
         passedSuppliers.forEach(supplier => {
             const priceInput = form.querySelector(`input[name="supplier${supplier.id}_price"]`);
@@ -453,7 +479,16 @@
                          (isNaN(tech) ? 0 : tech) + 
                          (isNaN(performance) ? 0 : performance) + 
                          (isNaN(solution) ? 0 : solution);
-            
+            if(isError){
+                return;
+            }
+            if(total>100){
+                alert("总分不能超过100分！");
+                isError = true;
+                return;
+            }
+
+
             // 更新汇总显示
             document.getElementById(`supplier${supplier.id}_price_summary`).textContent = isNaN(price) ? '-' : price;
             document.getElementById(`supplier${supplier.id}_tech_summary`).textContent = isNaN(tech) ? '-' : tech;
@@ -461,6 +496,9 @@
             document.getElementById(`supplier${supplier.id}_solution_summary`).textContent = isNaN(solution) ? '-' : solution;
             document.getElementById(`supplier${supplier.id}_total_summary`).textContent = total === 0 ? '-' : total;
         });
+        if(isError){
+            return;
+        }
         
         if (hasEmptyFields) {
             if (!allSuppliersFilled) {
@@ -590,6 +628,11 @@
             return;
         }
 
+
+        var isError = false;
+        // 保存评审数据
+        var saveDataList = [];
+        var projectId = new URLSearchParams(window.location.search).get("id");
         // 收集所有供应商评分数据
         const scores = [];
         document.querySelectorAll('#complianceSuppliersList .supplier-name').forEach(supplierEl => {
@@ -599,7 +642,25 @@
             const tech = parseInt(form.querySelector(`input[name="supplier${id}_tech"]`).value) || 0;
             const performance = parseInt(form.querySelector(`input[name="supplier${id}_performance"]`).value) || 0;
             const solution = parseInt(form.querySelector(`input[name="supplier${id}_solution"]`).value) || 0;
-            
+            if(isError){
+                return;
+            }
+            if((price + tech + performance + solution)>100){
+                alert("总分不能超过100分！");
+                isError = true;
+                return;
+            }
+
+            const priceReason = form.querySelector(`input[name="supplier${id}_price_reason"]`).value;
+            const techReason = form.querySelector(`input[name="supplier${id}_tech_reason"]`).value;
+            const performanceReason = form.querySelector(`input[name="supplier${id}_performance_reason"]`).value;
+            const solutionReason = form.querySelector(`input[name="supplier${id}_solution_reason"]`).value;
+
+            saveDataList.push({"sort":1,"evaluationCriteriaName":"评分标准","score":price,"deductionReason":priceReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
+            saveDataList.push({"sort":2,"evaluationCriteriaName":"评分标准","score":tech,"deductionReason":techReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
+            saveDataList.push({"sort":3,"evaluationCriteriaName":"评分标准","score":performance,"deductionReason":performanceReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
+            saveDataList.push({"sort":4,"evaluationCriteriaName":"评分标准","score":solution,"deductionReason":solutionReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
+
             scores.push({
                 id: id,
                 name: name,
@@ -609,6 +670,22 @@
                 solution: solution,
                 total: price + tech + performance + solution
             });
+
+        });
+        if(isError){
+            return;
+        }
+
+        $.ajax({
+            url: "/evaluation/create",
+            type: "POST",
+            data: JSON.stringify(saveDataList),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status != 200){
+                    alert("资格评审提交失败："+e.message);
+                }
+            }
         });
 
         // 保存评分数据到本地存储
@@ -883,7 +960,7 @@
                     <div id="criteria-result" class="criteria-section">
                         <h3>评审结果</h3>
                         <p>综合评审结果将在此显示</p>
-                        <button style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer;">
+                        <button onclick="submitResult()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer;">
                             生成评审报告
                         </button>
                     </div>
@@ -921,12 +998,17 @@
             verifyLogin();
 
             $.ajax({
-                url: "/projectRegister/getProject/"+new URLSearchParams(window.location.search).get("id"),
+                url: "/projectRegister/getProjectSuccess/"+new URLSearchParams(window.location.search).get("id"),
                 type: "GET",
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){
                         localStorage.setItem('data', JSON.stringify(e)); //缓存数据 方便后面查询
+                        if(e.data.length==0){
+                            alert("没有投标方报名参与，请选择其他项目评审!");
+                            location.href='/expert.html';
+                            return;
+                        }
                         var fileId = e.data[0].project.procurementDocuments;
                         $("#pdf-viewer").attr("data-fileId",fileId);
 
@@ -961,10 +1043,21 @@
                     }
                 });
             }
-
-
-
         });
+        function submitResult(){
+            $.ajax({
+                url: "/tenderee/update",
+                type: "POST",
+                data: JSON.stringify({"project":{"id":new URLSearchParams(window.location.search).get("id"),"state":3,"reviewEndDate":new Date().toLocaleString().replaceAll("/","-")}}),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status != 200){
+                        alert("更新项目失败："+e.message);
+                    }
+                }
+            });
+            alert("评审报告成功");
+        }
     </script>
 </body>
 <!-- InstanceEnd --></html>

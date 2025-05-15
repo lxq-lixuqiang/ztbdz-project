@@ -84,6 +84,14 @@ public interface ProjectRegisterService {
      */
     ProjectRegister selectById(Long id) throws Exception;
 
+
+    /**
+     * 更新投标
+     * @param projectRegister
+     * @return
+     */
+    Result update(ProjectRegister projectRegister);
+
     /**
      * 根据id更新投标
      * @param projectRegister
@@ -104,7 +112,7 @@ public interface ProjectRegisterService {
      * @param projectId
      * @return
      */
-    Result getProject(Long projectId);
+    Result getProject(Long projectId,Integer state);
 
     /**
      * 统计投标分数
@@ -137,4 +145,13 @@ public interface ProjectRegisterService {
      * @throws Exception
      */
     List<ProjectRegister> selectMemberProjectByIds(List<Long> ids) throws Exception;
+
+    /**
+     * 批量删除 根据项目Id和人员Id
+     * @param projectId
+     * @param memberId
+     * @return
+     * @throws Exception
+     */
+    Integer deletesByProjectIdAndMemberId(Long projectId,Long memberId) throws Exception;
 }

@@ -3,6 +3,7 @@ package com.ztbdz.user.controller;
 
 import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.user.service.ExpertInfoService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "专家信息")
@@ -60,8 +62,9 @@ public class ExpertInfoController {
     @CheckToken
     @PostMapping("list")
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
-                         @RequestParam(required = false, defaultValue = "20") Integer size,
+                         @RequestParam(required = false) Integer size,
                          @RequestBody(required = false) ExpertInfo expertInfo) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         expertInfo.setIsCheck(0);
         return expertInfoService.list(page,size,expertInfo);
     }

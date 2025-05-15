@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "项目信息")
@@ -30,8 +31,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("list")
     public Result list(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,1);
     }
 
@@ -44,8 +46,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("runProject")
     public Result runProject(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,5);
     }
 
@@ -58,8 +61,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("reviewProject")
     public Result reviewProject(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false) Integer size,
                                 @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,6);
     }
 
@@ -72,8 +76,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("runReviewProject")
     public Result runReviewProject(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false) Integer size,
                                 @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,7);
     }
 
@@ -86,8 +91,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("listAvailable")
     public Result listAvailable(@RequestParam(required = false, defaultValue = "1") Integer page,
-                       @RequestParam(required = false, defaultValue = "20") Integer size,
+                       @RequestParam(required = false) Integer size,
                        @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,2);
     }
 
@@ -100,8 +106,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("listProject1")
     public Result listProject1(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false) Integer size,
                                 @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,3);
     }
 
@@ -114,8 +121,9 @@ public class ProjectController {
     @CheckToken
     @PostMapping("listApplyingInit")
     public Result listApplyingInit(@RequestParam(required = false, defaultValue = "1") Integer page,
-                               @RequestParam(required = false, defaultValue = "20") Integer size,
+                               @RequestParam(required = false) Integer size,
                                @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectService.page(page,size,project,4);
     }
 

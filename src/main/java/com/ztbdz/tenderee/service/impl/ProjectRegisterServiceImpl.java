@@ -39,6 +39,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     private TendereeService tendereeService;
 
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Result create(ProjectRegister projectRegister) {
         try{
@@ -49,10 +50,14 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             long endDate =project.getEnrollEndDate().getTime(); // 截止时间
             if(!(nowDate>startDate && endDate>nowDate)) return Result.fail("报名日期【"+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(project.getSenrollStartDate())+" - "+new SimpleDateFormat("yyyy-MM-dd HH:mm").format(project.getEnrollEndDate())+"】，请在报名时间内报名！");
 
+            // 如果报名未通过的话，可重复报名,删除重复报名数据
+            this.deletesByProjectIdAndMemberId(project.getId(),projectRegister.getMember().getId());
+
             Integer num = this.insert(projectRegister);
             if(num<=0) return Result.fail("报名失败");
             return Result.ok("报名成功");
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("项目报名异常，原因："+e.getMessage());
         }
@@ -80,6 +85,18 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
         try{
             PageHelper.startPage(page, size);
             List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
+            if(state==3){ // 进行去重操作
+                List<ProjectRegister> newProjectRegisterList = new ArrayList();
+                Map<Long,Object> isHavs = new HashMap();
+                for(ProjectRegister projectRegister : projectRegisterList){
+                    if(isHavs.get(projectRegister.getProject().getId())==null){
+                        isHavs.put(projectRegister.getProject().getId(),"");
+                        newProjectRegisterList.add(projectRegister);
+                    }
+                }
+                projectRegisterList =  newProjectRegisterList;
+            }
+
             List<Long> projectIds = new ArrayList();
             for(ProjectRegister projectRegister : projectRegisterList){
                 projectIds.add(projectRegister.getProject().getId());
@@ -175,10 +192,21 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
+    public Result update(ProjectRegister projectRegister) {
+        try{
+            int num = this.updateById(projectRegister);
+            if(num<=0) return Result.fail("更新失败");
+            return Result.ok("更新成功");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("更新投标异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
     public Integer updateById(ProjectRegister projectRegister) throws Exception {
         return projectRegisterMapper.updateById(projectRegister);
     }
-
 
     @Override
     public Integer updateWinBidState(List<Long> ids,ProjectRegister projectRegister) throws Exception {
@@ -188,9 +216,9 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public Result getProject(Long projectId) {
+    public Result getProject(Long projectId,Integer state) {
         try{
-            return Result.ok("查询成功",projectRegisterMapper.getProject(projectId));
+            return Result.ok("查询成功",projectRegisterMapper.getProject(projectId,state));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("根据项目id查询投标异常，原因："+e.getMessage());
@@ -264,6 +292,14 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public List<ProjectRegister> selectMemberProjectByIds(List<Long> ids) throws Exception {
         return projectRegisterMapper.selectMemberProjectByIds(ids);
+    }
+
+    @Override
+    public Integer deletesByProjectIdAndMemberId(Long projectId,Long memberId) throws Exception {
+        QueryWrapper<ProjectRegister> queryWrapper = new QueryWrapper();
+        queryWrapper.in("project_id",projectId.toString());
+        queryWrapper.in("member_id",memberId.toString());
+        return projectRegisterMapper.delete(queryWrapper);
     }
 
 

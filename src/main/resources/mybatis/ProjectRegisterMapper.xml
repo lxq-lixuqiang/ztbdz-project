@@ -25,8 +25,13 @@
 		<if test="state==1 and memberId != null">
 			and t.member_id = #{memberId}
 		</if>
-		group by pr.project_id
-		order by p.update_date
+		<if test="state!=3">
+			group by pr.project_id
+			order by p.update_date desc
+		</if>
+		<if test="state==3">
+			order by pr.state asc,p.update_date desc
+		</if>
 	</select>
 	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">
 		<result property="project.id" column="project_id"/>
@@ -57,6 +62,9 @@
 		1=1
 		<if test="projectId != null">
 			and p.id=#{projectId}
+		</if>
+		<if test="state != null">
+			and pr.state=#{state}
 		</if>
 		order by pr.create_date
 	</select>

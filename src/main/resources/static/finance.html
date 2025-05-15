@@ -1,0 +1,272 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>无标题文档</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+
+
+
+    </div>
+
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>项目列表</h3>
+            <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
+        </div>
+        <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
+        <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">暂无项目数据</div>
+        <table id="projectsTable" style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                    <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
+                    <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                    <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                    <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                    <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 项目数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+    </div>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>
+<script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+<script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+<script src="config/token.js" type="text/javascript"></script>
+<script>
+    verifyLogin();
+    function loadProjects() {
+        $("#loadingMessage").show();
+        $("#emptyMessage").hide();
+        $("#projectsTable").hide();
+        $.ajax({
+            url: "/projectRegister/auditList",
+            type: "POST",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    renderProjects(e.data);
+                    $("#loadingMessage").hide();
+                    $("#projectsTable").show();
+                }else{
+                    $("#emptyMessage").show().text("加载失败："+e.message);
+                    $("#loadingMessage").hide();
+                }
+            },
+            error: function() {
+                $("#emptyMessage").show().text("请求失败，请检查网络连接");
+                $("#loadingMessage").hide();
+            }
+        });
+    }
+
+    function renderProjects(data) {
+        const tbody = $("#projectsTable tbody");
+        tbody.empty();
+
+        if(data.list.length > 0) {
+            // 只显示前20个项目
+            const projectsToShow = data.list;
+
+            projectsToShow.forEach(project => {
+                const row = $(`
+                    <tr style="border:1px solid #ddd;">
+                        <td style="padding:10px;">${project.projectName==null?'':project.projectName}</td>
+                        <td style="padding:10px;">${project.enrollEndDate==null?'':project.enrollEndDate}</td>
+                        <td style="padding:10px;">${project.projectRegisters.project.tenderee.tendereeName==null?'':project.projectRegisters.project.tenderee.tendereeName}</td>
+                        <td style="padding:10px;">${project.projectOverview==null?'':project.projectOverview}</td>
+                        <td style="padding:10px;">${project.projectRegisters.state==1?'已审核':'未审核'}</td>
+                        <td style="padding:10px;">
+                            <button onclick="showApplicationModal('${project.projectName}','${project.id}')"
+                                    style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">
+                                查看报名情况
+                            </button>
+                        </td>
+                    </tr>
+                `);
+                tbody.append(row);
+            });
+        } else {
+            tbody.append('<tr><td colspan="6" style="padding:10px; border:1px solid #ddd;">暂无项目数据</td></tr>');
+        }
+    }
+
+    // 显示报名情况弹窗
+    function showApplicationModal(projectName, projectId) {
+        $("#applicationModal").show();
+        $("#modalTitle").text(projectName + " - 报名情况");
+        $("#modalApplicationTable").empty().append('<tr><td colspan="4" style="padding:10px;">加载中...</td></tr>');
+        localStorage.setItem('projectName', projectName);
+        localStorage.setItem('projectId', projectId);
+        // 原数据库请求代码(保留但注释掉)
+        $.ajax({
+            url: "/projectRegister/getProject/" + projectId,
+            type: "GET",
+            contentType: "application/json",
+            success:function(e) {
+                const tbody = $("#modalApplicationTable");
+                tbody.empty();
+
+                if (e.data.length > 0) {
+                    e.data.forEach(register => {
+                        const row = $(`
+                                <tr style="border:1px solid #ddd;">
+                                    <td style="padding:10px;">${register.member.account.accountName==null?'':register.member.account.accountName}</td>
+                                    <td style="padding:10px;">${register.member.account.member==null?'':register.member.account.member}</td>
+                                    <td style="padding:10px;">${register.member.account.phone==null?'':register.member.account.phone}</td>
+                                    <td style="padding:10px;">${register.createDate==null?'':register.createDate}</td>
+                                    <td style="padding:10px;">${register.paymentMoney==null?'':register.paymentMoney}元</td>
+                                    <td style="padding:10px;">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
+                                    <td style="padding:10px;">
+                                        <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}')"
+                                                style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">
+                                            查看凭证
+                                        </button>
+                                    </td>
+                                </tr>
+                          `);
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append('<tr><td colspan="4" style="padding:10px;">暂无报名信息</td></tr>');
+                }
+            }
+        });
+
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+        $("#applicationModal").hide();
+    }
+
+    function audit(state){
+        var registerId = $("#voucherImage").attr("data-id");
+        $.ajax({
+            url: "/projectRegister/update",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({'id':registerId,'state':state}),
+            success:function(e) {
+                if(e.status == 200){
+                    loadProjects()
+                    showApplicationModal(localStorage.getItem('projectName'),localStorage.getItem('projectId'));
+                    alert("审核成功!");
+                    closeVoucherModal();
+                }else{
+                    alert(e.message)
+                }
+            },
+            error: function() {
+                $("#emptyMessage").show().text("请求失败，请检查网络连接");
+                $("#loadingMessage").hide();
+            }
+        });
+
+
+    }
+
+
+    // 查看缴费金额
+    function showPaymentAmount(companyName) {
+        // 模拟缴费金额数据
+        const mockAmounts = {
+            "ABC科技有限公司": "5000元",
+            "XYZ信息系统有限公司": "3000元"
+        };
+
+        alert(`${companyName}的缴费金额：${mockAmounts[companyName] || '未缴费'}`);
+    }
+
+    // 查看缴费凭证
+    function showPaymentVoucher(companyName,fileId,registerId,state) {
+        $("#voucherModal").show();
+        $("#voucherImage").attr("src", "/file/preview/"+fileId);
+        $("#voucherTitle").text(companyName + " - 缴费凭证");
+        $("#voucherImage").attr("data-id",registerId);
+        if(state!=0){
+            $("#buttonHide").hide();
+        }else{
+            $("#buttonHide").show();
+        }
+
+
+    }
+
+    // 关闭凭证弹窗
+    function closeVoucherModal() {
+        $("#voucherModal").hide();
+    }
+
+    $(function() {
+        // 页面加载时自动获取项目列表
+        loadProjects();
+    });
+</script>
+
+<!-- 报名情况弹窗 -->
+<div id="applicationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:800px; max-height:80vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 id="modalTitle">项目报名情况</h3>
+            <button onclick="closeModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
+                    <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                    <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                    <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
+                    <th style="padding:10px; border:1px solid #ddd;">缴费金额</th>
+                    <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                    <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                </tr>
+            </thead>
+            <tbody id="modalApplicationTable">
+                <!-- 报名数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+        <div style="text-align:center; margin-top:20px;">
+            <button onclick="closeModal()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
+        </div>
+</div>
+
+<!-- 凭证图片弹窗 -->
+<div id="voucherModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); z-index:1001;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; max-width:90%; max-height:90%;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 id="voucherTitle">缴费凭证</h3>
+            <button onclick="closeVoucherModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <img id="voucherImage" src="" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">
+        <div style="text-align:center; margin-top:15px;" id="buttonHide">
+            <button onclick="audit(1)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
+            <button onclick="audit(2)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+        </div>
+    </div>
+</div>
+</div>
