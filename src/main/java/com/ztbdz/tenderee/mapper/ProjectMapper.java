@@ -15,4 +15,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
 
     List<Project> runProject(@Param("project")Project project, @Param("memberId")Long memberId,@Param("state")Integer state);
 
+    List<Project> reviewEndProject(Project project);
+
 }

@@ -32,3 +32,25 @@ ADD COLUMN `payment_money` int(11) NULL AFTER `num`;
 # 项目信息添加评审结束时间
 ALTER TABLE `project`
 ADD COLUMN `review_end_date` datetime(0) NULL AFTER `review_progress`;
+
+# 创建评审结果报告
+CREATE TABLE `result_report`  (
+  `id` bigint(20) NOT NULL,
+  `member_id` bigint(20) NULL,
+  `project_id` bigint(20) NULL,
+  `state` int(11) NULL,
+  `describe` varchar(1000) NULL,
+  `result_report_id` varchar(255) NULL,
+  `result_report` longtext NULL,
+  `create_date` datetime(0) NULL,
+  `update_date` datetime(0) NULL,
+  PRIMARY KEY (`id`)
+);
+
+# 项目添加评审是否通过
+ALTER TABLE `project`
+ADD COLUMN `is_pass` int(11) NULL AFTER `state`;
+
+# 投标报名修改中标金额类型
+ALTER TABLE `project_register`
+MODIFY COLUMN `bid_money` varchar(255) NULL DEFAULT NULL AFTER `payment_voucher`;

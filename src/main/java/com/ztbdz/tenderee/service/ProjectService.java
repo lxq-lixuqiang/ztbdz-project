@@ -44,6 +44,16 @@ public interface ProjectService {
      * @return
      * @throws Exception
      */
+    PageInfo<Project> reviewEndProject(Integer page, Integer size, Project project) throws Exception;
+
+    /**
+     * 查询项目列表
+     * @param page
+     * @param size
+     * @param project
+     * @return
+     * @throws Exception
+     */
     PageInfo<Project> listAvailable(Integer page, Integer size, Project project,Integer state) throws Exception;
 
     /**

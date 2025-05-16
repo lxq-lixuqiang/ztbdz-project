@@ -239,7 +239,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">通过</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass 0}}通过{{else}}废标{{/eq}}</td>
         </tr>
         {{/each}}
         {{else}}

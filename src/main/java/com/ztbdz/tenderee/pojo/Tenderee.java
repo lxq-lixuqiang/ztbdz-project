@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.sql.Clob;
 import java.util.Date;
 import java.util.List;
 

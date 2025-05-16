@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.ProjectMapper;
-import com.ztbdz.tenderee.pojo.Project;
-import com.ztbdz.tenderee.pojo.Tender;
-import com.ztbdz.tenderee.pojo.Tenderee;
-import com.ztbdz.tenderee.pojo.TendereeInform;
+import com.ztbdz.tenderee.pojo.*;
 import com.ztbdz.tenderee.service.ProjectService;
 import com.ztbdz.tenderee.service.TenderService;
 import com.ztbdz.tenderee.service.TendereeInformService;
 import com.ztbdz.tenderee.service.TendereeService;
+import com.ztbdz.user.pojo.Member;
 import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,20 +47,31 @@ public class ProjectServiceImpl  implements ProjectService {
     public Result page(Integer page, Integer size, Project project,Integer states) {
         try{
             PageInfo<Project> pageDate = null;
-            if(states == 1){
-                pageDate = selectList(page,size,project);
-            }else if(states == 2){
-                pageDate = this.listAvailable(page,size,project,-1);
-            }else if(states == 3){
-                pageDate = this.listAvailable(page,size,project,1);
-            }else if(states == 4){
-                pageDate = this.listAvailable(page,size,project,0);
-            }else if(states == 5){
-                pageDate = this.runProject(page,size,project,0);
-            }else if(states == 6){
-                pageDate = this.runProject(page,size,project,1);
-            }else if(states == 7){
-                pageDate = this.runProject(page,size,project,2);
+            switch (states){
+                case 1:
+                    pageDate = selectList(page,size,project);
+                    break;
+                case 2:
+                    pageDate = this.listAvailable(page,size,project,-1);
+                    break;
+                case 3:
+                    pageDate = this.listAvailable(page,size,project,1);
+                    break;
+                case 4:
+                    pageDate = this.listAvailable(page,size,project,0);
+                    break;
+                case 5:
+                    pageDate = this.runProject(page,size,project,0);
+                    break;
+                case 6:
+                    pageDate = this.runProject(page,size,project,1);
+                    break;
+                case 7:
+                    pageDate = this.runProject(page,size,project,2);
+                    break;
+                case 8:
+                    pageDate = this.reviewEndProject(page,size,project);
+                    break;
             }
             return Result.ok("查询成功！",pageDate);
         }catch (Exception e){
@@ -83,6 +93,15 @@ public class ProjectServiceImpl  implements ProjectService {
             if(!StringUtils.isEmpty(project.getMemberId())) queryWrapper.eq("member_id", project.getMemberId());
         }
         return new PageInfo(projectMapper.selectList(queryWrapper));
+    }
+
+    @Override
+    public PageInfo<Project> reviewEndProject(Integer page, Integer size, Project project) throws Exception {
+        PageHelper.startPage(page, size);
+        ProjectRegister projectRegister = new ProjectRegister();
+        projectRegister.setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID)));
+        project.setProjectRegisters(projectRegister);
+        return new PageInfo(projectMapper.reviewEndProject(project));
     }
 
     @Override

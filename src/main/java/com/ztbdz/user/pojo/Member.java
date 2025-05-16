@@ -66,6 +66,12 @@ public class Member extends Model<Member> implements Serializable {
     @ApiModelProperty(value = "扩展字段05",hidden = true)
     private String ext5;
 
+    public Member(){}
+
+    public Member(Long id){
+        this.id = id;
+    }
+
     @Override
     protected Serializable pkVal() {
         return id;

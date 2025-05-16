@@ -44,7 +44,10 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "标书")
     private String bidDocumentId;
     @ApiModelProperty(value = "中标金额")
-    private Double bidMoney;
+    private String bidMoney;
+    @ApiModelProperty(value = "中标金额大写")
+    @TableField(exist = false)
+    private String bidMoneyUppercase;
     @ApiModelProperty(value = "合同盖章文件")
     private String contractImprint;
     @ApiModelProperty(value = "评标报告文件")

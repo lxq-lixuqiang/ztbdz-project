@@ -93,6 +93,8 @@ public class Project extends Model<Project> implements Serializable {
     private Integer numberReviewExpert;
     @ApiModelProperty(value = "评审进度")
     private Integer reviewProgress;
+    @ApiModelProperty(value = "评审是否通过（0=通过 1=废标）")
+    private Integer isPass;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

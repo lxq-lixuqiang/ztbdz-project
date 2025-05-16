@@ -37,6 +37,21 @@ public class ProjectController {
         return projectService.page(page,size,project,1);
     }
 
+    @ApiOperation(value = "查询评审结束项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("reviewEndProject")
+    public Result reviewEndProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false) Integer size,
+                       @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return projectService.page(page,size,project,8);
+    }
+
     @ApiOperation(value = "查询正在进行项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),

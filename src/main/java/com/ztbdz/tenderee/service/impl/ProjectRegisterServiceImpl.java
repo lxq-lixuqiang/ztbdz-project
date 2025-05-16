@@ -188,7 +188,9 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
 
     @Override
     public ProjectRegister selectById(Long id) throws Exception {
-        return projectRegisterMapper.selectById(id);
+        ProjectRegister projectRegister = projectRegisterMapper.selectProjectAndMemberById(id);
+        projectRegister.setBidMoneyUppercase(SystemConfig.digitUppercase(Double.valueOf(projectRegister.getBidMoney())));
+        return projectRegister;
     }
 
     @Override
@@ -270,6 +272,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             ProjectRegister projectRegister = new ProjectRegister();
             // 更新已中标状态
             projectRegister.setWinBidState(1);
+            projectRegister.setBidMoney(String.valueOf(winBidProjectRegisterList.get(0).getProject().getMoney()));
             this.updateWinBidState(ids,projectRegister);
             // 更新未中标状态
             if(notBidIds.size()>0){

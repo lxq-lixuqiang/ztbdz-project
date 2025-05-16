@@ -108,7 +108,13 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
                     // 保存项目进度
                     Project project = new Project();
                     project.setId(projectId);
-                    project.setReviewProgress(20);
+                    if(reviewType==1){ // 1=资格评审标准
+                        project.setReviewProgress(25);
+                    }else if(reviewType==2){ // 2=实质性符合标准
+                        project.setReviewProgress(50);
+                    }else if(reviewType==3){ // 3=评分标准
+                        project.setReviewProgress(75);
+                    }
                     projectService.updateById(project);
                 }
             }

@@ -244,7 +244,7 @@
     // 废标操作
     function disqualifyProject() {
         if (confirm('确定要废标吗？此操作不可撤销！')) {
-            window.open('bid-invalid.html', '_blank');
+            window.open('bid-invalid.html?id='+new URLSearchParams(window.location.search).get("id"), '_blank');
         }
     }
 
@@ -416,7 +416,7 @@
             var data = e.data[i];
             var isPass = $("input[name='supplier"+data.id+"_compliance']:checked").val()=='pass'?0:1;
             var reviewDescription = $("textarea[name='supplier"+data.id+"_compliance_comment']").val();
-            if(reviewDescription){
+            if($("input[name='supplier"+data.id+"_compliance']")){
                 var saveData={"sort":i+1,"evaluationCriteriaName":"实质性符合标准","reviewType":"2","isPass":isPass,"reviewDescription":reviewDescription,"projectId":projectId,"projectRegisterId":data.id};
                 saveDataList.push(saveData);
             }
@@ -630,6 +630,7 @@
 
 
         var isError = false;
+        var bidInfo = {};
         // 保存评审数据
         var saveDataList = [];
         var projectId = new URLSearchParams(window.location.search).get("id");
@@ -645,7 +646,13 @@
             if(isError){
                 return;
             }
-            if((price + tech + performance + solution)>100){
+            var total = price + tech + performance + solution;
+            if(!bidInfo.total){
+                bidInfo={"total":total,"id":id,"name":name};
+            }else if(total>bidInfo.total){
+                bidInfo={"total":total,"id":id,"name":name};
+            }
+            if(total>100){
                 alert("总分不能超过100分！");
                 isError = true;
                 return;
@@ -675,7 +682,9 @@
         if(isError){
             return;
         }
+        localStorage.setItem('bidInfo', JSON.stringify(bidInfo)); // 中标信息
 
+        calculateScores();
         $.ajax({
             url: "/evaluation/create",
             type: "POST",
@@ -684,6 +693,22 @@
             success:function(e) {
                 if(e.status != 200){
                     alert("资格评审提交失败："+e.message);
+                }
+            }
+        });
+        $("#resultInfo").html($("#resultScore").html());
+        var bidInfo = JSON.parse(localStorage.getItem('bidInfo')); // 中标信息
+        $("#bidInfo").html("<h2 style=\"color:red;text-align:center;\">恭喜供应商：</h2>" +
+                            "<h2 style=\"color:red;text-align:center;\">"+bidInfo.name+"</h2>" +
+                            "<h2 style=\"color:red;text-align:center;\">中标！</h2>");
+        // 更新中标 投标方
+        $.ajax({
+            url: "/projectRegister/winBid?ids="+bidInfo.id,
+            type: "POST",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status != 200){
+                    alert('提交中标供应商失败！');
                 }
             }
         });
@@ -929,7 +954,7 @@
                             </div>
                             
                             <!-- 汇总显示 -->
-                            <div style="margin-bottom:20px; padding:15px; background:#f9f9f9; border-radius:4px;">
+                            <div id="resultScore" style="margin-bottom:20px; padding:15px; background:#f9f9f9; border-radius:4px;">
                                 <h4>评分汇总</h4>
                                 <table style="width:100%; border-collapse:collapse; margin-top:10px;" id="scoreSummaryTable">
                                     <thead>
@@ -960,6 +985,8 @@
                     <div id="criteria-result" class="criteria-section">
                         <h3>评审结果</h3>
                         <p>综合评审结果将在此显示</p>
+                        <div id="resultInfo"></div>
+                        <div id="bidInfo"></div>
                         <button onclick="submitResult()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer;">
                             生成评审报告
                         </button>
@@ -1048,7 +1075,7 @@
             $.ajax({
                 url: "/tenderee/update",
                 type: "POST",
-                data: JSON.stringify({"project":{"id":new URLSearchParams(window.location.search).get("id"),"state":3,"reviewEndDate":new Date().toLocaleString().replaceAll("/","-")}}),
+                data: JSON.stringify({"project":{"id":new URLSearchParams(window.location.search).get("id"),"state":3,"isPass":0,"reviewProgress":100,"reviewEndDate":new Date().toLocaleString().replaceAll("/","-")}}),
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status != 200){
@@ -1056,7 +1083,9 @@
                     }
                 }
             });
-            alert("评审报告成功");
+            alert("评审报告生成成功！");
+            var bidInfo = JSON.parse(localStorage.getItem('bidInfo'));
+            location.href = "/Bid-e-r.html?id="+bidInfo.id;
         }
     </script>
 </body>

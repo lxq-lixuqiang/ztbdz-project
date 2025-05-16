@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.ProjectMapper">
 	<select id="listAvailable" resultMap="ProjectRegisterAndProject">
 		select 
-			p.*,pr.id as prId,pr.create_date as prCreateDate
+			p.*,pr.id as prId,pr.create_date as prCreateDate,pr.win_bid_state
 		from
 			project p
 			left join project_register pr on pr.project_id = p.id
@@ -36,6 +36,7 @@
 	<resultMap id="ProjectRegisterAndProject" type="Project">
 		<result property="projectRegisters.id" column="prId"/>
 		<result property="projectRegisters.createDate" column="prCreateDate"/>
+		<result property="projectRegisters.winBidState" column="win_bid_state"/>
 	</resultMap>
 
 	<select id="runProject" resultType="Project">
@@ -62,6 +63,29 @@
 			</if>
 		order by
 			p.update_date desc
+	</select>
+
+	<select id="reviewEndProject" resultMap="ProjectRegisterAndProject">
+		select
+		p.*,pr.win_bid_state
+		from
+			project p
+		left join project_register pr on pr.project_id = p.id
+		where
+		1=1
+		<if test="state != null">
+			and p.state=#{state}
+		</if>
+		<if test="projectName != null">
+			and p.project_name=#{projectName}
+		</if>
+		<if test="projectRegisters !=null and projectRegisters.member != null">
+			<if test="projectRegisters.member.id != null">
+				and pr.member_id=#{projectRegisters.member.id}
+			</if>
+		</if>
+		order by
+		p.update_date desc
 	</select>
 
 

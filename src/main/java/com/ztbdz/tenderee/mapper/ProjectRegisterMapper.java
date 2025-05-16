@@ -19,4 +19,6 @@ public interface ProjectRegisterMapper extends BaseMapper<ProjectRegister> {
 
     List<ProjectRegister> getProject(@Param("projectId") Long projectId,@Param("state") Integer state);
 
+    ProjectRegister selectProjectAndMemberById(Long id);
+
 }
