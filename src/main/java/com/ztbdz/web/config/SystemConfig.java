@@ -2,20 +2,21 @@ package com.ztbdz.web.config;
 
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.web.util.Common;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 系统配置
@@ -205,4 +206,49 @@ public class SystemConfig {
         }
         return head + s.replaceAll("(零.)*零元", "元").replaceFirst("(零.)+", "").replaceAll("(零.)+", "零").replaceAll("^整$", "零元整");
     }
+
+    /**
+     * 导入Excel文件数据
+     * @param file 文件
+     * @param fields 对应字段名称
+     * @return
+     * @throws Exception
+     */
+    public static List<Map<String,String>> importExcelData(MultipartFile file,String[] fields) throws Exception {
+        List<Map<String,String>> paramList = new ArrayList();
+        Workbook workbook = WorkbookFactory.create(file.getInputStream());
+        try{
+            Sheet sheet = workbook.getSheetAt(0); // 读取第一个Sheet
+            Iterator<Row> rowIterator = sheet.iterator();
+            if (rowIterator.hasNext()) rowIterator.next();// 跳过标题行（假设第一行是标题）
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                if(row.getLastCellNum() == fields.length){
+                    if(StringUtils.isEmpty(getCellStringValue(row.getCell(0))) && StringUtils.isEmpty(getCellStringValue(row.getCell(1)))){
+                        // 防止空数据,如果第一列和第二列都为空，说明下面行都是空行
+                        break;
+                    }
+                    Map<String,String> paramMap = new HashMap();
+                    for(int i=0;i<row.getLastCellNum();i++){
+                        paramMap.put(fields[i],getCellStringValue(row.getCell(i)));
+                    }
+                    paramList.add(paramMap);
+                }else{
+                    throw new Exception("字段数量不一致！");
+                }
+            }
+        }catch (Exception e){
+            throw e;
+        }finally {
+            if(workbook!=null) workbook.close();
+        }
+        return paramList;
+    }
+
+    private static String getCellStringValue(Cell cell) {
+        if (cell == null) return "";
+        cell.setCellType(CellType.STRING); // 统一按字符串读取
+        return cell.getStringCellValue().trim();
+    }
+
 }

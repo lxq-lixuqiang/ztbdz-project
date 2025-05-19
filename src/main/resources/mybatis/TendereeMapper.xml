@@ -9,7 +9,6 @@
 		from
 		   tenderee t
 		left join project p on t.project_id=p.id
-		left join category cy on p.category_id = cy.id
 		WHERE
 			 t.id = #{id}
 	</select>
@@ -32,8 +31,9 @@
 		<result property="project.senrollStartDate" column="senroll_start_date"/>
 		<result property="project.createDate" column="create_date"/>
 		<result property="project.updateDate" column="update_date"/>
+		<result property="project.reviewEndDate" column="review_end_date"/>
+		<result property="project.isPass" column="is_pass"/>
 
-		<result property="category.id" column="category_id"/>
 	</resultMap>
 
 	<select id="selectListProject" resultMap="TendereeAndProject">
@@ -42,7 +42,6 @@
 		from
 		   tenderee t
 		left join project p on t.project_id=p.id
-		left join category cy on p.category_id = cy.id
 		WHERE
 			1=1
 			<if test="member !=null and member.id !=null">
@@ -51,8 +50,16 @@
 			<if test="tendereeName !=null and tendereeName.length() >0">
 				and t.tenderee_name like concat('%',#{tendereeName},'%')
 			</if>
-			<if test="project !=null and project.projectName() >0">
-				and p.project_name like concat('%',#{projectName},'%')
+			<if test="project !=null">
+				<if test="project.projectName !=null and project.projectName.length()>0">
+					and p.project_name like concat('%',#{projectName},'%')
+				</if>
+				<if test="project.state != null and project.state != 12">
+					and p.state = #{project.state}
+				</if>
+				<if test="project.state != null and project.state == 12">
+					and (p.state = 1 or p.state=2) and Now() >= p.enroll_end_date
+				</if>
 			</if>
 	  	order by
 			t.update_date desc

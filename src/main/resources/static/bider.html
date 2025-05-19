@@ -394,6 +394,31 @@
             </div>
         </div>
     </div>
+    <!-- 报名结果弹窗 -->
+    <div id="applicationModal2" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 id="modalTitle2">项目报名情况</h3>
+                <button onclick="closeModal2()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+            </div>
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
+                    <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                    <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                    <th style="padding:10px; border:1px solid #ddd;">评审结果</th>
+                </tr>
+                </thead>
+                <tbody id="modalApplicationTable2">
+                <!-- 模拟数据将通过JavaScript动态填充 -->
+                </tbody>
+            </table>
+            <div style="text-align:center; margin-top:20px;">
+                <button onclick="closeModal2()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
+            </div>
+        </div>
+    </div>
     <script id="availableTemplate" type="text/x-handlebars-template">
         {{#if list}}
         {{#each list}}
@@ -478,7 +503,7 @@
             <td style="padding:10px; border:1px solid #ddd;">{{reviewEndDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#eq projectRegisters.winBidState 0}}未公布{{/eq}}{{#eq projectRegisters.winBidState 1}}已中标{{/eq}}{{#eq projectRegisters.winBidState 2}}未中标{{/eq}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>
+                <button onclick="showApplicationModal2('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>
             </td>
         </tr>
         {{/each}}
@@ -677,6 +702,73 @@
 
 
         })
+        // 显示报名结果弹窗
+        function showApplicationModal2(projectName,id) {
+
+            $.ajax({
+                url: "/projectRegister/getProject/"+id,
+                type: "GET",
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        // 设置弹窗标题
+                        document.getElementById('modalTitle2').textContent = projectName + ' - 评审结果';
+
+                        // 填充模拟数据
+                        const tbody = document.getElementById('modalApplicationTable2');
+                        tbody.innerHTML = '';
+
+                        // 模拟3个报名单位
+                        var companies = [{name: '暂无评审结果'}];
+                        if(e.data.length>0){
+                            companies = [];
+                            for(var i=0;i<e.data.length;i++){
+                                var accountName = "";
+                                var contact = "";
+                                var phone = "";
+                                var account = e.data[i].member.account;
+                                if(account!=null){
+                                    if(account.accountName!=null){
+                                        accountName =account.accountName;
+                                    }
+                                    if(account.member!=null){
+                                        contact =account.member;
+                                    }
+                                    if(account.phone!=null){
+                                        phone =account.phone;
+                                    }
+                                }
+                                companies.push({name: accountName, contact: contact, phone: phone, winBidState: e.data[i].winBidState})
+                            }
+                        }
+                        companies.forEach(company => {
+                            const row = document.createElement('tr');
+                        row.style.border = '1px solid #ddd';
+                        row.innerHTML = `<td colspan="5" style="padding:10px;">暂无评审结果</td>`;
+                        if(e.data.length>0){
+                            row.innerHTML = `
+                                <td style="padding:10px;">${company.name}</td>
+                                <td style="padding:10px;">${company.contact}</td>
+                                <td style="padding:10px;">${company.phone}</td>
+                                <td style="padding:10px;">${company.winBidState=="1"?'中标':(company.winBidState=="2"?'未中标':'未公布')}</td>
+                            `;
+                        }
+                        tbody.appendChild(row);
+                    });
+                        // 显示弹窗
+                        document.getElementById('applicationModal2').style.display = 'block';
+                    }else{
+                        alert("获取项目列表失败："+e.message);
+                    }
+                }
+            });
+
+        }
+
+        // 关闭弹窗
+        function closeModal2() {
+            document.getElementById('applicationModal2').style.display = 'none';
+        }
     </script>
     <!-- InstanceEndEditable -->
 </body>

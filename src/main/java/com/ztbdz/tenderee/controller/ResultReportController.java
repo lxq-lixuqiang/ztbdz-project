@@ -18,7 +18,7 @@ public class ResultReportController {
     @Autowired
     private ResultReportService resultReportService;
 
-    @ApiOperation(value = "根据项目id查询废标")
+    @ApiOperation(value = "根据项目id获取报告")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
@@ -29,7 +29,7 @@ public class ResultReportController {
         return resultReportService.selectByProjectId(projectId);
     }
 
-    @ApiOperation(value = "添加或修改废标")
+    @ApiOperation(value = "添加或修改报告")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })

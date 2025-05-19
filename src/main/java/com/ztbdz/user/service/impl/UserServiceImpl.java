@@ -1,10 +1,12 @@
 package com.ztbdz.user.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.UserMapper;
+import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.pojo.User;
@@ -12,6 +14,7 @@ import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.MD5;
 import com.ztbdz.web.util.Result;
@@ -22,8 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -199,5 +204,41 @@ public class UserServiceImpl implements UserService {
     @Override
     public User selectMember(Long id,String username) throws Exception {
         return userMapper.selectMember(id,username);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result uploadExcel(MultipartFile file) {
+        try{
+            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
+
+            String[] fields = new String[]{"用户名","密码","姓名","企业名称","角色类型"};
+            List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);
+            for(Map<String,String> dataMap : dataList){
+                String message = dataMap.get(fields[0]);
+                User user = new User();
+                user.setUsername(message);
+                user.setPassword(dataMap.get(fields[1]));
+                Member member = new Member();
+                member.setName(dataMap.get(fields[2]));
+                Account account = new Account();
+                account.setAccountName(dataMap.get(fields[3]));
+                member.setAccount(account);
+                Role role = new Role();
+                role.setType(dataMap.get(fields[4]));
+                member.setRole(role);
+                user.setMember(member);
+                Result result = this.create(user,"-1");
+                if(result.getStatus()!=200){
+                    log.error("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage()+",具体参数："+JSON.toJSONString(dataMap));
+                    return Result.fail("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage());
+                }
+            }
+            return Result.ok("解析Excel用户文件成功！");
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("解析Excel用户文件异常，原因："+e.getMessage());
+        }
     }
 }

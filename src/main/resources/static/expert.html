@@ -223,7 +223,9 @@
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{reviewProgress}}%</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">继续评审</button>
+                <a href="Bid evaluation.html?id={{id}}">
+                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">继续评审</button>
+                </a>
             </td>
         </tr>
         {{/each}}
@@ -239,7 +241,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass 0}}通过{{else}}废标{{/eq}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass null }}未公布{{/eq}}{{#eq isPass 0}}通过{{/eq}}{{#eq isPass 1}}废标{{/eq}}</td>
         </tr>
         {{/each}}
         {{else}}

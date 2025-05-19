@@ -3,6 +3,8 @@ package com.ztbdz.user.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.User;
 import com.ztbdz.web.util.Result;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface UserService {
@@ -102,5 +104,12 @@ public interface UserService {
      * @return
      */
     User selectMember(Long id,String username) throws Exception;
+
+    /**
+     * 上传Excel用户文件
+     * @param file
+     * @return
+     */
+    Result uploadExcel(MultipartFile file);
 
 }

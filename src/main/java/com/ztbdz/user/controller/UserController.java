@@ -12,6 +12,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @Api(tags = "用户信息（登录、注册）")
@@ -99,4 +102,13 @@ public class UserController {
         return userService.sendSMS(phone);
     }
 
+    @ApiOperation(value = "上传Excel用户文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping(value = "uploadExcel",consumes = "multipart/form-data")
+    public Result uploadExcel( @RequestParam("file") MultipartFile file) {
+        return userService.uploadExcel(file);
+    }
 }
