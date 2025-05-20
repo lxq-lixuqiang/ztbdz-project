@@ -540,7 +540,7 @@
                 projectInit(3,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
             });
             $("body").on("click", "div[data-tab=profile]", function() {
-                var account = JSON.parse(getMember()).account;
+                var account = getMember().account;
                 var fileName = "";
                 if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
                     var ids = account.accountCodeFileId.split(",");
@@ -575,13 +575,13 @@
                 var editContactPhone = $("#editContactPhone").val();
                 var editContactEmail = $("#editContactEmail").val();
 
-                var data = {"id":JSON.parse(getMember()).account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail};
+                var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail};
                 updateAccount(data);
             });
 
             $("#certificateUpload").on('change', function () {
                 var fileId = uploadFile(this.files);
-                var data = {"id":JSON.parse(getMember()).account.id,"accountCodeFileId":fileId}
+                var data = {"id":getMember().account.id,"accountCodeFileId":fileId}
                 updateAccount(data);
                 var fileName = "";
                 for(var i=0;i<this.files.length;i++){

@@ -68,7 +68,7 @@
                         if(e.status == 200){
                             setToken(e.data.token);
                             verifyLogin();
-                            var roleType = JSON.parse(getMember()).role.type;
+                            var roleType = getMember().role.type;
                             if(roleType == "admin"){ // 管理员
                                 location.href = "";
                             }else if(roleType == "expert"){ // 专家

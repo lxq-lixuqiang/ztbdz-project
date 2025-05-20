@@ -55,6 +55,8 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     private String emergencyPhone;
     @ApiModelProperty(value = "备注")
     private String description;
+    @ApiModelProperty(value = "是否组长（0=不是 1=是）")
+    private Integer isAdmin;
     @ApiModelProperty(value = "身份证正面文件id")
     private Long idCardFront;
     @ApiModelProperty(value = "身份证反面文件id")

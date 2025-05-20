@@ -46,6 +46,9 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     @ApiModelProperty(value = "专业要求")
     @TableField(exist = false)
     private List<Speciality> speciality;
+    @ApiModelProperty(value = "分配评审专家")
+    @TableField(exist = false)
+    private List<Long> expertIds;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

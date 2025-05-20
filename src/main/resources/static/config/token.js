@@ -14,7 +14,7 @@ function getToken() {
 
 // 从localStorage获取member
 function getMember() {
-    return localStorage.getItem('member');
+    return JSON.parse(localStorage.getItem('member'));
 }
 // 删除token
 function removeToken() {

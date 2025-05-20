@@ -115,4 +115,14 @@ public class ReviewInfoController {
         return reviewInfoService.expertReviewInfoList( page,  size,  projectName);
     }
 
+    @ApiOperation(value = "分配评审专家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("assignReviewExperts")
+    public Result assignReviewExperts(@RequestBody ReviewInfo reviewInfo) {
+        return reviewInfoService.assignReviewExperts(reviewInfo);
+    }
+
 }

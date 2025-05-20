@@ -79,7 +79,7 @@
                         $("#sumitButton").attr("data-projectid",e.data.project.id);
                         $("input[name='projectName']").attr("value",e.data.project.projectName);
                         $("input[name='projectCode']").attr("value",e.data.project.projectCode);
-                        $("input[name='purchaser']").attr("value",e.data.member.account.accountName);
+                        $("input[name='purchaser']").attr("value",e.data.project.tenderee.tendereeName);
                         var procurementMethod = $("input[name='purchaseMethod'][value="+e.data.project.procurementMethod+"]");
                         if(procurementMethod.length>0){
                             procurementMethod.attr("checked","checked")

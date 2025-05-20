@@ -259,6 +259,8 @@
         $(function() {
             // 初始化
             verifyLogin();
+            var isAdmin = false;
+            getIsAdmin();
             reviewProject($("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
 
             $("body").on("click", "div[data-tab=project1]", function() {
@@ -271,10 +273,16 @@
                 availableInit(3,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
             });
             function availableInit(state,tbody,template){
+                var url = "";
+                var data ={};
+                if(isAdmin){
+                    url = "/project/list";
+                    data ={"state":state};
+                }
                 $.ajax({
-                    url: "/project/list",
+                    url: url,
                     type: "POST",
-                    data: JSON.stringify({"state":state}),
+                    data: JSON.stringify(data),
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
@@ -287,8 +295,12 @@
                 });
             }
             function runReviewProjectInit(tbody,template){
+                var url = "";
+                if(isAdmin){
+                    url = "/project/runReviewProject";
+                }
                 $.ajax({
-                    url: "/project/runReviewProject",
+                    url: url,
                     type: "POST",
                     contentType: "application/json",
                     success:function(e) {
@@ -303,8 +315,12 @@
             }
 
             function reviewProject(tbody,template){
+                var url = "";
+                if(isAdmin){
+                    url = "/project/reviewProject";
+                }
                 $.ajax({
-                    url: "/project/reviewProject",
+                    url: url,
                     type: "POST",
                     contentType: "application/json",
                     success:function(e) {
@@ -313,6 +329,24 @@
                             tbody.html(newTemplate);
                         }else{
                             alert("获取可评审项目列表失败："+e.message);
+                        }
+                    }
+                });
+            }
+
+            function getIsAdmin(){
+                $.ajax({
+                    url: "/expertInfo/getMemberInfo/"+getMember().id,
+                    type: "GET",
+                    async: false,
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            if(e.data.isAdmin==1) {
+                                isAdmin = true;
+                            }
+                        }else{
+                            alert("查询专家信息失败："+e.message);
                         }
                     }
                 });

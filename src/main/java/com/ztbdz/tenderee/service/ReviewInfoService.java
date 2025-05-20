@@ -86,6 +86,14 @@ public interface ReviewInfoService {
      */
     Integer deletes(List<Long> ids) throws Exception;
 
+    /**
+     * 根据项目id进行删除
+     * @param projectId
+     * @return
+     * @throws Exception
+     */
+    Integer deleteByProjectId(Long projectId) throws Exception;
+
 
     /**
      * 专家抽取
@@ -102,4 +110,11 @@ public interface ReviewInfoService {
      * @return
      */
     Result expertReviewInfoList(Integer page, Integer size, String projectName);
+
+
+    /**
+     * 分配评审专家
+     * @return
+     */
+    Result assignReviewExperts(ReviewInfo reviewInfo);
 }

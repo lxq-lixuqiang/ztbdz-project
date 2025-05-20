@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,13 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
         return reviewInfoMapper.delete(queryWrapper);
     }
 
+    @Override
+    public Integer deleteByProjectId(Long projectId) throws Exception {
+        QueryWrapper<ReviewInfo> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("project",projectId);
+        return reviewInfoMapper.delete(queryWrapper);
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result randomExpert(Long id,String hideExpert, String hideAccount, List<Speciality> specialityList) {
@@ -170,6 +178,32 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询专家评审列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result assignReviewExperts(ReviewInfo reviewInfo) {
+        try{
+            if(StringUtils.isEmpty(reviewInfo.getProject().getId()) || reviewInfo.getExpertIds().size()<=0) Result.fail("项目id和分配专家不能为空");
+            List<Long> experIds = reviewInfo.getExpertIds();
+            reviewInfo.setNumber(experIds.size());
+            reviewInfo.setState(1);
+            Long projectId = reviewInfo.getProject().getId();
+            this.deleteByProjectId(projectId); // 删除防止重复分配
+            winBidService.delete(projectId); // 删除防止重复分配
+            this.insert(reviewInfo);
+            for(Long experId : experIds){
+                WinBid winBid = new WinBid();
+                winBid.setMemberId(experId);
+                winBid.setWinBidId(reviewInfo.getId());
+                winBidService.insert(winBid);
+            }
+            return Result.ok("分配专家成功！");
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("分配评审专家异常，原因："+e.getMessage());
         }
     }
 }
