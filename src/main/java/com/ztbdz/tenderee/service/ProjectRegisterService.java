@@ -115,6 +115,13 @@ public interface ProjectRegisterService {
     Result getProject(Long projectId,Integer state);
 
     /**
+     * 根据项目id查询投标
+     * @param projectId
+     * @return
+     */
+    List<ProjectRegister> selectByProjectId(Long projectId,Integer state) throws Exception;
+
+    /**
      * 统计投标分数
      * @param id
      * @param fileId

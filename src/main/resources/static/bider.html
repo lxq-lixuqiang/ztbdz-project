@@ -427,7 +427,7 @@
                 <td style="padding:10px; border:1px solid #ddd;">{{enrollEndDate}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">{{money}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">
-                    <a href="application.html?id={{id}}" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</a>
+                    <a href="Application.html?id={{id}}" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</a>
                 </td>
             </tr>
         {{/each}}
@@ -501,7 +501,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{reviewEndDate}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{#eq projectRegisters.winBidState 0}}未公布{{/eq}}{{#eq projectRegisters.winBidState 1}}已中标{{/eq}}{{#eq projectRegisters.winBidState 2}}未中标{{/eq}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass 1}}废标{{else}}{{#eq projectRegisters.winBidState 0}}未公布{{/eq}}{{#eq projectRegisters.winBidState 1}}已中标{{/eq}}{{#eq projectRegisters.winBidState 2}}未中标{{/eq}}{{/eq}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button onclick="showApplicationModal2('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>
             </td>

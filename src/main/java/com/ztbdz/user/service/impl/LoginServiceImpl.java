@@ -116,7 +116,7 @@ public class LoginServiceImpl implements LoginService {
             Map<String,Object> dataMap = ((Map<String,Map<String,Object>>) redisObject).get(memberId.toString());
             // 校验 当前人员是否有访问权限
             if(roleService.verifyAuthority(url)){
-                return Result.fail("账号没有权限，请切换对应账号访问！");
+                return Result.fail("该账号没有权限，请切换对应账号访问！");
             }
             dataMap.put("token",JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user));
             return Result.ok("校验成功！",dataMap);

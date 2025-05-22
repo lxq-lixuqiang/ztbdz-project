@@ -49,7 +49,7 @@ public class ProjectServiceImpl  implements ProjectService {
             PageInfo<Project> pageDate = null;
             switch (states){
                 case 1:
-                    pageDate = selectList(page,size,project);
+                    pageDate = this.selectList(page,size,project);
                     break;
                 case 2:
                     pageDate = this.listAvailable(page,size,project,-1);
@@ -71,6 +71,15 @@ public class ProjectServiceImpl  implements ProjectService {
                     break;
                 case 8:
                     pageDate = this.reviewEndProject(page,size,project);
+                    break;
+                case 9:
+                    pageDate = this.expertProject(page,size,project,1);
+                    break;
+                case 10:
+                    pageDate = this.expertProject(page,size,project,2);
+                    break;
+                case 11:
+                    pageDate = this.expertProject(page,size,project,null);
                     break;
             }
             return Result.ok("查询成功！",pageDate);
@@ -121,6 +130,12 @@ public class ProjectServiceImpl  implements ProjectService {
             }
         }
         return new PageInfo(projectList);
+    }
+
+    @Override
+    public PageInfo<Project> expertProject(Integer page, Integer size, Project project,Integer state) throws Exception {
+        PageHelper.startPage(page, size);
+        return new PageInfo(projectMapper.expertProject(project,SystemConfig.getCreateMember().getId(),state));
     }
 
     @Override

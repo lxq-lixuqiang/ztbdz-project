@@ -220,11 +220,16 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public Result getProject(Long projectId,Integer state) {
         try{
-            return Result.ok("查询成功",projectRegisterMapper.getProject(projectId,state));
+            return Result.ok("查询成功",this.selectByProjectId(projectId,state));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("根据项目id查询投标异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public List<ProjectRegister> selectByProjectId(Long projectId, Integer state) throws Exception {
+        return projectRegisterMapper.getProject(projectId,state);
     }
 
     @Override

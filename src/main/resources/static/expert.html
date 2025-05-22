@@ -273,16 +273,14 @@
                 availableInit(3,$("#project3 tbody"),Handlebars.compile($("#project3Template").html()));
             });
             function availableInit(state,tbody,template){
-                var url = "";
-                var data ={};
+                var url = "/project/expertList";
                 if(isAdmin){
                     url = "/project/list";
-                    data ={"state":state};
                 }
                 $.ajax({
                     url: url,
                     type: "POST",
-                    data: JSON.stringify(data),
+                    data: JSON.stringify({"state":state}),
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
@@ -295,7 +293,7 @@
                 });
             }
             function runReviewProjectInit(tbody,template){
-                var url = "";
+                var url = "/project/expertRunReviewProject";
                 if(isAdmin){
                     url = "/project/runReviewProject";
                 }
@@ -315,7 +313,7 @@
             }
 
             function reviewProject(tbody,template){
-                var url = "";
+                var url = "/project/expertReviewProject";
                 if(isAdmin){
                     url = "/project/reviewProject";
                 }

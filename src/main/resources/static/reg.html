@@ -34,13 +34,13 @@
                     <label style="display:block; margin-bottom:5px;">密码</label>
                     <input type="password" name="password" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" required>
                 </div>
-                <div style="margin-bottom:20px;">
+                <div style="margin-bottom:20px;display: none;">
                     <label style="display:block; margin-bottom:5px;">用户类型</label>
                     <select name="user_type" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" required>
                         <option value="">请选择用户类型</option>
-                        <option value="agent">代理</option>
-                        <option value="owner">业主单位</option>
-                        <option value="bidder">投标人</option>
+                        <option value="tenderee">代理</option>
+                        <option value="tenderee">业主单位</option>
+                        <option value="bidder" selected>投标人</option>
                     </select>
                 </div>
                 <button type="submit" style="width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">注册</button>

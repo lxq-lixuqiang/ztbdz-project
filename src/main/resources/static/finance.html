@@ -204,6 +204,7 @@
     // 查看缴费凭证
     function showPaymentVoucher(companyName,fileId,registerId,state) {
         $("#voucherModal").show();
+        $("#voucherImage").attr("src", "");
         $("#voucherImage").attr("src", "/file/preview/"+fileId);
         $("#voucherTitle").text(companyName + " - 缴费凭证");
         $("#voucherImage").attr("data-id",registerId);

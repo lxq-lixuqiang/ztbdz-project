@@ -4,7 +4,7 @@ function setToken(token) {
 }
 
 function setMember(member) {
-    localStorage.setItem('member', member);
+    localStorage.setItem('member', JSON.stringify(member));
 }
 
 // 从localStorage获取token
@@ -24,6 +24,10 @@ function removeToken() {
 
 // 校验token是否有效
 function verifyLogin(){
+    if(!getToken()){
+        location.href = "/login.html";
+        return;
+    }
     $.ajaxSetup({
         headers: {
             'token': getToken(),
@@ -38,7 +42,7 @@ function verifyLogin(){
         success:function(e) {
             if(e.status == 200){
                 setToken(e.data.token); // 刷新token保持活跃状态
-                setMember(JSON.stringify(e.data.member));
+                setMember(e.data.member);
             }else{
                 alert(e.message);
                 location.href = "/login.html";
@@ -81,7 +85,11 @@ function uploadImg(files) {
         contentType: false, // 告诉jQuery不要去设置Content-Type请求头
         processData: false, // 告诉jQuery不要去处理发送的数据
         success: function (e) {
-            fileId = e.data;
+            if(e.status == 200){
+                fileId = e.data;
+            }else{
+                alert("上传图片失败！")
+            }
         },
         error: function () {
             alert("上传图片失败！")
@@ -105,7 +113,11 @@ function uploadFile(files) {
         contentType: false, // 告诉jQuery不要去设置Content-Type请求头
         processData: false, // 告诉jQuery不要去处理发送的数据
         success: function (e) {
-            fileId = e.data;
+            if(e.status == 200){
+                fileId = e.data;
+            }else{
+                alert("上传图片失败！")
+            }
         },
         error: function () {
             alert("上传文件失败！")

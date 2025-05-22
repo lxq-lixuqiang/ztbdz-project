@@ -78,7 +78,7 @@ public class DataInitializer {
                 // 投标方
                 List<MenuAuthorize> bidderMenuList = new ArrayList();
                 bidderMenuList.add(new MenuAuthorize("投标方管理页面","bider","/bider.html"));
-                bidderMenuList.add(new MenuAuthorize("投标方报名详情页","application","/application.html"));
+                bidderMenuList.add(new MenuAuthorize("投标方报名详情页","application","/Application.html"));
                 saveDataMap.put("bidder",bidderMenuList);
                 // 专家
                 List<MenuAuthorize> expertMenuList = new ArrayList();

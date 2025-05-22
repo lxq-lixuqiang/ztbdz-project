@@ -2,8 +2,10 @@ package com.ztbdz.tenderee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.ResultReportMapper;
+import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.tenderee.pojo.ResultReport;
 import com.ztbdz.tenderee.pojo.Project;
+import com.ztbdz.tenderee.service.ProjectRegisterService;
 import com.ztbdz.tenderee.service.ResultReportService;
 import com.ztbdz.tenderee.service.ProjectService;
 import com.ztbdz.user.pojo.Member;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +30,8 @@ public class ResultReportServiceImpl implements ResultReportService {
     private ResultReportMapper resultReportMapper;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ProjectRegisterService projectRegisterService;
 
 
     @Override
@@ -42,9 +47,20 @@ public class ResultReportServiceImpl implements ResultReportService {
                 if(StringUtils.isEmpty(resultReport.getProject()) || StringUtils.isEmpty(resultReport.getProject().getId())) return Result.fail("项目id不能为空！");
                 Project project = projectService.selectById(resultReport.getProject().getId());
                 project.setState(3);
+                project.setIsPass(resultReport.getProject().getIsPass());
                 project.setReviewProgress(100);
                 project.setReviewEndDate(new Date());
-                projectService.updateById(project); // TODO 更新项目状态
+                projectService.updateById(project); // 更新项目状态
+                if("1".equals(resultReport.getProject().getIsPass().toString())){
+                    List<ProjectRegister> projectRegisterList = projectRegisterService.selectByProjectId(project.getId(),null);
+                    List<Long> ids = new ArrayList();
+                    for(ProjectRegister projectRegister : projectRegisterList){
+                        ids.add(projectRegister.getId());
+                    }
+                    ProjectRegister projectRegister = new ProjectRegister();
+                    projectRegister.setWinBidState(2);
+                    projectRegisterService.updateWinBidState(ids,projectRegister); //更新中标状态
+                }
                 resultReport.setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID))); // 保存创建人
                 Integer num = this.insert(resultReport);
                 if(num<=0) {

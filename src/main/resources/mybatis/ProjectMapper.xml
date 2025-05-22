@@ -65,6 +65,32 @@
 			p.update_date desc
 	</select>
 
+	<select id="expertProject" resultType="Project">
+		select
+			p.*
+		from
+			project p
+			left join review_info ri on ri.project_id=p.id
+			left join win_bid wb on ri.id=wb.win_bid_id
+			where
+			1=1
+			<if test="project != null">
+				<if test="project.state != null">
+					and p.state = #{project.state}
+				</if>
+			</if>
+			and wb.member_id=#{memberId}
+			<if test="state==1 or state==2">
+				and Now() >= p.enroll_end_date
+				and (p.state=1 or p.state=2)
+			</if>
+			<if test="state==2">
+				and (p.review_progress is not null and p.review_progress>0)
+			</if>
+		order by
+			p.update_date desc
+	</select>
+
 	<select id="reviewEndProject" resultMap="ProjectRegisterAndProject">
 		select
 		p.*,pr.win_bid_state

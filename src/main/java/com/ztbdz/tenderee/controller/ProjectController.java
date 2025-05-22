@@ -82,7 +82,52 @@ public class ProjectController {
         return projectService.page(page,size,project,6);
     }
 
-    @ApiOperation(value = "查询正在评审项目项目列表")
+    @ApiOperation(value = "查询专家可评审项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("expertReviewProject")
+    public Result expertReviewProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                @RequestParam(required = false) Integer size,
+                                @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return projectService.page(page,size,project,9);
+    }
+
+    @ApiOperation(value = "查询专家正在评审项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("expertRunReviewProject")
+    public Result expertRunReviewProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                                      @RequestParam(required = false) Integer size,
+                                      @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return projectService.page(page,size,project,10);
+    }
+
+    @ApiOperation(value = "查询专家项目列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("expertList")
+    public Result expertList(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false) Integer size,
+                       @RequestBody(required = false) Project project) {
+        if (StringUtils.isEmpty(size)) size = SystemConfig.PAGE_SIZE;
+        return projectService.page(page, size, project, 11);
+    }
+
+    @ApiOperation(value = "查询正在评审项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
