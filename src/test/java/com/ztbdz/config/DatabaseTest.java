@@ -39,7 +39,6 @@ public class DatabaseTest {
         System.out.println("spring.datasource.username=ENC("+name+")");
         System.out.println("spring.datasource.password=ENC("+password+")");
 
-
     }
 
 }

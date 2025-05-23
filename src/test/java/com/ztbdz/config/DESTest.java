@@ -13,7 +13,7 @@ public class DESTest {
 
 
     /**
-     * 数据库加密
+     * 加密
      */
     @Test
     public void desTest() {

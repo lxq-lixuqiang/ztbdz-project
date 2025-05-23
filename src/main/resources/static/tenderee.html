@@ -472,6 +472,19 @@
             alert("请填写所有必填字段");
             return;
         }
+        if(!fileId){
+            alert("请上传采购文件！");
+            return;
+        }
+        var now = new Date().getTime();
+        var enrollEndDateTime = new Date(enrollEndDate).getTime();
+        var senrollStartDateTime = new Date(senrollStartDate).getTime();
+        var tendereeDateTime = new Date(tendereeDate).getTime();
+        if(enrollEndDateTime<now || tendereeDateTime<now || senrollStartDateTime<now){
+            alert("开始时间，截至时间和招标时间不能早于当天！");
+            return;
+        }
+
 
         // 统一所有日期为ISO格式
         var data = {

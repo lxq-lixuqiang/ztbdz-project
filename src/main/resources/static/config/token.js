@@ -32,6 +32,11 @@ function verifyLogin(){
         headers: {
             'token': getToken(),
             'url' : window.location.pathname
+        },
+        error:function(e) {
+            alert("token失效，请重新登陆！");
+            removeToken();
+            location.href = "/login.html";
         }
     });
     $.ajax({
@@ -47,10 +52,6 @@ function verifyLogin(){
                 alert(e.message);
                 location.href = "/login.html";
             }
-        },error:function(e) {
-            alert("token失效，请重新登陆！");
-            removeToken();
-            location.href = "/login.html";
         }
     });
 }
