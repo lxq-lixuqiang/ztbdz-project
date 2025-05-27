@@ -1,51 +1,85 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
-<meta charset="utf-8">
-<!-- InstanceBeginEditable name="doctitle" -->
-<title>无标题文档</title>
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="head" -->
-<script src="/js/db-connection.js"></script>
-<!-- InstanceEndEditable -->
+    <meta charset="utf-8">
+    <!-- InstanceBeginEditable name="doctitle" -->
+    <title>无标题文档</title>
+    <!-- InstanceEndEditable -->
+    <!-- InstanceBeginEditable name="head" -->
+    <script src="/js/db-connection.js"></script>
+    <!-- InstanceEndEditable -->
 </head>
 
 <body>
-    <!-- 不可编辑的顶部区域 -->
-    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
-        <div style="font-size:28px; font-weight:bold;">中天阳光AI智能化评标系统</div>
-        <div style="display:flex; gap:30px;">
-            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
-            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
-            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
-        </div>
-
-
-
+<!-- 不可编辑的顶部区域 -->
+<div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+    <div style="font-size:28px; font-weight:bold;">中天阳光AI智能化评标系统</div>
+    <div style="display:flex; gap:30px;">
+        <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+        <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+        <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
     </div>
 
-    <!-- 可编辑的主要内容区域 -->
-    <!-- InstanceBeginEditable name="content" -->
-    <div style="width:1040px; min-height:calc(100vh - 120px);">
+
+
+</div>
+
+<!-- 可编辑的主要内容区域 -->
+<!-- InstanceBeginEditable name="content" -->
+<div style="width:1040px; min-height:calc(100vh - 120px);">
+    <!-- 发票申请列表 -->
+    <div style="margin-bottom:30px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>开具发票申请列表</h3>
+            <div>
+                <button onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                <button onclick="exportToExcel('#invoiceRequestsTable', '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+            </div>
+        </div>
+        <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
+        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">暂无发票申请数据</div>
+        <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
+            <thead>
+            <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">申请编号</th>
+                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                <th style="padding:10px; border:1px solid #ddd;">申请单位</th>
+                <th style="padding:10px; border:1px solid #ddd;">申请时间</th>
+                <th style="padding:10px; border:1px solid #ddd;">发票金额</th>
+                <th style="padding:10px; border:1px solid #ddd;">状态</th>
+                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 发票申请数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 项目列表 -->
+    <div style="margin-bottom:30px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3>项目列表</h3>
-            <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
+            <div>
+                <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                <button onclick="exportToExcel('#projectsTable', '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+            </div>
         </div>
         <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
         <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">暂无项目数据</div>
         <table id="projectsTable" style="width:100%; border-collapse:collapse;">
             <thead>
-                <tr style="background:#f5f5f5;">
-                    <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
-                    <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
-                    <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
-                    <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
-                    <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
-                    <th style="padding:10px; border:1px solid #ddd;">操作</th>
-                </tr>
+            <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
+                <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+            </tr>
             </thead>
             <tbody>
-                <!-- 项目数据将通过JavaScript动态填充 -->
+            <!-- 项目数据将通过JavaScript动态填充 -->
             </tbody>
         </table>
     </div>
@@ -98,7 +132,7 @@
                         <td style="padding:10px;">${project.enrollEndDate==null?'':project.enrollEndDate}</td>
                         <td style="padding:10px;">${project.projectRegisters.project.tenderee.tendereeName==null?'':project.projectRegisters.project.tenderee.tendereeName}</td>
                         <td style="padding:10px;">${project.projectOverview==null?'':project.projectOverview}</td>
-                        <td style="padding:10px;">${project.projectRegisters.state==1?'已审核':'未审核'}</td>
+                        <td style="padding:10px;">${project.projectRegisters.state==0?'未审核':'已审核'}</td>
                         <td style="padding:10px;">
                             <button onclick="showApplicationModal('${project.projectName}','${project.id}')"
                                     style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">
@@ -107,8 +141,8 @@
                         </td>
                     </tr>
                 `);
-                tbody.append(row);
-            });
+            tbody.append(row);
+        });
         } else {
             tbody.append('<tr><td colspan="6" style="padding:10px; border:1px solid #ddd;">暂无项目数据</td></tr>');
         }
@@ -148,8 +182,8 @@
                                     </td>
                                 </tr>
                           `);
-                        tbody.append(row);
-                    });
+                    tbody.append(row);
+                });
                 } else {
                     tbody.append('<tr><td colspan="4" style="padding:10px;">暂无报名信息</td></tr>');
                 }
@@ -223,9 +257,90 @@
     }
 
     $(function() {
-        // 页面加载时自动获取项目列表
+        // 页面加载时自动获取列表
         loadProjects();
+        loadInvoiceRequests();
     });
+    // 加载发票申请列表
+    function loadInvoiceRequests() {
+        $("#invoiceLoading").show();
+        $("#invoiceEmpty").hide();
+        $("#invoiceRequestsTable").hide();
+
+        // 模拟数据
+        const mockData = {
+            status: 200,
+            data: [
+                {
+                    id: "INV-2023-001",
+                    projectName: "智慧城市建设项目",
+                    company: "ABC科技有限公司",
+                    requestDate: "2023-06-15",
+                    amount: "5000",
+                    status: "待处理"
+                },
+                {
+                    id: "INV-2023-002",
+                    projectName: "政务云平台升级",
+                    company: "XYZ信息系统有限公司",
+                    requestDate: "2023-06-18",
+                    amount: "3000",
+                    status: "已开票"
+                }
+            ]
+        };
+
+        setTimeout(() => {
+            renderInvoiceRequests(mockData);
+        $("#invoiceLoading").hide();
+        $("#invoiceRequestsTable").show();
+    }, 500);
+    }
+
+    // 渲染发票申请列表
+    function renderInvoiceRequests(data) {
+        const tbody = $("#invoiceRequestsTable tbody");
+        tbody.empty();
+
+        if(data.data.length > 0) {
+            data.data.forEach(request => {
+                const row = $(`
+                    <tr style="border:1px solid #ddd;">
+                        <td style="padding:10px;">${request.id}</td>
+                        <td style="padding:10px;">${request.projectName}</td>
+                        <td style="padding:10px;">${request.company}</td>
+                        <td style="padding:10px;">${request.requestDate}</td>
+                        <td style="padding:10px;">${request.amount}元</td>
+                        <td style="padding:10px;">${request.status}</td>
+                        <td style="padding:10px;">
+                            <button onclick="processInvoiceRequest('${request.id}')"
+                                    style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">
+                                处理
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            tbody.append(row);
+        });
+        } else {
+            tbody.append('<tr><td colspan="7" style="padding:10px; border:1px solid #ddd;">暂无发票申请数据</td></tr>');
+        }
+    }
+
+    // 处理发票申请
+    function processInvoiceRequest(requestId) {
+        alert(`正在处理发票申请: ${requestId}`);
+    }
+
+    // 导出Excel功能
+    function exportToExcel(tableId, fileName) {
+        // 模拟导出功能
+        alert(`已将${fileName}导出为Excel文件`);
+
+        // 实际实现可以使用第三方库如SheetJS
+        // 这里仅提供模拟实现
+    }
+
 </script>
 
 <!-- 报名情况弹窗 -->
@@ -237,37 +352,37 @@
         </div>
         <table style="width:100%; border-collapse:collapse;">
             <thead>
-                <tr style="background:#f5f5f5;">
-                    <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
-                    <th style="padding:10px; border:1px solid #ddd;">联系人</th>
-                    <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
-                    <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
-                    <th style="padding:10px; border:1px solid #ddd;">缴费金额</th>
-                    <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
-                    <th style="padding:10px; border:1px solid #ddd;">操作</th>
-                </tr>
+            <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
+                <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
+                <th style="padding:10px; border:1px solid #ddd;">缴费金额</th>
+                <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+            </tr>
             </thead>
             <tbody id="modalApplicationTable">
-                <!-- 报名数据将通过JavaScript动态填充 -->
+            <!-- 报名数据将通过JavaScript动态填充 -->
             </tbody>
         </table>
         <div style="text-align:center; margin-top:20px;">
             <button onclick="closeModal()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
         </div>
-</div>
+    </div>
 
-<!-- 凭证图片弹窗 -->
-<div id="voucherModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); z-index:1001;">
-    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; max-width:90%; max-height:90%;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 id="voucherTitle">缴费凭证</h3>
-            <button onclick="closeVoucherModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
-        </div>
-        <img id="voucherImage" src="" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">
-        <div style="text-align:center; margin-top:15px;" id="buttonHide">
-            <button onclick="audit(1)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
-            <button onclick="audit(2)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+    <!-- 凭证图片弹窗 -->
+    <div id="voucherModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); z-index:1001;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; max-width:90%; max-height:90%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 id="voucherTitle">缴费凭证</h3>
+                <button onclick="closeVoucherModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+            </div>
+            <img id="voucherImage" src="" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">
+            <div style="text-align:center; margin-top:15px;" id="buttonHide">
+                <button onclick="audit(1)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
+                <button onclick="audit(2)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+            </div>
         </div>
     </div>
-</div>
 </div>

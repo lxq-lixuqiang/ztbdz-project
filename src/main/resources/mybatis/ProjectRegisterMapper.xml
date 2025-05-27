@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.ProjectRegisterMapper">
 	<select id="selectByCountProjectId" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select 
-			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code
+			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date
 		from
 		   project_register pr
 		left join project p on pr.project_id=p.id
@@ -19,18 +19,23 @@
 				and p.id=#{project.id}
 			</if>
 		</if>
-		<if test="state==0 and memberId != null">
-			and pr.member_id = #{memberId}
+		<if test="memberId != null">
+			<if test="state==0">
+				and pr.member_id = #{memberId}
+			</if>
+			<if test="state==1 or state==4">
+				and t.member_id = #{memberId}
+			</if>
 		</if>
-		<if test="state==1 and memberId != null">
-			and t.member_id = #{memberId}
-		</if>
-		<if test="state!=3">
+		<if test="state!=3 and state!=4">
 			group by pr.project_id
 			order by p.update_date desc
 		</if>
 		<if test="state==3">
 			order by pr.state asc,p.update_date desc
+		</if>
+		<if test="state==4">
+			order by pr.state desc,p.update_date desc,p.project_name
 		</if>
 	</select>
 	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">
@@ -41,6 +46,7 @@
 		<result property="project.procurementMethod" column="procurement_method"/>
 		<result property="project.projectName" column="project_name"/>
 		<result property="project.projectCode" column="project_code"/>
+		<result property="project.enrollEndDate" column="enroll_end_date"/>
 
 		<result property="project.tenderee.id" column="tid"/>
 		<result property="project.tenderee.tendereeName" column="tenderee_name"/>
@@ -56,7 +62,7 @@
 
 	<select id="getProject" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id
@@ -76,7 +82,7 @@
 
 	<select id="selectProjectAndMemberById" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id

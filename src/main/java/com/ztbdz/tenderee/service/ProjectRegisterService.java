@@ -3,6 +3,7 @@ package com.ztbdz.tenderee.service;
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.web.util.Result;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -45,6 +46,18 @@ public interface ProjectRegisterService {
      * @return
      */
     List<ProjectRegister> selectByCountProjectId(Project project,Long memberId,Integer state)throws Exception;
+
+    /**
+     * 查询项目报名列表
+     * @return
+     */
+    Result selectByProject(Integer page,Integer size,Project project,Integer state);
+
+    /**
+     * 查询项目报名列表
+     * @return
+     */
+    ResponseEntity<byte[]> selectByProjectExport(Project project, Integer state);
 
     /**
      * 校验报名资质

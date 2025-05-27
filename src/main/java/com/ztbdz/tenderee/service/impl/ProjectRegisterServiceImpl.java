@@ -1,5 +1,6 @@
 package com.ztbdz.tenderee.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -9,15 +10,22 @@ import com.ztbdz.tenderee.service.*;
 import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.service.BidderInfoService;
 import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.export.ProjectRegisterExport;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -84,6 +92,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     public Result page(Integer page, Integer size, Project project,Integer state) {
         try{
             PageHelper.startPage(page, size);
+            Object id = SystemConfig.getCreateMember().getId();
             List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
             if(state==3){ // 进行去重操作
                 List<ProjectRegister> newProjectRegisterList = new ArrayList();
@@ -126,6 +135,28 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public List<ProjectRegister> selectByCountProjectId(Project project,Long memberId,Integer state) throws Exception {
         return projectRegisterMapper.selectByCountProjectId(project,memberId,state);
+    }
+
+    @Override
+    public Result selectByProject(Integer page, Integer size, Project project, Integer state) {
+        try{
+            PageHelper.startPage(page, size);
+            return Result.ok("查询成功！",new PageInfo(this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state)));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询项目已报名的报名列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public  ResponseEntity<byte[]> selectByProjectExport( Project project, Integer state) {
+        try{
+            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
+            return SystemConfig.excelExport("项目报名情况",ProjectRegisterExport.SelectByProjectExport.converter(projectRegisterList),ProjectRegisterExport.SelectByProjectExport.class);
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "投标人id")
     @TableField(value = "member_id",el = "member.id")
     private Member member;
-    @ApiModelProperty(value = "审核状态（0=未审核 1=通过 2=不通过）")
+    @ApiModelProperty(value = "审核状态（0=审核中 1=通过 2=不通过 3=资质审核中 4=资质通过 5=资质不通过 ）")
     private Integer state;
     @ApiModelProperty(value = "报名数量")
     private Integer num;

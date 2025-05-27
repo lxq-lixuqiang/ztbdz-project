@@ -430,7 +430,7 @@
                 <td style="padding:10px; border:1px solid #ddd;">{{enrollEndDate}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">{{money}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">
-                    <a href="Application.html?id={{id}}" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</a>
+                    <button onclick="signUp('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</button>
                 </td>
             </tr>
         {{/each}}
@@ -447,12 +447,19 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                {{#eq  projectRegisters.state 0}}审核中{{/eq}}
-                {{#eq  projectRegisters.state 1}}已通过{{/eq}}
-                {{#eq  projectRegisters.state 2}}不通过{{/eq}}
+                {{#eq  projectRegisters.state 0}}报名审核中{{/eq}}
+                {{#eq  projectRegisters.state 1}}报名通过{{/eq}}
+                {{#eq  projectRegisters.state 2}}报名不通过{{/eq}}
+                {{#eq  projectRegisters.state 3}}资质审核中{{/eq}}
+                {{#eq  projectRegisters.state 4}}资质通过{{/eq}}
+                {{#eq  projectRegisters.state 5}}资质不通过{{/eq}}
             </td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
+                {{#eq  projectRegisters.state 4}}
+                    <a href="Application.html?id={{id}}&pid={{projectRegisters.id}}" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;">报名缴费</a>
+                {{else}}
+                    <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">查看进度</button>
+                {{/eq}}
             </td>
         </tr>
         {{/each}}
@@ -662,25 +669,23 @@
                 });
             }
 
-            function availableInit(state,tbody,template){
-                $.ajax({
-                    url: "/project/listAvailable",
-                    type: "POST",
-                    data: JSON.stringify({"state":state}),
-                    contentType: "application/json",
-                    success:function(e) {
-                        if(e.status == 200){
-                            var newTemplate = template(e.data);
-                            tbody.html(newTemplate);
-                        }else{
-                            alert("获取可以报名项目列表失败："+e.message);
-                        }
-                    }
-                });
-            }
-
-
         })
+        function availableInit(state,tbody,template){
+            $.ajax({
+                url: "/project/listAvailable",
+                type: "POST",
+                data: JSON.stringify({"state":state}),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        var newTemplate = template(e.data);
+                        tbody.html(newTemplate);
+                    }else{
+                        alert("获取可以报名项目列表失败："+e.message);
+                    }
+                }
+            });
+        }
         function saveAccount(){
             var editCompanyName = $("#editCompanyName").val();
             var editCreditCode = $("#editCreditCode").val();
@@ -779,6 +784,28 @@
         // 显示报名结果弹窗
         function showProgress(projectName,id) {
             alert("功能正在建设当中");
+        }
+        // 显示报名结果弹窗
+        function signUp(id) {
+            var data = {"project":{"id":id}};
+            projectRegister(data);
+        }
+
+        function projectRegister(data){
+            $.ajax({
+                url: "/projectRegister/create",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
+                        alert('报名成功,正在审核企业资质！');
+                    }else{
+                        alert("报名失败："+e.message);
+                    }
+                }
+            });
         }
 
         // 关闭弹窗

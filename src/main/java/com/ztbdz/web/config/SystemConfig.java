@@ -1,10 +1,17 @@
 package com.ztbdz.web.config;
 
+import com.alibaba.excel.EasyExcel;
+import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.web.export.ProjectRegisterExport;
 import com.ztbdz.web.util.Common;
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
@@ -13,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -83,7 +91,7 @@ public class SystemConfig {
      * 默认页码大小
      */
     public static Integer PAGE_SIZE;
-    @Value("${ztbdz.default.page.size}")
+    @Value("${ztbdz.default.pageSize}")
     private Integer pageSize;
 
     @PostConstruct
@@ -249,6 +257,38 @@ public class SystemConfig {
         if (cell == null) return "";
         cell.setCellType(CellType.STRING); // 统一按字符串读取
         return cell.getStringCellValue().trim();
+    }
+
+    /**
+     * 导出Excel文件数据
+     * @param fileName 文件名称
+     * @param dataList 数据集合
+     * @param entity 实体类对象
+     * @return
+     * @throws Exception
+     */
+    public static ResponseEntity<byte[]> excelExport(String fileName,List dataList,Class<?> entity) throws Exception{
+        File file = null;
+        try{
+            String fileInfo = UUID.randomUUID().getMostSignificantBits()+".xlsx";
+            file = new File(SystemConfig.UPLOAD_FILE_TEMP,fileInfo);
+            file.createNewFile();
+
+            EasyExcel.write(file, entity)
+                    .sheet(fileInfo)
+                    .doWrite(dataList);
+            byte[] body=FileUtils.readFileToByteArray(file);
+            HttpHeaders headers=new HttpHeaders();
+            // 防止下载文件名乱码
+            String encodedFileName = URLEncoder.encode(fileName+".xlsx", "UTF-8").replaceAll("\\+", "%20");  // 替换空格编码
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName);
+
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return ResponseEntity.ok().headers(headers).body(body);
+        }finally {
+            if(file!=null) file.delete();
+        }
+
     }
 
 }

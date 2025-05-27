@@ -121,23 +121,22 @@
     <script>
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");
-            var project = {"id":new URLSearchParams(window.location.search).get("id")};
-            var data = {"project":project,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text()};
+            var data = {"id":new URLSearchParams(window.location.search).get("pid"),"state":0,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text()};
             projectRegister(data);
         }
 
         function projectRegister(data){
             $.ajax({
-                url: "/projectRegister/create",
+                url: "/projectRegister/update",
                 type: "POST",
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){
-                        alert('报名成功！');
+                        alert('报名成功，资料正在审核中！');
                         location.href = "/bider.html";
                     }else{
-                        alert("发布项目失败："+e.message);
+                        alert("报名失败："+e.message);
                     }
                 }
             });

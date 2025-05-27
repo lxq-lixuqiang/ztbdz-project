@@ -136,6 +136,57 @@
     </div>
 </div>
 
+<!-- 公告发布弹窗 -->
+<div id="announcementModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>发布公告</h3>
+            <button onclick="closeAnnouncementModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">标题</label>
+            <input id="title" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">公告类型</label>
+            <select id="announcementType" style="width:100%; padding:8px; border:1px solid #ddd;">
+                <option value="">请选择公告类型</option>
+                <option value="延期">延期公告</option>
+                <option value="废标">废标公告</option>
+                <option value="更正">更正公告</option>
+            </select>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">公告内容</label>
+            <textarea id="announcementContent" style="width:100%; height:150px; padding:8px; border:1px solid #ddd;"></textarea>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">补充内容</label>
+            <input id="context" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+        </div>
+        <div style="text-align:center;">
+            <button onclick="submitAnnouncement()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">发布公告</button>
+        </div>
+    </div>
+</div>
+
+<!-- 供应商资质弹窗 -->
+<div id="qualificationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>供应商资质信息</h3>
+            <button onclick="$('#qualificationModal').hide()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <div id="qualificationContent" style="margin-bottom:20px;">
+            <!-- 资质内容将通过JavaScript动态填充 -->
+        </div>
+        <div id="examine" style="text-align:center;">
+            <button onclick="approveSupplier(true)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:15px;">通过审核</button>
+            <button onclick="approveSupplier(false)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+        </div>
+    </div>
+</div>
+
 <!-- 可编辑的主要内容区域 -->
 <!-- InstanceBeginEditable name="content" -->
 <div style="width:1040px; min-height:calc(100vh - 120px);">
@@ -228,7 +279,10 @@
             <div class="tab-content" id="application">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <h3>项目报名情况</h3>
-                    <button onclick="loadApplicationData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新数据</button>
+                    <div>
+                        <button onclick="loadApplicationData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新数据</button>
+                        <button onclick="exportToExcel('#applicationTable', '报名情况')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                    </div>
                 </div>
                 <div id="applicationLoading" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
                 <div id="applicationEmpty" style="text-align:center; padding:20px; display:none;">暂无报名数据</div>
@@ -238,7 +292,8 @@
                         <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
-                        <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                        <th style="padding:10px; border:1px solid #ddd;">报名单位</th>
+                        <th style="padding:10px; border:1px solid #ddd;">资质状态</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -249,8 +304,12 @@
             </div>
             <div class="tab-content" id="project1">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h3>已发布项目列表</h3>
-                    <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
+                    <h3>已发布项目管理</h3>
+                    <div>
+                        <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                        <button onclick="exportToExcel('#publishedProjects', '已发布项目')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                        <button onclick="showAnnouncementModal()" style="padding:5px 10px; background:#9C27B0; color:white; border:none; cursor:pointer;">发布公告</button>
+                    </div>
                 </div>
                 <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
                 <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">暂无已发布项目</div>
@@ -258,9 +317,10 @@
                     <thead>
                     <tr style="background:#f5f5f5;">
                         <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                        <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
-                        <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
-                        <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                        <th style="padding:10px; border:1px solid #ddd;">预算金额</th>
+                        <th style="padding:10px; border:1px solid #ddd;">状态</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -316,6 +376,7 @@
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
         <td style="padding:10px;">{{tendereeName}}</td>
         <td style="padding:10px;">{{project.projectOverview}}</td>
+        <td style="padding:10px;">未发布</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
         </td>
@@ -332,12 +393,20 @@
     {{#each list}}
     <!-- 模拟数据1 -->
     <tr style="border:1px solid #ddd;">
-        <td style="padding:10px;">{{projectName}}</td>
-        <td style="padding:10px;">{{enrollEndDate}}</td>
-        <td style="padding:10px;">{{projectRegisters.project.tenderee.tendereeName}}</td>
-        <td style="padding:10px;">{{projectOverview}}</td>
+        <td style="padding:10px;">{{project.projectName}}</td>
+        <td style="padding:10px;">{{project.enrollEndDate}}</td>
+        <td style="padding:10px;">{{project.tenderee.tendereeName}}</td>
+        <td style="padding:10px;">{{member.account.accountName}}</td>
         <td style="padding:10px;">
-            <button onclick="showApplicationModal('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
+            {{#eq state 0}}报名审核中{{/eq}}
+            {{#eq state 1}}报名通过{{/eq}}
+            {{#eq state 2}}报名未通过{{/eq}}
+            {{#eq state 3}}资质未审核{{/eq}}
+            {{#eq state 4}}资质通过{{/eq}}
+            {{#eq state 5}}资质不通过{{/eq}}
+        </td>
+        <td style="padding:10px;">
+            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{#eq state 3}}0{{else}}1{{/eq}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
         </td>
     </tr>
     {{/each}}
@@ -547,7 +616,7 @@
         $("#applicationTable").hide();
 
         $.ajax({
-            url: "/projectRegister/list",
+            url: "/projectRegister/selectByProject",
             type: "POST",
             contentType: "application/json",
             success:function(e) {
@@ -575,7 +644,18 @@
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(e.data));
+                    // 增强已发布项目数据展示
+                    const enhancedData = {
+                        list: e.data.list.map(item => ({
+                            ...item,
+                            project: {
+                    ...item.project,
+                            status: item.project.state === 1 ? "已发布" :
+                            item.project.state === 2 ? "进行中" : "已完成"
+                    }
+                }))
+                };
+                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(enhancedData));
                     $("#loadingMessage").hide();
                     $("#publishedProjects").show();
                 }else{
@@ -584,7 +664,106 @@
             }
         });
     }
+    // 导出Excel功能
+    function exportToExcel(tableId, fileName) {
+        window.open('/projectRegister/selectByProjectExport', '_blank');
+        alert(`已将${fileName}导出为Excel文件`);
+    }
+
+    // 显示公告发布弹窗
+    function showAnnouncementModal() {
+        $("#announcementModal").show();
+    }
+
+    // 关闭公告弹窗
+    function closeAnnouncementModal() {
+        $("#announcementModal").hide();
+    }
+
+    // 提交公告
+    function submitAnnouncement() {
+        const type = $("#announcementType").val();
+        const content = $("#announcementContent").val();
+
+        if(!type || !content) {
+            alert("请填写完整的公告信息");
+            return;
+        }
+
+        alert(`已成功发布${type}公告`);
+        closeAnnouncementModal();
+    }
+
+    // 查看供应商资质
+    function viewSupplierQualification(id,memberId,state) {
+        if(state==0){
+            $("#examine").show();
+        }else{
+            $("#examine").hide();
+        }
+        $.ajax({
+            url: "/member/get/"+memberId,
+            type: "GET",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    var account = e.data.account;
+                    var fileInfo = "无";
+                    if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
+                        fileInfo = "";
+                        var ids = account.accountCodeFileId.split(",");
+                        for(var i=0;i<ids.length;i++){
+                            var sort = i;
+                            if(i<10){
+                                sort="0"+(i+1);
+                            }
+                            fileInfo+="<p><a target=\"_blank\" href='/file/preview/"+ids[i]+"'>文件"+sort+"</a></p>";
+                        }
+                    }
+                    // 模拟加载资质数据
+                    $("#qualificationContent").html(`
+                        <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>
+                        <p>企业名称: <span>`+(account.accountName!=null?account.accountName:"")+`</span></p>
+                        <p>统一社会信用代码: <span>`+(account.accountCode!=null?account.accountCode:"")+`</span></p>
+                        <p>注册资本: <span>`+(account.accountMoney!=null?account.accountMoney:"")+`</span></p>
+
+                        <h4 style="margin-top:20px;">资质文件</h4>
+                        `+fileInfo+`
+                    `);
+                    $("#qualificationModal").show();
+                }else{
+                    alert("获取企业信息失败："+e.message);
+                }
+            }
+        });
+
+    }
+
+    // 审核供应商
+    function approveSupplier(isApproved) {
+        var state = 5;
+        if(isApproved) state = 4;
+        var id = $("#accountInfo").attr("data-id");
+        $.ajax({
+            url: "/projectRegister/update",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({"id":id,"state":state}),
+            success:function(e) {
+                if(e.status == 200){
+                    loadApplicationData(); // 刷新列表
+                    alert(`审核成功！`);
+                    $("#qualificationModal").hide();
+                }else{
+                    alert("审核失败："+e.message);
+                }
+            }
+        });
+
+
+    }
 </script>
+
 <!-- 报名情况弹窗 -->
 <div id="applicationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
     <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
@@ -677,16 +856,16 @@
                     }
                     companies.forEach(company => {
                         const row = document.createElement('tr');
-                        row.style.border = '1px solid #ddd';
-                        row.innerHTML = `<td colspan="5" style="padding:10px;">暂无报名信息</td>`;
-                        if(e.data.length>0){
-                            row.innerHTML = `
+                    row.style.border = '1px solid #ddd';
+                    row.innerHTML = `<td colspan="5" style="padding:10px;">暂无报名信息</td>`;
+                    if(e.data.length>0){
+                        row.innerHTML = `
                                 <td style="padding:10px;">${company.name}</td>
                                 <td style="padding:10px;">${company.contact}</td>
                                 <td style="padding:10px;">${company.phone}</td>
                                 <td style="padding:10px;">${company.time}</td>
                             `;
-                        }
+                    }
                     tbody.appendChild(row);
                 });
                     // 显示弹窗

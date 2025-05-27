@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class ProjectRegisterController {
     @CheckToken
     @PostMapping("create")
     public Result create(@RequestBody ProjectRegister projectRegister) {
-        projectRegister.setState(0);
+        projectRegister.setState(3);
         projectRegister.setMember(SystemConfig.getCreateMember());
         return projectRegisterService.create(projectRegister);
     }
@@ -153,7 +154,7 @@ public class ProjectRegisterController {
         return projectRegisterService.page(page,size,project,0);
     }
 
-    @ApiOperation(value = "查询投标报名列表")
+    @ApiOperation(value = "查询项目已报名的项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
@@ -166,6 +167,27 @@ public class ProjectRegisterController {
                        @RequestBody(required = false) Project project) {
         if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         return projectRegisterService.page(page,size,project,1);
+    }
+
+    @ApiOperation(value = "查询项目已报名的报名列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("selectByProject")
+    public Result selectByProject(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false) Integer size,
+                       @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return projectRegisterService.selectByProject(page,size,project,4);
+    }
+
+    @ApiOperation(value = "导出项目已报名的报名")
+    @GetMapping("selectByProjectExport")
+    public ResponseEntity<byte[]> selectByProjectExport(@RequestBody(required = false) Project project) {
+        return projectRegisterService.selectByProjectExport(project,4);
     }
 
     @ApiOperation(value = "查询投标报名审核状态列表")
