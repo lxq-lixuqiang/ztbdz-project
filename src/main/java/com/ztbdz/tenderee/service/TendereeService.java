@@ -3,6 +3,7 @@ package com.ztbdz.tenderee.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.web.util.Result;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -80,6 +81,13 @@ public interface TendereeService {
      * @return
      */
     Result page(Integer page, Integer size,Tenderee tenderee);
+
+    /**
+     * 导出招标信息
+     * @param tenderee
+     * @return
+     */
+    ResponseEntity<byte[]> pageExport(Tenderee tenderee);
 
     /**
      * 查询招标信息

@@ -75,7 +75,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         QueryWrapper<TendereeInform> queryWrapper = new QueryWrapper();
         queryWrapper.orderByAsc("create_date");
         queryWrapper.eq("is_public","1");
-        if(!StringUtils.isEmpty(tendereeInform.getProjectName())) queryWrapper.like("project_name", tendereeInform.getProjectName());
+        if(!StringUtils.isEmpty(tendereeInform.getTitle())) queryWrapper.like("title", tendereeInform.getTitle());
         return tendereeInformMapper.selectList(queryWrapper);
     }
 

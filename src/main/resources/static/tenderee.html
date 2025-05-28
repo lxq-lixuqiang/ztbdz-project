@@ -162,7 +162,7 @@
         </div>
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">补充内容</label>
-            <input id="context" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+            <input id="supplementaryContent" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
         </div>
         <div style="text-align:center;">
             <button onclick="submitAnnouncement()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">发布公告</button>
@@ -204,7 +204,7 @@
                 <div class="tab-item" data-tab="project2">正在进行项目</div>
                 <div class="tab-item" data-tab="project3">评审结束项目</div>
             </div>
-            <div class="tab-content active" id="overview">这里是综合信息概览</div>
+            <div class="tab-content active" id="overview" data-id="" data-projectid="">这里是综合信息概览</div>
             <div class="tab-content" id="publish">
                 <h3>发布新项目</h3>
                 <form id="publishForm" style="max-width:800px;">
@@ -281,7 +281,7 @@
                     <h3>项目报名情况</h3>
                     <div>
                         <button onclick="loadApplicationData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新数据</button>
-                        <button onclick="exportToExcel('#applicationTable', '报名情况')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                        <button onclick="exportToExcel(0, '报名情况')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
                     </div>
                 </div>
                 <div id="applicationLoading" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
@@ -307,7 +307,7 @@
                     <h3>已发布项目管理</h3>
                     <div>
                         <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                        <button onclick="exportToExcel('#publishedProjects', '已发布项目')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                        <button onclick="exportToExcel(1, '已发布项目')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
                         <button onclick="showAnnouncementModal()" style="padding:5px 10px; background:#9C27B0; color:white; border:none; cursor:pointer;">发布公告</button>
                     </div>
                 </div>
@@ -373,12 +373,13 @@
     <!-- 模拟数据1 -->
     <tr style="border:1px solid #ddd;">
         <td style="padding:10px;">{{project.projectName}}</td>
+        <td style="padding:10px;">{{project.projectCode}}</td>
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
-        <td style="padding:10px;">{{tendereeName}}</td>
-        <td style="padding:10px;">{{project.projectOverview}}</td>
-        <td style="padding:10px;">未发布</td>
+        <td style="padding:10px;">{{project.money}}</td>
+        <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
+            <button onclick="showProject('{{project.id}}')" style="padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">修改</button>
         </td>
     </tr>
     {{/each}}
@@ -509,12 +510,16 @@
         var senrollStartDate = $("#senrollStartDate").val();
         var enrollEndDate = $("#enrollEndDate").val();
         var registrationFee = $("#registrationFee").val();
+        var id = $("#overview").attr("data-id");
+        var projectid = $("#overview").attr("data-projectid");
+
 
         var fileId = $("#fileUpload").attr("data-file-id");
         var currentTime = new Date().toLocaleString().replaceAll("/","-"); // 统一使用ISO格式
         var tender={"tenderName":projectName};
         var tenders=[tender];
         var project = {
+            "id":projectid,
             "bidOpeningTime": currentTime,
             "projectCode": projectCode,
             "projectName": projectName,
@@ -557,6 +562,7 @@
 
         // 统一所有日期为ISO格式
         var data = {
+            "id":id,
             "tendereeCode": projectCode,
             "tendereeName": tendereeName,
             "tendereeDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"),
@@ -574,6 +580,8 @@
             contentType: "application/json",
             success: function(response) {
                 if(response.status == 200) {
+                    $("#overview").attr("data-id","");
+                    $("#overview").attr("data-projectid","");
                     alert("项目发布成功！");
                     loadPublishedProjects(); // 刷新项目列表
                     showProjectTabs();
@@ -644,18 +652,7 @@
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    // 增强已发布项目数据展示
-                    const enhancedData = {
-                        list: e.data.list.map(item => ({
-                            ...item,
-                            project: {
-                    ...item.project,
-                            status: item.project.state === 1 ? "已发布" :
-                            item.project.state === 2 ? "进行中" : "已完成"
-                    }
-                }))
-                };
-                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(enhancedData));
+                    $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(e.data));
                     $("#loadingMessage").hide();
                     $("#publishedProjects").show();
                 }else{
@@ -665,8 +662,12 @@
         });
     }
     // 导出Excel功能
-    function exportToExcel(tableId, fileName) {
-        window.open('/projectRegister/selectByProjectExport', '_blank');
+    function exportToExcel(state, fileName) {
+        if(state==0){
+            window.open('/projectRegister/selectByProjectExport', '_blank');
+        }else if(state==1){
+            window.open('/tenderee/pageExport?member.id='+getMember().id, '_blank');
+        }
         alert(`已将${fileName}导出为Excel文件`);
     }
 
@@ -682,16 +683,30 @@
 
     // 提交公告
     function submitAnnouncement() {
+        const title = $("#title").val();
         const type = $("#announcementType").val();
         const content = $("#announcementContent").val();
+        const supplementaryContent = $("#supplementaryContent").val();
 
-        if(!type || !content) {
+        if(!title || !type || !content) {
             alert("请填写完整的公告信息");
             return;
         }
-
-        alert(`已成功发布${type}公告`);
-        closeAnnouncementModal();
+        var data = {"title":title,"content":content,"tendereeInformType":type,"supplementaryContent":supplementaryContent,"isPublic":1,"type":0};
+        $.ajax({
+            url: "/tendereeInfo/create",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    alert(`已成功发布${type}公告`);
+                    closeAnnouncementModal();
+                }else{
+                    alert("发布公告失败："+e.message);
+                }
+            }
+        });
     }
 
     // 查看供应商资质
@@ -939,6 +954,47 @@
         });
 
     }
+
+    // 更新项目
+    function showProject(projectId){
+        $.ajax({
+            url: "/project/get/" + projectId,
+            type: "GET",
+            contentType: "application/json",
+            success: function (e) {
+                if(e.status == 200){
+                    loadData(e.data);
+                    showAffairTabs();
+                    showTab("publish");
+                }else{
+                    alert("获取招标信息失败："+e.message);
+                }
+            }
+        });
+    }
+
+    function loadData(data){
+        $("#overview").attr("data-id",data.id);
+        $("#overview").attr("data-projectid",data.project.id);
+
+        $("#projectName").val(data.project.projectName);
+        $("#projectCode").val(data.project.projectCode);
+        $("#money").val(data.project.money);
+        $("#projectQualificationConditions").val(data.project.projectQualificationConditions);
+        $("#projectComplianceConditions").val(data.project.projectComplianceConditions);
+        $("#projectScoringRequirements").val(data.project.projectScoringRequirements);
+        $("#projectOverview").val(data.project.projectOverview);
+        $("#registrationFee").val(data.project.registrationFee);
+        $("#procurementMethod>[value="+data.project.procurementMethod+"]").attr("selected","selected");
+        $("#senrollStartDate").attr("value",data.project.senrollStartDate);
+        $("#enrollEndDate").attr("value",data.project.enrollEndDate);
+        $("#fileUpload").attr("data-file-id",data.project.procurementDocuments);
+
+        $("#tendereeName").val(data.tendereeName);
+        $("#tendereeDate").attr("value",data.tendereeDate);
+
+    }
+
 
     // 关闭弹窗
     function closeModal() {

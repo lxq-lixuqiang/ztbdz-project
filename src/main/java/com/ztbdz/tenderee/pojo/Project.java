@@ -42,6 +42,8 @@ public class Project extends Model<Project> implements Serializable {
     private Integer bidWinningPriceType;
     @ApiModelProperty(value = "是否划分标段（0=是 1=否）")
     private Integer isDivisionSection;
+    @ApiModelProperty(value = "审核状态（0=未审核 1=通过 2=不通过）")
+    private Integer isAudit;
     @ApiModelProperty(value = "项目资格条件")
     private String projectQualificationConditions;
     @ApiModelProperty(value = "项目符合性条件")

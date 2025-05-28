@@ -1,5 +1,6 @@
 package com.ztbdz.tenderee.service;
 
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.web.util.Result;
@@ -42,6 +43,22 @@ public interface ProjectRegisterService {
     Result page(Integer page,Integer size,Project project,Integer state);
 
     /**
+     * 查询报名项目的发票列表
+     * @param page
+     * @param size
+     * @param project
+     * @return
+     */
+    Result pageInvoice(Integer page,Integer size,Project project);
+
+    /**
+     * 查询报名项目的发票列表
+     * @param project
+     * @return
+     */
+    List<ProjectRegister> selectInvoice(Project project) throws Exception;
+
+    /**
      * 查询项目报名列表
      * @return
      */
@@ -58,6 +75,12 @@ public interface ProjectRegisterService {
      * @return
      */
     ResponseEntity<byte[]> selectByProjectExport(Project project, Integer state);
+
+    /**
+     * 查询项目报名列表
+     * @return
+     */
+    ResponseEntity<byte[]> invoiceOrAuditExport(Project project, Integer exportType);
 
     /**
      * 校验报名资质

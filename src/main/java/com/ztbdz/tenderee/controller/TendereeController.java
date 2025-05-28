@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,8 +57,14 @@ public class TendereeController {
                        @RequestBody(required = false) Tenderee tenderee) {
         if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
         if(tenderee==null) tenderee = new Tenderee();
-        tenderee.setMember(SystemConfig.getCreateMember());
+        if(!(tenderee.getProject()!=null && tenderee.getProject().getIsAudit()!=null && tenderee.getProject().getIsAudit()==12)) tenderee.setMember(SystemConfig.getCreateMember());
         return tendereeService.page(page,size,tenderee);
+    }
+
+    @ApiOperation(value = "导出招标")
+    @GetMapping("pageExport")
+    public ResponseEntity<byte[]> pageExport(Tenderee tenderee) {
+        return tendereeService.pageExport(tenderee);
     }
 
     @ApiOperation(value = "查询全部招标")

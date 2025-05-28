@@ -91,7 +91,6 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public Result page(Integer page, Integer size, Project project,Integer state) {
         try{
-            PageHelper.startPage(page, size);
             Object id = SystemConfig.getCreateMember().getId();
             List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
             if(state==3){ // 进行去重操作
@@ -125,11 +124,27 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                     }
                 }
             }
+            PageHelper.startPage(page, size);
             return Result.ok("查询成功！",new PageInfo(projectList));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询项目报名列表异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public Result pageInvoice(Integer page, Integer size, Project project) {
+        try{
+            return Result.ok("查询成功！",new PageInfo(this.selectInvoice(project)));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询报名项目的发票列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ProjectRegister> selectInvoice(Project project) throws Exception {
+        return projectRegisterMapper.selectInvoice(project);
     }
 
     @Override
@@ -153,6 +168,25 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
         try{
             List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
             return SystemConfig.excelExport("项目报名情况",ProjectRegisterExport.SelectByProjectExport.converter(projectRegisterList),ProjectRegisterExport.SelectByProjectExport.class);
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    public  ResponseEntity<byte[]> invoiceOrAuditExport( Project project, Integer exportType) {
+        try{
+            switch (exportType){
+                case 0:
+                    List<ProjectRegister> projectRegisterList = this.selectInvoice(project);
+                    return SystemConfig.excelExport("开具发票申请列表",ProjectRegisterExport.SelectInvoiceExport.converter(projectRegisterList),ProjectRegisterExport.SelectInvoiceExport.class);
+                case 1:
+                    Result result = this.page(1,0,project,3);
+                    List<Project> projectList = ((PageInfo)result.getData()).getList();
+                    return SystemConfig.excelExport("项目列表",ProjectRegisterExport.PageExport.converter(projectList),ProjectRegisterExport.PageExport.class);
+            }
+            return ResponseEntity.notFound().build();
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return ResponseEntity.notFound().build();

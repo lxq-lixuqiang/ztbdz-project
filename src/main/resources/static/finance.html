@@ -33,7 +33,7 @@
             <h3>开具发票申请列表</h3>
             <div>
                 <button onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                <button onclick="exportToExcel('#invoiceRequestsTable', '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
             </div>
         </div>
         <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
@@ -41,10 +41,10 @@
         <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
             <thead>
             <tr style="background:#f5f5f5;">
-                <th style="padding:10px; border:1px solid #ddd;">申请编号</th>
                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                 <th style="padding:10px; border:1px solid #ddd;">申请单位</th>
-                <th style="padding:10px; border:1px solid #ddd;">申请时间</th>
+                <th style="padding:10px; border:1px solid #ddd;">统一社会信用代码</th>
+                <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
                 <th style="padding:10px; border:1px solid #ddd;">发票金额</th>
                 <th style="padding:10px; border:1px solid #ddd;">状态</th>
                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
@@ -62,7 +62,7 @@
             <h3>项目列表</h3>
             <div>
                 <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                <button onclick="exportToExcel('#projectsTable', '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                <button onclick="exportToExcel(1, '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
             </div>
         </div>
         <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
@@ -267,34 +267,24 @@
         $("#invoiceEmpty").hide();
         $("#invoiceRequestsTable").hide();
 
-        // 模拟数据
-        const mockData = {
-            status: 200,
-            data: [
-                {
-                    id: "INV-2023-001",
-                    projectName: "智慧城市建设项目",
-                    company: "ABC科技有限公司",
-                    requestDate: "2023-06-15",
-                    amount: "5000",
-                    status: "待处理"
-                },
-                {
-                    id: "INV-2023-002",
-                    projectName: "政务云平台升级",
-                    company: "XYZ信息系统有限公司",
-                    requestDate: "2023-06-18",
-                    amount: "3000",
-                    status: "已开票"
+        $.ajax({
+            url: '/projectRegister/pageInvoice',
+            type: 'POST',
+            contentType: "application/json",
+            success: function(e) {
+                if(e.status == 200) {
+                    renderInvoiceRequests(e.data);
+                    $("#invoiceLoading").hide();
+                    $("#invoiceRequestsTable").show();
+                } else {
+                    alert('查询开具发票申请列表失败: ' + e.message);
                 }
-            ]
-        };
+            },
+            error: function() {
+                alert('查询开具发票申请列表失败');
+            }
+        });
 
-        setTimeout(() => {
-            renderInvoiceRequests(mockData);
-        $("#invoiceLoading").hide();
-        $("#invoiceRequestsTable").show();
-    }, 500);
     }
 
     // 渲染发票申请列表
@@ -302,19 +292,19 @@
         const tbody = $("#invoiceRequestsTable tbody");
         tbody.empty();
 
-        if(data.data.length > 0) {
-            data.data.forEach(request => {
+        if(data.list.length > 0) {
+            data.list.forEach(list => {
                 const row = $(`
                     <tr style="border:1px solid #ddd;">
-                        <td style="padding:10px;">${request.id}</td>
-                        <td style="padding:10px;">${request.projectName}</td>
-                        <td style="padding:10px;">${request.company}</td>
-                        <td style="padding:10px;">${request.requestDate}</td>
-                        <td style="padding:10px;">${request.amount}元</td>
-                        <td style="padding:10px;">${request.status}</td>
+                        <td style="padding:10px;">${list.project.projectName}</td>
+                        <td style="padding:10px;">${list.member.account.accountName}</td>
+                        <td style="padding:10px;">${list.member.account.accountCode}</td>
+                        <td style="padding:10px;">${list.member.account.email}</td>
+                        <td style="padding:10px;">${list.paymentMoney}元</td>
+                        <td style="padding:10px;">${list.isInvoice==0?'待处理':'已开票'}</td>
                         <td style="padding:10px;">
-                            <button onclick="processInvoiceRequest('${request.id}')"
-                                    style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">
+                            <button onclick="processInvoiceRequest('${list.id}')"
+                                    style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;${list.isInvoice==0?'':'display:none;'}">
                                 处理
                             </button>
                         </td>
@@ -328,17 +318,32 @@
     }
 
     // 处理发票申请
-    function processInvoiceRequest(requestId) {
-        alert(`正在处理发票申请: ${requestId}`);
+    function processInvoiceRequest(id) {
+        $.ajax({
+            url: '/projectRegister/update',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({"id":id,"isInvoice":1}),
+            success: function(response) {
+                if(response.status == 200) {
+                    loadInvoiceRequests();
+                    alert(`发票处理成功！`);
+                } else {
+                    alert('发票处理失败: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('发票处理失败');
+            }
+        });
+
     }
 
     // 导出Excel功能
-    function exportToExcel(tableId, fileName) {
+    function exportToExcel(state, fileName) {
         // 模拟导出功能
+        window.open('/projectRegister/invoiceOrAuditExport/'+state, '_blank');
         alert(`已将${fileName}导出为Excel文件`);
-
-        // 实际实现可以使用第三方库如SheetJS
-        // 这里仅提供模拟实现
     }
 
 </script>

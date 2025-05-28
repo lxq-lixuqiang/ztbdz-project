@@ -78,6 +78,7 @@ public class DataInitializer {
                     Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
                     // 管理员
                     List<MenuAuthorize> adminMenuList = new ArrayList();
+                    adminMenuList.add(new MenuAuthorize("项目审查页面","audit","/audit.html"));
                     saveDataMap.put("admin",adminMenuList);
                     // 招标方
                     List<MenuAuthorize> tendereeMenuList = new ArrayList();
@@ -87,6 +88,8 @@ public class DataInitializer {
                     List<MenuAuthorize> bidderMenuList = new ArrayList();
                     bidderMenuList.add(new MenuAuthorize("投标方管理页面","bider","/bider.html"));
                     bidderMenuList.add(new MenuAuthorize("投标方报名详情页","application","/Application.html"));
+                    bidderMenuList.add(new MenuAuthorize("项目详情","project-d","/project-d.html"));
+
                     saveDataMap.put("bidder",bidderMenuList);
                     // 专家
                     List<MenuAuthorize> expertMenuList = new ArrayList();

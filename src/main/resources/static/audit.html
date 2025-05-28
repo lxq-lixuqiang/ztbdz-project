@@ -1,0 +1,127 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>无标题文档</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">中天阳光AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px); padding:20px;">
+        <h2>项目审查清单</h2>
+        <table id="projectList" style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            <thead>
+                <tr style="background:#f0f0f0;">
+                    <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
+                    <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                    <th style="padding:10px; border:1px solid #ddd;">采购单位</th>
+                    <th style="padding:10px; border:1px solid #ddd;">预算金额</th>
+                    <th style="padding:10px; border:1px solid #ddd;">审查情况</th>
+                    <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 示例项目数据，实际应用中应从数据库获取 -->
+
+                <!-- 可以添加更多项目行 -->
+            </tbody>
+        </table>
+    </div>
+    <script id="projectTemplate" type="text/x-handlebars-template">
+        {{#if list}}
+            {{#each list}}
+                <tr>
+                    <td style="padding:10px; border:1px solid #ddd;">{{project.projectCode}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">{{project.projectName}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">{{tendereeName}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">¥{{project.money}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">
+                        <button onclick="downloadFile('{{project.procurementDocuments}}','{{project.projectName}}')" style="padding:5px 10px; margin-right:5px;">下载采购文件</button>
+                        <button onclick="approveProject('{{project.id}}',true)" style="padding:5px 10px; margin-right:5px; background:#4CAF50; color:white;{{#eq project.isAudit 0}}{{else}}display:none;{{/eq}}">审查通过</button>
+                        <button onclick="approveProject('{{project.id}}',false)" style="padding:5px 10px; background:#f44336; color:white;{{#eq project.isAudit 0}}{{else}}display:none;{{/eq}}">审查不通过</button>
+                    </td>
+                </tr>
+            {{/each}}
+        {{else}}
+            <tr>
+                <td colspan="6" style="padding:10px; border:1px solid #ddd;">没有项目审查清单</td>
+            </tr>
+        {{/if}}
+    </script>
+    <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+    <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+    <script src="config/token.js" type="text/javascript"></script>
+    <script>
+        // 初始化
+        verifyLogin();
+        initData();
+
+        // 加载数据
+        function initData(){
+            $.ajax({
+                url: "/tenderee/page",
+                type: "POST",
+                data: JSON.stringify({"project":{"isAudit":12}}),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        var newTemplate = Handlebars.compile($("#projectTemplate").html())(e.data);
+                        $("#projectList tbody").html(newTemplate);
+                    }else{
+                        alert("获取项目列表失败："+e.message);
+                    }
+                }
+            });
+        }
+        // 下载采购文件
+        function downloadFile(fileId,projectName) {
+            window.open( '/file/download/' + fileId, '_blank');
+            // 实际应用中这里应该调用后端API下载文件
+            alert('开始下载项目' + projectName + '的采购文件');
+        }
+
+        // 审查通过
+        function approveProject(projectId,isPass) {
+            var isAudit = isPass?1:2;
+
+            $.ajax({
+                url: '/tenderee/update',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({"project":{"id":projectId,"isAudit":isAudit}}),
+                success: function(response) {
+                    if(response.status == 200) {
+                        initData();
+                        alert('审查成功！');
+                    } else {
+                        alert('上传失败: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('上传失败');
+                }
+            });
+        }
+
+    </script>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

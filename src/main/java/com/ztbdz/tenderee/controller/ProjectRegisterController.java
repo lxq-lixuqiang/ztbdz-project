@@ -154,6 +154,21 @@ public class ProjectRegisterController {
         return projectRegisterService.page(page,size,project,0);
     }
 
+    @ApiOperation(value = "查询报名项目的发票列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("pageInvoice")
+    public Result pageInvoice(@RequestParam(required = false, defaultValue = "1") Integer page,
+                               @RequestParam(required = false) Integer size,
+                               @RequestBody(required = false) Project project) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return projectRegisterService.pageInvoice(page,size,project);
+    }
+
     @ApiOperation(value = "查询项目已报名的项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
@@ -186,8 +201,17 @@ public class ProjectRegisterController {
 
     @ApiOperation(value = "导出项目已报名的报名")
     @GetMapping("selectByProjectExport")
-    public ResponseEntity<byte[]> selectByProjectExport(@RequestBody(required = false) Project project) {
+    public ResponseEntity<byte[]> selectByProjectExport(Project project) {
         return projectRegisterService.selectByProjectExport(project,4);
+    }
+
+    @ApiOperation(value = "导出发票和审核的报名")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "exportType", value = "状态", required=true, dataType = "Integer")
+    })
+    @GetMapping("invoiceOrAuditExport/{exportType}")
+    public ResponseEntity<byte[]> invoiceOrAuditExport(Project project,@PathVariable Integer exportType) {
+        return projectRegisterService.invoiceOrAuditExport(project,exportType);
     }
 
     @ApiOperation(value = "查询投标报名审核状态列表")

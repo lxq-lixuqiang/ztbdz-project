@@ -7,9 +7,11 @@ import com.ztbdz.tenderee.mapper.TendereeMapper;
 import com.ztbdz.tenderee.pojo.*;
 import com.ztbdz.tenderee.service.*;
 import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.export.TendereeExport;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -40,8 +42,14 @@ public class TendereeServiceImpl implements TendereeService {
             // 判断 投标报名，截止时间，开标时间 必填
             if(StringUtils.isEmpty(tenderee.getProject().getSenrollStartDate()) || StringUtils.isEmpty(tenderee.getProject().getEnrollEndDate()))  return Result.fail("投标开始时间和投标截止时间不能为空！");
             if(StringUtils.isEmpty(tenderee.getProject().getBidOpeningTime()))  return Result.fail("开标时间不能为空！");
+
+            if(!StringUtils.isEmpty(tenderee.getId())){ //id不为空时进行更新
+                tenderee.getProject().setIsAudit(0);
+                return update(tenderee);
+            }
             // 项目信息
             Project project = tenderee.getProject();
+            project.setIsAudit(0); // 默认 未审核
             projectService.insert(project);
             // 标段
             List<Tender> tenders =  project.getTenders();
@@ -160,6 +168,18 @@ public class TendereeServiceImpl implements TendereeService {
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询招标列表异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<byte[]> pageExport(Tenderee tenderee) {
+        try{
+            PageInfo<Tenderee> tendereePageInfo = this.selectList( 1, 0,tenderee);
+            List<Tenderee> tendereeList = tendereePageInfo.getList();
+            return SystemConfig.excelExport("已发布项目",TendereeExport.PageExport.converter(tendereeList),TendereeExport.PageExport.class);
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return ResponseEntity.notFound().build();
         }
     }
 

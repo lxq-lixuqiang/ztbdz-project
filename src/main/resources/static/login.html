@@ -70,8 +70,7 @@
                             verifyLogin();
                             var roleType = getMember().role.type;
                             if(roleType == "admin"){ // 管理员
-                                alert("管理员页面正在建设中。。。");
-                                // location.href = "";
+                                location.href = "/audit.html";
                             }else if(roleType == "expert"){ // 专家
                                 location.href = "/expert.html";
                             }else if(roleType == "tenderee"){ // 招标方

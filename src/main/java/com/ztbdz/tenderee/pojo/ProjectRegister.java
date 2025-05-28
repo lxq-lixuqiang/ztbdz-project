@@ -58,6 +58,8 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private String paymentVoucher;
     @ApiModelProperty(value = "中标情况（0=未公布 1=已中标 2=未中标）")
     private Integer winBidState;
+    @ApiModelProperty(value = "是否开具发票（0=待处理 1=已开票）")
+    private Integer isInvoice;
     @ApiModelProperty(value = "保证金到账时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date earnestMoneyAccountDate;

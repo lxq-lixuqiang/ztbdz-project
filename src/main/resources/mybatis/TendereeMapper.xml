@@ -33,6 +33,9 @@
 		<result property="project.updateDate" column="update_date"/>
 		<result property="project.reviewEndDate" column="review_end_date"/>
 		<result property="project.isPass" column="is_pass"/>
+		<result property="project.money" column="money"/>
+		<result property="project.isAudit" column="is_audit"/>
+		<result property="project.procurementDocuments" column="procurement_documents"/>
 
 	</resultMap>
 
@@ -59,6 +62,9 @@
 				</if>
 				<if test="project.state != null and project.state == 12">
 					and (p.state = 1 or p.state=2) and Now() >= p.enroll_end_date
+				</if>
+				<if test="project.isAudit != null and project.isAudit !=12">
+					and p.is_audit = #{project.isAudit}
 				</if>
 			</if>
 	  	order by

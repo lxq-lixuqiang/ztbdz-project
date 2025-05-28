@@ -282,6 +282,7 @@
                         <thead>
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
                                 <th style="padding:10px; border:1px solid #ddd;">状态</th>
                                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
@@ -304,7 +305,7 @@
                             <div id="certificateFiles">
                                 <p>暂无上传文件</p>
                             </div>
-                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传新文件</button>
+                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传资质文件</button>
                         </div>
                         
                         <button onclick="enableEditMode()" style="padding:8px 16px; background:#2196F3; color:white; border:none; cursor:pointer; margin-top:15px;">更改信息</button>
@@ -445,6 +446,7 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#eq  projectRegisters.state 0}}报名审核中{{/eq}}
@@ -456,16 +458,23 @@
             </td>
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#eq  projectRegisters.state 4}}
-                    <a href="Application.html?id={{id}}&pid={{projectRegisters.id}}" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;">报名缴费</a>
+                    <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">报名缴费</button>
                 {{else}}
-                    <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">查看进度</button>
+                    <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
+                {{/eq}}
+                {{#eq  projectRegisters.state 2}}
+                    <button onclick="showProgress()" style="padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">退费</button>
+                    <button onclick="signUp2('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新报名</button>
+                {{/eq}}
+                {{#eq  projectRegisters.state 5}}
+                    <button onclick="signUp3('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新报名</button>
                 {{/eq}}
             </td>
         </tr>
         {{/each}}
         {{else}}
         <tr>
-            <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有正在报名项目</td>
+            <td colspan="6" style="padding:10px; border:1px solid #ddd;">没有正在报名项目</td>
         </tr>
         {{/if}}
     </script>
@@ -477,7 +486,7 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">已报名</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看详情</button>
+                <a href="/project-d.html?id={{id}}&rid={{projectRegisters.id}}" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;">查看详情</a>
             </td>
         </tr>
         {{/each}}
@@ -495,7 +504,7 @@
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#gtNowDate bidOpeningTime}}等待评审{{else}}评审中{{/gtNowDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
+                <!-- <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">报名记录</button> -->
             </td>
         </tr>
         {{/each}}
@@ -603,23 +612,6 @@
                 $("#certificateUpload").attr("data-file-id",fileId);
             }
 
-            function applyingInit(state,tbody,template){
-                $.ajax({
-                    url: "/projectRegister/listApplying",
-                    type: "POST",
-                    data: JSON.stringify({"state":state}),
-                    contentType: "application/json",
-                    success:function(e) {
-                        if(e.status == 200){
-                            var newTemplate = template(e.data);
-                            tbody.html(newTemplate);
-                        }else{
-                            alert("获取正在报名项目列表失败："+e.message);
-                        }
-                    }
-                });
-            }
-
             function projectInit(state,tbody,template){
                 $.ajax({
                     url: "/project/reviewEndProject",
@@ -682,6 +674,22 @@
                         tbody.html(newTemplate);
                     }else{
                         alert("获取可以报名项目列表失败："+e.message);
+                    }
+                }
+            });
+        }
+        function applyingInit(state,tbody,template){
+            $.ajax({
+                url: "/projectRegister/listApplying",
+                type: "POST",
+                data: JSON.stringify({"state":state}),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        var newTemplate = template(e.data);
+                        tbody.html(newTemplate);
+                    }else{
+                        alert("获取正在报名项目列表失败："+e.message);
                     }
                 }
             });
@@ -783,15 +791,37 @@
 
         // 显示报名结果弹窗
         function showProgress(projectName,id) {
-            alert("功能正在建设当中");
+            alert("请添加微信号 “xxx” ，备注 “报名费退费” 并截图页面有 “报名不通过” 的项目 进行退费操作！");
         }
         // 显示报名结果弹窗
         function signUp(id) {
-            var data = {"project":{"id":id}};
-            projectRegister(data);
+            if(confirm('确认报名项目吗？')) {
+                var data = {"project":{"id":id}};
+                projectRegister(data,1);
+            }
         }
 
-        function projectRegister(data){
+
+        // 显示报名结果弹窗
+        function signUp2(id) {
+            if(confirm('是否已了解退费流程，确定要重新报名吗？')) {
+                var data = {"project":{"id":id}};
+                projectRegister(data,2);
+            }
+        }
+        // 显示报名结果弹窗
+        function signUp3(id) {
+            if(confirm('确认要重新报名项目吗？')) {
+                var data = {"project":{"id":id}};
+                projectRegister(data,2);
+            }
+        }
+
+        function application(href){
+            window.location.href = href;
+        }
+
+        function projectRegister(data,state){
             $.ajax({
                 url: "/projectRegister/create",
                 type: "POST",
@@ -799,7 +829,11 @@
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){
-                        availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
+                        if(state==1){
+                            availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
+                        }else{
+                            applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
+                        }
                         alert('报名成功,正在审核企业资质！');
                     }else{
                         alert("报名失败："+e.message);

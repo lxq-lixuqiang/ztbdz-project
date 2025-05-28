@@ -1,6 +1,7 @@
 package com.ztbdz.web.export;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import lombok.Data;
 
@@ -63,6 +64,98 @@ public class ProjectRegisterExport {
                 selectByProjectExportList.add(selectByProjectExport);
             }
             return selectByProjectExportList;
+        }
+    }
+
+    /**
+     * 开具发票申请列表_导出数据
+     */
+    @Data
+    public static class SelectInvoiceExport {
+        @ExcelProperty("项目名称")
+        private String projectName;
+
+        @ExcelProperty("申请单位")
+        private String accountName;
+
+        @ExcelProperty("统一社会信用代码")
+        private String accountCode;
+
+        @ExcelProperty("电子邮箱")
+        private String email;
+
+        @ExcelProperty("发票金额")
+        private Long paymentMoney;
+
+        @ExcelProperty("状态")
+        private String invoice;
+
+        public static List<SelectInvoiceExport> converter(List<ProjectRegister> projectRegisterList){
+            List<SelectInvoiceExport> selectInvoiceExportList = new ArrayList();
+            for(ProjectRegister projectRegister : projectRegisterList){
+                SelectInvoiceExport selectInvoiceExport = new SelectInvoiceExport();
+                selectInvoiceExport.setProjectName(projectRegister.getProject().getProjectName());
+                selectInvoiceExport.setAccountName(projectRegister.getMember().getAccount().getAccountName());
+                selectInvoiceExport.setAccountCode(projectRegister.getMember().getAccount().getAccountCode());
+                selectInvoiceExport.setEmail(projectRegister.getMember().getAccount().getEmail());
+                selectInvoiceExport.setPaymentMoney(projectRegister.getPaymentMoney());
+                String invoice = "";
+                switch (projectRegister.getIsInvoice()){
+                    case 0:
+                        invoice = "待处理";
+                        break;
+                    case 1:
+                        invoice = "已开票";
+                        break;
+                }
+                selectInvoiceExport.setInvoice(invoice);
+                selectInvoiceExportList.add(selectInvoiceExport);
+            }
+            return selectInvoiceExportList;
+        }
+    }
+
+    /**
+     * 项目列表_导出数据
+     */
+    @Data
+    public static class PageExport {
+        @ExcelProperty("项目名称")
+        private String projectName;
+
+        @ExcelProperty("报名截止时间")
+        private Date enrollEndDate;
+
+        @ExcelProperty("业主单位")
+        private String tendereeName;
+
+        @ExcelProperty("项目概况")
+        private String projectOverview;
+
+        @ExcelProperty("审核状态")
+        private String state;
+
+        public static List<PageExport> converter(List<Project> projectList){
+            List<PageExport> pageExportList = new ArrayList();
+            for(Project project : projectList){
+                PageExport pageExport = new PageExport();
+                pageExport.setProjectName(project.getProjectName());
+                pageExport.setEnrollEndDate(project.getEnrollEndDate());
+                pageExport.setTendereeName(project.getProjectRegisters().getProject().getTenderee().getTendereeName());
+                pageExport.setProjectOverview(project.getProjectOverview());
+                String state = "";
+                switch (project.getProjectRegisters().getState()){
+                    case 0:
+                        state = "未审核";
+                        break;
+                    default:
+                        state = "已审核";
+                        break;
+                }
+                pageExport.setState(state);
+                pageExportList.add(pageExport);
+            }
+            return pageExportList;
         }
     }
 

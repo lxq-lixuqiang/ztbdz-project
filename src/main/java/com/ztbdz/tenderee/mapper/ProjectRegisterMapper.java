@@ -21,4 +21,6 @@ public interface ProjectRegisterMapper extends BaseMapper<ProjectRegister> {
 
     ProjectRegister selectProjectAndMemberById(Long id);
 
+    List<ProjectRegister> selectInvoice(Project project);
+
 }
