@@ -425,7 +425,7 @@
         <td style="padding:10px; border:1px solid #ddd;">{{project.bidOpeningTime}}</td>
         <td style="padding:10px; border:1px solid #ddd;">{{#gtNowDate project.bidOpeningTime}}等待评审{{else}}评审中{{/gtNowDate}}</td>
         <td style="padding:10px; border:1px solid #ddd;">
-            <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button>
+            <!-- <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看进度</button> -->
         </td>
     </tr>
     {{/each}}
@@ -732,7 +732,7 @@
                             if(i<10){
                                 sort="0"+(i+1);
                             }
-                            fileInfo+="<p><a target=\"_blank\" href='/file/preview/"+ids[i]+"'>文件"+sort+"</a></p>";
+                            fileInfo+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+ids[i]+"'>资质文件"+sort+"</a></p>";
                         }
                     }
                     // 模拟加载资质数据

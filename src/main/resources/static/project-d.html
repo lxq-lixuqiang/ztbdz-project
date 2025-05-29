@@ -108,6 +108,13 @@
             type: 'GET',
             success: function(response) {
                 if(response.status == 200) {
+                    var begin = new Date(response.data.project.bidOpeningTime).getTime();
+                    var now = new Date().getTime();
+                    if(now>begin){
+                        alert("已超过开标时间，无法上传投标文件！");
+                        location.href='/bider.html';
+                        return;
+                    }
                     $("#download-btn").attr("data-file-id",response.data.project.procurementDocuments);
 
                     renderProjectDetails(response.data.project);

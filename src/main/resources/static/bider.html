@@ -791,7 +791,7 @@
 
         // 显示报名结果弹窗
         function showProgress(projectName,id) {
-            alert("请添加微信号 “xxx” ，备注 “报名费退费” 并截图页面有 “报名不通过” 的项目 进行退费操作！");
+            alert("请发送邮箱到 “2817899794@qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “报名不通过” 的项目 进行退费审核！");
         }
         // 显示报名结果弹窗
         function signUp(id) {
@@ -804,14 +804,14 @@
 
         // 显示报名结果弹窗
         function signUp2(id) {
-            if(confirm('是否已了解退费流程，确定要重新报名吗？')) {
+            if(confirm('是否已了解退费流程，确定重新报名吗？')) {
                 var data = {"project":{"id":id}};
                 projectRegister(data,2);
             }
         }
         // 显示报名结果弹窗
         function signUp3(id) {
-            if(confirm('确认要重新报名项目吗？')) {
+            if(confirm('确认重新报名项目吗？')) {
                 var data = {"project":{"id":id}};
                 projectRegister(data,2);
             }

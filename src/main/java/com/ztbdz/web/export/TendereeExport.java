@@ -35,6 +35,7 @@ public class TendereeExport {
             for(Tenderee tenderee : tendereeList){
                 PageExport pageExport = new PageExport();
                 pageExport.setProjectName(tenderee.getProject().getProjectName());
+                pageExport.setProjectCode(tenderee.getProject().getProjectCode());
                 pageExport.setEnrollEndDate(tenderee.getProject().getEnrollEndDate());
                 pageExport.setMoney(tenderee.getProject().getMoney());
                 String state = "";
