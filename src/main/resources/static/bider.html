@@ -149,6 +149,7 @@
         document.getElementById('editContactPerson').value = document.getElementById('contactPerson').textContent;
         document.getElementById('editContactPhone').value = document.getElementById('contactPhone').textContent;
         document.getElementById('editContactEmail').value = document.getElementById('contactEmail').textContent;
+        document.getElementById('editAccountMoney').value = document.getElementById('accountMoney').textContent;
         
         // 切换显示/编辑模式
         document.getElementById('companyInfoDisplay').style.display = 'none';
@@ -194,6 +195,7 @@
         document.getElementById('contactPerson').textContent = document.getElementById('editContactPerson').value;
         document.getElementById('contactPhone').textContent = document.getElementById('editContactPhone').value;
         document.getElementById('contactEmail').textContent = document.getElementById('editContactEmail').value;
+        document.getElementById('accountMoney').textContent = document.getElementById('editAccountMoney').value;
         
         // 更新已上传文件显示
         const files = document.getElementById('certificateUpload').files;
@@ -299,6 +301,7 @@
                         <p><strong>联系人：</strong><span id="contactPerson"></span></p>
                         <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
+                        <p><strong>注册资本：</strong><span id="accountMoney"></span></p>
                         
                         <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                             <h4>资质文件</h4>
@@ -330,6 +333,10 @@
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">电子邮箱</label>
                             <input type="email" id="editContactEmail" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">注册资本/元</label>
+                            <input type="number" id="editAccountMoney" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
 
                         <div style="margin:20px 0; border-top:1px solid #eee; padding-top:15px;">
@@ -585,7 +592,7 @@
                         }
                     });
                 }
-                showInfo(account.accountName,account.accountCode,account.member,account.phone,account.email,fileName,account.accountCodeFileId);
+                showInfo(account.accountName,account.accountCode,account.member,account.phone,account.email,account.accountMoney,fileName,account.accountCodeFileId);
             });
 
             $("#certificateUpload").on('change', function () {
@@ -601,12 +608,13 @@
                 $("#certificateFiles p").text(fileName);
                 $("#uploadedFilesList p").text(fileName);
             });
-            function showInfo(companyName,creditCode,contactPerson,contactPhone,contactEmail,fileName,fileId){
+            function showInfo(companyName,creditCode,contactPerson,contactPhone,contactEmail,accountMoney,fileName,fileId){
                 $("#companyName").text(companyName);
                 $("#creditCode").text(creditCode);
                 $("#contactPerson").text(contactPerson);
                 $("#contactPhone").text(contactPhone);
                 $("#contactEmail").text(contactEmail);
+                $("#accountMoney").text(accountMoney);
                 $("#certificateFiles p").text(fileName);
                 $("#uploadedFilesList p").text(fileName);
                 $("#certificateUpload").attr("data-file-id",fileId);
@@ -700,6 +708,7 @@
             var editContactPerson = $("#editContactPerson").val();
             var editContactPhone = $("#editContactPhone").val();
             var editContactEmail = $("#editContactEmail").val();
+            var editAccountMoney = $("#editAccountMoney").val();
             var fileId = $("#certificateUpload").attr("data-file-id");
 
             if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone || !fileId) {
@@ -708,7 +717,7 @@
             }
 
 
-            var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountCodeFileId":fileId};
+            var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountMoney":editAccountMoney,"accountCodeFileId":fileId};
             updateAccount(data);
             return false;
         };

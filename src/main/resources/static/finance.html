@@ -37,7 +37,7 @@
             </div>
         </div>
         <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
-        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">暂无发票申请数据</div>
+        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">暂无发票申请</div>
         <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
             <thead>
             <tr style="background:#f5f5f5;">
@@ -303,7 +303,7 @@
                         <td style="padding:10px;">${list.paymentMoney}元</td>
                         <td style="padding:10px;">${list.isInvoice==0?'待处理':'已开票'}</td>
                         <td style="padding:10px;">
-                            <button onclick="processInvoiceRequest('${list.id}')"
+                            <button onclick="processInvoiceRequest('${list.id}','${list.project.projectName}')"
                                     style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;${list.isInvoice==0?'':'display:none;'}">
                                 处理
                             </button>
@@ -313,30 +313,31 @@
             tbody.append(row);
         });
         } else {
-            tbody.append('<tr><td colspan="7" style="padding:10px; border:1px solid #ddd;">暂无发票申请数据</td></tr>');
+            tbody.append('<tr><td colspan="7" style="padding:10px; border:1px solid #ddd;">暂无发票申请</td></tr>');
         }
     }
 
     // 处理发票申请
-    function processInvoiceRequest(id) {
-        $.ajax({
-            url: '/projectRegister/update',
-            type: 'POST',
-            contentType: "application/json",
-            data: JSON.stringify({"id":id,"isInvoice":1}),
-            success: function(response) {
-                if(response.status == 200) {
-                    loadInvoiceRequests();
-                    alert(`发票处理成功！`);
-                } else {
-                    alert('发票处理失败: ' + response.message);
+    function processInvoiceRequest(id,projectName) {
+        if(confirm('确定项目 “'+projectName+'” 开票完成吗？')) {
+            $.ajax({
+                url: '/projectRegister/update',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({"id":id,"isInvoice":1}),
+                success: function(response) {
+                    if(response.status == 200) {
+                        loadInvoiceRequests();
+                        alert(`发票处理成功！`);
+                    } else {
+                        alert('发票处理失败: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('发票处理失败');
                 }
-            },
-            error: function() {
-                alert('发票处理失败');
-            }
-        });
-
+            });
+        }
     }
 
     // 导出Excel功能

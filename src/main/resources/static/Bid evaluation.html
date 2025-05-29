@@ -114,28 +114,33 @@
         ctx = null;
     
     // 初始化PDF查看器
-    function initPDFViewer() {
+    function initPDFViewer(fileId) {
         const pdfContainer = document.getElementById('pdf-viewer');
         
         // 显示加载状态
         pdfContainer.innerHTML = '<p style="text-align:center;">正在加载PDF文件...</p>';
-        
+        if(!fileId){
+            pdfContainer.innerHTML = '<p style="text-align:center;">无投标文件</p>';
+            return;
+        }
+
         // 创建Canvas元素
         canvas = document.createElement('canvas');
         canvas.style.display = 'block';
         canvas.style.margin = '0 auto';
         ctx = canvas.getContext('2d');
-        
+
+        $("#pdf-viewer").attr("data-fileId",fileId);
         // 处理PDF文件路径
         let pdfPath;
         if (window.location.protocol === 'file:') {
             // 本地文件系统路径处理
             const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-            pdfPath = basePath + "/file/preview/"+$("#pdf-viewer").attr("data-fileId");
+            pdfPath = basePath + "/file/preview/"+fileId;
             console.log('本地文件模式，PDF路径:', pdfPath);
         } else {
             // 服务器路径处理
-            pdfPath = "/file/preview/"+$("#pdf-viewer").attr("data-fileId");
+            pdfPath = "/file/preview/"+fileId;
             console.log('服务器模式，PDF路径:', pdfPath);
         }
         
@@ -149,8 +154,7 @@
         
         loadingTask.promise.then(function(pdf) {
             pdfDoc = pdf;
-                pdfContainer.innerHTML = '';
-                pdfContainer.appendChild(canvas);
+                pdfContainer.innerHTML = '';                pdfContainer.appendChild(canvas);
                 renderPage(1);
             },
             function(error) {
@@ -772,6 +776,7 @@
                 <!-- 左侧文件展示区 -->
                 <div class="file-viewer">
                     <h3>评审文件</h3>
+                    <div id="bidder_info"></div>
                     <div class="pdf-container" id="pdf-viewer">
                         <!-- PDF内容将通过canvas渲染 -->
                     </div>
@@ -1036,13 +1041,17 @@
                             location.href='/expert.html';
                             return;
                         }
-                        var fileId = e.data[0].project.procurementDocuments;
-                        $("#pdf-viewer").attr("data-fileId",fileId);
+
+                        for(var i=0;i<e.data.length;i++){
+                            const bidder = document.createElement('div');
+                            bidder.innerHTML = `<button onclick='initPDFViewer("${e.data[i].bidDocumentId}")'>供应商${i+1}：${e.data[i].member.account.accountName}</button>`;
+                            document.getElementById('bidder_info').appendChild(bidder);
+                        }
 
                         var newTemplate = Handlebars.compile($("#gysTemplate").html())(e);
                         $("div#gys").html(newTemplate);
                         // 最后初始化PDF查看器
-                        initPDFViewer();
+                        initPDFViewer(e.data[0].bidDocumentId);
                         initData();
                     }else{
                         alert("获取投标方失败："+e.message);

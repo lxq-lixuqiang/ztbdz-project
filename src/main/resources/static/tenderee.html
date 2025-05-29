@@ -512,15 +512,15 @@
         var registrationFee = $("#registrationFee").val();
         var id = $("#overview").attr("data-id");
         var projectid = $("#overview").attr("data-projectid");
+        var tendereeDate = $("#tendereeDate").val();
 
 
         var fileId = $("#fileUpload").attr("data-file-id");
-        var currentTime = new Date().toLocaleString().replaceAll("/","-"); // 统一使用ISO格式
         var tender={"tenderName":projectName};
         var tenders=[tender];
         var project = {
             "id":projectid,
-            "bidOpeningTime": currentTime,
+            "bidOpeningTime": new Date(tendereeDate).toLocaleString().replaceAll("/","-"),
             "projectCode": projectCode,
             "projectName": projectName,
             "procurementMethod": procurementMethod,
@@ -534,12 +534,11 @@
             "procurementDocuments": fileId,
             "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
             "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
-            "answerEndDate": currentTime, // 已经是ISO格式
+            "answerEndDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"), // 已经是ISO格式
             "registrationFee":registrationFee,
             "state": 1
         };
         var tendereeName = $("#tendereeName").val();
-        var tendereeDate = $("#tendereeDate").val();
 
         // 验证必填字段
         if(!senrollStartDate || !enrollEndDate || !tendereeName || !tendereeDate || !money) {
@@ -554,8 +553,16 @@
         var enrollEndDateTime = new Date(enrollEndDate).getTime();
         var senrollStartDateTime = new Date(senrollStartDate).getTime();
         var tendereeDateTime = new Date(tendereeDate).getTime();
-        if(enrollEndDateTime<now || tendereeDateTime<now || senrollStartDateTime<now){
-            alert("开始时间，截至时间和招标时间不能早于当前时间！");
+        if(enrollEndDateTime<=now || tendereeDateTime<=now || senrollStartDateTime<=now){
+            alert("开始时间，截至时间和招标时间不能早于或等于当前时间！");
+            return;
+        }
+        if(enrollEndDateTime<=senrollStartDateTime){
+            alert("截至时间不能早于或等于开始时间！");
+            return;
+        }
+        if(tendereeDateTime<=enrollEndDateTime || tendereeDateTime<=senrollStartDateTime){
+            alert("开始时间，截至时间不能早于或等于招标时间！");
             return;
         }
 
@@ -740,7 +747,7 @@
                         <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>
                         <p>企业名称: <span>`+(account.accountName!=null?account.accountName:"")+`</span></p>
                         <p>统一社会信用代码: <span>`+(account.accountCode!=null?account.accountCode:"")+`</span></p>
-                        <p>注册资本: <span>`+(account.accountMoney!=null?account.accountMoney:"")+`</span></p>
+                        <p>注册资本: <span>`+(account.accountMoney!=null?(account.accountMoney+"元"):"")+`</span></p>
 
                         <h4 style="margin-top:20px;">资质文件</h4>
                         `+fileInfo+`
