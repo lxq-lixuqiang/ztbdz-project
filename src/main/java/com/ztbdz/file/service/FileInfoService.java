@@ -39,7 +39,7 @@ public interface FileInfoService {
      * @param id
      * @return
      */
-    ResponseEntity<byte[]> download(Long id);
+    ResponseEntity<Object> download(Long id);
 
     /**
      * 查询文件信息

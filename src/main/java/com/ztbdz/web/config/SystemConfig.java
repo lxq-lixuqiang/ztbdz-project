@@ -123,7 +123,7 @@ public class SystemConfig {
     public static String determineContentType(String filename) {
         String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
         if (!Arrays.asList("txt", "jpg", "jpeg", "png", "pdf","xml").contains(extension)) {
-            throw new IllegalArgumentException("不支持的文件格式");
+            return "不支持的文件格式";
         }
         switch (extension) {
             case "txt": return MediaType.TEXT_PLAIN_VALUE;

@@ -120,7 +120,10 @@
         // 显示加载状态
         pdfContainer.innerHTML = '<p style="text-align:center;">正在加载PDF文件...</p>';
         if(!fileId){
-            pdfContainer.innerHTML = '<p style="text-align:center;">无投标文件</p>';
+            pdfContainer.innerHTML = '<p style="text-align:center;">供应商未上传投标文件</p>';
+            return;
+        }else if(fileId==-1){
+            pdfContainer.innerHTML = '<p style="text-align:center;">请选择供应商查看投标文件并点击文件查看</p>';
             return;
         }
 
@@ -730,6 +733,33 @@
         generateScoringForm();
     }
 
+    // 模拟供应商文件数据
+    var supplierFiles = {};
+
+    // 切换供应商
+    function switchSupplier(supplierId) {
+        if (!supplierId) return;
+        
+        const fileList = supplierFiles[supplierId];
+        const bidderInfo = document.getElementById('bidder_info');
+        
+        bidderInfo.innerHTML = `
+            <div style="margin-bottom: 10px;">
+                <strong>当前供应商文件:</strong>
+                <div style="margin-top: 5px;padding-left:40px;">
+                    ${fileList.map(file => `<div><button style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;" onclick='initPDFViewer("${file.split("）_")[1]}")'>${file.split("）_")[0]+"）"}</button></div>`).join('')}
+                </div>
+            </div>
+        `;
+        
+        // 这里可以添加实际加载第一个文件的逻辑
+        if(fileList.length==0){
+            initPDFViewer('');
+        }else{
+            initPDFViewer(fileList[0].split("）_")[1]);
+        }
+    }
+
     // 页面加载时初始化
     window.onload = function() {
         // 先设置PDF.js worker路径
@@ -776,6 +806,12 @@
                 <!-- 左侧文件展示区 -->
                 <div class="file-viewer">
                     <h3>评审文件</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label for="supplierSelect" style="margin-right: 10px;">选择供应商:</label>
+                        <select id="supplierSelect" style="padding: 5px; min-width: 200px;" onchange="switchSupplier(this.value)">
+                            <option value="">-- 请选择供应商 --</option>
+                        </select>
+                    </div>
                     <div id="bidder_info"></div>
                     <div class="pdf-container" id="pdf-viewer">
                         <!-- PDF内容将通过canvas渲染 -->
@@ -1041,17 +1077,22 @@
                             location.href='/expert.html';
                             return;
                         }
-
                         for(var i=0;i<e.data.length;i++){
-                            const bidder = document.createElement('div');
-                            bidder.innerHTML = `<button onclick='initPDFViewer("${e.data[i].bidDocumentId}")'>供应商${i+1}：${e.data[i].member.account.accountName}</button>`;
-                            document.getElementById('bidder_info').appendChild(bidder);
+                            var fileIds = [];
+                            var bidDocumentIds = e.data[i].bidDocumentIds;
+                            for(var j=0;j<bidDocumentIds.length;j++){
+                                fileIds.push(bidDocumentIds[j].name+"（"+bidDocumentIds[j].fileSize+"）_"+bidDocumentIds[j].id);
+                            }
+                            supplierFiles[i+1] = fileIds;
+                            var option = document.createElement("option");
+                            option.setAttribute("value",i+1);
+                            option.innerText=`供应商${i+1}：${e.data[i].member.account.accountName}`;
+                            document.getElementById('supplierSelect').appendChild(option)
                         }
-
                         var newTemplate = Handlebars.compile($("#gysTemplate").html())(e);
                         $("div#gys").html(newTemplate);
                         // 最后初始化PDF查看器
-                        initPDFViewer(e.data[0].bidDocumentId);
+                        initPDFViewer(-1);
                         initData();
                     }else{
                         alert("获取投标方失败："+e.message);

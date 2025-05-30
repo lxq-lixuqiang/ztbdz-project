@@ -12,3 +12,11 @@ CHANGE COLUMN `project_name` `title` varchar(255) CHARACTER SET utf8 COLLATE utf
 ADD COLUMN `content` longtext NULL AFTER `is_public`,
 ADD COLUMN `tenderee_inform_type` varchar(255) NULL AFTER `content`,
 ADD COLUMN `supplementary_content` varchar(255) NULL AFTER `tenderee_info_type`;
+
+# 项目信息添加不通过原因
+ALTER TABLE `project`
+ADD COLUMN `not_pass_info` varchar(255) NULL AFTER `is_pass`;
+
+# 投标报名添加不通过原因
+ALTER TABLE `project_register`
+ADD COLUMN `not_pass_info` varchar(255) NULL AFTER `state`;

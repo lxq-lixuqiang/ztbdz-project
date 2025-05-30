@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ztbdz.file.pojo.FileInfo;
 import com.ztbdz.user.pojo.Member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,6 +34,8 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private Member member;
     @ApiModelProperty(value = "审核状态（0=审核中 1=通过 2=不通过 3=资质审核中 4=资质通过 5=资质不通过 ）")
     private Integer state;
+    @ApiModelProperty(value = "不通过原因")
+    private String notPassInfo;
     @ApiModelProperty(value = "报名数量")
     private Integer num;
     @ApiModelProperty(value = "保证金金额")
@@ -43,6 +46,9 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private Integer score;
     @ApiModelProperty(value = "标书")
     private String bidDocumentId;
+    @ApiModelProperty(value = "标书集合")
+    @TableField(exist = false)
+    private List<FileInfo> bidDocumentIds;
     @ApiModelProperty(value = "中标金额")
     private String bidMoney;
     @ApiModelProperty(value = "中标金额大写")

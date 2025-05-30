@@ -3,6 +3,8 @@ package com.ztbdz.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ztbdz.file.pojo.FileInfo;
+import com.ztbdz.file.service.FileInfoService;
 import com.ztbdz.user.mapper.MemberMapper;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.Role;
@@ -38,6 +40,8 @@ public class MemberServiceImpl implements MemberService {
     private RoleService roleService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private FileInfoService fileInfoService;
 
 
     @Override
@@ -103,6 +107,18 @@ public class MemberServiceImpl implements MemberService {
             List<Role> roleList = new ArrayList();
             roleList.add(member.getRole());
             roleService.getMenuAuthorizeInfo(roleList);
+            if(!StringUtils.isEmpty(member.getAccount().getAccountCodeFileId())){
+                String[] fileIdStrings = member.getAccount().getAccountCodeFileId().split(",");
+                List<Long> fileIds = new ArrayList<>();
+                for(int i=0;i<fileIdStrings.length;i++){
+                    fileIds.add(Long.valueOf(fileIdStrings[i]));
+                }
+                List<FileInfo> fileInfoList = fileInfoService.listByIds(fileIds);
+                for(FileInfo fileInfo : fileInfoList){
+                    fileInfo.convertSize();
+                }
+                member.getAccount().setAccountCodeFileIds(fileInfoList);
+            }
 
             if(member==null) return Result.fail("【"+id+"】未查询到数据！",member);
             return Result.ok("查询成功！",member);

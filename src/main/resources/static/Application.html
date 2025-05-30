@@ -173,6 +173,9 @@
                 registrationFee
             }
             $("#paymentProof").on('change', function () {
+                if(this.files.length==0){
+                    return;
+                }
                 var fileId = uploadImg(this.files);
                 $("#paymentProof").attr("data-file-id",fileId);
             });

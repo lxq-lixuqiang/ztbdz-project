@@ -201,6 +201,9 @@
     function uploadBidFile() {
         const fileInput = $('<input type="file">');
         fileInput.on('change', function() {
+            if(this.files.length==0){
+                return;
+            }
             var fileId = uploadFile(this.files);
             const urlParams = new URLSearchParams(window.location.search);
             const rid = urlParams.get('rid');

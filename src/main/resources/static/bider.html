@@ -340,8 +340,8 @@
                         </div>
 
                         <div style="margin:20px 0; border-top:1px solid #eee; padding-top:15px;">
-                            <h4>资质文件上传</h4>
-                            <input type="file" id="certificateUpload" name="certificateFiles" style="margin-bottom:10px;" multiple>
+                            <h4>资质文件</h4>
+                            <input type="file" id="certificateUpload" name="certificateFiles" style="margin-bottom:10px;display: none;" multiple>
                             <div id="uploadedFilesList" style="margin-top:10px;">
                                 <p>未选择文件</p>
                             </div>
@@ -570,21 +570,16 @@
                 var fileName = "";
                 if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
                     var ids = account.accountCodeFileId.split(",");
-                    var datas = ""
-                    for(var i=0;i<ids.length;i++){
-                        if(datas.length>0) datas+="&"
-                        datas+="ids="+ids[i];
-                    }
                     $.ajax({
-                        url: "/file/list?"+datas,
+                        url: "/file/list",
                         type: "POST",
                         async: false,
+                        data: JSON.stringify(ids),
                         contentType: "application/json",
                         success:function(e) {
                             if(e.status == 200){
                                 for(var i=0;i<e.data.length;i++){
-                                    if(fileName.length>0) fileName+=",";
-                                    fileName += e.data[i].name;
+                                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）</a></p>";
                                 }
                             }else{
                                 alert("获取文件信息失败："+e.message);
@@ -596,17 +591,20 @@
             });
 
             $("#certificateUpload").on('change', function () {
+                if(this.files.length==0){
+                    return;
+                }
                 var fileId = uploadFile(this.files);
                 var data = {"id":getMember().account.id,"accountCodeFileId":fileId}
                 $("#certificateUpload").attr("data-file-id",fileId);
                 updateAccount(data);
+                var fileIds = fileId.split(",");
                 var fileName = "";
                 for(var i=0;i<this.files.length;i++){
-                    if(i!=0) fileName+=",";
-                    fileName+=this.files[i].name;
+                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
                 }
-                $("#certificateFiles p").text(fileName);
-                $("#uploadedFilesList p").text(fileName);
+                $("#certificateFiles p").html(fileName);
+                $("#uploadedFilesList p").html(fileName);
             });
             function showInfo(companyName,creditCode,contactPerson,contactPhone,contactEmail,accountMoney,fileName,fileId){
                 $("#companyName").text(companyName);
@@ -615,8 +613,8 @@
                 $("#contactPhone").text(contactPhone);
                 $("#contactEmail").text(contactEmail);
                 $("#accountMoney").text(accountMoney);
-                $("#certificateFiles p").text(fileName);
-                $("#uploadedFilesList p").text(fileName);
+                $("#certificateFiles p").html(fileName);
+                $("#uploadedFilesList p").html(fileName);
                 $("#certificateUpload").attr("data-file-id",fileId);
             }
 
@@ -711,7 +709,7 @@
             var editAccountMoney = $("#editAccountMoney").val();
             var fileId = $("#certificateUpload").attr("data-file-id");
 
-            if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone || !fileId) {
+            if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone) {
                 alert("请填写所有必填字段");
                 return true;
             }
@@ -805,6 +803,11 @@
         // 显示报名结果弹窗
         function signUp(id) {
             if(confirm('确认报名项目吗？')) {
+                var account = getMember().account;
+                if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
+                    alert("请先完善个人信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，资质文件")
+                    return ;
+                }
                 var data = {"project":{"id":id}};
                 projectRegister(data,1);
             }

@@ -4,6 +4,8 @@ import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ztbdz.file.pojo.FileInfo;
+import com.ztbdz.file.service.FileInfoService;
 import com.ztbdz.tenderee.mapper.ProjectRegisterMapper;
 import com.ztbdz.tenderee.pojo.*;
 import com.ztbdz.tenderee.service.*;
@@ -45,6 +47,8 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     private WinBidService winBidService;
     @Autowired
     private TendereeService tendereeService;
+    @Autowired
+    private FileInfoService fileInfoService;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -294,7 +298,20 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
 
     @Override
     public List<ProjectRegister> selectByProjectId(Long projectId, Integer state) throws Exception {
-        return projectRegisterMapper.getProject(projectId,state);
+        List<ProjectRegister> projectRegisterList = projectRegisterMapper.getProject(projectId,state);
+        for(ProjectRegister projectRegister : projectRegisterList){
+            String[] fileIdStrings = projectRegister.getBidDocumentId().split(",");
+            List<Long> fileIds = new ArrayList<>();
+            for(int i=0;i<fileIdStrings.length;i++){
+                fileIds.add(Long.valueOf(fileIdStrings[i]));
+            }
+            List<FileInfo> fileInfoList = fileInfoService.listByIds(fileIds);
+            for(FileInfo fileInfo : fileInfoList){
+                fileInfo.convertSize();
+            }
+            projectRegister.setBidDocumentIds(fileInfoList);
+        }
+        return projectRegisterList;
     }
 
     @Override

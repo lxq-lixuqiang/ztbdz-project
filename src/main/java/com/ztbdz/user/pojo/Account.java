@@ -12,6 +12,7 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @ApiModel("企业")
@@ -58,6 +59,9 @@ public class Account extends Model<Account> implements Serializable {
     private String natureBusiness;
     @ApiModelProperty("统一社会信用代码证书扫描件文件id")
     private String accountCodeFileId;
+    @ApiModelProperty("统一社会信用代码证书扫描件文件集合")
+    @TableField(exist = false)
+    private List<FileInfo> accountCodeFileIds;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

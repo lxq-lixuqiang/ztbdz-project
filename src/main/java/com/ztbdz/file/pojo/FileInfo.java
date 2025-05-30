@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -79,14 +80,15 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
     }
 
     public void convertSize(){
+        DecimalFormat df = new DecimalFormat("#.00");
         if(this.size<1024){
             this.fileSize = this.size+"B";
         }else if(this.size<1024 * 1024){
-            this.fileSize = Math.round(this.size / 1024)+"KB";
+            this.fileSize = df.format(this.size / 1024d)+"KB";
         }else if(this.size<1024 * 1024 * 1024){
-            this.fileSize = Math.round(this.size / (1024 * 1024))+"MB";
+            this.fileSize = df.format(this.size / (1024d * 1024d))+"MB";
         }else if(this.size<1024 * 1024 * 1024 * 1024){
-            this.fileSize = Math.round(this.size / (1024 * 1024 * 1024))+"GB";
+            this.fileSize = df.format(this.size / (1024d * 1024d * 1024d))+"GB";
         }
     }
 }

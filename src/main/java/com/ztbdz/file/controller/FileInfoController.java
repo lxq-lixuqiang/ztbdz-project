@@ -59,18 +59,17 @@ public class FileInfoController {
             @ApiImplicitParam(name = "id", value = "文件id", required=true, dataType = "Long")
     })
     @GetMapping("download/{id}")
-    public ResponseEntity<byte[]> download(@PathVariable Long id) {
+    public ResponseEntity<Object> download(@PathVariable Long id) {
         return fileInfoService.download(id);
     }
 
     @ApiOperation(value = "查询文件列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-            @ApiImplicitParam(name = "ids", value = "文件ids", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
     @CheckToken
     @PostMapping("list")
-    public Result list(@RequestParam("ids") List<Long> ids) {
+    public Result list(@RequestBody List<Long> ids) {
         return fileInfoService.list(ids);
     }
 

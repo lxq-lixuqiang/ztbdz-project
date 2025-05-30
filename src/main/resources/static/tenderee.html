@@ -285,7 +285,7 @@
                     </div>
                 </div>
                 <div id="applicationLoading" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
-                <div id="applicationEmpty" style="text-align:center; padding:20px; display:none;">暂无报名数据</div>
+                <div id="applicationEmpty" style="text-align:center; padding:20px; display:none;">没有报名</div>
                 <table id="applicationTable" style="width:100%; border-collapse:collapse;">
                     <thead>
                     <tr style="background:#f5f5f5;">
@@ -312,7 +312,7 @@
                     </div>
                 </div>
                 <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
-                <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">暂无已发布项目</div>
+                <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有已发布项目</div>
                 <table id="publishedProjects" style="width:100%; border-collapse:collapse;">
                     <thead>
                     <tr style="background:#f5f5f5;">
@@ -378,14 +378,14 @@
         <td style="padding:10px;">{{project.money}}</td>
         <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
-            <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看报名情况</button>
-            <button onclick="showProject('{{project.id}}')" style="padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">修改</button>
+            <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
+            <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">修改</button>
         </td>
     </tr>
     {{/each}}
     {{else}}
     <tr>
-        <td colspan="5" style="padding:10px; border:1px solid #ddd;">暂无项目</td>
+        <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有项目</td>
     </tr>
     {{/if}}
 </script>
@@ -413,7 +413,7 @@
     {{/each}}
     {{else}}
     <tr>
-        <td colspan="5" style="padding:10px; border:1px solid #ddd;">暂无项目</td>
+        <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有项目</td>
     </tr>
     {{/if}}
 </script>
@@ -616,6 +616,9 @@
         verifyLogin();
 
         $("#fileUpload").on('change', function () {
+            if(this.files.length==0){
+                return;
+            }
             var fileId = uploadFile(this.files);
             $("#fileUpload").attr("data-file-id",fileId);
         });
@@ -730,28 +733,26 @@
             success:function(e) {
                 if(e.status == 200){
                     var account = e.data.account;
-                    var fileInfo = "无";
+                    var fileInfo = "没有上传资质文件";
                     if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
                         fileInfo = "";
-                        var ids = account.accountCodeFileId.split(",");
-                        for(var i=0;i<ids.length;i++){
-                            var sort = i;
-                            if(i<10){
-                                sort="0"+(i+1);
-                            }
-                            fileInfo+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+ids[i]+"'>资质文件"+sort+"</a></p>";
+                        for(var i=0;i<account.accountCodeFileIds.length;i++){
+                            fileInfo+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+account.accountCodeFileIds[i].id+"'>"+account.accountCodeFileIds[i].name+"（"+account.accountCodeFileIds[i].fileSize+"）</a></p>";
                         }
                     }
                     // 模拟加载资质数据
                     $("#qualificationContent").html(`
-                        <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>
-                        <p>企业名称: <span>`+(account.accountName!=null?account.accountName:"")+`</span></p>
-                        <p>统一社会信用代码: <span>`+(account.accountCode!=null?account.accountCode:"")+`</span></p>
-                        <p>注册资本: <span>`+(account.accountMoney!=null?(account.accountMoney+"元"):"")+`</span></p>
+                            <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>
+                            <p>企业名称: <span>`+(account.accountName!=null?account.accountName:"")+`</span></p>
+                            <p>统一社会信用代码: <span>`+(account.accountCode!=null?account.accountCode:"")+`</span></p>
+                            <p>联系人: <span>`+(account.member!=null?account.member:"")+`</span></p>
+                            <p>联系电话: <span>`+(account.phone!=null?account.phone:"")+`</span></p>
+                            <p>电子邮箱: <span>`+(account.email!=null?account.email:"")+`</span></p>
+                            <p>注册资本: <span>`+(account.accountMoney!=null?(account.accountMoney+"元"):"")+`</span></p>
 
-                        <h4 style="margin-top:20px;">资质文件</h4>
-                        `+fileInfo+`
-                    `);
+                            <h4 style="margin-top:20px;">资质文件</h4>
+                            `+fileInfo+`
+                        `);
                     $("#qualificationModal").show();
                 }else{
                     alert("获取企业信息失败："+e.message);
@@ -854,7 +855,7 @@
                     tbody.innerHTML = '';
 
                     // 模拟3个报名单位
-                    var companies = [{name: '暂无报名信息'}];
+                    var companies = [{name: '没有报名'}];
                     if(e.data.length>0){
                         companies = [];
                         for(var i=0;i<e.data.length;i++){
@@ -879,7 +880,7 @@
                     companies.forEach(company => {
                         const row = document.createElement('tr');
                     row.style.border = '1px solid #ddd';
-                    row.innerHTML = `<td colspan="5" style="padding:10px;">暂无报名信息</td>`;
+                    row.innerHTML = `<td colspan="5" style="padding:10px;">没有报名</td>`;
                     if(e.data.length>0){
                         row.innerHTML = `
                                 <td style="padding:10px;">${company.name}</td>
@@ -916,7 +917,7 @@
                     tbody.innerHTML = '';
 
                     // 模拟3个报名单位
-                    var companies = [{name: '暂无评审结果'}];
+                    var companies = [{name: '没有评审结果'}];
                     if(e.data.length>0){
                         companies = [];
                         for(var i=0;i<e.data.length;i++){
@@ -941,7 +942,7 @@
                     companies.forEach(company => {
                         const row = document.createElement('tr');
                     row.style.border = '1px solid #ddd';
-                    row.innerHTML = `<td colspan="5" style="padding:10px;">暂无评审结果</td>`;
+                    row.innerHTML = `<td colspan="5" style="padding:10px;">没有评审结果</td>`;
                     if(e.data.length>0){
                         row.innerHTML = `
                                 <td style="padding:10px;">${company.name}</td>

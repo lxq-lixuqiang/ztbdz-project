@@ -70,7 +70,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public ResponseEntity<byte[]> download(Long id) {
+    public ResponseEntity<Object> download(Long id) {
         try{
             FileInfo fileInfo = this.getById(id);
             File file= new File(fileInfo.path(), fileInfo.getId().toString());
@@ -97,13 +97,15 @@ public class FileInfoServiceImpl implements FileInfoService {
     public ResponseEntity<Object> preview(Long id) {
         try{
             FileInfo fileInfo = this.getById(id);
-            Resource resource = new FileSystemResource(SystemConfig.validateAndGetPath(fileInfo.path(),fileInfo.getId().toString()));
-
             String contentType = SystemConfig.determineContentType(fileInfo.getName());
+            if(contentType.indexOf("不支持")>-1){
+                return download(id); // 不支持预览的文件就进行下载
+            }
+            Resource resource = new FileSystemResource(SystemConfig.validateAndGetPath(fileInfo.path(),fileInfo.getId().toString()));
 
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
-            return ResponseEntity.ok().headers(headers) .body(resource);
+            return ResponseEntity.ok().headers(headers).body(resource);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return ResponseEntity.notFound().build();
