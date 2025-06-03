@@ -226,6 +226,8 @@
                             <option value="谈判">谈判</option>
                             <option value="询价">询价</option>
                             <option value="单一来源">单一来源</option>
+                            <option value="竞争性谈判">竞争性谈判</option>
+                            <option value="竞争性磋商">竞争性磋商</option>
                             <option value="其他">其他</option>
                         </select>
                     </div>
@@ -380,6 +382,7 @@
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
             <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">修改</button>
+            <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">原因</button>
         </td>
     </tr>
     {{/each}}
@@ -407,7 +410,7 @@
             {{#eq state 5}}资质不通过{{/eq}}
         </td>
         <td style="padding:10px;">
-            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{#eq state 3}}0{{else}}1{{/eq}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
+            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{#eq state 3}}0{{else}}1{{/eq}}')" style="padding:5px 10px; background:{{#eq state 3}}red{{else}}#4CAF50{{/eq}}; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
         </td>
     </tr>
     {{/each}}
@@ -513,7 +516,14 @@
         var id = $("#overview").attr("data-id");
         var projectid = $("#overview").attr("data-projectid");
         var tendereeDate = $("#tendereeDate").val();
-
+        if(money<0){
+            alert("项目预算必须大于或等于0");
+            return;
+        }
+        if(registrationFee<0){
+            alert("报名费必须大于或等于0");
+            return;
+        }
 
         var fileId = $("#fileUpload").attr("data-file-id");
         var tender={"tenderName":projectName};
@@ -764,6 +774,26 @@
 
     // 审核供应商
     function approveSupplier(isApproved) {
+        var notPassInfo="";
+        var isUpdate = false;
+        if(isApproved){
+            if(confirm('确定要审核吗？')) {
+                isUpdate = true;
+            }
+        }else{
+            notPassInfo = prompt("请输入不通过的原因:");
+            if(!notPassInfo){
+                if(notPassInfo==""){
+                    alert("必须填写不通过原因");
+                }
+                return ;
+            }
+            isUpdate = true;
+        }
+        if(!isUpdate){
+            return;
+        }
+
         var state = 5;
         if(isApproved) state = 4;
         var id = $("#accountInfo").attr("data-id");
@@ -771,7 +801,7 @@
             url: "/projectRegister/update",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({"id":id,"state":state}),
+            data: JSON.stringify({"id":id,"state":state,"notPassInfo":notPassInfo}),
             success:function(e) {
                 if(e.status == 200){
                     loadApplicationData(); // 刷新列表

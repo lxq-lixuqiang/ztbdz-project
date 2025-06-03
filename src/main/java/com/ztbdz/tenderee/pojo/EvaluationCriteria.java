@@ -53,6 +53,9 @@ public class EvaluationCriteria  extends Model<EvaluationCriteria> implements Se
     private String reviewDescription;
     @ApiModelProperty(value = "扣分理由")
     private String deductionReason;
+    @ApiModelProperty(value = "投标报名信息")
+    @TableField(exist = false)
+    private ProjectRegister projectRegister;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

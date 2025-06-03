@@ -14,6 +14,12 @@ public interface EvaluationCriteriaService {
      */
     Result select(EvaluationCriteria evaluationCriteria);
 
+    /**
+     * 查询评标标准
+     * @param evaluationCriteria
+     * @return
+     */
+    List<EvaluationCriteria> selectMember(EvaluationCriteria evaluationCriteria) throws Exception;
 
     /**
      * 查询评标标准

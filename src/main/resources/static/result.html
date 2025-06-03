@@ -1,0 +1,167 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>无标题文档</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">轩辕AI智能化评标系统</div>
+        <div style="display:flex; gap:30px;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px); padding:20px;">
+        <h2>专家评分汇总</h2>
+        <div style="overflow-x:auto;">
+            <table id="scoreTable" border="1" style="width:auto; min-width:100%; border-collapse:collapse; margin-bottom:20px;">
+                <thead>
+                    <tr style="background:#f0f0f0;">
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 数据将通过JavaScript动态加载 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <button id="submitBtn" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">提交结果</button>
+
+
+        <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+        <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+        <script src="config/token.js" type="text/javascript"></script>
+        <script>
+            // 初始化
+            verifyLogin();
+            $.ajax({
+                url: "/evaluation/select",
+                type: "POST",
+                data: JSON.stringify({"projectId":new URLSearchParams(window.location.search).get("id"),"reviewType":3}),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        if(e.data.length==0){
+                            alert("没有专家进行评审！");
+                            location.href = "/expert.html";
+                            return;
+                        }
+
+                        var member = "";
+                        var ratingItems = "";
+                        var gongyingshang = "";
+                        for(var i=0;i<e.data.length;i++){
+                            if(member.indexOf(e.data[i].member.name)==-1){
+                                if(member.length>0) member+=",";
+                                member+=e.data[i].member.name;
+                            }
+                            if(ratingItems.indexOf(e.data[i].evaluationCriteriaName)==-1){
+                                if(ratingItems.length>0) ratingItems+=",";
+                                ratingItems+=e.data[i].evaluationCriteriaName;
+                            }
+                            if(gongyingshang.indexOf(e.data[i].projectRegister.member.account.accountName)==-1){
+                                if(gongyingshang.length>0) gongyingshang+=",";
+                                gongyingshang+=e.data[i].projectRegister.member.account.accountName;
+                            }
+                        }
+
+                        // 动态生成表头
+                        const thead = document.querySelector('#scoreTable thead tr');
+                        thead.innerHTML = '<th style="min-width:100px;">评分项</th>';
+
+                        var expert = member.split(",");
+                        // 添加专家列
+                        for(let i = 0; i < expert.length; i++) {
+                            thead.innerHTML += `<th style="min-width:60px;">${expert[i]}</th>`;
+                        }
+                        // 添加总分和平均分列
+                        thead.innerHTML += '<th style="min-width:60px;">总分</th><th style="min-width:60px;">平均分</th>';
+
+                        var scoreTable = $("#scoreTable tbody");
+                        scoreTable.html("");
+                        var trs = "";
+                        var ratingItemsTr = ratingItems.split(",");
+                        var gongyingshangTr = gongyingshang.split(",")
+
+                        for(var k=0;k<gongyingshangTr.length;k++){
+                            trs+= `<tr style="font-weight: bold;"><td>供应商</td><td colspan="3">${gongyingshangTr[k]}</td></tr>`;
+                            var countInfo = 0;
+                            for(var i=0;i<ratingItemsTr.length;i++){
+                                var row = "<tr>";
+                                row+= `<td>${ratingItemsTr[i]}</td>`;
+                                var count=0;
+                                var num = 0;
+                                for(var j=0;j<e.data.length;j++){
+                                    if(gongyingshangTr[k]==e.data[j].projectRegister.member.account.accountName && ratingItemsTr[i]==e.data[j].evaluationCriteriaName){
+                                        row += `<td>${e.data[j].score}</td>`;
+                                        count+=Number(e.data[j].score);
+                                        countInfo+=count;
+                                        num++;
+                                    }
+                                }
+                                row += "<td>"+count+"</td><td>"+(count/num).toFixed(0)+"</td></tr>";
+                                trs+=row;
+                            }
+                            trs+= `<tr style="font-weight: bold;"><td >合计</td><td colspan="3">${countInfo}</td></tr>`;
+
+                        }
+                        scoreTable.html(trs);
+
+                        // 添加提示框区域
+                        const messageBox = document.createElement('div');
+                        messageBox.id = 'messageBox';
+                        messageBox.style.marginTop = '20px';
+                        messageBox.style.padding = '15px';
+                        messageBox.style.border = '1px solid #ffcccc';
+                        messageBox.style.backgroundColor = '#ffeeee';
+                        messageBox.style.borderRadius = '5px';
+                        messageBox.style.display = 'none';
+                        document.querySelector('div[style*="width:1040px"]').appendChild(messageBox);
+
+                        // 提交按钮事件
+                        document.getElementById('submitBtn').addEventListener('click', function() {
+                            const messageBox = document.getElementById('messageBox');
+                            messageBox.style.display = 'none';
+                            messageBox.innerHTML = '';
+
+                            // 检查分数问题
+                            const problems = [];
+
+                            // 显示问题或提交
+                            if(problems.length > 0) {
+                                messageBox.innerHTML = `
+                                            <h3 style="color:#d32f2f; margin-top:0;">发现以下问题：</h3>
+                                            <ul style="margin-bottom:0;">
+                                                ${problems.map(p => `<li>${p}</li>`).join('')}
+                                            </ul>
+                                        `;
+                                messageBox.style.display = 'block';
+                            } else {
+                                alert('结果已提交！');
+                                window.location.href = '/expert.html';
+                            }
+                        });
+                    }else{
+                        alert("获取评分汇总列表失败："+e.message);
+                    }
+                }
+            });
+        </script>
+    </div>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

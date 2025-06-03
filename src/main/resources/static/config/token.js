@@ -34,8 +34,8 @@ function verifyLogin(){
             'url' : window.location.pathname
         },
         error:function(e) {
-            alert("token失效，请重新登陆！");
             removeToken();
+            alert("token失效，请重新登陆！");
             location.href = "/login.html";
         }
     });
@@ -139,6 +139,7 @@ function daysBetweenDates(startDate, endDate) {
     return diffDays;
 }
 
+// 文件大小转换
 function convertSize(size){
     if(size<1024){
         return size+"B";

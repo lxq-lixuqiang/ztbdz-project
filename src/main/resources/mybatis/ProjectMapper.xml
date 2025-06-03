@@ -30,6 +30,9 @@
 		<if test="state==1 || state==0">
 			and pr.member_id = #{memberId} and pr.state = #{state}
 		</if>
+		<if test="state==1">
+			and (p.state=1 or p.state=2)
+		</if>
 		group by p.id
 	  	order by
 	  		p.update_date desc

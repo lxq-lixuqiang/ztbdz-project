@@ -197,13 +197,34 @@
         $("#applicationModal").hide();
     }
 
-    function audit(state){
+    function audit(isPass){
+        var notPassInfo="";
+        var isUpdate = false;
+        if(isPass){
+            if(confirm('确定要审核吗？')) {
+                isUpdate = true;
+            }
+        }else{
+            notPassInfo = prompt("请输入不通过的原因:");
+            if(!notPassInfo){
+                if(notPassInfo==""){
+                    alert("必须填写不通过原因");
+                }
+                return ;
+            }
+            isUpdate = true;
+        }
+        if(!isUpdate){
+            return;
+        }
+
+        var state = isPass?1:2;
         var registerId = $("#voucherImage").attr("data-id");
         $.ajax({
             url: "/projectRegister/update",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({'id':registerId,'state':state}),
+            data: JSON.stringify({'id':registerId,'state':state,'notPassInfo':notPassInfo}),
             success:function(e) {
                 if(e.status == 200){
                     loadProjects()
@@ -386,8 +407,8 @@
             </div>
             <img id="voucherImage" src="" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">
             <div style="text-align:center; margin-top:15px;" id="buttonHide">
-                <button onclick="audit(1)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
-                <button onclick="audit(2)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+                <button onclick="audit(true)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
+                <button onclick="audit(false)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
             </div>
         </div>
     </div>

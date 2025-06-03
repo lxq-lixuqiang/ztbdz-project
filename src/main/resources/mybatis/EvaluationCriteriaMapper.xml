@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.tenderee.mapper.EvaluationCriteriaMapper">
+	<select id="selectMember" resultMap="EvaluationCriteriaAndMemberAndProjectRegisterAndAccount">
+		select 
+			ec.*,ec.member_id as ecMemberId,m.name as mName,a.account_name as unitName
+		from
+		   evaluation_criteria ec
+		left join member m on ec.member_id=m.id
+		left join project_register pr on pr.id = ec.project_register_id
+		left join member m2 on m2.id=pr.member_id
+		left join account a on a.id=m2.account_id
+		WHERE
+			1=1
+			<if test="reviewType != null">
+				and ec.review_type = #{reviewType}
+			</if>
+			<if test="projectId != null">
+				and ec.project_id = #{projectId}
+			</if>
+	</select>
+	<resultMap id="EvaluationCriteriaAndMemberAndProjectRegisterAndAccount" type="EvaluationCriteria">
+		<result property="member.id" column="ecMemberId"/>
+		<result property="member.name" column="mName"/>
+
+		<result property="projectRegister.member.account.accountName" column="unitName"/>
+
+	</resultMap>
+</mapper>

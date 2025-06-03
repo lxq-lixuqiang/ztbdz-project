@@ -183,6 +183,7 @@
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                                 <th style="padding:10px; border:1px solid #ddd;">评审时间</th>
                                 <th style="padding:10px; border:1px solid #ddd;">评审结果</th>
+                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -203,9 +204,15 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{enrollEndDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <a href="Bid evaluation.html?id={{id}}">
-                    <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
-                </a>
+                {{#if isAdmin}}
+                    <a href="Bid evaluation.html?id={{id}}">
+                        <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
+                    </a>
+                {{else}}
+                    <a href="result.html?id={{id}}">
+                        <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看评分汇总</button>
+                    </a>
+                {{/if}}
             </td>
         </tr>
         {{/each}}
@@ -223,9 +230,15 @@
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{reviewProgress}}%</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <a href="Bid evaluation.html?id={{id}}">
-                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">继续评审</button>
-                </a>
+                {{#if isAdmin}}
+                    <a href="Bid evaluation.html?id={{id}}">
+                        <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">继续评审</button>
+                    </a>
+                {{else}}
+                    <a href="result.html?id={{id}}">
+                        <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看评分汇总</button>
+                    </a>
+                {{/if}}
             </td>
         </tr>
         {{/each}}
@@ -242,6 +255,13 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass null }}未公布{{/eq}}{{#eq isPass 0}}通过{{/eq}}{{#eq isPass 1}}废标{{/eq}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">
+                {{#eq isPass 0}}
+                <a href="result.html?id={{id}}">
+                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看评分汇总</button>
+                </a>
+                {{/eq}}
+            </td>
         </tr>
         {{/each}}
         {{else}}
@@ -284,6 +304,7 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
+                            e.data.isAdmit = isAdmin;
                             var newTemplate = template(e.data);
                             tbody.html(newTemplate);
                         }else{
@@ -303,6 +324,7 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
+                            e.data.isAdmit = isAdmin;
                             var newTemplate = template(e.data);
                             tbody.html(newTemplate);
                         }else{
@@ -323,6 +345,7 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
+                            e.data.isAdmit = isAdmin;
                             var newTemplate = template(e.data);
                             tbody.html(newTemplate);
                         }else{

@@ -102,23 +102,41 @@
         function approveProject(projectId,isPass) {
             var isAudit = isPass?1:2;
 
-            $.ajax({
-                url: '/tenderee/update',
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify({"project":{"id":projectId,"isAudit":isAudit}}),
-                success: function(response) {
-                    if(response.status == 200) {
-                        initData();
-                        alert('审查成功！');
-                    } else {
-                        alert('上传失败: ' + response.message);
-                    }
-                },
-                error: function() {
-                    alert('上传失败');
+            var notPassInfo="";
+            var isUpdate = false;
+            if(isPass){
+                if(confirm('确定要审核吗？')) {
+                    isUpdate = true;
                 }
-            });
+            }else{
+                notPassInfo = prompt("请输入不通过的原因:");
+                if(!notPassInfo){
+                    if(notPassInfo==""){
+                        alert("必须填写不通过原因");
+                    }
+                    return ;
+                }
+                isUpdate = true;
+            }
+            if(isUpdate){
+                $.ajax({
+                    url: '/tenderee/update',
+                    type: 'POST',
+                    contentType: "application/json",
+                    data: JSON.stringify({"project":{"id":projectId,"isAudit":isAudit,"notPassInfo":notPassInfo}}),
+                    success: function(response) {
+                        if(response.status == 200) {
+                            initData();
+                            alert('审查成功！');
+                        } else {
+                            alert('上传失败: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('上传失败');
+                    }
+                });
+            }
         }
 
     </script>

@@ -31,11 +31,16 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
     @Override
     public Result select(EvaluationCriteria evaluationCriteria) {
         try{
-            return Result.ok("查询成功！",this.selectList(evaluationCriteria));
+            return Result.ok("查询成功！",this.selectMember(evaluationCriteria));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询评标标准列表异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public List<EvaluationCriteria> selectMember(EvaluationCriteria evaluationCriteria) throws Exception {
+        return evaluationCriteriaMapper.selectMember(evaluationCriteria);
     }
 
     @Override

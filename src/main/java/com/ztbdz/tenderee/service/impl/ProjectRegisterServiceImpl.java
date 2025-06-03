@@ -300,6 +300,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     public List<ProjectRegister> selectByProjectId(Long projectId, Integer state) throws Exception {
         List<ProjectRegister> projectRegisterList = projectRegisterMapper.getProject(projectId,state);
         for(ProjectRegister projectRegister : projectRegisterList){
+            if(StringUtils.isEmpty(projectRegister.getBidDocumentId())) continue;
             String[] fileIdStrings = projectRegister.getBidDocumentId().split(",");
             List<Long> fileIds = new ArrayList<>();
             for(int i=0;i<fileIdStrings.length;i++){

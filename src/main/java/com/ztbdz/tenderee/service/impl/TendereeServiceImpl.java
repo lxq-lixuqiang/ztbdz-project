@@ -43,6 +43,9 @@ public class TendereeServiceImpl implements TendereeService {
             if(StringUtils.isEmpty(tenderee.getProject().getSenrollStartDate()) || StringUtils.isEmpty(tenderee.getProject().getEnrollEndDate()))  return Result.fail("投标开始时间和投标截止时间不能为空！");
             if(StringUtils.isEmpty(tenderee.getProject().getBidOpeningTime()))  return Result.fail("开标时间不能为空！");
 
+            if( StringUtils.isEmpty(tenderee.getProject().getRegistrationFee()) || tenderee.getProject().getRegistrationFee()<0) return Result.fail("报名费必须大于或等于0！");
+            if( StringUtils.isEmpty(tenderee.getProject().getMoney()) || tenderee.getProject().getMoney()<0) return Result.fail("项目预算必须大于或等于0！");
+
             if(!StringUtils.isEmpty(tenderee.getId())){ //id不为空时进行更新
                 tenderee.getProject().setIsAudit(0);
                 return update(tenderee);

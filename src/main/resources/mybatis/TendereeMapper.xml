@@ -36,6 +36,7 @@
 		<result property="project.money" column="money"/>
 		<result property="project.isAudit" column="is_audit"/>
 		<result property="project.procurementDocuments" column="procurement_documents"/>
+		<result property="project.notPassInfo" column="not_pass_info"/>
 
 	</resultMap>
 
