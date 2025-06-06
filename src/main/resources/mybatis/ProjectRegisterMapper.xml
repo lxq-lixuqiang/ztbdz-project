@@ -32,6 +32,7 @@
 			order by p.update_date desc
 		</if>
 		<if test="state==3">
+			and (pr.state=0 or pr.state=1 or pr.state=2)
 			order by pr.state asc,p.update_date desc
 		</if>
 		<if test="state==4">
@@ -77,7 +78,12 @@
 			and p.id=#{projectId}
 		</if>
 		<if test="state != null">
-			and pr.state=#{state}
+			<if test="state == 12">
+				and (pr.state=0 or pr.state=1 or pr.state=2)
+			</if>
+			<if test="state != 12">
+				and pr.state=#{state}
+			</if>
 		</if>
 		order by pr.create_date
 	</select>

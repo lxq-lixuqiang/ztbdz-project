@@ -114,7 +114,7 @@ public class ProjectRegisterController {
     @CheckToken
     @GetMapping("getProject/{projectId}")
     public Result getProject(@PathVariable Long projectId) {
-        return projectRegisterService.getProject(projectId,null);
+        return projectRegisterService.getProject(projectId,12);
     }
 
     @ApiOperation(value = "查询项目报名成功的投标")

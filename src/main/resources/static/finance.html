@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <!-- InstanceBeginEditable name="doctitle" -->
-    <title>无标题文档</title>
+    <title>财务</title>
     <!-- InstanceEndEditable -->
     <!-- InstanceBeginEditable name="head" -->
     <script src="/js/db-connection.js"></script>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
-        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">暂无发票申请</div>
+        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">没有发票申请</div>
         <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
             <thead>
             <tr style="background:#f5f5f5;">
@@ -66,7 +66,7 @@
             </div>
         </div>
         <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
-        <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">暂无项目数据</div>
+        <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有项目</div>
         <table id="projectsTable" style="width:100%; border-collapse:collapse;">
             <thead>
             <tr style="background:#f5f5f5;">
@@ -144,7 +144,7 @@
             tbody.append(row);
         });
         } else {
-            tbody.append('<tr><td colspan="6" style="padding:10px; border:1px solid #ddd;">暂无项目数据</td></tr>');
+            tbody.append('<tr><td colspan="6" style="padding:10px; border:1px solid #ddd;">没有项目</td></tr>');
         }
     }
 
@@ -185,7 +185,7 @@
                     tbody.append(row);
                 });
                 } else {
-                    tbody.append('<tr><td colspan="4" style="padding:10px;">暂无报名信息</td></tr>');
+                    tbody.append('<tr><td colspan="4" style="padding:10px;">没有报名</td></tr>');
                 }
             }
         });
@@ -334,7 +334,7 @@
             tbody.append(row);
         });
         } else {
-            tbody.append('<tr><td colspan="7" style="padding:10px; border:1px solid #ddd;">暂无发票申请</td></tr>');
+            tbody.append('<tr><td colspan="7" style="padding:10px; border:1px solid #ddd;">没有发票申请</td></tr>');
         }
     }
 

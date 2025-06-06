@@ -102,9 +102,9 @@ public class FileInfoServiceImpl implements FileInfoService {
                 return download(id); // 不支持预览的文件就进行下载
             }
             Resource resource = new FileSystemResource(SystemConfig.validateAndGetPath(fileInfo.path(),fileInfo.getId().toString()));
-
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline;filename="+URLEncoder.encode(fileInfo.getName(),"UTF-8"));
             return ResponseEntity.ok().headers(headers).body(resource);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);

@@ -123,7 +123,7 @@
             pdfContainer.innerHTML = '<p style="text-align:center;">供应商未上传投标文件</p>';
             return;
         }else if(fileId==-1){
-            pdfContainer.innerHTML = '<p style="text-align:center;">请选择供应商查看投标文件并点击文件查看</p>';
+            pdfContainer.innerHTML = '<p style="text-align:center;">请选择供应商查看投标文件并点击文件查看内容</p>';
             return;
         }
 
@@ -1084,6 +1084,9 @@
                         for(var i=0;i<e.data.length;i++){
                             var fileIds = [];
                             var bidDocumentIds = e.data[i].bidDocumentIds;
+                            if(!bidDocumentIds){
+                                bidDocumentIds = [];
+                            }
                             for(var j=0;j<bidDocumentIds.length;j++){
                                 fileIds.push(bidDocumentIds[j].name+"（"+bidDocumentIds[j].fileSize+"）_"+bidDocumentIds[j].id);
                             }
