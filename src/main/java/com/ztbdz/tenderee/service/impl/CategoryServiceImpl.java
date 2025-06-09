@@ -1,11 +1,16 @@
 package com.ztbdz.tenderee.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.CategoryMapper;
 import com.ztbdz.tenderee.pojo.Category;
 import com.ztbdz.tenderee.service.CategoryService;
+import com.ztbdz.user.pojo.Account;
+import com.ztbdz.user.pojo.ExpertInfo;
+import com.ztbdz.user.pojo.Member;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import com.ztbdz.web.util.TreeNode;
 import com.ztbdz.web.util.TreeUtil;
@@ -15,9 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -42,12 +50,12 @@ public class CategoryServiceImpl implements CategoryService {
             category1.setParentId(-1L);
             List<Category> categoryList = this.selectList(category1);
             pathString = "000";
-            if(categoryList.size()<2){
+            if(categoryList.size()<10){
                 pathString="00"+categoryList.size();
-            }else if(categoryList.size()<3){
+            }else if(categoryList.size()<100){
                 pathString="0"+categoryList.size();
-            }else if(categoryList.size()>=3){
-               throw new Exception("分类路径不能超过3位数！");
+            }else if(categoryList.size()>=100){
+                pathString=""+categoryList.size();
             }
         }else{
             Category parentCategory = this.selectById(category.getParentId());
@@ -57,10 +65,12 @@ public class CategoryServiceImpl implements CategoryService {
             if(categoryList.size()>0){
                 Integer newPath = Integer.valueOf(categoryList.get(categoryList.size()-1).getCategoryPath());
                 pathString = String.valueOf(++newPath);
-                if(pathString.length()<2){
-                    pathString=parentCategory.getCategoryPath()+"00"+pathString;
-                }else if(pathString.length()<3){
-                    pathString=parentCategory.getCategoryPath()+"0"+pathString;
+                if(pathString.length()<10){
+                    pathString=parentCategory.getCategoryPath()+"00"+categoryList.size();
+                }else if(pathString.length()<100){
+                    pathString=parentCategory.getCategoryPath()+"0"+categoryList.size();
+                }else if(pathString.length()>=100){
+                    pathString=parentCategory.getCategoryPath()+""+categoryList.size();
                 }
             }else{
                 pathString=parentCategory.getCategoryPath()+"001";
@@ -258,5 +268,37 @@ public class CategoryServiceImpl implements CategoryService {
         QueryWrapper<Category> queryWrapper = new QueryWrapper();
         queryWrapper.groupBy("category_classify");
         return categoryMapper.selectList(queryWrapper);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result uploadExcel(MultipartFile file) {
+        try{
+            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
+
+            String[] fields = new String[]{"类别名称","类别分类","类别代码","父ID"};
+            List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);
+            for(Map<String,String> dataMap : dataList){
+                String message = dataMap.get(fields[0]);
+                Category category = new Category();
+                category.setCategoryName(message);
+                if(StringUtils.isEmpty(dataMap.get(fields[1]))) return Result.fail("解析'"+fields[0]+"'为【"+message+"】创建失败，原因：类别分类不能为空！");
+                category.setCategoryClassify(dataMap.get(fields[1]));
+                if(StringUtils.isEmpty(dataMap.get(fields[2]))) return Result.fail("解析'"+fields[0]+"'为【"+message+"】创建失败，原因：类别代码不能为空！");
+                category.setCategoryCode(dataMap.get(fields[2]));
+                if(!StringUtils.isEmpty(dataMap.get(fields[3]))) category.setParentId(Long.valueOf(dataMap.get(fields[3])));
+                category.setIsUse(1);
+                Result result = this.create(category);
+                if(result.getStatus()!=200){
+                    log.error("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage()+",具体参数："+JSON.toJSONString(dataMap));
+                    return Result.fail("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage());
+                }
+            }
+            return Result.ok("解析Excel类别文件成功！");
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("解析Excel类别文件异常，原因："+e.getMessage());
+        }
     }
 }

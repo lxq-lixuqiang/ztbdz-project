@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Category;
 import com.ztbdz.web.util.Result;
 import com.ztbdz.web.util.TreeNode;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -125,4 +126,11 @@ public interface CategoryService {
      * @return
      */
     List<Category> getGroupByClassify();
+
+    /**
+     * 上传Excel类别文件
+     * @param file
+     * @return
+     */
+    Result uploadExcel(MultipartFile file);
 }

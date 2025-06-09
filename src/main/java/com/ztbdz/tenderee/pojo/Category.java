@@ -34,7 +34,6 @@ public class Category extends Model<Tenderee> implements Serializable{
     private String categoryPath;
     @ApiModelProperty(value = "父Id")
     private Long parentId;
-    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "是否使用（0=未使用 1=使用）")
     private Integer isUse;
     @TableField(fill = FieldFill.INSERT)

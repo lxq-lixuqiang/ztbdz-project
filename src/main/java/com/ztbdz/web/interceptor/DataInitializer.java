@@ -44,6 +44,8 @@ public class DataInitializer {
                 if(roleService.countByTypeAndTypeName(null,"bidder","投标方")==0) roleService.insert(new Role("bidder","投标方","投标方",0));
                 if(roleService.countByTypeAndTypeName(null,"expert","专家")==0) roleService.insert(new Role("expert","专家","专家",0));
                 if(roleService.countByTypeAndTypeName(null,"finance","财务")==0) roleService.insert(new Role("finance","财务","财务",0));
+                if(roleService.countByTypeAndTypeName(null,"expertSelect","抽取专家员")==0) roleService.insert(new Role("expertSelect","抽取专家员","抽取专家员",0));
+                if(roleService.countByTypeAndTypeName(null,"manage","项目经理")==0) roleService.insert(new Role("manage","项目经理","项目经理",0));
                 redisTemplate.opsForValue().set("initRole",true);
             }
 
@@ -65,8 +67,8 @@ public class DataInitializer {
                 redisTemplate.opsForValue().set("initAdmin",true);
             }
 
-
             // 初始化菜单权限 并 关联角色
+            // 清空 menu_authorize和role_related_authorize 表数据才能进行初始化数据
             if(redisTemplate.opsForValue().get("initMenu") == null){
                 PageInfo<MenuAuthorize> menuPage =  menuAuthorizeService.selectList(1,1,new MenuAuthorize());
                 if(menuPage.getTotal()<=0){
@@ -76,30 +78,64 @@ public class DataInitializer {
                         roleMap.put(role.getType(),role.getId());
                     }
                     Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
+
+                    // 菜单
+                    MenuAuthorize audit = new MenuAuthorize("项目审查页面","audit","/audit.html");
+                    MenuAuthorize tenderee = new MenuAuthorize("招标方管理页面","tenderee","/tenderee.html");
+                    MenuAuthorize bider = new MenuAuthorize("投标方管理页面","bider","/bider.html");
+                    MenuAuthorize application = new MenuAuthorize("投标方报名详情页","application","/Application.html");
+                    MenuAuthorize project_d = new MenuAuthorize("项目详情","project-d","/project-d.html");
+                    MenuAuthorize expert = new MenuAuthorize("专家管理页面","expert","/expert.html");
+                    MenuAuthorize Bid_evaluation = new MenuAuthorize("专家评审页面","Bid evaluation","/Bid evaluation.html");
+                    MenuAuthorize finance = new MenuAuthorize("财务管理页面","finance","/finance.html");
+                    MenuAuthorize expertSelect = new MenuAuthorize("抽取专家页面","expertSelect","/expert-select.html");
+                    MenuAuthorize manage = new MenuAuthorize("项目经理工作台","manage","/manage.html");
+
+                    // 角色与菜单关联
                     // 管理员
                     List<MenuAuthorize> adminMenuList = new ArrayList();
-                    adminMenuList.add(new MenuAuthorize("项目审查页面","audit","/audit.html"));
+                    adminMenuList.add(audit);
                     saveDataMap.put("admin",adminMenuList);
+
                     // 招标方
                     List<MenuAuthorize> tendereeMenuList = new ArrayList();
-                    tendereeMenuList.add(new MenuAuthorize("招标方管理页面","tenderee","/tenderee.html"));
+                    tendereeMenuList.add(tenderee);
                     saveDataMap.put("tenderee",tendereeMenuList);
+
                     // 投标方
                     List<MenuAuthorize> bidderMenuList = new ArrayList();
-                    bidderMenuList.add(new MenuAuthorize("投标方管理页面","bider","/bider.html"));
-                    bidderMenuList.add(new MenuAuthorize("投标方报名详情页","application","/Application.html"));
-                    bidderMenuList.add(new MenuAuthorize("项目详情","project-d","/project-d.html"));
-
+                    bidderMenuList.add(bider);
+                    bidderMenuList.add(application);
+                    bidderMenuList.add(project_d);
                     saveDataMap.put("bidder",bidderMenuList);
+
                     // 专家
                     List<MenuAuthorize> expertMenuList = new ArrayList();
-                    expertMenuList.add(new MenuAuthorize("专家管理页面","expert","/expert.html"));
-                    expertMenuList.add(new MenuAuthorize("专家评审页面","Bid evaluation","/Bid evaluation.html"));
+                    expertMenuList.add(expert);
+                    expertMenuList.add(Bid_evaluation);
                     saveDataMap.put("expert",expertMenuList);
+
                     // 财务
                     List<MenuAuthorize> treasurerMenuList = new ArrayList();
-                    treasurerMenuList.add(new MenuAuthorize("财务管理页面","finance","/finance.html"));
+                    treasurerMenuList.add(finance);
                     saveDataMap.put("finance",treasurerMenuList);
+
+                    // 抽取专家员
+                    List<MenuAuthorize> extractExpertMenuList = new ArrayList();
+                    extractExpertMenuList.add(expertSelect);
+                    saveDataMap.put("expertSelect",extractExpertMenuList);
+
+                    // 项目经理
+                    List<MenuAuthorize> projectManagerMenuList = new ArrayList();
+                    projectManagerMenuList.add(manage);
+                    projectManagerMenuList.add(expertSelect);
+                    projectManagerMenuList.add(finance);
+                    projectManagerMenuList.add(tenderee);
+                    projectManagerMenuList.add(project_d);
+                    projectManagerMenuList.add(expert);
+                    projectManagerMenuList.add(audit);
+                    saveDataMap.put("manage",projectManagerMenuList);
+
 
                     for(String key :saveDataMap.keySet()){
                         List<MenuAuthorize> menuList = saveDataMap.get(key);

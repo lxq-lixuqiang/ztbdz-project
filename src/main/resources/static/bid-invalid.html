@@ -97,6 +97,9 @@
                             .replaceAll("[报告日期]",nowDate);
                         $("#reportContent").html(content);
                     }
+                },
+                error:function(e) {
+                    alert("获取项目信息错误，请联系管理员！");
                 }
             });
         })
@@ -116,6 +119,8 @@
                         if(e.status == 200){
                             alert('废标报告已提交！');
                             location.href='/expert.html';
+                        }else{
+                            alert('废标报告提交失败，原因：');
                         }
                     }
                 });

@@ -1,0 +1,818 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="utf-8">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>专家抽取页面</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<script src="/js/db-connection.js"></script>
+    <script src="/config/token.js"></script>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+    <!-- 不可编辑的顶部区域 -->
+    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+        <div style="font-size:28px; font-weight:bold;">中天阳光AI智能化评标系统</div>
+        <div style="display:flex; gap:30px; align-items:center;">
+            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
+        </div>
+    </div>
+    
+    <!-- 可编辑的主要内容区域 -->
+    <!-- InstanceBeginEditable name="content" -->
+    <div style="width:1040px; min-height:calc(100vh - 120px); padding:20px;">
+        <h2>专家抽取页面</h2>
+        
+        <div style="margin:20px 0;">
+            <button id="expertSelectBtn" style="padding:10px 20px; background:#4CAF50; color:#fff; border:none; border-radius:4px; cursor:pointer;">抽取专家</button>
+        </div>
+    
+    <!-- 项目清单 -->
+        <div style="margin:30px 0;">
+            <h3>可开始评标的项目清单</h3>
+            <table id="projectTable" style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f0f0f0;">
+                        <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
+                        <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                        <th style="padding:10px; border:1px solid #ddd;">报名截止日期</th>
+                        <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="projectList"></tbody>
+            </table>
+        </div>
+        
+        <!-- 抽取专家弹窗 -->
+        <div id="expertModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+            <div style="background:#fff; padding:30px; width:600px; border-radius:5px;">
+                <h3>抽取专家-<span id="expertModalTitle"></span></h3>
+                <div style="margin:15px 0;">
+                    <div style="margin-bottom:10px;">
+                        <label>专家数量：</label>
+                        <input type="number" id="expertCount" min="1" max="10" value="1" style="padding:5px; width:50px;">
+                        <label style="margin-left:15px;">备选专家数量：</label>
+                        <input type="number" id="backupCount" min="0" max="5" value="0" style="padding:5px; width:50px;">
+                        <button id="confirmCountBtn" style="padding:5px 10px; margin-left:10px; background:#4CAF50; color:#fff; border:none;">确认</button>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label><input type="checkbox" id="uniformSelection"> 统一选择所有专家品目</label>
+                        <div id="uniformSelectionPanel" style="margin-top:5px; display:none;">
+                            <label>主类别：</label>
+                            <select id="uniformMainCat" style="padding:5px;">
+                                <option value="">请选择主类别</option>
+                                <option value="货物">货物</option>
+                                <option value="服务">服务</option>
+                                <option value="工程">工程</option>
+                            </select>
+                            <label style="margin-left:10px;">子类别：</label>
+                            <select id="uniformSubCat" style="padding:5px;" disabled>
+                                <option value="">请先选择主类别</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="expertOptions" style="display:none;">
+                    <h4>请为每位专家选择专业类别：</h4>
+                    <div id="expertSelection"></div>
+                    <div id="backupExpertSelection"></div>
+                    <div style="margin:20px 0; text-align:right;">
+                        <button id="cancelBtn" style="padding:8px 15px; margin-right:10px;">取消</button>
+                        <button id="confirmBtn" style="padding:8px 15px; background:#4CAF50; color:#fff; border:none;">确认抽取</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 抽取结果 -->
+        <div id="resultArea" style="margin-top:30px; display:none;">
+            <h3>抽取结果</h3>
+            <div id="expertResult"></div>
+            <div style="margin-top:20px;">
+                <label style="margin-right:15px;">
+                    <input type="checkbox" id="showCategoryDetail"> 打印内容显示专家品类详情
+                </label>
+                <button id="printBtn" style="padding:8px 15px; margin-right:10px;">打印</button>
+                <button id="exportBtn" style="padding:8px 15px; background:#2196F3; color:#fff; border:none;">导出Word</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+    <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+    <script src="config/token.js" type="text/javascript"></script>
+    <script>
+        // 专家分类选项
+        var categoryOptions={};
+        $(function() {
+            // 初始化
+            verifyLogin();
+            initProject();
+            initCategory();
+
+            // 初始化类别
+            function initCategory(){
+                $.ajax({
+                    url: "/category/getTreeNode/expertSelect",
+                    type: "GET",
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            for(var i=0;i<e.data.length;i++){
+                                var zName = e.data[i].name;
+                                var children = [];
+                                for(var j=0;j<e.data[i].children.length;j++){
+                                    children[j] = e.data[i].children[j].name;
+                                }
+                                categoryOptions[zName]=children;
+                            }
+                        }else{
+                            alert('查询类别失败：'+e.message);
+                        }
+                    }
+                });
+            }
+
+            function initProject(){
+                $.ajax({
+                    url: "/project/extractProjectList",
+                    type: "POST",
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            loadProjectList(e.data)
+                        }else{
+                            alert('查询项目信息失败：'+e.message);
+                        }
+                    }
+                });
+            }
+
+            // 项目列表加载
+            function loadProjectList(data) {
+                const projectListBody = document.getElementById('projectList');
+                if (!projectListBody) return;
+
+                // 清空现有内容
+                projectListBody.innerHTML = '';
+                if(data.list.length==0){
+                    projectListBody.innerHTML = `<tr><td style="padding:10px; border:1px solid #ddd;text-align:center;" colspan="4">没有可开始评标的项目</td></tr>`;
+                    return;
+                }
+
+                // 渲染项目列表
+                data.list.forEach(project => {
+                    const row = `
+                        <tr>
+                            <td style="padding:10px; border:1px solid #ddd; text-align:center">${project.projectCode}</td>
+                            <td style="padding:10px; border:1px solid #ddd">${project.projectName}</td>
+                            <td style="padding:10px; border:1px solid #ddd; text-align:center">${project.enrollEndDate}</td>
+                            <td style="padding:10px; border:1px solid #ddd; text-align:center">
+                                <button class="selectBtn" style="padding:5px 10px; background:#4CAF50; color:#fff; border:none; cursor:pointer"
+                                        data-project='{"id":"${project.id}","code":"${project.projectCode}","name":"${project.projectName}","endDate":"${project.enrollEndDate}"}'>
+                                    抽取专家
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                        projectListBody.innerHTML += row;
+                    });
+            }
+
+        });
+
+
+    // 初始化应用
+    function initializeApp() {
+        // 设置事件监听器
+        const expertSelectBtn = document.getElementById('expertSelectBtn');
+        if (expertSelectBtn) {
+            expertSelectBtn.addEventListener('click', function() {
+                document.getElementById('expertModal').style.display = 'flex';
+                document.getElementById('expertCount').value = '1';
+                document.getElementById('backupCount').value = '0';
+                document.getElementById('expertOptions').style.display = 'none';
+                document.getElementById('expertModalTitle').innerText = '全部项目';
+            });
+        }
+
+        // 绑定抽取按钮事件
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('selectBtn')) {
+                // 移除之前可能存在的active类
+                document.querySelectorAll('.selectBtn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // 为当前按钮添加active类
+                e.target.classList.add('active');
+                document.getElementById('expertModal').style.display = 'flex';
+                document.getElementById('expertOptions').style.display = 'none';
+                document.getElementById('expertCount').value = '1';
+            }
+        });
+    }
+
+    // 确保DOM加载后执行
+    if (document.readyState === 'complete') {
+        initializeApp();
+    } else {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    }
+
+    // 设置事件监听器
+    function setupEventListeners() {
+        // 主抽取按钮事件
+        document.getElementById('expertSelectBtn').addEventListener('click', function() {
+            document.getElementById('expertModal').style.display = 'flex';
+            document.getElementById('expertCount').value = '1';
+            document.getElementById('backupCount').value = '0';
+            document.getElementById('expertOptions').style.display = 'none';
+        });
+    }
+        
+        // 统一选择复选框事件处理
+        document.getElementById('uniformSelection').addEventListener('change', function() {
+            const panel = document.getElementById('uniformSelectionPanel');
+            panel.style.display = this.checked ? 'block' : 'none';
+            const expertOptions = document.getElementById('expertOptions');
+            expertOptions.style.display = this.checked ? 'none' : 'block';
+        });
+
+        // 统一选择主类别变化处理
+        const uniformMainCat = document.getElementById('uniformMainCat');
+        if (uniformMainCat) {
+            uniformMainCat.addEventListener('change', function() {
+                const mainCat = this.value;
+                const subCatSelect = document.getElementById('uniformSubCat');
+                
+                if (subCatSelect) {
+                    subCatSelect.innerHTML = '<option value="">请选择子类别</option>';
+                    subCatSelect.disabled = !mainCat;
+                    
+                    if (mainCat && categoryOptions[mainCat]) {
+                        categoryOptions[mainCat].forEach(subCat => {
+                            subCatSelect.innerHTML += `<option value="${subCat}">${subCat}</option>`;
+                        });
+                    }
+                }
+            });
+        }
+
+        // 绑定抽取按钮事件
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('selectBtn')) {
+                document.getElementById('expertModal').style.display = 'flex';
+                document.getElementById('expertOptions').style.display = 'none';
+                document.getElementById('expertCount').value = '1';
+            }
+        });
+        
+        // 取消按钮
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            document.getElementById('expertModal').style.display = 'none';
+        });
+
+        // 选择统一类别的专家
+        function uniform(count,backupCount){
+            const mainCat = document.getElementById('uniformMainCat').value;
+            const subCat = document.getElementById('uniformSubCat').value;
+
+            if (!mainCat) {
+                alert('请选择统一主类别');
+                return;
+            }
+
+            // 直接抽取专家
+            const selectedExperts = [];
+            const backupExperts = [];
+            selectedExpertIds = [];
+
+            // 抽取主专家
+            let availableExperts = expertDatabase.filter(expert =>
+                expert.categories.includes(mainCat) &&
+                !selectedExpertIds.includes(expert.id)
+        );
+
+            if (subCat) {
+                availableExperts = availableExperts.filter(expert =>
+                    expert.categories.includes(subCat)
+            );
+            }
+
+            for (let i = 0; i < count && availableExperts.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * availableExperts.length);
+                const selectedExpert = availableExperts[randomIndex];
+                selectedExperts.push(selectedExpert);
+                selectedExpertIds.push(selectedExpert.id);
+                availableExperts.splice(randomIndex, 1);
+            }
+
+            // 抽取备选专家
+            if (backupCount > 0) {
+                availableExperts = expertDatabase.filter(expert =>
+                    expert.categories.includes(mainCat) &&
+                    !selectedExpertIds.includes(expert.id)
+            );
+
+                if (subCat) {
+                    availableExperts = availableExperts.filter(expert =>
+                        expert.categories.includes(subCat)
+                );
+                }
+
+                for (let i = 0; i < backupCount && availableExperts.length > 0; i++) {
+                    const randomIndex = Math.floor(Math.random() * availableExperts.length);
+                    const selectedExpert = availableExperts[randomIndex];
+                    backupExperts.push(selectedExpert);
+                    selectedExpertIds.push(selectedExpert.id);
+                    availableExperts.splice(randomIndex, 1);
+                }
+            }
+
+            displayResult(selectedExperts, backupExperts);
+            document.getElementById('expertModal').style.display = 'none';
+        }
+
+
+        
+        // 确认数量按钮
+        const confirmCountBtn = document.getElementById('confirmCountBtn');
+        if (confirmCountBtn) {
+            confirmCountBtn.addEventListener('click', function() {
+                const count = parseInt(document.getElementById('expertCount').value) || 1;
+                const backupCount = parseInt(document.getElementById('backupCount').value) || 0;
+                const isUniform = document.getElementById('uniformSelection').checked;
+                
+                if (count < 1 || count > 10) {
+                    alert('请选择1-10位专家');
+                    return;
+                }
+
+                // 统一选择模式
+                if (isUniform) {
+                    uniform(count,backupCount);
+                    return;
+                }
+                
+                // 生成专家选择界面
+                const expertSelection = document.getElementById('expertSelection');
+                const backupExpertSelection = document.getElementById('backupExpertSelection');
+                if (expertSelection && backupExpertSelection) {
+                    expertSelection.innerHTML = '';
+                    backupExpertSelection.innerHTML = '';
+                    
+                    // 生成主专家选择
+                    for (let i = 0; i < count; i++) {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '15px';
+                        div.style.padding = '10px';
+                        div.style.backgroundColor = '#f9f9f9';
+                        div.style.borderRadius = '4px';
+                        
+                        const mainLabel = document.createElement('label');
+                        mainLabel.textContent = `专家${i+1}主类别: `;
+                        
+                        const mainSelect = document.createElement('select');
+                        mainSelect.className = 'main-category';
+                        mainSelect.style.padding = '5px';
+                        mainSelect.style.marginLeft = '5px';
+                        mainSelect.innerHTML = '<option value="">请选择主类别</option>';
+                        Object.keys(categoryOptions).forEach(cat => {
+                            mainSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+                        });
+                        
+                        const subLabel = document.createElement('label');
+                        subLabel.style.marginLeft = '10px';
+                        subLabel.textContent = '子类别: ';
+                        
+                        const subSelect = document.createElement('select');
+                        subSelect.className = 'sub-category';
+                        subSelect.disabled = true;
+                        subSelect.style.padding = '5px';
+                        subSelect.style.marginLeft = '5px';
+                        subSelect.innerHTML = '<option value="">请先选择主类别</option>';
+                        
+                        // 主类别变化时更新子类别
+                        mainSelect.addEventListener('change', function() {
+                            const mainCat = this.value;
+                            subSelect.innerHTML = '<option value="">请选择子类别</option>';
+                            subSelect.disabled = !mainCat;
+                            
+                            if (mainCat && categoryOptions[mainCat]) {
+                                categoryOptions[mainCat].forEach(subCat => {
+                                    subSelect.innerHTML += `<option value="${subCat}">${subCat}</option>`;
+                                });
+                            }
+                        });
+                        
+                        div.appendChild(mainLabel);
+                        div.appendChild(mainSelect);
+                        div.appendChild(subLabel);
+                        div.appendChild(subSelect);
+                        expertSelection.appendChild(div);
+                    }
+                    
+                    // 生成备选专家选择
+                    if (backupCount > 0) {
+                        const backupTitle = document.createElement('h4');
+                        backupTitle.textContent = '请为备选专家选择专业类别：';
+                        backupTitle.style.marginTop = '20px';
+                        backupTitle.style.marginBottom = '10px';
+                        backupExpertSelection.innerHTML = '';
+                        backupExpertSelection.appendChild(backupTitle);
+                        
+                        for (let i = 0; i < backupCount; i++) {
+                            const div = document.createElement('div');
+                            div.style.marginBottom = '15px';
+                            div.style.padding = '10px';
+                            div.style.backgroundColor = '#f9f9f9';
+                            div.style.borderRadius = '4px';
+                            
+                            const mainLabel = document.createElement('label');
+                            mainLabel.textContent = `备选专家${i+1}主类别: `;
+                            mainLabel.style.fontWeight = 'bold';
+                            
+                            const mainSelect = document.createElement('select');
+                            mainSelect.className = 'backup-main-category';
+                            mainSelect.style.padding = '5px';
+                            mainSelect.style.marginLeft = '5px';
+                            mainSelect.innerHTML = '<option value="">请选择主类别</option>';
+                            Object.keys(categoryOptions).forEach(cat => {
+                                mainSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+                            });
+                            
+                            const subLabel = document.createElement('label');
+                            subLabel.style.marginLeft = '15px';
+                            subLabel.textContent = '子类别: ';
+                            subLabel.style.fontWeight = 'bold';
+                            
+                            const subSelect = document.createElement('select');
+                            subSelect.className = 'backup-sub-category';
+                            subSelect.style.padding = '5px';
+                            subSelect.style.marginLeft = '5px';
+                            subSelect.disabled = true;
+                            subSelect.innerHTML = '<option value="">请先选择主类别</option>';
+                            
+                            // 主类别变化时更新子类别
+                            mainSelect.addEventListener('change', function() {
+                                const mainCat = this.value;
+                                subSelect.innerHTML = '<option value="">请选择子类别</option>';
+                                subSelect.disabled = !mainCat;
+                                
+                                if (mainCat && categoryOptions[mainCat]) {
+                                    categoryOptions[mainCat].forEach(subCat => {
+                                        subSelect.innerHTML += `<option value="${subCat}">${subCat}</option>`;
+                                    });
+                                }
+                            });
+                            
+                            div.appendChild(mainLabel);
+                            div.appendChild(mainSelect);
+                            div.appendChild(subLabel);
+                            div.appendChild(subSelect);
+                            backupExpertSelection.appendChild(div);
+                            console.log(`已添加备选专家 ${i+1} 的选择控件`);
+                        }
+                    }
+                    
+                    document.getElementById('expertOptions').style.display = 'block';
+                }
+            });
+        }
+
+        // 全局变量跟踪已选专家
+        let selectedExpertIds = [];
+        
+        // 确认抽取按钮
+        document.getElementById('confirmBtn').addEventListener('click', function() {
+            const count = parseInt(document.getElementById('expertCount').value) || 1;
+            const backupCount = parseInt(document.getElementById('backupCount').value) || 0;
+            const selectedExperts = [];
+            const backupExperts = [];
+            selectedExpertIds = [];
+            
+            // 统一选择模式
+            const isUniform = document.getElementById('uniformSelection').checked;
+            if (isUniform) {
+                const mainCat = document.getElementById('uniformMainCat').value;
+                const subCat = document.getElementById('uniformSubCat').value;
+                
+                if (!mainCat) {
+                    alert('请选择统一主类别');
+                    return;
+                }
+                
+                // 抽取主专家
+                let availableExperts = expertDatabase.filter(expert => 
+                    expert.categories.some(cat => cat.main === mainCat) &&
+                    !selectedExpertIds.includes(expert.id)
+                );
+                
+                if (subCat) {
+                    availableExperts = availableExperts.filter(expert => 
+                        expert.categories.some(cat => 
+                            cat.main === mainCat && cat.subs.includes(subCat)
+                        )
+                    );
+                }
+                
+                for (let i = 0; i < count && availableExperts.length > 0; i++) {
+                    const randomIndex = Math.floor(Math.random() * availableExperts.length);
+                    const selectedExpert = availableExperts[randomIndex];
+                    selectedExperts.push(selectedExpert);
+                    selectedExpertIds.push(selectedExpert.id);
+                    availableExperts.splice(randomIndex, 1);
+                }
+                
+                // 抽取备选专家
+                if (backupCount > 0) {
+                    availableExperts = expertDatabase.filter(expert => 
+                        expert.categories.some(cat => cat.main === mainCat) &&
+                        !selectedExpertIds.includes(expert.id)
+                    );
+                    
+                    if (subCat) {
+                        availableExperts = availableExperts.filter(expert => 
+                            expert.categories.some(cat => 
+                                cat.main === mainCat && cat.subs.includes(subCat)
+                            )
+                        );
+                    }
+                    
+                    for (let i = 0; i < backupCount && availableExperts.length > 0; i++) {
+                        const randomIndex = Math.floor(Math.random() * availableExperts.length);
+                        const selectedExpert = availableExperts[randomIndex];
+                        backupExperts.push(selectedExpert);
+                        selectedExpertIds.push(selectedExpert.id);
+                        availableExperts.splice(randomIndex, 1);
+                    }
+                }
+            } 
+            // 非统一选择模式
+            else {
+                const expertSelections = document.querySelectorAll('#expertSelection > div');
+                const backupSelections = document.querySelectorAll('#backupExpertSelection > div');
+                
+                // 抽取主专家
+                for (let i = 0; i < count; i++) {
+                    const selection = expertSelections[i];
+                    if (selection) {
+                        const mainCat = selection.querySelector('.main-category')?.value;
+                        const subCat = selection.querySelector('.sub-category')?.value;
+                        
+                        if (mainCat) {
+                            let availableExperts = expertDatabase.filter(expert => 
+                                expert.categories.some(cat => cat.main === mainCat) &&
+                                !selectedExpertIds.includes(expert.id)
+                            );
+                            
+                            if (subCat) {
+                                availableExperts = availableExperts.filter(expert => 
+                                    expert.categories.some(cat => 
+                                        cat.main === mainCat && cat.subs.includes(subCat)
+                                    )
+                                );
+                            }
+                            
+                            if (availableExperts.length > 0) {
+                                const randomIndex = Math.floor(Math.random() * availableExperts.length);
+                                const selectedExpert = availableExperts[randomIndex];
+                                selectedExperts.push(selectedExpert);
+                                selectedExpertIds.push(selectedExpert.id);
+                            }
+                        }
+                    }
+                }
+                
+                // 抽取备选专家
+                for (let i = 0; i < backupCount; i++) {
+                    const selection = backupSelections[i];
+                    if (selection) {
+                        const mainCat = selection.querySelector('.backup-main-category')?.value;
+                        const subCat = selection.querySelector('.backup-sub-category')?.value;
+                        
+                        if (mainCat) {
+                            let availableExperts = expertDatabase.filter(expert => 
+                                expert.categories.some(cat => cat.main === mainCat) &&
+                                !selectedExpertIds.includes(expert.id)
+                            );
+                            
+                            if (subCat) {
+                                availableExperts = availableExperts.filter(expert => 
+                                    expert.categories.some(cat => 
+                                        cat.main === mainCat && cat.subs.includes(subCat)
+                                    )
+                                );
+                            }
+                            
+                            if (availableExperts.length > 0) {
+                                const randomIndex = Math.floor(Math.random() * availableExperts.length);
+                                const selectedExpert = availableExperts[randomIndex];
+                                backupExperts.push(selectedExpert);
+                                selectedExpertIds.push(selectedExpert.id);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 显示结果
+            if (selectedExperts.length > 0) {
+                displayResult(selectedExperts, backupExperts);
+                document.getElementById('expertModal').style.display = 'none';
+            } else {
+                alert('没有找到符合条件的专家，请调整筛选条件');
+            }
+        });
+        
+        // 打印按钮
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                // 创建打印专用内容
+                const printContent = document.createElement('div');
+                printContent.innerHTML = document.getElementById('expertResult').innerHTML;
+                
+                // 获取当前显示状态
+                const showDetail = document.getElementById('showCategoryDetail').checked;
+                
+                // 处理打印内容中的类别显示
+                const categoryCells = printContent.querySelectorAll('td:nth-child(4)');
+                categoryCells.forEach(cell => {
+                    if (!showDetail) {
+                        // 如果未勾选详情，只保留大类
+                        cell.textContent = cell.textContent.split(';')
+                            .map(cat => cat.split('-')[0].trim())
+                            .join('; ');
+                    }
+                });
+                
+                // 创建打印窗口
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>专家抽取结果</title>
+                        <style>
+                            body { font-family: Arial; margin: 20px; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>专家抽取结果</h2>
+                        ${printContent.innerHTML}
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            });
+        }
+        
+        // 导出Word按钮
+        const exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                const resultDiv = document.getElementById('expertResult');
+                if (resultDiv) {
+                    const content = resultDiv.innerHTML;
+                    const blob = new Blob([`
+                        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                              xmlns:w="urn:schemas-microsoft-com:office:word">
+                        <head><meta charset="UTF-8"></head>
+                        <body>${content}</body>
+                        </html>
+                    `], {type: 'application/msword'});
+                    
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = '专家抽取结果.doc';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            });
+        }
+        
+        // 显示结果
+        function displayResult(experts, backups) {
+            const resultDiv = document.getElementById('expertResult');
+            const resultArea = document.getElementById('resultArea');
+            const currentProject = document.querySelector('.selectBtn.active')?.dataset.project;
+            let projectInfo = {};
+            
+            if (currentProject) {
+                try {
+                    projectInfo = JSON.parse(currentProject);
+                } catch (e) {
+                    console.error('解析项目信息失败:', e);
+                }
+            }
+            
+            if (resultDiv && resultArea) {
+                let html = `
+                    <div style="margin-bottom:20px;">
+                        <h3>项目信息</h3>
+                        <p><strong>项目编号：</strong>${projectInfo.id || '未知'}</p>
+                        <p><strong>项目名称：</strong>${projectInfo.name || '未知项目'}</p>
+                        <p><strong>截止日期：</strong>${projectInfo.endDate || '未知'}</p>
+                    </div>
+                    <h3>抽取专家名单</h3>
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+                        <thead>
+                            <tr style="background:#f0f0f0;">
+                                <th style="padding:10px; border:1px solid #ddd;">姓名</th>
+                                <th style="padding:10px; border:1px solid #ddd;">电话</th>
+                                <th style="padding:10px; border:1px solid #ddd;">专家证号</th>
+                                <th style="padding:10px; border:1px solid #ddd;">专业类别</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                experts.forEach(expert => {
+                    // 根据选择情况显示专业类别
+                    const showDetail = document.getElementById('showCategoryDetail')?.checked;
+                    const categoryDisplay = expert.categories
+                        .map(cat => {
+                            if (showDetail && cat.subs && cat.subs.length > 0) {
+                                return `${cat.main} - ${cat.subs.join('/')}`;
+                            }
+                            return cat.main;
+                        })
+                        .join('; ');
+                    
+                    html += `
+                        <tr>
+                            <td style="padding:10px; border:1px solid #ddd;">${expert.name || ''}</td>
+                            <td style="padding:10px; border:1px solid #ddd;">${expert.phone || ''}</td>
+                            <td style="padding:10px; border:1px solid #ddd;">${expert.cert || ''}</td>
+                            <td style="padding:10px; border:1px solid #ddd;">${categoryDisplay}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `</tbody></table>`;
+                
+                if (backups.length > 0) {
+                    html += `
+                        <h3>备选专家名单</h3>
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+                            <thead>
+                                <tr style="background:#f0f0f0;">
+                                    <th style="padding:10px; border:1px solid #ddd;">姓名</th>
+                                    <th style="padding:10px; border:1px solid #ddd;">电话</th>
+                                    <th style="padding:10px; border:1px solid #ddd;">专家证号</th>
+                                    <th style="padding:10px; border:1px solid #ddd;">专业类别</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    backups.forEach(expert => {
+                        // 格式化专业类别显示
+                        const showDetail = document.getElementById('showCategoryDetail')?.checked;
+                        const categoryDisplay = expert.categories
+                            .map(cat => {
+                                if (showDetail && cat.subs && cat.subs.length > 0) {
+                                    return `${cat.main} - ${cat.subs.join('/')}`;
+                                }
+                                return cat.main;
+                            })
+                            .join('; ');
+                        
+                        html += `
+                            <tr>
+                                <td style="padding:10px; border:1px solid #ddd;">${expert.name || ''}</td>
+                                <td style="padding:10px; border:1px solid #ddd;">${expert.phone || ''}</td>
+                                <td style="padding:10px; border:1px solid #ddd;">${expert.cert || ''}</td>
+                                <td style="padding:10px; border:1px solid #ddd;">${categoryDisplay}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `</tbody></table>`;
+                }
+                
+                resultDiv.innerHTML = html;
+                resultArea.style.display = 'block';
+            }
+        }
+    // 初始化日志
+    console.log('项目数据加载完成:', projectList);
+    console.log('专家数据库加载完成:', expertDatabase);
+    </script>
+    <!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

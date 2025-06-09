@@ -57,6 +57,10 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     private String description;
     @ApiModelProperty(value = "是否组长（0=不是 1=是）")
     private Integer isAdmin;
+    @ApiModelProperty(value = "银行名称")
+    private String bankName;
+    @ApiModelProperty(value = "银行卡号")
+    private String bankCard;
     @ApiModelProperty(value = "身份证正面文件id")
     private Long idCardFront;
     @ApiModelProperty(value = "身份证反面文件id")
@@ -69,7 +73,7 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     private Long professionalField;
     @ApiModelProperty(value = "评标经验文件id")
     private Long bidEvaluationExperience;
-    @ApiModelProperty(value = "参加工作日期",hidden = true)
+    @ApiModelProperty(value = "参加工作日期")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date workDate;
 

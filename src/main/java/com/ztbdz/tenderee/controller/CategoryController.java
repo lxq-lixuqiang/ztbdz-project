@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -66,8 +67,8 @@ public class CategoryController {
             @ApiImplicitParam(name = "categoryClassify", value = "类别分类", required=true, dataType = "String"),
     })
     @CheckToken
-    @PostMapping("getTreeNode ")
-    public Result getTreeNode (String categoryClassify) {
+    @GetMapping("getTreeNode/{categoryClassify}")
+    public Result getTreeNode (@PathVariable String categoryClassify) {
         return categoryService.getTreeNode(categoryClassify);
     }
 
@@ -102,5 +103,14 @@ public class CategoryController {
         return categoryService.deleteList(ids);
     }
 
+    @ApiOperation(value = "上传Excel类别文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping(value = "uploadExcel",consumes = "multipart/form-data")
+    public Result uploadExcel( @RequestParam("file") MultipartFile file) {
+        return categoryService.uploadExcel(file);
+    }
 
 }

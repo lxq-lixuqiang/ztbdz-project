@@ -27,6 +27,15 @@ public interface ProjectService {
     Result page( Integer page, Integer size, Project project,Integer states);
 
     /**
+     * 查询需要抽取专家项目列表
+     * @param page
+     * @param size
+     * @param project
+     * @return
+     */
+    Result extractProjectList( Integer page, Integer size, Project project);
+
+    /**
      * 查询项目列表
      * @param page
      * @param size
