@@ -85,8 +85,7 @@ public class ReviewInfoController {
         return reviewInfoService.deleteList(ids);
     }
 
-
-    @ApiOperation(value = "专家抽取")
+    @ApiOperation(value = "评审ID抽取专家抽取")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "id", value = "评审id", required=true, dataType = "Long"),
@@ -94,10 +93,21 @@ public class ReviewInfoController {
             @ApiImplicitParam(name = "hideAccount", value = "屏蔽工作单位", required=false, dataType = "String")
     })
     @CheckToken
-    @PostMapping("randomExpert")
-    public Result randomExpert(@RequestParam(required = true) Long id,@RequestParam String hideExpert, @RequestParam String hideAccount,@RequestBody List<Speciality> specialityList) {
-        return reviewInfoService.randomExpert(id,hideExpert,hideAccount,specialityList);
+    @PostMapping("randomExpertById")
+    public Result randomExpertById(@RequestParam(required = true) Long id,@RequestParam String hideExpert, @RequestParam String hideAccount,@RequestBody List<Speciality> specialityList) {
+        return reviewInfoService.randomExpertById(id,hideExpert,hideAccount,specialityList);
     }
+
+    @ApiOperation(value = "项目ID抽取专家抽取")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("randomExpertByProjectId")
+    public Result randomExpertByProjectId(@RequestBody ReviewInfo reviewInfo) {
+        return reviewInfoService.randomExpertByProjectId(reviewInfo);
+    }
+
 
     @ApiOperation(value = "专家评审列表")
     @ApiImplicitParams({

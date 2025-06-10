@@ -27,23 +27,23 @@
         <result property="project.projectCode" column="project_code"/>
     </resultMap>
 
-    <select id="randomExpert" resultType="Member" >
+    <select id="randomExpert" resultMap="ExpertInfoAndMember" >
         select
-        *
+          e.*,m.name as mName
         from
-        expert_info e
+          expert_info e
         left join member m on e.member_id=m.id
         left join account a on m.account_id=a.id
         WHERE
           1=1
-        <if test="hideExperts != null and hideExperts.length >0">
+        <if test="hideExperts != null and hideExperts.size >0">
           and m.name not in
             <foreach collection='hideExperts' item='item' open='(' separator=',' close=')'>
                 #{item}
             </foreach>
         </if>
 
-        <if test="hideAccounts != null and hideAccounts.length >0">
+        <if test="hideAccounts != null and hideAccounts.size >0">
             and a.account_name not in
             <foreach collection='hideAccounts' item='item' open='(' separator=',' close=')'>
                 #{item}
@@ -51,14 +51,18 @@
         </if>
 
         <if test="speciality != null">
-            <if test="speciality.specialityInfo != null and speciality.specialityInfo.length() >0">
-                and e.expert_type == #{speciality.specialityInfo}
+            <if test="speciality.expertType != null and speciality.expertType.length() >0">
+                and e.expert_type like concat('%',#{speciality.expertType},'%')
             </if>
             <if test="speciality.reviewArea != null and speciality.reviewArea.length() >0">
-                and e.region == #{speciality.reviewArea}
+                and e.region == #{item.reviewArea}
             </if>
         </if>
         ORDER BY RAND()
-        LIMIT #{speciality.planNum};
+        LIMIT #{planNum};
     </select>
+    <resultMap id="ExpertInfoAndMember" type="ExpertInfo">
+        <result property="member.id" column="member_id"/>
+        <result property="member.name" column="mName"/>
+    </resultMap>
 </mapper>

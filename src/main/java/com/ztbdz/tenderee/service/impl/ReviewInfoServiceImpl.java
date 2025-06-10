@@ -10,7 +10,7 @@ import com.ztbdz.tenderee.pojo.WinBid;
 import com.ztbdz.tenderee.service.ReviewInfoService;
 import com.ztbdz.tenderee.service.SpecialityService;
 import com.ztbdz.tenderee.service.WinBidService;
-import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
@@ -22,6 +22,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -125,43 +126,124 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result randomExpert(Long id,String hideExpert, String hideAccount, List<Speciality> specialityList) {
+    public Result randomExpertById(Long id,String hideExpert, String hideAccount, List<Speciality> specialityList) {
         try{
+            List<ExpertInfo> winBidMemberList = new ArrayList<ExpertInfo>();
             // 保存屏蔽的专家和单位
             ReviewInfo reviewInfo = this.selectById(id);
+            reviewInfo.setState(1);
             reviewInfo.setHideExpert(hideExpert);
             reviewInfo.setHideAccount(hideAccount);
             this.update(reviewInfo);
+
             // 保存专业要求
             specialityService.deleteByReviewInfoId(id);
             // 抽取专家
-            String[] hideExperts = null; // 屏蔽专家
-            if(hideExpert!=null && hideExpert.length()>0){
-                hideExperts = hideExpert.split("\\/");
+            List<String> hideExperts = new ArrayList<String>(); // 屏蔽专家
+            if(reviewInfo.getHideExpert()!=null && reviewInfo.getHideExpert().length()>0){
+                hideExperts =  Arrays.asList(reviewInfo.getHideExpert().split("\\/"));
             }
-            String[] hideAccounts = null; // 屏蔽单位
-            if(hideAccount!=null && hideAccount.length()>0){
-                hideAccounts = hideAccount.split("\\/");
+            List<String> hideAccounts = new ArrayList<String>(); // 屏蔽单位
+            if(reviewInfo.getHideAccount()!=null && reviewInfo.getHideAccount().length()>0){
+                hideAccounts = Arrays.asList(reviewInfo.getHideAccount().split("\\/"));
             }
-            List<Member> winBidMemberList = new ArrayList();
             for(Speciality speciality : specialityList){
                 speciality.setReviewInfoId(id);
-                winBidMemberList.addAll(reviewInfoMapper.randomExpert(hideExperts,hideAccounts,speciality));
                 specialityService.insert(speciality);
+                List<ExpertInfo> expertInfoList = reviewInfoMapper.randomExpert(hideExperts,hideAccounts,speciality.getNum(),speciality);
+                if(expertInfoList.size()==0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.error("【"+speciality.getExpertType()+"】类别，没有找到符合条件的专家，请调整筛选条件！");
+                }
+                winBidMemberList.addAll(expertInfoList);
+                for(ExpertInfo expertInfo : winBidMemberList){
+                    hideExperts.add(""+expertInfo.getMember().getId());
+                }
             }
             winBidService.delete(id); //删除已中标的中标id,防止重复
             WinBid winBid;
-            for(Member member : winBidMemberList){
-                winBid = new WinBid();
-                winBid.setWinBidId(id);
-                winBid.setMemberId(member.getId());
-                winBidService.insert(winBid);
+            String selectExpert = "";
+            String spareExpert = "";
+            for(int i=0;i<winBidMemberList.size();i++){
+                ExpertInfo expertInfo = winBidMemberList.get(i);
+                if(reviewInfo.getNumber()>=(i+1)){
+                    winBid = new WinBid();
+                    winBid.setWinBidId(reviewInfo.getId());
+                    winBid.setMemberId(expertInfo.getMember().getId());
+                    winBidService.insert(winBid);
+                    if(selectExpert.length()>0) selectExpert+=",";
+                    selectExpert+=expertInfo.getMember().getId();
+                }else{
+                    if(spareExpert.length()>0) spareExpert+=",";
+                    spareExpert+=expertInfo.getMember().getId();
+                }
             }
+            reviewInfo.setSelectExpert(selectExpert);
+            reviewInfo.setSpareExpert(spareExpert);
+            this.update(reviewInfo);
             return Result.ok("抽取成功！",winBidMemberList);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
-            return Result.error("专家抽取异常，原因："+e.getMessage());
+            return Result.error("评审ID抽取专家抽取异常，原因："+e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result randomExpertByProjectId(ReviewInfo reviewInfo) {
+        try{
+            reviewInfo.setState(1);
+            this.insert(reviewInfo);
+            List<ExpertInfo> winBidMemberList = new ArrayList<ExpertInfo>();
+
+            // 抽取专家
+            List<String> hideExperts = new ArrayList<String>(); // 屏蔽专家
+            if(reviewInfo.getHideExpert()!=null && reviewInfo.getHideExpert().length()>0){
+                hideExperts =  Arrays.asList(reviewInfo.getHideExpert().split("\\/"));
+            }
+            List<String> hideAccounts = new ArrayList<String>(); // 屏蔽单位
+            if(reviewInfo.getHideAccount()!=null && reviewInfo.getHideAccount().length()>0){
+                hideAccounts = Arrays.asList(reviewInfo.getHideAccount().split("\\/"));
+            }
+            for(Speciality speciality : reviewInfo.getSpeciality()){
+                speciality.setReviewInfoId(reviewInfo.getId());
+                specialityService.insert(speciality);
+                List<ExpertInfo> expertInfoList = reviewInfoMapper.randomExpert(hideExperts,hideAccounts,speciality.getNum(),speciality);
+                if(expertInfoList.size()==0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.error("【"+speciality.getExpertType()+"】类别，没有找到符合条件的专家，请调整筛选条件！");
+                }
+                winBidMemberList.addAll(expertInfoList);
+                for(ExpertInfo expertInfo : winBidMemberList){
+                    hideExperts.add(""+expertInfo.getMember().getName());
+                }
+            }
+            WinBid winBid;
+            String selectExpert = "";
+            String spareExpert = "";
+            for(int i=0;i<winBidMemberList.size();i++){
+                ExpertInfo expertInfo = winBidMemberList.get(i);
+                if(reviewInfo.getNumber()>=(i+1)){
+                    winBid = new WinBid();
+                    winBid.setWinBidId(reviewInfo.getId());
+                    winBid.setMemberId(expertInfo.getMember().getId());
+                    winBidService.insert(winBid);
+                    if(selectExpert.length()>0) selectExpert+=",";
+                    selectExpert+=expertInfo.getMember().getId();
+                }else{
+                    if(spareExpert.length()>0) spareExpert+=",";
+                    spareExpert+=expertInfo.getMember().getId();
+                }
+            }
+            reviewInfo.setSelectExpert(selectExpert);
+            reviewInfo.setSpareExpert(spareExpert);
+            this.update(reviewInfo);
+            return Result.ok("抽取成功！",winBidMemberList);
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("项目ID抽取专家抽取异常，原因："+e.getMessage());
         }
     }
 

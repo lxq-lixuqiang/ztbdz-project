@@ -96,14 +96,22 @@ public interface ReviewInfoService {
 
 
     /**
-     * 专家抽取
+     * 评审ID抽取专家抽取
      * @param id
      * @param hideExpert
      * @param hideAccount
      * @param specialityList
      * @return
      */
-    Result randomExpert(Long id,String hideExpert, String hideAccount, List<Speciality> specialityList);
+    Result randomExpertById(Long id,String hideExpert, String hideAccount, List<Speciality> specialityList);
+
+    /**
+     * 项目ID抽取专家抽取
+     * @param reviewInfo
+     * @return
+     */
+    Result randomExpertByProjectId(ReviewInfo reviewInfo);
+
 
     /**
      * 获取专家评审列表

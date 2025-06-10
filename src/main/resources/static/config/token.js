@@ -56,20 +56,23 @@ function verifyLogin(){
     });
 }
 
-// 退出登录
-$("body").on("click", "a:contains('退出')", function() {
-    $.ajax({
-        url: "/user/logout",
-        type: "POST",
-        contentType: "application/json",
-        success:function(e) {
-            if(e.status != 200){
-                alert("退出失败："+e.message);
+window.onload = function()  {
+    // 退出登录
+    $("body").on("click", "a:contains('退出')", function() {
+        $.ajax({
+            url: "/user/logout",
+            type: "POST",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status != 200){
+                    alert("退出失败："+e.message);
+                }
             }
-        }
+        });
+        removeToken();
     });
-    removeToken();
-});
+};
+
 
 // 上传图片
 function uploadImg(files) {

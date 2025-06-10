@@ -109,6 +109,7 @@
     <script>
         // 专家分类选项
         var categoryOptions={};
+        var project={};
         $(function() {
             // 初始化
             verifyLogin();
@@ -137,37 +138,51 @@
                     }
                 });
             }
+        });
 
-            function initProject(){
-                $.ajax({
-                    url: "/project/extractProjectList",
-                    type: "POST",
-                    contentType: "application/json",
-                    success:function(e) {
-                        if(e.status == 200){
-                            loadProjectList(e.data)
-                        }else{
-                            alert('查询项目信息失败：'+e.message);
+        function initProject(){
+            $.ajax({
+                url: "/project/extractProjectList",
+                type: "POST",
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        loadProjectList(e.data);
+                        var allId = "";
+                        for(var i=0;i<e.data.list.length;i++){
+                            var id = e.data.list[i].id;
+                            if(allId.length>0){
+                                allId +=",";
+                            }
+                            allId +=id;
+                            project[id+""] = {"id": e.data.list[i].projectCode,"name": e.data.list[i].projectName,"endDate": e.data.list[i].enrollEndDate};
                         }
+                        $("#expertSelectBtn").attr("data-id",allId);
+                        if(e.data.list.length==0){
+                            project=null;
+                        }
+                    }else{
+                        alert('查询项目信息失败：'+e.message);
                     }
-                });
+                }
+            });
+        }
+
+        // 项目列表加载
+        function loadProjectList(data) {
+            const projectListBody = document.getElementById('projectList');
+            if (!projectListBody) return;
+
+            // 清空现有内容
+            projectListBody.innerHTML = '';
+            if(data.list.length==0){
+                projectListBody.innerHTML = `<tr><td style="padding:10px; border:1px solid #ddd;text-align:center;" colspan="4">没有可开始评标的项目</td></tr>`;
+                return;
             }
 
-            // 项目列表加载
-            function loadProjectList(data) {
-                const projectListBody = document.getElementById('projectList');
-                if (!projectListBody) return;
-
-                // 清空现有内容
-                projectListBody.innerHTML = '';
-                if(data.list.length==0){
-                    projectListBody.innerHTML = `<tr><td style="padding:10px; border:1px solid #ddd;text-align:center;" colspan="4">没有可开始评标的项目</td></tr>`;
-                    return;
-                }
-
-                // 渲染项目列表
-                data.list.forEach(project => {
-                    const row = `
+            // 渲染项目列表
+            data.list.forEach(project => {
+                const row = `
                         <tr>
                             <td style="padding:10px; border:1px solid #ddd; text-align:center">${project.projectCode}</td>
                             <td style="padding:10px; border:1px solid #ddd">${project.projectName}</td>
@@ -180,11 +195,9 @@
                             </td>
                         </tr>
                     `;
-                        projectListBody.innerHTML += row;
-                    });
-            }
-
+            projectListBody.innerHTML += row;
         });
+        }
 
 
     // 初始化应用
@@ -193,11 +206,16 @@
         const expertSelectBtn = document.getElementById('expertSelectBtn');
         if (expertSelectBtn) {
             expertSelectBtn.addEventListener('click', function() {
+                if(!project){
+                    alert("没有可开始评标的项目!");
+                    return;
+                }
                 document.getElementById('expertModal').style.display = 'flex';
                 document.getElementById('expertCount').value = '1';
                 document.getElementById('backupCount').value = '0';
                 document.getElementById('expertOptions').style.display = 'none';
                 document.getElementById('expertModalTitle').innerText = '全部项目';
+                $("#expertModal").attr("data-info","all");
             });
         }
 
@@ -241,6 +259,9 @@
             panel.style.display = this.checked ? 'block' : 'none';
             const expertOptions = document.getElementById('expertOptions');
             expertOptions.style.display = this.checked ? 'none' : 'block';
+            if(!this.checked){
+                $("#confirmCountBtn").click();
+            }
         });
 
         // 统一选择主类别变化处理
@@ -269,6 +290,8 @@
                 document.getElementById('expertModal').style.display = 'flex';
                 document.getElementById('expertOptions').style.display = 'none';
                 document.getElementById('expertCount').value = '1';
+                document.getElementById('expertModalTitle').innerText = JSON.parse($(e.target).attr("data-project")).name;
+                $("#expertModal").attr("data-info",$(e.target).attr("data-project"));
             }
         });
         
@@ -278,64 +301,59 @@
         });
 
         // 选择统一类别的专家
-        function uniform(count,backupCount){
-            const mainCat = document.getElementById('uniformMainCat').value;
-            const subCat = document.getElementById('uniformSubCat').value;
+        function expertSelect(count,backupCount,specialityList){
 
-            if (!mainCat) {
-                alert('请选择统一主类别');
-                return;
+            var planNum = Number(count)+Number(backupCount);
+            var dataInfo = $("#expertModal").attr("data-info");
+            var projectIds =[];
+            if(dataInfo=='all'){
+                projectIds = $("#expertSelectBtn").attr("data-id").split(",");
+            }else{
+                projectIds[0] = JSON.parse(dataInfo).id;
             }
 
-            // 直接抽取专家
-            const selectedExperts = [];
-            const backupExperts = [];
-            selectedExpertIds = [];
-
-            // 抽取主专家
-            let availableExperts = expertDatabase.filter(expert =>
-                expert.categories.includes(mainCat) &&
-                !selectedExpertIds.includes(expert.id)
-        );
-
-            if (subCat) {
-                availableExperts = availableExperts.filter(expert =>
-                    expert.categories.includes(subCat)
-            );
+            for(var i=0;i<projectIds.length;i++){
+                var projectId = projectIds[i];
+                var project= {"id":projectId};
+                var data = {"project":project,"number":count,"spareNumber":backupCount,"speciality":specialityList};
+                $.ajax({
+                    url: "/review/randomExpertByProjectId",
+                    type: "POST",
+                    async: false,
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success:function(e) {
+                        if(e.status == 200){
+                            if(e.data.length==0){
+                                alert('没有找到符合条件的专家，请调整筛选条件');
+                                return;
+                            }
+                            var selectedExperts=[];
+                            var backupExperts=[];
+                            for(var i=0;i<e.data.length;i++){
+                                var iNum = i+1;
+                                var expertInfo = e.data[i];
+                                var info = {'name':expertInfo.member.name,'phone':expertInfo.member.phone,'cert':expertInfo.expertCard,'categoryDisplay':expertInfo.expertType};
+                                if(Number(count)>=iNum){
+                                    selectedExperts[i]=info;
+                                }else{
+                                    backupExperts[i-Number(count)]=info;
+                                }
+                            }
+                            if(dataInfo=='all'){
+                                displayResult(selectedExperts, backupExperts,projectId);
+                            }else{
+                                displayResult(selectedExperts, backupExperts);
+                            }
+                            document.getElementById('expertModal').style.display = 'none';
+                        }else{
+                            alert('自动抽取专家失败：'+e.message);
+                        }
+                    }
+                });
             }
+            initProject(); //重新加载项目信息
 
-            for (let i = 0; i < count && availableExperts.length > 0; i++) {
-                const randomIndex = Math.floor(Math.random() * availableExperts.length);
-                const selectedExpert = availableExperts[randomIndex];
-                selectedExperts.push(selectedExpert);
-                selectedExpertIds.push(selectedExpert.id);
-                availableExperts.splice(randomIndex, 1);
-            }
-
-            // 抽取备选专家
-            if (backupCount > 0) {
-                availableExperts = expertDatabase.filter(expert =>
-                    expert.categories.includes(mainCat) &&
-                    !selectedExpertIds.includes(expert.id)
-            );
-
-                if (subCat) {
-                    availableExperts = availableExperts.filter(expert =>
-                        expert.categories.includes(subCat)
-                );
-                }
-
-                for (let i = 0; i < backupCount && availableExperts.length > 0; i++) {
-                    const randomIndex = Math.floor(Math.random() * availableExperts.length);
-                    const selectedExpert = availableExperts[randomIndex];
-                    backupExperts.push(selectedExpert);
-                    selectedExpertIds.push(selectedExpert.id);
-                    availableExperts.splice(randomIndex, 1);
-                }
-            }
-
-            displayResult(selectedExperts, backupExperts);
-            document.getElementById('expertModal').style.display = 'none';
         }
 
 
@@ -352,10 +370,23 @@
                     alert('请选择1-10位专家');
                     return;
                 }
+                var planNum = Number(count)+Number(backupCount);
 
                 // 统一选择模式
                 if (isUniform) {
-                    uniform(count,backupCount);
+                    const mainCat = document.getElementById('uniformMainCat').value;
+                    const subCat = document.getElementById('uniformSubCat').value;
+
+                    if (!mainCat) {
+                        alert('请选择统一主类别');
+                        return;
+                    }
+                    var specialityList = [];
+                    specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat+";",'sort':1};
+                    if (subCat) {
+                        specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+";"+subCat+";",'sort':1};
+                    }
+                    expertSelect(count,backupCount,specialityList);
                     return;
                 }
                 
@@ -435,7 +466,6 @@
                             
                             const mainLabel = document.createElement('label');
                             mainLabel.textContent = `备选专家${i+1}主类别: `;
-                            mainLabel.style.fontWeight = 'bold';
                             
                             const mainSelect = document.createElement('select');
                             mainSelect.className = 'backup-main-category';
@@ -449,7 +479,6 @@
                             const subLabel = document.createElement('label');
                             subLabel.style.marginLeft = '15px';
                             subLabel.textContent = '子类别: ';
-                            subLabel.style.fontWeight = 'bold';
                             
                             const subSelect = document.createElement('select');
                             subSelect.className = 'backup-sub-category';
@@ -495,69 +524,37 @@
             const selectedExperts = [];
             const backupExperts = [];
             selectedExpertIds = [];
+            var planNum = Number(count)+Number(backupCount);
             
             // 统一选择模式
             const isUniform = document.getElementById('uniformSelection').checked;
             if (isUniform) {
                 const mainCat = document.getElementById('uniformMainCat').value;
                 const subCat = document.getElementById('uniformSubCat').value;
-                
+
                 if (!mainCat) {
                     alert('请选择统一主类别');
                     return;
                 }
-                
-                // 抽取主专家
-                let availableExperts = expertDatabase.filter(expert => 
-                    expert.categories.some(cat => cat.main === mainCat) &&
-                    !selectedExpertIds.includes(expert.id)
-                );
-                
+                var specialityList = [];
+                specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat+";",'sort':1};
                 if (subCat) {
-                    availableExperts = availableExperts.filter(expert => 
-                        expert.categories.some(cat => 
-                            cat.main === mainCat && cat.subs.includes(subCat)
-                        )
-                    );
+                    specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+";"+subCat+";",'sort':1};
                 }
-                
-                for (let i = 0; i < count && availableExperts.length > 0; i++) {
-                    const randomIndex = Math.floor(Math.random() * availableExperts.length);
-                    const selectedExpert = availableExperts[randomIndex];
-                    selectedExperts.push(selectedExpert);
-                    selectedExpertIds.push(selectedExpert.id);
-                    availableExperts.splice(randomIndex, 1);
-                }
-                
-                // 抽取备选专家
-                if (backupCount > 0) {
-                    availableExperts = expertDatabase.filter(expert => 
-                        expert.categories.some(cat => cat.main === mainCat) &&
-                        !selectedExpertIds.includes(expert.id)
-                    );
-                    
-                    if (subCat) {
-                        availableExperts = availableExperts.filter(expert => 
-                            expert.categories.some(cat => 
-                                cat.main === mainCat && cat.subs.includes(subCat)
-                            )
-                        );
-                    }
-                    
-                    for (let i = 0; i < backupCount && availableExperts.length > 0; i++) {
-                        const randomIndex = Math.floor(Math.random() * availableExperts.length);
-                        const selectedExpert = availableExperts[randomIndex];
-                        backupExperts.push(selectedExpert);
-                        selectedExpertIds.push(selectedExpert.id);
-                        availableExperts.splice(randomIndex, 1);
-                    }
-                }
+                expertSelect(count,backupCount,specialityList);
             } 
             // 非统一选择模式
             else {
+
                 const expertSelections = document.querySelectorAll('#expertSelection > div');
                 const backupSelections = document.querySelectorAll('#backupExpertSelection > div');
-                
+                var specialityList = [];
+
+                if((expertSelections.length+backupSelections.length)!=planNum){
+                    alert('专家数量和备选专家数量和选择类别不一致！');
+                    return;
+                }
+
                 // 抽取主专家
                 for (let i = 0; i < count; i++) {
                     const selection = expertSelections[i];
@@ -566,25 +563,13 @@
                         const subCat = selection.querySelector('.sub-category')?.value;
                         
                         if (mainCat) {
-                            let availableExperts = expertDatabase.filter(expert => 
-                                expert.categories.some(cat => cat.main === mainCat) &&
-                                !selectedExpertIds.includes(expert.id)
-                            );
-                            
+                            specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+";",'sort':Number(i)+1};
                             if (subCat) {
-                                availableExperts = availableExperts.filter(expert => 
-                                    expert.categories.some(cat => 
-                                        cat.main === mainCat && cat.subs.includes(subCat)
-                                    )
-                                );
+                                specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+";"+subCat+";",'sort':Number(i)+1};
                             }
-                            
-                            if (availableExperts.length > 0) {
-                                const randomIndex = Math.floor(Math.random() * availableExperts.length);
-                                const selectedExpert = availableExperts[randomIndex];
-                                selectedExperts.push(selectedExpert);
-                                selectedExpertIds.push(selectedExpert.id);
-                            }
+                        }else{
+                            alert('请选择专家'+(Number(i)+1)+'的主类别');
+                            return;
                         }
                     }
                 }
@@ -597,37 +582,20 @@
                         const subCat = selection.querySelector('.backup-sub-category')?.value;
                         
                         if (mainCat) {
-                            let availableExperts = expertDatabase.filter(expert => 
-                                expert.categories.some(cat => cat.main === mainCat) &&
-                                !selectedExpertIds.includes(expert.id)
-                            );
-                            
+                            specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+";",'sort':Number(i)+count+1};
                             if (subCat) {
-                                availableExperts = availableExperts.filter(expert => 
-                                    expert.categories.some(cat => 
-                                        cat.main === mainCat && cat.subs.includes(subCat)
-                                    )
-                                );
+                                specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+";"+subCat+";",'sort':Number(i)+count+1};
                             }
-                            
-                            if (availableExperts.length > 0) {
-                                const randomIndex = Math.floor(Math.random() * availableExperts.length);
-                                const selectedExpert = availableExperts[randomIndex];
-                                backupExperts.push(selectedExpert);
-                                selectedExpertIds.push(selectedExpert.id);
-                            }
+
+                        }else{
+                            alert('请选择专家'+(Number(i)+1)+'的主类别');
+                            return;
                         }
                     }
                 }
             }
-            
-            // 显示结果
-            if (selectedExperts.length > 0) {
-                displayResult(selectedExperts, backupExperts);
-                document.getElementById('expertModal').style.display = 'none';
-            } else {
-                alert('没有找到符合条件的专家，请调整筛选条件');
-            }
+
+            expertSelect(count,backupCount,specialityList);
         });
         
         // 打印按钮
@@ -706,13 +674,15 @@
         }
         
         // 显示结果
-        function displayResult(experts, backups) {
+        function displayResult(experts, backups, projectId) {
             const resultDiv = document.getElementById('expertResult');
             const resultArea = document.getElementById('resultArea');
             const currentProject = document.querySelector('.selectBtn.active')?.dataset.project;
             let projectInfo = {};
-            
-            if (currentProject) {
+
+            if(projectId){
+                projectInfo = project[""+projectId];
+            }else if (currentProject) {
                 try {
                     projectInfo = JSON.parse(currentProject);
                 } catch (e) {
@@ -742,23 +712,12 @@
                 `;
                 
                 experts.forEach(expert => {
-                    // 根据选择情况显示专业类别
-                    const showDetail = document.getElementById('showCategoryDetail')?.checked;
-                    const categoryDisplay = expert.categories
-                        .map(cat => {
-                            if (showDetail && cat.subs && cat.subs.length > 0) {
-                                return `${cat.main} - ${cat.subs.join('/')}`;
-                            }
-                            return cat.main;
-                        })
-                        .join('; ');
-                    
                     html += `
                         <tr>
                             <td style="padding:10px; border:1px solid #ddd;">${expert.name || ''}</td>
                             <td style="padding:10px; border:1px solid #ddd;">${expert.phone || ''}</td>
                             <td style="padding:10px; border:1px solid #ddd;">${expert.cert || ''}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${categoryDisplay}</td>
+                            <td style="padding:10px; border:1px solid #ddd;">${expert.categoryDisplay}</td>
                         </tr>
                     `;
                 });
@@ -782,36 +741,28 @@
                     
                     backups.forEach(expert => {
                         // 格式化专业类别显示
-                        const showDetail = document.getElementById('showCategoryDetail')?.checked;
-                        const categoryDisplay = expert.categories
-                            .map(cat => {
-                                if (showDetail && cat.subs && cat.subs.length > 0) {
-                                    return `${cat.main} - ${cat.subs.join('/')}`;
-                                }
-                                return cat.main;
-                            })
-                            .join('; ');
-                        
                         html += `
                             <tr>
                                 <td style="padding:10px; border:1px solid #ddd;">${expert.name || ''}</td>
                                 <td style="padding:10px; border:1px solid #ddd;">${expert.phone || ''}</td>
                                 <td style="padding:10px; border:1px solid #ddd;">${expert.cert || ''}</td>
-                                <td style="padding:10px; border:1px solid #ddd;">${categoryDisplay}</td>
+                                <td style="padding:10px; border:1px solid #ddd;">${expert.categoryDisplay}</td>
                             </tr>
                         `;
                     });
                     
                     html += `</tbody></table>`;
                 }
-                
-                resultDiv.innerHTML = html;
+
+                if(projectId){
+                    resultDiv.innerHTML += html;
+                }else{
+                    resultDiv.innerHTML = html;
+                }
+
                 resultArea.style.display = 'block';
             }
         }
-    // 初始化日志
-    console.log('项目数据加载完成:', projectList);
-    console.log('专家数据库加载完成:', expertDatabase);
     </script>
     <!-- InstanceEndEditable -->
 </body>

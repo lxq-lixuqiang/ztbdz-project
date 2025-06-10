@@ -26,8 +26,10 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     @ApiModelProperty(value = "项目")
     @TableField(value = "project_id",el = "project.id")
     private Project project;
-    @ApiModelProperty(value = "抽取人数")
+    @ApiModelProperty(value = "抽取数量")
     private Integer number;
+    @ApiModelProperty(value = "备选数量")
+    private Integer spareNumber;
     @ApiModelProperty(value = "抽取状态（0=未开始 1=已结束）")
     private Integer state;
     @ApiModelProperty(value = "评审时长")
@@ -46,6 +48,10 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     @ApiModelProperty(value = "专业要求")
     @TableField(exist = false)
     private List<Speciality> speciality;
+    @ApiModelProperty(value = "专家名单")
+    private String selectExpert;
+    @ApiModelProperty(value = "备选专家名单")
+    private String spareExpert;
     @ApiModelProperty(value = "分配评审专家")
     @TableField(exist = false)
     private List<Long> expertIds;
