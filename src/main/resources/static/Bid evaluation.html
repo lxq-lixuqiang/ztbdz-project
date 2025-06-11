@@ -705,20 +705,8 @@
         });
         $("#resultInfo").html($("#resultScore").html());
         var bidInfo = JSON.parse(localStorage.getItem('bidInfo')); // 中标信息
-        // $("#bidInfo").html("<h2 style=\"color:red;text-align:center;\">恭喜供应商：</h2>" +
-        //                     "<h2 style=\"color:red;text-align:center;\">"+bidInfo.name+"</h2>" +
-        //                     "<h2 style=\"color:red;text-align:center;\">中标！</h2>");
-        // 更新中标 投标方
-        $.ajax({
-            url: "/projectRegister/winBid?ids="+bidInfo.id,
-            type: "POST",
-            contentType: "application/json",
-            success:function(e) {
-                if(e.status != 200){
-                    alert('提交中标供应商失败！');
-                }
-            }
-        });
+
+
 
         // 保存评分数据到本地存储
         localStorage.setItem('evaluationScores', JSON.stringify(scores));
@@ -1028,7 +1016,7 @@
                         <p>综合评审结果将在此显示</p>
                         <div id="resultInfo"></div>
                         <div id="bidInfo"></div>
-                        <button onclick="submitResult()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer;">
+                        <button onclick="submitResult()" style="margin-top:20px;padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer;">
                             生成评审报告
                         </button>
                     </div>
@@ -1108,7 +1096,8 @@
             });
 
             function initData(){
-                var data = {'projectId':new URLSearchParams(window.location.search).get("id"),'reviewType':1};
+                var member = {'id':getMember().id};
+                var data = {'projectId':new URLSearchParams(window.location.search).get("id"),'reviewType':1,'member':member};
                 $.ajax({
                     url: "/evaluation/select",
                     type: "POST",
@@ -1129,20 +1118,8 @@
             }
         });
         function submitResult(){
-            $.ajax({
-                url: "/tenderee/update",
-                type: "POST",
-                data: JSON.stringify({"project":{"id":new URLSearchParams(window.location.search).get("id"),"state":3,"isPass":0,"reviewProgress":100,"reviewEndDate":new Date().toLocaleString().replaceAll("/","-")}}),
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status != 200){
-                        alert("更新项目失败："+e.message);
-                    }
-                }
-            });
             alert("评审报告生成成功！");
-            var bidInfo = JSON.parse(localStorage.getItem('bidInfo'));
-            location.href = "/Bid-e-r.html?id="+bidInfo.id;
+            location.href = "/Bid-e-r.html?id="+new URLSearchParams(window.location.search).get("id");
         }
     </script>
 </body>

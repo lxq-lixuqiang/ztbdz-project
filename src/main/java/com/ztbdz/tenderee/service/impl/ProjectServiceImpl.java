@@ -5,11 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.ProjectMapper;
 import com.ztbdz.tenderee.pojo.*;
-import com.ztbdz.tenderee.service.ProjectService;
-import com.ztbdz.tenderee.service.TenderService;
-import com.ztbdz.tenderee.service.TendereeInformService;
-import com.ztbdz.tenderee.service.TendereeService;
+import com.ztbdz.tenderee.service.*;
 import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.service.MemberService;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,6 +34,10 @@ public class ProjectServiceImpl  implements ProjectService {
     private TendereeService tendereeService;
     @Autowired
     private TendereeInformService tendereeInformService;
+    @Autowired
+    private MemberService memberService;
+    @Autowired
+    private ReviewInfoService reviewInfoService;
 
 
     @Override
@@ -46,43 +49,43 @@ public class ProjectServiceImpl  implements ProjectService {
     @Override
     public Result page(Integer page, Integer size, Project project,Integer states) {
         try{
-            PageInfo<Project> pageDate = null;
+            PageInfo<Project> pageData = null;
             switch (states){
                 case 1:
-                    pageDate = this.selectList(page,size,project);
+                    pageData = this.selectList(page,size,project);
                     break;
                 case 2:
-                    pageDate = this.listAvailable(page,size,project,-1);
+                    pageData = this.listAvailable(page,size,project,-1);
                     break;
                 case 3:
-                    pageDate = this.listAvailable(page,size,project,1);
+                    pageData = this.listAvailable(page,size,project,1);
                     break;
                 case 4:
-                    pageDate = this.listAvailable(page,size,project,0);
+                    pageData = this.listAvailable(page,size,project,0);
                     break;
                 case 5:
-                    pageDate = this.runProject(page,size,project,0);
+                    pageData = this.runProject(page,size,project,0);
                     break;
                 case 6:
-                    pageDate = this.runProject(page,size,project,1);
+                    pageData = this.runProject(page,size,project,1);
                     break;
                 case 7:
-                    pageDate = this.runProject(page,size,project,2);
+                    pageData = this.runProject(page,size,project,2);
                     break;
                 case 8:
-                    pageDate = this.reviewEndProject(page,size,project);
+                    pageData = this.reviewEndProject(page,size,project);
                     break;
                 case 9:
-                    pageDate = this.expertProject(page,size,project,1);
+                    pageData = this.expertProject(page,size,project,1);
                     break;
                 case 10:
-                    pageDate = this.expertProject(page,size,project,2);
+                    pageData = this.expertProject(page,size,project,2);
                     break;
                 case 11:
-                    pageDate = this.expertProject(page,size,project,null);
+                    pageData = this.expertProject(page,size,project,null);
                     break;
             }
-            return Result.ok("查询成功！",pageDate);
+            return Result.ok("查询成功！",pageData);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询项目列表异常，原因："+e.getMessage());
@@ -160,12 +163,33 @@ public class ProjectServiceImpl  implements ProjectService {
             List<Tender> tenderList = tenderService.selectListByProjectId(id);
 
             project.setTenders(tenderList);
+            project.setMoneyUppercase(SystemConfig.digitUppercase(project.getMoney()));
             tenderee.setProject(project);
             tenderee.setTendereeInforms(tendereeInformList);
             return Result.ok("查询成功",tenderee);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询项目异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result winDid(Long projectId) {
+        try{
+            ReviewInfo reviewInfo = reviewInfoService.selectByProjectId(projectId);
+            if(StringUtils.isEmpty(reviewInfo) || StringUtils.isEmpty(reviewInfo.getSelectExpert())){
+                return Result.ok("查询成功",new ArrayList<ReviewInfo>());
+            }
+            String getSelectExpert = reviewInfo.getSelectExpert();
+            String[] selectExperts = getSelectExpert.split(",");
+            List<Long> ids = new ArrayList<Long>();
+            for(String selectExpert : selectExperts){
+                ids.add(Long.valueOf(selectExpert));
+            }
+            return Result.ok("查询成功",memberService.selectByIds(ids));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("项目ID获取中标人信息异常，原因："+e.getMessage());
         }
     }
 

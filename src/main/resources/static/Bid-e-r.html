@@ -71,7 +71,7 @@
             verifyLogin();
             $("#sumitButton").show();
             $.ajax({
-                url: "/projectRegister/get/"+new URLSearchParams(window.location.search).get("id"),
+                url: "/project/get/"+new URLSearchParams(window.location.search).get("id"),
                 type: "GET",
                 contentType: "application/json",
                 success:function(e) {
@@ -79,16 +79,16 @@
                         $("#sumitButton").attr("data-projectid",e.data.project.id);
                         $("input[name='projectName']").attr("value",e.data.project.projectName);
                         $("input[name='projectCode']").attr("value",e.data.project.projectCode);
-                        $("input[name='purchaser']").attr("value",e.data.project.tenderee.tendereeName);
+                        $("input[name='purchaser']").attr("value",e.data.tendereeName);
                         var procurementMethod = $("input[name='purchaseMethod'][value="+e.data.project.procurementMethod+"]");
                         if(procurementMethod.length>0){
                             procurementMethod.attr("checked","checked")
                         }else{
                             $("input[name='purchaseMethod'][value=其他]").attr("checked","checked");
                         }
-                        $("input[name='reviewDate']").attr("value",new Date(e.data.project.reviewEndDate).toLocaleDateString('zh-CN', {year: 'numeric',month: '2-digit',day: '2-digit'}).replaceAll("/","-"));
-                        $("input[name='budgetCapital']").attr("value",e.data.bidMoneyUppercase.replaceAll("元整",""));
-                        $("input[name='budgetNumber']").attr("value",e.data.bidMoney);
+                        $("input[name='reviewDate']").attr("value",new Date().toLocaleDateString('zh-CN', {year: 'numeric',month: '2-digit',day: '2-digit'}).replaceAll("/","-"));
+                        $("input[name='budgetCapital']").attr("value",e.data.project.moneyUppercase.replaceAll("元整",""));
+                        $("input[name='budgetNumber']").attr("value",e.data.project.money);
                     }
                 },
                 error:function(e) {

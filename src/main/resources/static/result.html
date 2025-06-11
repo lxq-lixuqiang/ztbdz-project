@@ -48,118 +48,181 @@
         <script>
             // 初始化
             verifyLogin();
-            $.ajax({
-                url: "/evaluation/select",
-                type: "POST",
-                data: JSON.stringify({"projectId":new URLSearchParams(window.location.search).get("id"),"reviewType":3}),
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status == 200){
-                        if(e.data.length==0){
-                            alert("没有专家进行评审！");
-                            location.href = "/expert.html";
-                            return;
-                        }
-
-                        var member = "";
-                        var ratingItems = "";
-                        var gongyingshang = "";
-                        for(var i=0;i<e.data.length;i++){
-                            if(member.indexOf(e.data[i].member.name)==-1){
-                                if(member.length>0) member+=",";
-                                member+=e.data[i].member.name;
+            init();
+            var isEnd = false;
+            var memberScore = {};
+            function init(){
+                $.ajax({
+                    url: "/project/winDid/"+new URLSearchParams(window.location.search).get("id"),
+                    type: "Get",
+                    contentType: "application/json",
+                    success: function (e) {
+                        if(e.status == 200) {
+                            if (e.data.length == 0) {
+                                alert("评审项目还未没有抽取评审专家！");
+                                location.href = "/expert.html";
+                                return;
                             }
-                            if(ratingItems.indexOf(e.data[i].evaluationCriteriaName)==-1){
-                                if(ratingItems.length>0) ratingItems+=",";
-                                ratingItems+=e.data[i].evaluationCriteriaName;
-                            }
-                            if(gongyingshang.indexOf(e.data[i].projectRegister.member.account.accountName)==-1){
-                                if(gongyingshang.length>0) gongyingshang+=",";
-                                gongyingshang+=e.data[i].projectRegister.member.account.accountName;
-                            }
+                            initData(e.data);
+                        }else{
+                            alert("获取评审专家失败，原因："+e.message);
                         }
+                    }
+                });
+            }
 
-                        // 动态生成表头
-                        const thead = document.querySelector('#scoreTable thead tr');
-                        thead.innerHTML = '<th style="min-width:100px;">评分项</th>';
-
-                        var expert = member.split(",");
-                        // 添加专家列
-                        for(let i = 0; i < expert.length; i++) {
-                            thead.innerHTML += `<th style="min-width:60px;">${expert[i]}</th>`;
-                        }
-                        // 添加总分和平均分列
-                        thead.innerHTML += '<th style="min-width:60px;">总分</th><th style="min-width:60px;">平均分</th>';
-
-                        var scoreTable = $("#scoreTable tbody");
-                        scoreTable.html("");
-                        var trs = "";
-                        var ratingItemsTr = ratingItems.split(",");
-                        var gongyingshangTr = gongyingshang.split(",")
-
-                        for(var k=0;k<gongyingshangTr.length;k++){
-                            trs+= `<tr style="font-weight: bold;"><td>供应商</td><td colspan="3">${gongyingshangTr[k]}</td></tr>`;
-                            var countInfo = 0;
-                            for(var i=0;i<ratingItemsTr.length;i++){
-                                var row = "<tr>";
-                                row+= `<td>${ratingItemsTr[i]}</td>`;
-                                var count=0;
-                                var num = 0;
-                                for(var j=0;j<e.data.length;j++){
-                                    if(gongyingshangTr[k]==e.data[j].projectRegister.member.account.accountName && ratingItemsTr[i]==e.data[j].evaluationCriteriaName){
-                                        row += `<td>${e.data[j].score}</td>`;
-                                        count+=Number(e.data[j].score);
-                                        countInfo+=count;
-                                        num++;
-                                    }
+            function initData(memberData){
+                $.ajax({
+                    url: "/evaluation/select",
+                    type: "POST",
+                    data: JSON.stringify({"projectId":new URLSearchParams(window.location.search).get("id"),"reviewType":3}),
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var memberIds = "";
+                            var member = "";
+                            for(var i=0;i<memberData.length;i++){
+                                if(memberIds.indexOf(memberData[i].id)==-1){
+                                    if(member.length>0) member+=",";
+                                    if(memberIds.length>0) memberIds+=",";
+                                    member+=memberData[i].name;
+                                    memberIds+=memberData[i].id;
                                 }
-                                row += "<td>"+count+"</td><td>"+(count/num).toFixed(0)+"</td></tr>";
-                                trs+=row;
                             }
-                            trs+= `<tr style="font-weight: bold;"><td >合计</td><td colspan="3">${countInfo}</td></tr>`;
 
-                        }
-                        scoreTable.html(trs);
+                            var ratingItems = "";
+                            var gongyingshang = ""; // TODO 供应商获取不到 供应商id
+                            var dataMap = {};
+                            var havMember = "";
+                            var havNum = 0;
+                            for(var i=0;i<e.data.length;i++){
+                                if(ratingItems.indexOf(e.data[i].evaluationCriteriaName)==-1){
+                                    if(havMember.indexOf(e.data[i].member.id)==-1){
+                                        if(havMember.length>0) havMember+=",";
+                                        havMember+=e.data[i].member.id;
+                                        havNum++;
+                                    }
+                                    if(ratingItems.length>0) ratingItems+=",";
+                                    ratingItems+=e.data[i].evaluationCriteriaName;
+                                }
+                                if(gongyingshang.indexOf(e.data[i].projectRegister.member.account.accountName)==-1){
+                                    if(gongyingshang.length>0) gongyingshang+=",";
+                                    gongyingshang+=e.data[i].projectRegister.member.account.accountName;
+                                }
+                                dataMap[e.data[i].member.id+e.data[i].evaluationCriteriaName+e.data[i].projectRegister.member.account.accountName] = e.data[i];
+                            }
+                            if(havNum==memberData.length){
+                                isEnd = true;
+                            }
 
-                        // 添加提示框区域
-                        const messageBox = document.createElement('div');
-                        messageBox.id = 'messageBox';
-                        messageBox.style.marginTop = '20px';
-                        messageBox.style.padding = '15px';
-                        messageBox.style.border = '1px solid #ffcccc';
-                        messageBox.style.backgroundColor = '#ffeeee';
-                        messageBox.style.borderRadius = '5px';
-                        messageBox.style.display = 'none';
-                        document.querySelector('div[style*="width:1040px"]').appendChild(messageBox);
+                            // 动态生成表头
+                            const thead = document.querySelector('#scoreTable thead tr');
+                            thead.innerHTML = '<th style="min-width:100px;">评分项</th>';
 
-                        // 提交按钮事件
-                        document.getElementById('submitBtn').addEventListener('click', function() {
-                            const messageBox = document.getElementById('messageBox');
+                            var expert = member.split(",");
+                            // 添加专家列
+                            for(let i = 0; i < expert.length; i++) {
+                                thead.innerHTML += `<th style="min-width:60px;">${expert[i]}</th>`;
+                            }
+                            // 添加总分和平均分列
+                            thead.innerHTML += '<th style="min-width:60px;">总分</th><th style="min-width:60px;">平均分</th>';
+
+                            var scoreTable = $("#scoreTable tbody");
+                            scoreTable.html("");
+                            var trs = "";
+                            var memberIdsTr = memberIds.split(",");
+                            var ratingItemsTr = ratingItems.split(",");
+                            var gongyingshangTr = gongyingshang.split(",")
+
+                            for(var k=0;k<gongyingshangTr.length;k++) { // 供应商
+                                trs+= `<tr style="font-weight: bold;"><td>供应商</td><td colspan="${memberIdsTr.length+2}">${gongyingshangTr[k]}</td></tr>`;
+
+                                var sumInfo = {};
+                                var zSum = 0;
+                                var zAvg = 0;
+
+                                for(var i=0;i<ratingItemsTr.length;i++){
+                                    var row = "<tr>";
+                                    row+= `<td>${ratingItemsTr[i]}</td>`;
+
+                                    var sum = 0;
+                                    for(var l=0;l<memberIdsTr.length;l++) {
+                                        var getData = dataMap[memberIdsTr[l]+ratingItemsTr[i]+gongyingshangTr[k]];
+                                        if(getData){
+                                            var score = dataMap[memberIdsTr[l]+ratingItemsTr[i]+gongyingshangTr[k]].score;
+                                            sum+=Number(score);
+                                            row +="<td>"+score+"</td>";
+
+                                            if(!sumInfo[memberIdsTr[l]+gongyingshangTr[k]]) sumInfo[memberIdsTr[l]+gongyingshangTr[k]]=0;
+                                            sumInfo[memberIdsTr[l]+gongyingshangTr[k]] +=Number(score);
+                                        }else{
+                                            sum+=Number(0);
+                                            row +="<td></td>";
+                                            if(!sumInfo[memberIdsTr[l]+gongyingshangTr[k]]) sumInfo[memberIdsTr[l]+gongyingshangTr[k]]=0;
+                                            sumInfo[memberIdsTr[l]+gongyingshangTr[k]] +=Number(0);
+                                        }
+                                    }
+                                    var avg = (Number(sum)/memberIdsTr.length).toFixed(2);
+                                    zAvg=(Number(zAvg)+Number(avg)).toFixed(2);
+                                    zSum=zSum+sum;
+                                    row += "<td>"+sum+"</td><td>"+avg+"</td></tr>";
+                                    trs+=row;
+                                }
+                                var otherSumInfo="";
+                                for(var l=0;l<memberIdsTr.length;l++) {
+                                    otherSumInfo+=`<td>${sumInfo[memberIdsTr[l]+gongyingshangTr[k]]}</td>`;
+                                }
+                                memberScore[gongyingshangTr[k]]=zSum;
+                                trs+= `<tr style="font-weight: bold;"><td >合计</td>${otherSumInfo}<td>${zSum}</td><td>${zAvg}</td></tr>`;
+                            }
+
+                            scoreTable.html(trs);
+
+                            // 添加提示框区域
+                            const messageBox = document.createElement('div');
+                            messageBox.id = 'messageBox';
+                            messageBox.style.marginTop = '20px';
+                            messageBox.style.padding = '15px';
+                            messageBox.style.border = '1px solid #ffcccc';
+                            messageBox.style.backgroundColor = '#ffeeee';
+                            messageBox.style.borderRadius = '5px';
                             messageBox.style.display = 'none';
-                            messageBox.innerHTML = '';
+                            document.querySelector('div[style*="width:1040px"]').appendChild(messageBox);
 
-                            // 检查分数问题
-                            const problems = [];
+                            // 提交按钮事件
+                            document.getElementById('submitBtn').addEventListener('click', function() {
+                                if(!isEnd){
+                                    alert('还有专家未进行评审，无法提交结果！');
+                                    return;
+                                }
 
-                            // 显示问题或提交
-                            if(problems.length > 0) {
-                                messageBox.innerHTML = `
+                                const messageBox = document.getElementById('messageBox');
+                                messageBox.style.display = 'none';
+                                messageBox.innerHTML = '';
+
+                                // 检查分数问题
+                                const problems = [];
+
+                                // 显示问题或提交
+                                if(problems.length > 0) {
+                                    messageBox.innerHTML = `
                                             <h3 style="color:#d32f2f; margin-top:0;">发现以下问题：</h3>
                                             <ul style="margin-bottom:0;">
                                                 ${problems.map(p => `<li>${p}</li>`).join('')}
                                             </ul>
                                         `;
-                                messageBox.style.display = 'block';
-                            } else {
-                                alert('结果已提交！');
-                                window.location.href = '/expert.html';
-                            }
-                        });
-                    }else{
-                        alert("获取评分汇总列表失败："+e.message);
+                                    messageBox.style.display = 'block';
+                                } else {
+                                    alert('结果已提交！');
+                                    window.location.href = '/expert.html';
+                                }
+                            });
+                        }else{
+                            alert("获取评分汇总列表失败："+e.message);
+                        }
                     }
-                }
-            });
+                });
+            }
         </script>
     </div>
     <!-- InstanceEndEditable -->

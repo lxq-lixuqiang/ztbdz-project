@@ -53,6 +53,14 @@ public interface ReviewInfoService {
     ReviewInfo selectById(Long id) throws Exception;
 
     /**
+     * 项目id获取评审
+     * @param projectId
+     * @return
+     * @throws Exception
+     */
+    ReviewInfo selectByProjectId(Long projectId) throws Exception;
+
+    /**
      * 分页查询评审
      * @param page
      * @param size

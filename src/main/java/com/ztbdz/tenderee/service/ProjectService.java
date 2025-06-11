@@ -93,6 +93,13 @@ public interface ProjectService {
     Result get( Long id);
 
     /**
+     * 项目ID获取中标人信息
+     * @param projectId
+     * @return
+     */
+    Result winDid(Long projectId);
+
+    /**
      * 修改项目
      * @param project
      * @return

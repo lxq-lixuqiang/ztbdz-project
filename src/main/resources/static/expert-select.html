@@ -155,7 +155,7 @@
                                 allId +=",";
                             }
                             allId +=id;
-                            project[id+""] = {"id": e.data.list[i].projectCode,"name": e.data.list[i].projectName,"endDate": e.data.list[i].enrollEndDate};
+                            project[id+""] = {"id": e.data.list[i].id,"code":e.data.list[i].projectCode,"name": e.data.list[i].projectName,"endDate": e.data.list[i].enrollEndDate};
                         }
                         $("#expertSelectBtn").attr("data-id",allId);
                         if(e.data.list.length==0){
@@ -312,6 +312,7 @@
                 projectIds[0] = JSON.parse(dataInfo).id;
             }
 
+            var isError = false;
             for(var i=0;i<projectIds.length;i++){
                 var projectId = projectIds[i];
                 var project= {"id":projectId};
@@ -326,6 +327,7 @@
                         if(e.status == 200){
                             if(e.data.length==0){
                                 alert('没有找到符合条件的专家，请调整筛选条件');
+                                isError = true;
                                 return;
                             }
                             var selectedExperts=[];
@@ -348,12 +350,16 @@
                             document.getElementById('expertModal').style.display = 'none';
                         }else{
                             alert('自动抽取专家失败：'+e.message);
+                            isError = true;
                         }
                     }
                 });
+                if(isError){
+                    initProject(); //重新加载项目信息
+                    return;
+                }
             }
             initProject(); //重新加载项目信息
-
         }
 
 
@@ -384,7 +390,7 @@
                     var specialityList = [];
                     specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat+";",'sort':1};
                     if (subCat) {
-                        specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+";"+subCat+";",'sort':1};
+                        specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+"-"+subCat+";",'sort':1};
                     }
                     expertSelect(count,backupCount,specialityList);
                     return;
@@ -539,7 +545,7 @@
                 var specialityList = [];
                 specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat+";",'sort':1};
                 if (subCat) {
-                    specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+";"+subCat+";",'sort':1};
+                    specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+"-"+subCat+";",'sort':1};
                 }
                 expertSelect(count,backupCount,specialityList);
             } 
@@ -551,7 +557,7 @@
                 var specialityList = [];
 
                 if((expertSelections.length+backupSelections.length)!=planNum){
-                    alert('专家数量和备选专家数量和选择类别不一致！');
+                    alert('数量与类别专业不一致！');
                     return;
                 }
 
@@ -565,7 +571,7 @@
                         if (mainCat) {
                             specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+";",'sort':Number(i)+1};
                             if (subCat) {
-                                specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+";"+subCat+";",'sort':Number(i)+1};
+                                specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+1};
                             }
                         }else{
                             alert('请选择专家'+(Number(i)+1)+'的主类别');
@@ -584,7 +590,7 @@
                         if (mainCat) {
                             specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+";",'sort':Number(i)+count+1};
                             if (subCat) {
-                                specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+";"+subCat+";",'sort':Number(i)+count+1};
+                                specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+count+1};
                             }
 
                         }else{
@@ -689,12 +695,12 @@
                     console.error('解析项目信息失败:', e);
                 }
             }
-            
+            resultDiv.innerHTML = "";
             if (resultDiv && resultArea) {
                 let html = `
                     <div style="margin-bottom:20px;">
                         <h3>项目信息</h3>
-                        <p><strong>项目编号：</strong>${projectInfo.id || '未知'}</p>
+                        <p><strong>项目编号：</strong>${projectInfo.code || '未知'}</p>
                         <p><strong>项目名称：</strong>${projectInfo.name || '未知项目'}</p>
                         <p><strong>截止日期：</strong>${projectInfo.endDate || '未知'}</p>
                     </div>

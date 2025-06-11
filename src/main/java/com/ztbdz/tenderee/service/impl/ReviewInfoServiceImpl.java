@@ -82,6 +82,13 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     }
 
     @Override
+    public ReviewInfo selectByProjectId(Long projectId) throws Exception {
+        QueryWrapper<ReviewInfo> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("project_id",projectId);
+        return reviewInfoMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public Result page(Integer page, Integer size, String projectName) {
         try{
             return Result.ok("查询成功！",this.selectPage(page,size,projectName,null));
@@ -120,7 +127,7 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     @Override
     public Integer deleteByProjectId(Long projectId) throws Exception {
         QueryWrapper<ReviewInfo> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("project",projectId);
+        queryWrapper.eq("project_id",projectId);
         return reviewInfoMapper.delete(queryWrapper);
     }
 
@@ -210,6 +217,10 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
                 speciality.setReviewInfoId(reviewInfo.getId());
                 specialityService.insert(speciality);
                 List<ExpertInfo> expertInfoList = reviewInfoMapper.randomExpert(hideExperts,hideAccounts,speciality.getNum(),speciality);
+                if(expertInfoList.size()<speciality.getNum()){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.error("【"+speciality.getExpertType()+"】类别的专家数量不足，请调整筛选条件！");
+                }
                 if(expertInfoList.size()==0){
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return Result.error("【"+speciality.getExpertType()+"】类别，没有找到符合条件的专家，请调整筛选条件！");

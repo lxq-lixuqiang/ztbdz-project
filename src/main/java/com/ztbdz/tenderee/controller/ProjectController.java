@@ -213,4 +213,16 @@ public class ProjectController {
         return projectService.get(id);
     }
 
+
+    @ApiOperation(value = "项目ID获取中标人信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("winDid/{projectId}")
+    public Result winDid(@PathVariable Long projectId) {
+        return projectService.winDid(projectId);
+    }
+
 }

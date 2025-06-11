@@ -45,14 +45,9 @@ public class ResultReportServiceImpl implements ResultReportService {
         try{
             if(StringUtils.isEmpty(resultReport.getId())){
                 if(StringUtils.isEmpty(resultReport.getProject()) || StringUtils.isEmpty(resultReport.getProject().getId())) return Result.fail("项目id不能为空！");
-                Project project = projectService.selectById(resultReport.getProject().getId());
-                project.setState(3);
-                project.setIsPass(resultReport.getProject().getIsPass());
-                project.setReviewProgress(100);
-                project.setReviewEndDate(new Date());
-                projectService.updateById(project); // 更新项目状态
+
                 if("1".equals(resultReport.getProject().getIsPass().toString())){
-                    List<ProjectRegister> projectRegisterList = projectRegisterService.selectByProjectId(project.getId(),null);
+                    List<ProjectRegister> projectRegisterList = projectRegisterService.selectByProjectId(resultReport.getProject().getId(),null);
                     List<Long> ids = new ArrayList();
                     for(ProjectRegister projectRegister : projectRegisterList){
                         ids.add(projectRegister.getId());

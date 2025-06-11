@@ -89,10 +89,11 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
 
 
     @Override
-    public Integer deleteByProjectIdAndReviewType(Long projectId,Integer reviewType) throws Exception {
+    public Integer deleteByProjectIdAndReviewTypeAndMemberId(Long projectId,Integer reviewType,Long memberId) throws Exception {
         QueryWrapper<EvaluationCriteria> queryWrapper = new QueryWrapper();
         queryWrapper.eq("project_id",projectId);
         queryWrapper.eq("review_type",reviewType);
+        queryWrapper.eq("member_id",memberId);
         return evaluationCriteriaMapper.delete(queryWrapper);
     }
 
@@ -101,6 +102,7 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
     @Override
     public Result create(List<EvaluationCriteria> evaluationCriteriaList,boolean isDelete) {
         try{
+            Long memberId = SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
             if(isDelete){
                 // 先删除 后添加 根据项目id和评审类型
                 if(evaluationCriteriaList.size()>0){
@@ -109,22 +111,14 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
                     if(StringUtils.isEmpty(reviewType) || StringUtils.isEmpty(projectId) ){
                         return Result.fail("项目id和评审类型不能为空！");
                     }
-                    this.deleteByProjectIdAndReviewType(projectId,reviewType);
+                    this.deleteByProjectIdAndReviewTypeAndMemberId(projectId,reviewType,memberId);
                     // 保存项目进度
                     Project project = new Project();
                     project.setId(projectId);
-                    if(reviewType==1){ // 1=资格评审标准
-                        project.setReviewProgress(25);
-                    }else if(reviewType==2){ // 2=实质性符合标准
-                        project.setReviewProgress(50);
-                    }else if(reviewType==3){ // 3=评分标准
-                        project.setReviewProgress(75);
-                    }
                     projectService.updateById(project);
                 }
             }
 
-            Long memberId = SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
             for(EvaluationCriteria evaluationCriteria : evaluationCriteriaList){
                 Member member = new Member();
                 member.setId(memberId);// 默认当前登录人员

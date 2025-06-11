@@ -33,9 +33,12 @@
         from
           expert_info e
         left join member m on e.member_id=m.id
+        left join role r on r.id = m.role.id
         left join account a on m.account_id=a.id
         WHERE
-          1=1
+          m.is_delete = 0
+          and m.is_stop = 0
+          and r.type='expert'
         <if test="hideExperts != null and hideExperts.size >0">
           and m.name not in
             <foreach collection='hideExperts' item='item' open='(' separator=',' close=')'>

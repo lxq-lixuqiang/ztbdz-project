@@ -199,7 +199,7 @@
     }
 
     function uploadBidFile() {
-        const fileInput = $('<input type="file">');
+        const fileInput = $('<input type="file" accept="application/pdf">');
         fileInput.on('change', function() {
             if(this.files.length==0){
                 return;

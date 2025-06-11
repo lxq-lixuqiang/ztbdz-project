@@ -100,4 +100,12 @@ public interface MemberService {
      * @return
      */
     Integer deletes(List<Long> ids) throws Exception;
+
+    /**
+     * 查询多人员
+     * @param ids
+     * @return
+     * @throws Exception
+     */
+    List<Member> selectByIds(List<Long> ids) throws Exception;
 }

@@ -206,5 +206,13 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.update(member,queryWrapper);
     }
 
+    @Override
+    public List<Member> selectByIds(List<Long> ids) throws Exception {
+        QueryWrapper<Member> queryWrapper = new QueryWrapper();
+        queryWrapper.in("id", ids);
+        queryWrapper.eq("is_delete", Common.ENABL);
+        return memberMapper.selectList(queryWrapper);
+    }
+
 
 }

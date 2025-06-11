@@ -20,6 +20,11 @@
 			<if test="projectId != null">
 				and ec.project_id = #{projectId}
 			</if>
+			<if test="member != null">
+				<if test="member.id != null">
+					and ec.member_id = #{member.id}
+				</if>
+			</if>
 	</select>
 	<resultMap id="EvaluationCriteriaAndMemberAndProjectRegisterAndAccount" type="EvaluationCriteria">
 		<result property="member.id" column="ecMemberId"/>

@@ -63,7 +63,7 @@ public interface EvaluationCriteriaService {
      * @param reviewType
      * @return
      */
-    Integer deleteByProjectIdAndReviewType(Long projectId,Integer reviewType) throws Exception;
+    Integer deleteByProjectIdAndReviewTypeAndMemberId(Long projectId,Integer reviewType,Long memberId) throws Exception;
 
     /**
      * 创建评标标准
