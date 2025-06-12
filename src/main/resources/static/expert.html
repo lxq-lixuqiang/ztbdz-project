@@ -183,7 +183,6 @@
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                                 <th style="padding:10px; border:1px solid #ddd;">评审时间</th>
                                 <th style="padding:10px; border:1px solid #ddd;">评审结果</th>
-                                <th style="padding:10px; border:1px solid #ddd;">操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -257,13 +256,6 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass null }}未公布{{/eq}}{{#eq isPass 0}}通过{{/eq}}{{#eq isPass 1}}废标{{/eq}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">
-                {{#if ../this.isAdmit}}
-                    <a href="result.html?id={{id}}">
-                        <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看评分汇总</button>
-                    </a>
-                {{/if}}
-            </td>
         </tr>
         {{/each}}
         {{else}}

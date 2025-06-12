@@ -64,5 +64,14 @@ public class EvaluationCriteriaController {
         return evaluationCriteriaService.delete(id);
     }
 
+    @ApiOperation(value = "项目计算中标投标方")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("winBid")
+    public Result winBid(@RequestBody EvaluationCriteria evaluationCriteria) {
+        return evaluationCriteriaService.winBid(evaluationCriteria);
+    }
 
 }

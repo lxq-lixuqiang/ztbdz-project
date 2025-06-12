@@ -46,7 +46,7 @@ function verifyLogin(){
         contentType: "application/json",
         success:function(e) {
             if(e.status == 200){
-                setToken(e.data.token); // 刷新token保持活跃状态
+                // setToken(e.data.token); // 刷新token保持活跃状态
                 setMember(e.data.member);
             }else{
                 alert(e.message);

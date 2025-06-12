@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.EvaluationCriteriaMapper;
 import com.ztbdz.tenderee.pojo.EvaluationCriteria;
 import com.ztbdz.tenderee.pojo.Project;
+import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.tenderee.service.EvaluationCriteriaService;
+import com.ztbdz.tenderee.service.ProjectRegisterService;
 import com.ztbdz.tenderee.service.ProjectService;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.web.config.SystemConfig;
@@ -17,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.sql.Array;
+import java.util.*;
 
 
 @Slf4j
@@ -27,6 +31,8 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
     private EvaluationCriteriaMapper evaluationCriteriaMapper;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ProjectRegisterService projectRegisterService;
 
     @Override
     public Result select(EvaluationCriteria evaluationCriteria) {
@@ -139,5 +145,62 @@ public class EvaluationCriteriaServiceImpl implements EvaluationCriteriaService 
     @Override
     public Integer insert(EvaluationCriteria evaluationCriteria) {
         return evaluationCriteriaMapper.insert(evaluationCriteria);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result winBid(EvaluationCriteria evaluationCriteria) {
+        try{
+            Map<Long,BigDecimal> sumMap = new HashMap<Long,BigDecimal>();
+            List<EvaluationCriteria> evaluationCriteriaList = this.selectMember(evaluationCriteria);
+            // 统计总分数
+            for(EvaluationCriteria evaluationCriteria1 : evaluationCriteriaList){
+                if(StringUtils.isEmpty(sumMap.get(evaluationCriteria1.getProjectRegister().getId()))){
+                    sumMap.put(evaluationCriteria1.getProjectRegister().getId(),new BigDecimal(evaluationCriteria1.getScore()));
+                }else{
+                    BigDecimal bd = sumMap.get(evaluationCriteria1.getProjectRegister().getId());
+                    sumMap.put(evaluationCriteria1.getProjectRegister().getId(),bd.add(new BigDecimal(evaluationCriteria1.getScore())));
+                }
+            }
+
+            // 获取最高分数
+            Long winbidId = -1L;
+            double[] sortScore = new double[sumMap.size()];
+            int num=-1;
+            for(Long key : sumMap.keySet()){
+                num++;
+                sortScore[num]=sumMap.get(key).doubleValue();
+            }
+            Arrays.sort(sortScore);
+            for(Long key : sumMap.keySet()){
+                if(sumMap.get(key).doubleValue() == sortScore[num]){
+                    winbidId = key;
+                    break;
+                }
+            }
+
+            List<Long> ids = new ArrayList<Long>();
+            ids.add(winbidId);
+            Result result = projectRegisterService.winBid(ids);
+            if(result.getStatus()!=200){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return Result.fail(result.getMessage());
+            }
+            // 更新项目状态
+            Project project = projectService.selectById(evaluationCriteria.getProjectId());
+            project.setState(3);
+            project.setIsPass(0);
+            project.setReviewEndDate(new Date());
+            projectService.updateById(project);
+
+            Map<String,Object> data = new HashMap<String,Object>();
+            data.put("winbidId",winbidId);
+            data.put("sumMap",sumMap);
+            return Result.ok("结果已提交！",data);
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("项目计算中标投标方异常，原因："+e.getMessage());
+        }
     }
 }

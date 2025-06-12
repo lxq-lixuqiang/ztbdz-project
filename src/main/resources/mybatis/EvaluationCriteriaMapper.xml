@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.EvaluationCriteriaMapper">
 	<select id="selectMember" resultMap="EvaluationCriteriaAndMemberAndProjectRegisterAndAccount">
 		select 
-			ec.*,ec.member_id as ecMemberId,m.name as mName,a.account_name as unitName
+			ec.*,pr.id as prId,ec.member_id as ecMemberId,m.name as mName,a.account_name as unitName
 		from
 		   evaluation_criteria ec
 		left join member m on ec.member_id=m.id
@@ -30,6 +30,7 @@
 		<result property="member.id" column="ecMemberId"/>
 		<result property="member.name" column="mName"/>
 
+		<result property="projectRegister.id" column="prId"/>
 		<result property="projectRegister.member.account.accountName" column="unitName"/>
 
 	</resultMap>

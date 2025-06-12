@@ -33,7 +33,7 @@
         from
           expert_info e
         left join member m on e.member_id=m.id
-        left join role r on r.id = m.role.id
+        left join role r on r.id = m.role_id
         left join account a on m.account_id=a.id
         WHERE
           m.is_delete = 0
@@ -55,7 +55,7 @@
 
         <if test="speciality != null">
             <if test="speciality.expertType != null and speciality.expertType.length() >0">
-                and e.expert_type like concat('%',#{speciality.expertType},'%')
+                and e.expert_type like concat(#{speciality.expertType},'%')
             </if>
             <if test="speciality.reviewArea != null and speciality.reviewArea.length() >0">
                 and e.region == #{item.reviewArea}

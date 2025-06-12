@@ -121,9 +121,10 @@ public class ProjectServiceImpl  implements ProjectService {
     @Override
     public PageInfo<Project> reviewEndProject(Integer page, Integer size, Project project) throws Exception {
         PageHelper.startPage(page, size);
-        ProjectRegister projectRegister = new ProjectRegister();
-        projectRegister.setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID)));
-        project.setProjectRegisters(projectRegister);
+        if(project.getProjectRegisters()==null){
+            project.setProjectRegisters(new ProjectRegister());
+        }
+        project.getProjectRegisters().setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID)));
         return new PageInfo(projectMapper.reviewEndProject(project));
     }
 

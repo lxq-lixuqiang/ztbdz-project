@@ -624,7 +624,7 @@
                 $.ajax({
                     url: "/project/reviewEndProject",
                     type: "POST",
-                    data: JSON.stringify({"state":state}),
+                    data: JSON.stringify({"state":state,"projectRegisters":{"state":1}}),
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
@@ -739,7 +739,7 @@
         function showApplicationModal2(projectName,id) {
 
             $.ajax({
-                url: "/projectRegister/getProject/"+id,
+                url: "/projectRegister/getProject/"+id+"/1",
                 type: "GET",
                 contentType: "application/json",
                 success:function(e) {

@@ -72,6 +72,7 @@
 	<select id="expertProject" resultType="Project">
 		select
 			p.id,
+			p.is_pass,
 			p.project_name,
 			p.bid_opening_time,
 			p.enroll_end_date,
@@ -116,9 +117,14 @@
 		<if test="projectName != null">
 			and p.project_name=#{projectName}
 		</if>
-		<if test="projectRegisters !=null and projectRegisters.member != null">
-			<if test="projectRegisters.member.id != null">
-				and pr.member_id=#{projectRegisters.member.id}
+		<if test="projectRegisters !=null">
+			<if test="projectRegisters.member != null">
+				<if test="projectRegisters.member.id != null">
+					and pr.member_id = #{projectRegisters.member.id}
+				</if>
+			</if>
+			<if test="projectRegisters.state != null">
+				and pr.state = #{projectRegisters.state}
 			</if>
 		</if>
 		order by

@@ -59,7 +59,7 @@
                     success: function (e) {
                         if(e.status == 200) {
                             if (e.data.length == 0) {
-                                alert("评审项目还未没有抽取评审专家！");
+                                alert("项目还没有抽取评审专家！");
                                 location.href = "/expert.html";
                                 return;
                             }
@@ -67,6 +67,9 @@
                         }else{
                             alert("获取评审专家失败，原因："+e.message);
                         }
+                    },
+                    error:function(e) {
+                        alert("获取评审专家错误，请联系管理员！");
                     }
                 });
             }
@@ -79,6 +82,12 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
+                            if (e.data.length == 0) {
+                                alert("当前没有专家进行评审！");
+                                location.href = "/expert.html";
+                                return;
+                            }
+
                             var memberIds = "";
                             var member = "";
                             for(var i=0;i<memberData.length;i++){
@@ -91,25 +100,25 @@
                             }
 
                             var ratingItems = "";
-                            var gongyingshang = ""; // TODO 供应商获取不到 供应商id
+                            var gongyingshang = "";
                             var dataMap = {};
                             var havMember = "";
                             var havNum = 0;
                             for(var i=0;i<e.data.length;i++){
+                                if(havMember.indexOf(e.data[i].member.id)==-1){
+                                    if(havMember.length>0) havMember+=",";
+                                    havMember+=e.data[i].member.id;
+                                    havNum++;
+                                }
                                 if(ratingItems.indexOf(e.data[i].evaluationCriteriaName)==-1){
-                                    if(havMember.indexOf(e.data[i].member.id)==-1){
-                                        if(havMember.length>0) havMember+=",";
-                                        havMember+=e.data[i].member.id;
-                                        havNum++;
-                                    }
                                     if(ratingItems.length>0) ratingItems+=",";
                                     ratingItems+=e.data[i].evaluationCriteriaName;
                                 }
                                 if(gongyingshang.indexOf(e.data[i].projectRegister.member.account.accountName)==-1){
                                     if(gongyingshang.length>0) gongyingshang+=",";
-                                    gongyingshang+=e.data[i].projectRegister.member.account.accountName;
+                                    gongyingshang+=e.data[i].projectRegister.member.account.accountName+"||"+e.data[i].projectRegister.id;
                                 }
-                                dataMap[e.data[i].member.id+e.data[i].evaluationCriteriaName+e.data[i].projectRegister.member.account.accountName] = e.data[i];
+                                dataMap[e.data[i].member.id+e.data[i].evaluationCriteriaName+e.data[i].projectRegister.id] = e.data[i];
                             }
                             if(havNum==memberData.length){
                                 isEnd = true;
@@ -135,7 +144,10 @@
                             var gongyingshangTr = gongyingshang.split(",")
 
                             for(var k=0;k<gongyingshangTr.length;k++) { // 供应商
-                                trs+= `<tr style="font-weight: bold;"><td>供应商</td><td colspan="${memberIdsTr.length+2}">${gongyingshangTr[k]}</td></tr>`;
+                                var gongyingshangTrs = gongyingshangTr[k].split("||");
+                                var gongyingshangTrName = gongyingshangTrs[0];
+                                var gongyingshangTrId = gongyingshangTrs[1];
+                                trs+= `<tr style="font-weight: bold;"><td>供应商</td><td colspan="${memberIdsTr.length+2}">${gongyingshangTrName}</td></tr>`;
 
                                 var sumInfo = {};
                                 var zSum = 0;
@@ -147,19 +159,19 @@
 
                                     var sum = 0;
                                     for(var l=0;l<memberIdsTr.length;l++) {
-                                        var getData = dataMap[memberIdsTr[l]+ratingItemsTr[i]+gongyingshangTr[k]];
+                                        var getData = dataMap[memberIdsTr[l]+ratingItemsTr[i]+gongyingshangTrId];
                                         if(getData){
-                                            var score = dataMap[memberIdsTr[l]+ratingItemsTr[i]+gongyingshangTr[k]].score;
+                                            var score = dataMap[memberIdsTr[l]+ratingItemsTr[i]+gongyingshangTrId].score;
                                             sum+=Number(score);
-                                            row +="<td>"+score+"</td>";
+                                            row +=score==0?"<td>-</td>":"<td>"+score+"</td>";
 
-                                            if(!sumInfo[memberIdsTr[l]+gongyingshangTr[k]]) sumInfo[memberIdsTr[l]+gongyingshangTr[k]]=0;
-                                            sumInfo[memberIdsTr[l]+gongyingshangTr[k]] +=Number(score);
+                                            if(!sumInfo[memberIdsTr[l]+gongyingshangTrId]) sumInfo[memberIdsTr[l]+gongyingshangTrId]=0;
+                                            sumInfo[memberIdsTr[l]+gongyingshangTrId] +=Number(score);
                                         }else{
                                             sum+=Number(0);
                                             row +="<td></td>";
-                                            if(!sumInfo[memberIdsTr[l]+gongyingshangTr[k]]) sumInfo[memberIdsTr[l]+gongyingshangTr[k]]=0;
-                                            sumInfo[memberIdsTr[l]+gongyingshangTr[k]] +=Number(0);
+                                            if(!sumInfo[memberIdsTr[l]+gongyingshangTrId]) sumInfo[memberIdsTr[l]+gongyingshangTrId]=0;
+                                            sumInfo[memberIdsTr[l]+gongyingshangTrId] +=Number(0);
                                         }
                                     }
                                     var avg = (Number(sum)/memberIdsTr.length).toFixed(2);
@@ -170,9 +182,10 @@
                                 }
                                 var otherSumInfo="";
                                 for(var l=0;l<memberIdsTr.length;l++) {
-                                    otherSumInfo+=`<td>${sumInfo[memberIdsTr[l]+gongyingshangTr[k]]}</td>`;
+                                    otherSumInfo+=`<td>${sumInfo[memberIdsTr[l]+gongyingshangTrId]}</td>`;
                                 }
-                                memberScore[gongyingshangTr[k]]=zSum;
+
+                                memberScore[gongyingshangTrId]=zSum;
                                 trs+= `<tr style="font-weight: bold;"><td >合计</td>${otherSumInfo}<td>${zSum}</td><td>${zAvg}</td></tr>`;
                             }
 
@@ -213,8 +226,24 @@
                                         `;
                                     messageBox.style.display = 'block';
                                 } else {
-                                    alert('结果已提交！');
-                                    window.location.href = '/expert.html';
+                                    $.ajax({
+                                        url: "/evaluation/winBid",
+                                        type: "POST",
+                                        data: JSON.stringify({
+                                            "projectId": new URLSearchParams(window.location.search).get("id"),
+                                            "reviewType": 3
+                                        }),
+                                        contentType: "application/json",
+                                        success: function (e) {
+                                            if (e.status == 200) {
+                                                console.info(e.data);
+                                                alert('结果已提交！');
+                                                window.location.href = '/expert.html';
+                                            }else{
+                                                alert('结果提交失败，原因：'+e.message);
+                                            }
+                                        }
+                                    });
                                 }
                             });
                         }else{

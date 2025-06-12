@@ -872,7 +872,7 @@
     function showApplicationModal(projectName,id) {
 
         $.ajax({
-            url: "/projectRegister/getProject/"+id,
+            url: "/projectRegister/getProject/"+id+"/1",
             type: "GET",
             contentType: "application/json",
             success:function(e) {
@@ -934,7 +934,7 @@
     function showApplicationModal2(projectName,id) {
 
         $.ajax({
-            url: "/projectRegister/getProject/"+id,
+            url: "/projectRegister/getProject/"+id+"/1",
             type: "GET",
             contentType: "application/json",
             success:function(e) {

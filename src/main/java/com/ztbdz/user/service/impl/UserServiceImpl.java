@@ -230,6 +230,7 @@ public class UserServiceImpl implements UserService {
                 user.setMember(member);
                 Result result = this.create(user,"-1");
                 if(result.getStatus()!=200){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     log.error("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage()+",具体参数："+JSON.toJSONString(dataMap));
                     return Result.fail("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage());
                 }

@@ -371,6 +371,7 @@
         }
     }
 
+    var notPass = [];
     // 提交实质性符合评审
     function submitComplianceReview() {
         const form = document.getElementById('complianceEvaluationForm');
@@ -425,6 +426,12 @@
             var reviewDescription = $("textarea[name='supplier"+data.id+"_compliance_comment']").val();
             if($("input[name='supplier"+data.id+"_compliance']")){
                 var saveData={"sort":i+1,"evaluationCriteriaName":"实质性符合标准","reviewType":"2","isPass":isPass,"reviewDescription":reviewDescription,"projectId":projectId,"projectRegisterId":data.id};
+                if(isPass == 1){
+                    notPass.push({"sort":1,"evaluationCriteriaName":"价格分","score":0,"reviewDescription":reviewDescription,"reviewType":"3","projectId":projectId,"projectRegisterId":data.id});
+                    notPass.push({"sort":2,"evaluationCriteriaName":"技术参数分","score":0,"reviewDescription":reviewDescription,"reviewType":"3","projectId":projectId,"projectRegisterId":data.id});
+                    notPass.push({"sort":3,"evaluationCriteriaName":"业绩分","score":0,"reviewDescription":reviewDescription,"reviewType":"3","projectId":projectId,"projectRegisterId":data.id});
+                    notPass.push({"sort":4,"evaluationCriteriaName":"方案分","score":0,"reviewDescription":reviewDescription,"reviewType":"3","projectId":projectId,"projectRegisterId":data.id});
+                }
                 saveDataList.push(saveData);
             }
         }
@@ -469,15 +476,15 @@
             const performanceInput = form.querySelector(`input[name="supplier${supplier.id}_performance"]`);
             const solutionInput = form.querySelector(`input[name="supplier${supplier.id}_solution"]`);
             
-            const price = priceInput.value ? parseInt(priceInput.value) : NaN;
-            const tech = techInput.value ? parseInt(techInput.value) : NaN;
-            const performance = performanceInput.value ? parseInt(performanceInput.value) : NaN;
-            const solution = solutionInput.value ? parseInt(solutionInput.value) : NaN;
+            const price = priceInput ? parseInt(priceInput.value) : NaN;
+            const tech = techInput ? parseInt(techInput.value) : NaN;
+            const performance = performanceInput ? parseInt(performanceInput.value) : NaN;
+            const solution = solutionInput ? parseInt(solutionInput.value) : NaN;
             
             // 检查是否有未填项
             if (isNaN(price) || isNaN(tech) || isNaN(performance) || isNaN(solution)) {
                 hasEmptyFields = true;
-                if (priceInput.value || techInput.value || performanceInput.value || solutionInput.value) {
+                if (priceInput || techInput || performanceInput || solutionInput) {
                     allSuppliersFilled = false;
                 }
             }
@@ -497,11 +504,11 @@
 
 
             // 更新汇总显示
-            document.getElementById(`supplier${supplier.id}_price_summary`).textContent = isNaN(price) ? '-' : price;
-            document.getElementById(`supplier${supplier.id}_tech_summary`).textContent = isNaN(tech) ? '-' : tech;
-            document.getElementById(`supplier${supplier.id}_performance_summary`).textContent = isNaN(performance) ? '-' : performance;
-            document.getElementById(`supplier${supplier.id}_solution_summary`).textContent = isNaN(solution) ? '-' : solution;
-            document.getElementById(`supplier${supplier.id}_total_summary`).textContent = total === 0 ? '-' : total;
+            if(document.getElementById(`supplier${supplier.id}_price_summary`)) document.getElementById(`supplier${supplier.id}_price_summary`).textContent = isNaN(price) ? '-' : price;
+            if(document.getElementById(`supplier${supplier.id}_tech_summary`)) document.getElementById(`supplier${supplier.id}_tech_summary`).textContent = isNaN(tech) ? '-' : tech;
+            if(document.getElementById(`supplier${supplier.id}_performance_summary`)) document.getElementById(`supplier${supplier.id}_performance_summary`).textContent = isNaN(performance) ? '-' : performance;
+            if(document.getElementById(`supplier${supplier.id}_solution_summary`)) document.getElementById(`supplier${supplier.id}_solution_summary`).textContent = isNaN(solution) ? '-' : solution;
+            if(document.getElementById(`supplier${supplier.id}_total_summary`)) document.getElementById(`supplier${supplier.id}_total_summary`).textContent = total === 0 ? '-' : total;
         });
         if(isError){
             return;
@@ -640,16 +647,19 @@
         var bidInfo = {};
         // 保存评审数据
         var saveDataList = [];
+        if(notPass.length>0){
+            saveDataList = notPass;
+        }
         var projectId = new URLSearchParams(window.location.search).get("id");
         // 收集所有供应商评分数据
         const scores = [];
         document.querySelectorAll('#complianceSuppliersList .supplier-name').forEach(supplierEl => {
             const id = supplierEl.dataset.id;
             const name = supplierEl.dataset.name;
-            const price = parseInt(form.querySelector(`input[name="supplier${id}_price"]`).value) || 0;
-            const tech = parseInt(form.querySelector(`input[name="supplier${id}_tech"]`).value) || 0;
-            const performance = parseInt(form.querySelector(`input[name="supplier${id}_performance"]`).value) || 0;
-            const solution = parseInt(form.querySelector(`input[name="supplier${id}_solution"]`).value) || 0;
+            const price = form.querySelector(`input[name="supplier${id}_price"]`)? parseInt(form.querySelector(`input[name="supplier${id}_price"]`).value) : 0;
+            const tech = form.querySelector(`input[name="supplier${id}_tech"]`)? parseInt(form.querySelector(`input[name="supplier${id}_tech"]`).value) : 0;
+            const performance = form.querySelector(`input[name="supplier${id}_performance"]`)? parseInt(form.querySelector(`input[name="supplier${id}_performance"]`).value) : 0;
+            const solution = form.querySelector(`input[name="supplier${id}_solution"]`)? parseInt(form.querySelector(`input[name="supplier${id}_solution"]`).value) : 0;
             if(isError){
                 return;
             }
@@ -665,10 +675,10 @@
                 return;
             }
 
-            const priceReason = form.querySelector(`input[name="supplier${id}_price_reason"]`).value;
-            const techReason = form.querySelector(`input[name="supplier${id}_tech_reason"]`).value;
-            const performanceReason = form.querySelector(`input[name="supplier${id}_performance_reason"]`).value;
-            const solutionReason = form.querySelector(`input[name="supplier${id}_solution_reason"]`).value;
+            const priceReason = form.querySelector(`input[name="supplier${id}_price_reason"]`)? form.querySelector(`input[name="supplier${id}_price_reason"]`).value : 0;
+            const techReason = form.querySelector(`input[name="supplier${id}_tech_reason"]`)? form.querySelector(`input[name="supplier${id}_tech_reason"]`).value : 0;
+            const performanceReason = form.querySelector(`input[name="supplier${id}_performance_reason"]`)? form.querySelector(`input[name="supplier${id}_performance_reason"]`).value : 0;
+            const solutionReason = form.querySelector(`input[name="supplier${id}_solution_reason"]`)? form.querySelector(`input[name="supplier${id}_solution_reason"]`).value : 0;
 
             saveDataList.push({"sort":1,"evaluationCriteriaName":"价格分","score":price,"deductionReason":priceReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
             saveDataList.push({"sort":2,"evaluationCriteriaName":"技术参数分","score":tech,"deductionReason":techReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
@@ -700,6 +710,10 @@
             success:function(e) {
                 if(e.status != 200){
                     alert("资格评审提交失败："+e.message);
+                }else{
+                    if(notPass.length>0){
+                        notPass = [];
+                    }
                 }
             }
         });

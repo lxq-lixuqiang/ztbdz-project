@@ -66,11 +66,11 @@ public class CategoryServiceImpl implements CategoryService {
                 Integer newPath = Integer.valueOf(categoryList.get(categoryList.size()-1).getCategoryPath());
                 pathString = String.valueOf(++newPath);
                 if(pathString.length()<10){
-                    pathString=parentCategory.getCategoryPath()+"00"+categoryList.size();
+                    pathString=parentCategory.getCategoryPath()+"00"+(categoryList.size()+1);
                 }else if(pathString.length()<100){
-                    pathString=parentCategory.getCategoryPath()+"0"+categoryList.size();
+                    pathString=parentCategory.getCategoryPath()+"0"+(categoryList.size()+1);
                 }else if(pathString.length()>=100){
-                    pathString=parentCategory.getCategoryPath()+""+categoryList.size();
+                    pathString=parentCategory.getCategoryPath()+""+(categoryList.size()+1);
                 }
             }else{
                 pathString=parentCategory.getCategoryPath()+"001";

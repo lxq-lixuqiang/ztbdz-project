@@ -48,16 +48,17 @@ public class ProjectRegisterController {
         return projectRegisterService.update(projectRegister);
     }
 
-    @ApiOperation(value = "中标投标方")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-            @ApiImplicitParam(name = "ids", value = "投标id", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
-    })
-    @CheckToken
-    @PostMapping("winBid")
-    public Result winBid(@RequestParam(value="ids") List<Long> ids) {
-        return projectRegisterService.winBid(ids);
-    }
+    // 前端禁止调用方法来直接更新中标方，需要通过在后台计算来更新中标方
+//    @ApiOperation(value = "中标投标方")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+//            @ApiImplicitParam(name = "ids", value = "投标id", required=true, allowMultiple = true, dataType = "Long",paramType = "query")
+//    })
+//    @CheckToken
+//    @PostMapping("winBid")
+//    public Result winBid(@RequestParam(value="ids") List<Long> ids) {
+//        return projectRegisterService.winBid(ids);
+//    }
 
     @ApiOperation(value = "上传盖章合同")
     @ApiImplicitParams({
@@ -115,6 +116,18 @@ public class ProjectRegisterController {
     @GetMapping("getProject/{projectId}")
     public Result getProject(@PathVariable Long projectId) {
         return projectRegisterService.getProject(projectId,12);
+    }
+
+    @ApiOperation(value = "状态查询项目投标")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long"),
+            @ApiImplicitParam(name = "state", value = "状态", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @GetMapping("getProject/{projectId}/{state}")
+    public Result getProject(@PathVariable Long projectId,@PathVariable Integer state) {
+        return projectRegisterService.getProject(projectId,state);
     }
 
     @ApiOperation(value = "查询项目报名成功的投标")

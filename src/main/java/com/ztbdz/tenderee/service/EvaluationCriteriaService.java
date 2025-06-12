@@ -78,4 +78,11 @@ public interface EvaluationCriteriaService {
      * @return
      */
     Integer insert(EvaluationCriteria evaluationCriteria);
+
+    /**
+     * 项目计算中标投标方
+     * @param evaluationCriteria
+     * @return
+     */
+    Result winBid(EvaluationCriteria evaluationCriteria);
 }

@@ -118,7 +118,7 @@ public class LoginServiceImpl implements LoginService {
             if(roleService.verifyAuthority(url)){
                 return Result.fail("该账号没有权限，请切换对应账号访问！");
             }
-            dataMap.put("token",JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user));
+//            dataMap.put("token",JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user));
             return Result.ok("校验成功！",dataMap);
         }catch (Exception e){
             return Result.fail(e.getMessage());

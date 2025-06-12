@@ -388,7 +388,7 @@
                         return;
                     }
                     var specialityList = [];
-                    specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat+";",'sort':1};
+                    specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat,'sort':1};
                     if (subCat) {
                         specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+"-"+subCat+";",'sort':1};
                     }
@@ -543,7 +543,7 @@
                     return;
                 }
                 var specialityList = [];
-                specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat+";",'sort':1};
+                specialityList[0] = {'planNum':count,'num':planNum,'expertType':mainCat,'sort':1};
                 if (subCat) {
                     specialityList[0] ={'planNum':count,'num':planNum,'expertType':mainCat+"-"+subCat+";",'sort':1};
                 }
@@ -569,7 +569,7 @@
                         const subCat = selection.querySelector('.sub-category')?.value;
                         
                         if (mainCat) {
-                            specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+";",'sort':Number(i)+1};
+                            specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat,'sort':Number(i)+1};
                             if (subCat) {
                                 specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+1};
                             }
@@ -588,7 +588,7 @@
                         const subCat = selection.querySelector('.backup-sub-category')?.value;
                         
                         if (mainCat) {
-                            specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+";",'sort':Number(i)+count+1};
+                            specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat,'sort':Number(i)+count+1};
                             if (subCat) {
                                 specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+count+1};
                             }

@@ -59,9 +59,9 @@ public class SystemConfig {
     public static String DEFAULT_PASSWORD = "1234";
 
     /**
-     * token时效 默认30分钟
+     * token时效 默认1小时
      */
-    public static long TOKEN_VALIDITY = 1800000;
+    public static long TOKEN_VALIDITY = 3600000;
 
     /**
      * 文件上传地址
