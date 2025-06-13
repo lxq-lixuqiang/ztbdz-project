@@ -45,7 +45,7 @@ public class ResultReportServiceImpl implements ResultReportService {
         try{
             if(StringUtils.isEmpty(resultReport.getId())){
                 if(StringUtils.isEmpty(resultReport.getProject()) || StringUtils.isEmpty(resultReport.getProject().getId())) return Result.fail("项目id不能为空！");
-
+                // 不通过 废标操作
                 if("1".equals(resultReport.getProject().getIsPass().toString())){
                     List<ProjectRegister> projectRegisterList = projectRegisterService.selectByProjectId(resultReport.getProject().getId(),null);
                     List<Long> ids = new ArrayList();
@@ -55,6 +55,12 @@ public class ResultReportServiceImpl implements ResultReportService {
                     ProjectRegister projectRegister = new ProjectRegister();
                     projectRegister.setWinBidState(2);
                     projectRegisterService.updateWinBidState(ids,projectRegister); //更新中标状态
+
+                    Project project = projectService.selectById(resultReport.getProject().getId());
+                    project.setState(3);
+                    project.setIsPass(resultReport.getProject().getIsPass());
+                    project.setReviewEndDate(new Date());
+                    projectService.updateById(project); // 更新项目状态
                 }
                 resultReport.setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID))); // 保存创建人
                 Integer num = this.insert(resultReport);

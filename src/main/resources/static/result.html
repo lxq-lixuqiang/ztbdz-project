@@ -60,7 +60,7 @@
                         if(e.status == 200) {
                             if (e.data.length == 0) {
                                 alert("项目还没有抽取评审专家！");
-                                location.href = "/expert.html";
+                                window.history.back();
                                 return;
                             }
                             initData(e.data);
@@ -70,6 +70,7 @@
                     },
                     error:function(e) {
                         alert("获取评审专家错误，请联系管理员！");
+                        window.history.back();
                     }
                 });
             }

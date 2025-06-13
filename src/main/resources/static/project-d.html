@@ -99,6 +99,8 @@
 
         if(!projectId) {
             $('#details-content').html('<p>未指定项目ID</p>');
+            alert("未指定项目ID，请联系管理员！")
+            window.history.back();
             return;
         }
 
