@@ -93,10 +93,10 @@ public class ProjectServiceImpl  implements ProjectService {
     }
 
     @Override
-    public Result extractProjectList(Integer page, Integer size, Project project) {
+    public Result extractProjectList(Integer page, Integer size,Integer state, Project project) {
         try{
             PageHelper.startPage(page, size);
-            return Result.ok("查询成功！",new PageInfo(projectMapper.extractProjectList(project)));
+            return Result.ok("查询成功！",new PageInfo(projectMapper.extractProjectList(state,project)));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("查询需要抽取专家项目列表异常，原因："+e.getMessage());

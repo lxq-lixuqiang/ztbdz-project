@@ -17,6 +17,13 @@ public interface ReviewInfoService {
     Result get(Long id);
 
     /**
+     * 项目Id获取评审
+     * @param projectId
+     * @return
+     */
+    Result getProjectId(Long projectId);
+
+    /**
      * 新增评审
      * @param reviewInfo
      * @return

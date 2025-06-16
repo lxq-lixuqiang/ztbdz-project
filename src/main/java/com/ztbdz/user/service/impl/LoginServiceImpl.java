@@ -40,6 +40,7 @@ public class LoginServiceImpl implements LoginService {
         try{
             if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) return Result.fail("用户名和密码不能为空！");
             User user = userService.selectMember(null,username);
+            if(user.getIsStop() !=0) return Result.fail("账号已被停用，请联系管理员！");
             String passwordMD5 = MD5.md5String(password);
             if(user == null) return Result.fail("用户名或密码错误！");
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("用户名或密码错误！");

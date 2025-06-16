@@ -37,6 +37,18 @@ public class ReviewInfoController {
         return reviewInfoService.get(id);
     }
 
+    @ApiOperation(value = "查询评审")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目Id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("getProjectId/{projectId}")
+    public Result getProjectId(@PathVariable Long projectId) {
+        return reviewInfoService.getProjectId(projectId);
+    }
+
+
     @ApiOperation(value = "新增评审")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")

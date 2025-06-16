@@ -142,7 +142,7 @@
 
         function initProject(){
             $.ajax({
-                url: "/project/extractProjectList",
+                url: "/project/extractProjectList?state=1",
                 type: "POST",
                 contentType: "application/json",
                 success:function(e) {

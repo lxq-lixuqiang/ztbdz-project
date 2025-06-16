@@ -37,6 +37,8 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     private String workState;
     @ApiModelProperty(value = "最高学历")
     private String educational;
+    @ApiModelProperty(value = "职称")
+    private String position;
     @ApiModelProperty(value = "民族")
     private String nation;
     @ApiModelProperty(value = "所在区域")
@@ -47,7 +49,7 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     private String expertState;
     @ApiModelProperty(value = "专家类型")
     private String expertType;
-    @ApiModelProperty(value = "是否审核通过（0=等待审核 1=审核通过 1=未通过）")
+    @ApiModelProperty(value = "是否审核通过（0=等待审核 1=审核通过 2=未通过）")
     private Integer isCheck;
     @ApiModelProperty(value = "审核不通过原因")
     private String notCheckShow;

@@ -54,7 +54,7 @@ public class ExpertInfoController {
         return expertInfoService.update(expertInfo);
     }
 
-    @ApiOperation(value = "查询未审核专家")
+    @ApiOperation(value = "查询专家列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
@@ -66,7 +66,6 @@ public class ExpertInfoController {
                          @RequestParam(required = false) Integer size,
                          @RequestBody(required = false) ExpertInfo expertInfo) {
         if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
-        expertInfo.setIsCheck(0);
         return expertInfoService.list(page,size,expertInfo);
     }
 

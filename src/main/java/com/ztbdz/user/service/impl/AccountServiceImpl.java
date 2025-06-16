@@ -98,8 +98,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Integer count(Account account) throws Exception {
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
-        if(!StringUtils.isEmpty(account.getAccountName())) queryWrapper.eq("account_name",account.getAccountName());
-        if(!StringUtils.isEmpty(account.getAccountCode())) queryWrapper.eq("account_code",account.getAccountCode());
+        if(StringUtils.isEmpty(account.getAccountCode())) return 0;
+        queryWrapper.eq("account_code",account.getAccountCode());
         return accountMapper.selectCount(queryWrapper);
     }
 }

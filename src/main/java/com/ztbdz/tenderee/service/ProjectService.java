@@ -33,7 +33,7 @@ public interface ProjectService {
      * @param project
      * @return
      */
-    Result extractProjectList( Integer page, Integer size, Project project);
+    Result extractProjectList( Integer page, Integer size,Integer state, Project project);
 
     /**
      * 查询项目列表

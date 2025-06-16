@@ -2,6 +2,7 @@ package com.ztbdz.web.interceptor;
 
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.*;
+import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.user.service.MenuAuthorizeService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
@@ -29,6 +30,8 @@ public class DataInitializer {
     private MenuAuthorizeService menuAuthorizeService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private ExpertInfoService expertInfoService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initData() {
@@ -51,7 +54,7 @@ public class DataInitializer {
 
             //初始化 管理员
             if(redisTemplate.opsForValue().get("initAdmin") == null){
-                if(userService.selectMember(null,"admin")==null){
+                if(userService.selectMember(null,"admin")==null){ // 管理员
                     User user = new User();
                     user.setUsername("admin");
                     user.setPassword("123456");
@@ -59,10 +62,24 @@ public class DataInitializer {
                     member.setName("admin");
                     member.setRole(new Role("admin","管理员","管理员",0));
                     Account account = new Account();
-                    account.setAccountName("单位");
+                    account.setAccountName("管理员单位");
                     member.setAccount(account);
                     user.setMember(member);
                     userService.create(user,"-1");
+                }
+                if(userService.selectMember(null,"zj")==null){ // 专家组长
+                    Member member = new Member();
+                    member.setPhone("zj");
+                    member.setName("zj");
+                    member.setRole(new Role("expert","专家","专家",0));
+                    Account account = new Account();
+                    account.setAccountName("专家组长单位");
+                    member.setAccount(account);
+                    ExpertInfo expertInfo = new ExpertInfo();
+                    expertInfo.setIsAdmin(1);
+                    expertInfo.setIsCheck(1);
+                    expertInfo.setMember(member);
+                    expertInfoService.create(expertInfo);
                 }
                 redisTemplate.opsForValue().set("initAdmin",true);
             }
@@ -90,6 +107,7 @@ public class DataInitializer {
                     MenuAuthorize finance = new MenuAuthorize("财务管理页面","finance","/finance.html");
                     MenuAuthorize expertSelect = new MenuAuthorize("抽取专家页面","expertSelect","/expert-select.html");
                     MenuAuthorize manage = new MenuAuthorize("项目经理工作台","manage","/manage.html");
+                    MenuAuthorize printExpert = new MenuAuthorize("专家库管理","print-expert","/print-expert.html");
 
                     // 角色与菜单关联
                     // 管理员
@@ -134,6 +152,7 @@ public class DataInitializer {
                     projectManagerMenuList.add(project_d);
                     projectManagerMenuList.add(expert);
                     projectManagerMenuList.add(audit);
+                    projectManagerMenuList.add(printExpert);
                     saveDataMap.put("manage",projectManagerMenuList);
 
 

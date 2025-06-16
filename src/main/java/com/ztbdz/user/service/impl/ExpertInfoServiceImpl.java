@@ -50,7 +50,11 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
             user.setMember(expertInfo.getMember());
             user.setUsername(expertInfo.getMember().getPhone());
             user.setPassword(expertInfo.getMember().getPhone()+SystemConfig.DEFAULT_PASSWORD);
-            userService.create(user,null);
+            Result reslut = userService.create(user,null);
+            if(reslut.getStatus()!=200){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return reslut;
+            }
             expertInfo.setMemberId(user.getMember().getId());
             Integer num = this.insert(expertInfo);
             if(num<=0){
@@ -71,6 +75,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
             ExpertInfo expertInfo = this.selectByMemberId(memberId);
             if(expertInfo==null){
                 expertInfo = new ExpertInfo(); // 初始化投标方信息
+                expertInfo.setIsCheck(1);
                 expertInfo.setMemberId(memberId);
                 this.insert(expertInfo);
             }
@@ -136,12 +141,13 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
         try{
             if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
 
-            String[] fields = new String[]{"姓名","手机号","企业名称","专家编号","身份证号","专家证号","最高学历","专家类型","银行名称","银行卡号","是否组长（0=不是 1=是）","参加工作日期"};
+            String[] fields = new String[]{"姓名","手机号","企业名称","专家编号","身份证号","专家证号","职称","专家类型","银行名称","银行卡号","是否组长（0=不是 1=是）","参加工作日期"};
             List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);
             for(Map<String,String> dataMap : dataList){
                 String message = dataMap.get(fields[0]);
                 if(StringUtils.isEmpty(dataMap.get(fields[10]))) return Result.fail("解析'"+fields[0]+"'为【"+message+"】创建失败，原因：是否组长不能为空！");
                 ExpertInfo expertInfo = new ExpertInfo();
+                expertInfo.setIsCheck(1);
                 Member member = new Member();
                 member.setName(message);
                 member.setPhone(dataMap.get(fields[1]));
@@ -151,7 +157,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
                 expertInfo.setExpertCode(dataMap.get(fields[3]));
                 expertInfo.setIdCard(dataMap.get(fields[4]));
                 expertInfo.setExpertCard(dataMap.get(fields[5]));
-                expertInfo.setEducational(dataMap.get(fields[6]));
+                expertInfo.setPosition(dataMap.get(fields[6]));
                 expertInfo.setExpertType(dataMap.get(fields[7]));
                 expertInfo.setBankName(dataMap.get(fields[8]));
                 expertInfo.setBankCard(dataMap.get(fields[9]));

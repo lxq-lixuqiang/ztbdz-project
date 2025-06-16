@@ -39,7 +39,22 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
 
     @Override
     public Result get(Long id) {
-        return null;
+        try{
+            return Result.ok("查询成功！",this.selectById(id));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询评审信息异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result getProjectId(Long projectId) {
+        try{
+            return Result.ok("查询成功！",this.selectByProjectId(projectId));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("项目id查询评审信息异常，原因："+e.getMessage());
+        }
     }
 
     @Override
@@ -283,9 +298,17 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
             reviewInfo.setNumber(experIds.size());
             reviewInfo.setState(1);
             Long projectId = reviewInfo.getProject().getId();
-            this.deleteByProjectId(projectId); // 删除防止重复分配
-            winBidService.delete(projectId); // 删除防止重复分配
-            this.insert(reviewInfo);
+
+            ReviewInfo reviewInfo1 = this.selectByProjectId(projectId);
+            if(!StringUtils.isEmpty(reviewInfo1)){//备选专家重新赋值
+                reviewInfo.setId(reviewInfo1.getId());
+                reviewInfo.setSpareExpert(reviewInfo1.getSpareExpert());
+                reviewInfo.setSpareNumber(reviewInfo1.getSpareNumber());
+                this.update(reviewInfo);
+            }else{
+                this.insert(reviewInfo);
+            }
+            winBidService.delete(reviewInfo.getId()); // 删除防止重复分配
             for(Long experId : experIds){
                 WinBid winBid = new WinBid();
                 winBid.setMemberId(experId);
