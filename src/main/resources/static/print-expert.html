@@ -132,7 +132,7 @@
             }
             var account = {"accountName":data.company};
             var member = {"account":account,"name":data.name,"phone":data.phone};
-            var expert = {'isAdmin':2,'isCheck':1,"expertCard":data.cert,"position":data.title,"idCard":data.idCard,"member":member,"expertType":data.majorCategory+"-"+data.major+";"};
+            var expert = {'isAdmin':0,'isCheck':1,"expertCard":data.cert,"position":data.title,"idCard":data.idCard,"member":member,"expertType":data.majorCategory+"-"+data.major+";"};
             $.ajax({
                 url: "/expertInfo/create",
                 type: "POST",

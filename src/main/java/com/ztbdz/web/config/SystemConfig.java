@@ -272,7 +272,7 @@ public class SystemConfig {
             file.createNewFile();
 
             EasyExcel.write(file, entity)
-                    .sheet(fileInfo)
+                    .sheet(fileName)
                     .doWrite(dataList);
             byte[] body=FileUtils.readFileToByteArray(file);
             HttpHeaders headers=new HttpHeaders();

@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.user.mapper.UserMapper">
 	<select id="selectMember" resultMap="UserAndMember">
 		select 
-			*
+			*,m.is_stop as mIsStop
 		from
 		   user u
 		left join member m on u.member_id=m.id
@@ -30,5 +30,6 @@
 		<result property="member.address" column="address"/>
 		<result property="member.account.id" column="account_id"/>
 		<result property="member.role.id" column="role_id"/>
+		<result property="member.isStop" column="mIsStop"/>
 	</resultMap>
 </mapper>

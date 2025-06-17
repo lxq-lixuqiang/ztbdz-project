@@ -50,7 +50,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
             user.setMember(expertInfo.getMember());
             user.setUsername(expertInfo.getMember().getPhone());
             user.setPassword(expertInfo.getMember().getPhone()+SystemConfig.DEFAULT_PASSWORD);
-            Result reslut = userService.create(user,null);
+            Result reslut = userService.create(user,"-1");
             if(reslut.getStatus()!=200){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return reslut;
