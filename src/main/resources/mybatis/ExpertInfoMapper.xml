@@ -41,7 +41,7 @@
             </if>
 
         </if>
-        order by e.update_date
+        order by e.update_date desc
 	</select>
     <resultMap id="ExpertInfoAndMember" type="ExpertInfo">
         <result property="member.account.id" column="aId"/>
@@ -49,6 +49,7 @@
 
         <result property="member.id" column="member_id"/>
         <result property="member.name" column="name"/>
+        <result property="member.phone" column="phone"/>
     </resultMap>
 
 </mapper>

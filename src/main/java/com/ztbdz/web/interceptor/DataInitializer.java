@@ -97,6 +97,11 @@ public class DataInitializer {
                     Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
 
                     // 菜单
+                    MenuAuthorize index = new MenuAuthorize("首页","index","/index.html");
+                    MenuAuthorize login = new MenuAuthorize("登录","login","/login.html");
+                    MenuAuthorize login_out = new MenuAuthorize("退出","login-out","/login-out.html");
+                    MenuAuthorize reg = new MenuAuthorize("注册","reg","/reg.html");
+
                     MenuAuthorize audit = new MenuAuthorize("项目审查页面","audit","/audit.html");
                     MenuAuthorize tenderee = new MenuAuthorize("招标方管理页面","tenderee","/tenderee.html");
                     MenuAuthorize bider = new MenuAuthorize("投标方管理页面","bider","/bider.html");
@@ -108,6 +113,9 @@ public class DataInitializer {
                     MenuAuthorize expertSelect = new MenuAuthorize("抽取专家页面","expertSelect","/expert-select.html");
                     MenuAuthorize manage = new MenuAuthorize("项目经理工作台","manage","/manage.html");
                     MenuAuthorize printExpert = new MenuAuthorize("专家库管理","print-expert","/print-expert.html");
+                    MenuAuthorize result = new MenuAuthorize("专家评分汇总","result","/result.html");
+                    MenuAuthorize Bid_e_r = new MenuAuthorize("评标报告","Bid-e-r","/Bid-e-r.html");
+                    MenuAuthorize bid_invalid = new MenuAuthorize("政府采购废标报告","bid-invalid","/bid-invalid.html");
 
                     // 角色与菜单关联
                     // 管理员
@@ -131,6 +139,9 @@ public class DataInitializer {
                     List<MenuAuthorize> expertMenuList = new ArrayList();
                     expertMenuList.add(expert);
                     expertMenuList.add(Bid_evaluation);
+                    expertMenuList.add(result);
+                    expertMenuList.add(Bid_e_r);
+                    expertMenuList.add(bid_invalid);
                     saveDataMap.put("expert",expertMenuList);
 
                     // 财务
@@ -153,6 +164,7 @@ public class DataInitializer {
                     projectManagerMenuList.add(expert);
                     projectManagerMenuList.add(audit);
                     projectManagerMenuList.add(printExpert);
+                    projectManagerMenuList.add(result);
                     saveDataMap.put("manage",projectManagerMenuList);
 
 

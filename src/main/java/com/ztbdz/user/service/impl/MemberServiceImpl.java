@@ -182,7 +182,7 @@ public class MemberServiceImpl implements MemberService {
                 userService.delete(user.getId());
 
                 // 删除企业
-                accountService.delete(member.getAccount().getId());
+//                accountService.delete(member.getAccount().getId());
             }
 
             // 删除人员

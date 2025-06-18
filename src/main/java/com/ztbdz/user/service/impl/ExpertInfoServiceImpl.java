@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.ExpertInfoMapper;
 import com.ztbdz.user.pojo.*;
+import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.UserService;
@@ -33,6 +34,8 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     private MemberService memberService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AccountService accountService;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -87,16 +90,30 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Result update(ExpertInfo expertInfo) {
         try{
-            if(expertInfo.getMember()!=null) memberService.updateById(expertInfo.getMember());
+            if(expertInfo.getMember()!=null && expertInfo.getMember().getId()!=null){
+                if(memberService.updateById(expertInfo.getMember())==0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.fail("更新人员失败！");
+                }
+            }
+            if(expertInfo.getMember()!=null && expertInfo.getMember().getAccount()!=null && expertInfo.getMember().getAccount().getId()!=null){
+                if(accountService.updateById(expertInfo.getMember().getAccount())==0){
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return Result.fail("更新单位失败！");
+                }
+            }
             Integer num = this.updateById(expertInfo);
             if(num<=0){
-                return Result.fail("更新失败！");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return Result.fail("更新专家失败！");
             }
             return Result.ok("更新成功！");
         }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("更新专家方异常，原因："+e.getMessage());
         }
