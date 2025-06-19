@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.user.mapper.ExpertInfoMapper">
     <select id="selectMember" resultMap="ExpertInfoAndMember">
 		select
-			*,a.id as aId,a.account_name
+			*,e.id as eId,m.id as mId,a.id as aId,a.account_name
 		from
 		   expert_info e
 		left join member m on e.member_id = m.id
@@ -44,10 +44,11 @@
         order by e.update_date desc
 	</select>
     <resultMap id="ExpertInfoAndMember" type="ExpertInfo">
+        <result property="id" column="eId"/>
         <result property="member.account.id" column="aId"/>
         <result property="member.account.accountName" column="account_name"/>
 
-        <result property="member.id" column="member_id"/>
+        <result property="member.id" column="mId"/>
         <result property="member.name" column="name"/>
         <result property="member.phone" column="phone"/>
     </resultMap>

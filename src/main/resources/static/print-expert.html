@@ -133,6 +133,34 @@
                 }
             });
         }
+        function updateExpert(data){
+            if(!data.phone){
+                alert("电话号码不能为空！");
+                return;
+            }
+            if(!data.major){
+                alert("请选择专业！");
+                return;
+            }
+            var account = {"id":data.accountId,"accountName":data.company};
+            var member = {"id":data.memberId,"account":account,"name":data.name,"phone":data.phone};
+            var expert = {"id":data.id,"memberId":data.memberId,"expertCard":data.cert,"position":data.title,"idCard":data.idCard,"member":member,"expertType":data.majorCategory+"-"+data.major+";"};
+            $.ajax({
+                url: "/expertInfo/update",
+                type: "POST",
+                async: false,
+                data: JSON.stringify(expert),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        alert("修改专家成功！");
+                        window.location.reload();
+                    }else{
+                        alert('修改专家信息失败：'+e.message);
+                    }
+                }
+            });
+        }
         function initProject(){
             $.ajax({
                 url: "/project/extractProjectList?state=-1",
@@ -214,6 +242,7 @@
                             <td style="padding:10px; border:1px solid #ddd;">${expert.title}</td>
                             <td style="padding:10px; border:1px solid #ddd; text-align:center;">
                                 <button class="selectBtn" style="padding:5px 10px;">选择</button>
+                                <button onclick="updateInfo('${expert.id}')" style="padding:5px 10px;">修改</button>
                                 <button onclick="deleteInfo('${expert.memberId}')" style="padding:5px 10px;">删除</button>
                             </td>
                         </tr>
@@ -293,10 +322,14 @@
             // 表单提交
             $('#expertForm').on('submit', function(e) {
                 e.preventDefault();
-                
-                const newId = expertDatabase.length + 1;
+
+                var id = $("#expertForm").attr("data-id");
+                var accountId = $("#expertForm").attr("data-accountId");
+                var memberId = $("#expertForm").attr("data-memberId");
                 const newExpert = {
-                    id: newId,
+                    id: id,
+                    accountId: accountId,
+                    memberId: memberId,
                     name: $('#expertName').val().trim(),
                     cert: $('#expertCert').val().trim(),
                     company: $('#expertCompany').val().trim(),
@@ -308,7 +341,11 @@
                 };
                 
                 if(newExpert.name && newExpert.cert) {
-                    addExpert(newExpert);
+                    if(id){
+                        updateExpert(newExpert);
+                    }else{
+                        addExpert(newExpert);
+                    }
                 } else {
                     alert('姓名和专家证号不能为空!');
                 }
@@ -679,14 +716,37 @@
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    initExpert();
                     alert('删除专家成功');
+                    window.location.reload();
                 }else{
                     alert('删除专家信息失败：'+e.message);
                 }
             }
         });
 
+    }
+
+    function updateInfo(id){
+        $("#addExpertBtn").click();
+
+        var data;
+        for(var i=0;i<expertDatabase.length;i++){
+            if(id == expertDatabase[i].id){
+                data = expertDatabase[i]
+                break;
+            }
+        }
+        $("#addExpertModal h3").text("修改专家");
+        $("#expertForm").attr("data-id",data.id);
+        $("#expertForm").attr("data-accountId",data.accountId);
+        $("#expertForm").attr("data-memberId",data.memberId);
+        $("#expertName").val(data.name);
+        $('#expertCert').val(data.cert);
+        $('#expertCompany').val(data.company);
+        $('#expertTitle').val(data.title);
+        $("#expertMajor [value="+data.major+"]").attr("selected","selected");
+        $('#expertIdCard').val(data.idCard);
+        $('#expertPhone').val(data.phone);
     }
 
     // 初始化专家列表
@@ -707,7 +767,8 @@
                         <td style="padding:10px; border:1px solid #ddd;">${expert.title}</td>
                         <td style="padding:10px; border:1px solid #ddd; text-align:center;">
                             <button class="selectBtn" style="padding:5px 10px;">选择</button>
-                                <button onclick="deleteInfo('${expert.memberId}')" style="padding:5px 10px;">删除</button>
+                            <button onclick="updateInfo('${expert.id}')" style="padding:5px 10px;">修改</button>
+                            <button onclick="deleteInfo('${expert.memberId}')" style="padding:5px 10px;">删除</button>
                         </td>
                     </tr>
                 `;
@@ -726,7 +787,7 @@
                     expertDatabase = [];
                     for(var i=0;i<e.data.list.length;i++){
                         var dataInfo = e.data.list[i];
-                        expertDatabase[i] = {id:dataInfo.member.id,memberId:dataInfo.member.id,accountId:dataInfo.member.account.id,name:dataInfo.member.name,cert:(dataInfo.expertCard==null?'':dataInfo.expertCard),company:dataInfo.member.account.accountName,title:(dataInfo.position==null?"":dataInfo.position),majorCategory:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[0]:''),major:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[1]:'').replace(";",""),idCard:(dataInfo.idCard==null?"":dataInfo.idCard),phone:(dataInfo.member.phone==null?'':dataInfo.member.phone)};
+                        expertDatabase[i] = {id:dataInfo.id,memberId:dataInfo.member.id,accountId:dataInfo.member.account.id,name:dataInfo.member.name,cert:(dataInfo.expertCard==null?'':dataInfo.expertCard),company:dataInfo.member.account.accountName,title:(dataInfo.position==null?"":dataInfo.position),majorCategory:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[0]:''),major:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[1]:'').replace(";",""),idCard:(dataInfo.idCard==null?"":dataInfo.idCard),phone:(dataInfo.member.phone==null?'':dataInfo.member.phone)};
                     }
                     initExpertList();
                 }else{
