@@ -11,6 +11,7 @@ import com.ztbdz.tenderee.service.ReviewInfoService;
 import com.ztbdz.tenderee.service.SpecialityService;
 import com.ztbdz.tenderee.service.WinBidService;
 import com.ztbdz.user.pojo.ExpertInfo;
+import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
@@ -35,6 +36,8 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     private SpecialityService specialityService;
     @Autowired
     private WinBidService winBidService;
+    @Autowired
+    private ExpertInfoService expertInfoService;
 
 
     @Override
@@ -50,7 +53,16 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     @Override
     public Result getProjectId(Long projectId) {
         try{
-            return Result.ok("查询成功！",this.selectByProjectId(projectId));
+            ReviewInfo reviewInfo = this.selectByProjectId(projectId);
+            if(reviewInfo!=null && !StringUtils.isEmpty(reviewInfo.getSelectExpert())){
+                String selectExpertString = reviewInfo.getSelectExpert();
+                List<Long> expertIds = new ArrayList<Long>();
+                for(String selectExpert : selectExpertString.split(",")){
+                    expertIds.add(Long.valueOf(selectExpert));
+                }
+                reviewInfo.setSelectExpertList(expertInfoService.selectExpertTo(expertIds));
+            }
+            return Result.ok("查询成功！",reviewInfo);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("项目id查询评审信息异常，原因："+e.getMessage());

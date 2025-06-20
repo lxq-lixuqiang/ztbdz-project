@@ -7,6 +7,8 @@ import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.util.Result;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface ExpertInfoService {
 
     /**
@@ -76,4 +78,12 @@ public interface ExpertInfoService {
      * @return
      */
     Result uploadExcel(MultipartFile file);
+
+    
+    /**
+     * 多id获取专家信息
+     * @param expertIds
+     * @return
+     */
+    List<ExpertInfo> selectExpertTo(List<Long> expertIds) throws Exception;
 }

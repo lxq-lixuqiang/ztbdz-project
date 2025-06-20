@@ -11,4 +11,8 @@ import java.util.List;
 public interface ExpertInfoMapper extends BaseMapper<ExpertInfo> {
 
     List<ExpertInfo> selectMember(@Param("expertInfo") ExpertInfo expertInfo);
+
+    List<ExpertInfo> selectExpertTo(@Param("expertIds") List<Long> expertIds);
+
+
 }

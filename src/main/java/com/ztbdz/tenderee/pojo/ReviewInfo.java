@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ztbdz.user.pojo.ExpertInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -55,6 +56,9 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     @ApiModelProperty(value = "分配评审专家")
     @TableField(exist = false)
     private List<Long> expertIds;
+    @ApiModelProperty(value = "专家名单")
+    @TableField(exist = false)
+    private List<ExpertInfo> selectExpertList;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

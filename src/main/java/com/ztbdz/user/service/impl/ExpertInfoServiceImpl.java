@@ -196,4 +196,9 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
             return Result.error("解析Excel专家文件异常，原因："+e.getMessage());
         }
     }
+
+    @Override
+    public List<ExpertInfo> selectExpertTo(List<Long> expertIds)  throws Exception{
+        return expertInfoMapper.selectExpertTo(expertIds);
+    }
 }

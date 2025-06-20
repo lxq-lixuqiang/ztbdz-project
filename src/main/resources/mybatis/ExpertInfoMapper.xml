@@ -25,21 +25,12 @@
             <if test="expertInfo.isAdmin != null and expertInfo.isAdmin !=-1">
                 and e.is_admin = #{expertInfo.isAdmin}
             </if>
-            <if test="expertInfo.expertCard != null and expertInfo.expertCard.length>0">
-                and e.expert_card like concat('%',#{expertInfo.expertCard},'%')
+            <if test="expertInfo.expertCard != null and expertInfo.expertCard.length>0 and expertInfo.expertCard != null and expertInfo.expertCard.length>0 and expertInfo.member != null and expertInfo.member.name != null and expertInfo.member.name.length>0 and expertInfo.member.phone != null and expertInfo.member.phone.length>0">
+                and (e.expert_card like concat('%',#{expertInfo.expertCard},'%') or
+                      e.id_card like concat('%',#{expertInfo.idCard},'%') or
+                      m.name like concat('%',#{expertInfo.member.name},'%') or
+                      m.phone like concat('%',#{expertInfo.member.phone},'%'))
             </if>
-            <if test="expertInfo.idCard != null and expertInfo.idCard.length>0">
-                and e.id_card like concat('%',#{expertInfo.idCard},'%')
-            </if>
-            <if test="expertInfo.member != null">
-                <if test="expertInfo.member.name != null and expertInfo.member.name.length>0">
-                    and m.name like concat('%',#{expertInfo.member.name},'%')
-                </if>
-                <if test="expertInfo.member.phone != null and expertInfo.member.phone.length>0">
-                    and m.phone like concat('%',#{expertInfo.member.phone},'%')
-                </if>
-            </if>
-
         </if>
         order by e.update_date desc
 	</select>
@@ -52,6 +43,25 @@
         <result property="member.name" column="name"/>
         <result property="member.phone" column="phone"/>
     </resultMap>
-
+    <select id="selectExpertTo" resultMap="ExpertInfoAndMember">
+        select
+        *,e.id as eId,m.id as mId,a.id as aId,a.account_name
+        from
+        expert_info e
+        left join member m on e.member_id = m.id
+        left join role r on r.id = m.role_id
+        left join account a on a.id = m.account_id
+        WHERE
+        m.is_delete = 0
+        and m.is_stop = 0
+        and r.type='expert'
+        <if test="expertIds != null and expertIds.size()>0">
+            and e.id in
+            <foreach collection='expertIds' item='item' open='(' separator=',' close=')'>
+                #{item}
+            </foreach>
+        </if>
+        order by e.update_date desc
+    </select>
 </mapper>
 

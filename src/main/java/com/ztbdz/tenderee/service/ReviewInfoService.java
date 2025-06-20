@@ -3,6 +3,7 @@ package com.ztbdz.tenderee.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.ReviewInfo;
 import com.ztbdz.tenderee.pojo.Speciality;
+import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.util.Result;
 
 import java.util.List;

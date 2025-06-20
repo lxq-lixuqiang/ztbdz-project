@@ -155,3 +155,40 @@ function convertSize(size){
     }
 }
 
+// 分页按钮展示
+localStorage.removeItem('page'); // 分页页码
+localStorage.removeItem('data'); // 搜索参数
+function pageButton(data){
+    if(data.navigatepageNums.length>0){
+        var pageInfo = "";
+        if(1!= data.navigateFirstPage){
+            pageInfo +=`<button style="width:40px;height:40px;margin-right:10px;cursor: pointer;" onclick="pageShow('1')">1</button>`;
+            pageInfo +=`<span style="margin:0 10px;">...</span>`;
+        }
+        for(var i=0;i<data.navigatepageNums.length;i++){
+            var disabled = "";
+            if(data.navigatepageNums[i] == data.pageNum){
+                disabled = "disabled=true";
+            }
+            var noDisabled = "";
+            if(data.navigatepageNums[i] != data.pageNum){
+                noDisabled = "cursor: pointer;";
+            }
+            pageInfo +=`<button style="width:40px;height:40px;margin-right:10px;${noDisabled}" ${disabled}  onclick="pageShow('${data.navigatepageNums[i]}')" >${data.navigatepageNums[i]}</button>`;
+        }
+        if(data.pages!= data.navigateLastPage){
+            pageInfo +=`<span style="margin:0 10px;">...</span>`;
+            pageInfo +=`<button style="width:40px;height:40px;margin-right:10px;cursor: pointer;" onclick="pageShow('${data.pages}')">${data.pages}</button>`;
+        }
+        $("#pageInfo").html(pageInfo);
+    }else{
+        localStorage.setItem('page',1);
+        $("#pageInfo").html("");
+    }
+}
+
+function pageShow(page){
+    localStorage.setItem('page', page);
+    initExpert(JSON.parse(localStorage.getItem('data')));
+}
+

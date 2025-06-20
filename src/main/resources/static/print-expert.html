@@ -78,6 +78,7 @@
             </thead>
             <tbody id="expertList"></tbody>
         </table>
+        <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
         
         <div style="margin-top:30px; text-align:center;">
             <button id="addExpertBtn" style="padding:10px 20px; margin-right:10px;">添加专家</button>
@@ -210,52 +211,15 @@
             const searchText = $('#expertSearch').val().trim();
             var filteredExperts=[];
             if(searchText) {
-                const searchTerms = searchText.split(' ').filter(term => term.length > 0);
-                filteredExperts = expertDatabase.filter(expert => {
-                    // 支持多条件综合搜索
-                    return searchTerms.some(term => 
-                        expert.name.includes(term) || 
-                        expert.cert.includes(term) || 
-                        expert.idCard.includes(term) || 
-                        expert.phone.includes(term)
-                    );
-                });
-                
-
+                var member = {"name":searchText,"phone":searchText};
+                var data ={"expertCard":searchText,"idCard":searchText,"member":member};
+                localStorage.setItem('data',JSON.stringify(data));
+                localStorage.setItem('page',1);
+                initExpert(data)
             } else {
-                filteredExperts = expertDatabase;
-            }
-            const expertList = $('#expertList');
-            expertList.empty();
-
-            var sort = 1;
-            if(filteredExperts.length>0){
-                filteredExperts.forEach(expert => {
-                    const row = `
-                        <tr data-id="${expert.id}">
-                            <td style="padding:10px; border:1px solid #ddd; text-align:center">${sort}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${expert.name}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${expert.cert}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${expert.majorCategory}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${expert.major}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${expert.company}</td>
-                            <td style="padding:10px; border:1px solid #ddd;">${expert.title}</td>
-                            <td style="padding:10px; border:1px solid #ddd; text-align:center;">
-                                <button class="selectBtn" style="padding:5px 10px;">选择</button>
-                                <button onclick="updateInfo('${expert.id}')" style="padding:5px 10px;">修改</button>
-                                <button onclick="deleteInfo('${expert.memberId}')" style="padding:5px 10px;">删除</button>
-                            </td>
-                        </tr>
-                    `;
-                 sort++;
-                    expertList.append(row);
-                });
-            }else{
-                expertList.append(`
-                        <tr>
-                            <td colspan="8" style="padding:10px; border:1px solid #ddd; text-align:center">没有匹配的专家信息</td>
-                        </tr>
-                    `);
+                localStorage.removeItem('data');
+                localStorage.setItem('page',1);
+                initExpert();
             }
         });
 
@@ -663,14 +627,11 @@
                     success:function(e) {
                         if(e.status == 200){
                             selectedExperts=[];
-                            if(e.data!=null && e.data.selectExpert!=null){
-                                var sort = 0;
-                                expertDatabase.forEach(expert => {
-                                    if(e.data.selectExpert.indexOf(expert.id+"")>-1){
-                                        selectedExperts[sort] = expert;
-                                        sort++;
-                                    }
-                                });
+                            if(e.data!=null && e.data.selectExpertList!=null && e.data.selectExpertList.length>0){
+                                for(var i=0;i<e.data.selectExpertList.length;i++){
+                                    var dataInfo = e.data.selectExpertList[i];
+                                    selectedExperts[i] = {id:dataInfo.id,memberId:dataInfo.member.id,accountId:dataInfo.member.account.id,name:dataInfo.member.name,cert:(dataInfo.expertCard==null?'':dataInfo.expertCard),company:dataInfo.member.account.accountName,title:(dataInfo.position==null?"":dataInfo.position),majorCategory:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[0]:''),major:(dataInfo.expertType!=null && dataInfo.expertType.split("-").length>1?dataInfo.expertType.split("-")[1].replace(";",""):''),idCard:(dataInfo.idCard==null?"":dataInfo.idCard),phone:(dataInfo.member.phone==null?'':dataInfo.member.phone)};
+                                }
                                 updateSelectedExpertList();
                                 $('#selectedExperts').show();
                                 $("#selectedExpertButton").parent().hide();
@@ -744,9 +705,11 @@
         $('#expertCert').val(data.cert);
         $('#expertCompany').val(data.company);
         $('#expertTitle').val(data.title);
-        $("#expertMajor [value="+data.major+"]").attr("selected","selected");
         $('#expertIdCard').val(data.idCard);
         $('#expertPhone').val(data.phone);
+        if(data.major!="" && $("#expertMajor [value="+data.major+"]").length>0){
+            $("#expertMajor [value="+data.major+"]").attr("selected","selected");
+        }
     }
 
     // 初始化专家列表
@@ -776,20 +739,32 @@
             expertList.append(row);
         });
     }
-    function initExpert(){
+    function initExpert(data){
+        if(data){
+            data["isAdmin"]=-1;
+            data["isCheck"]=1;
+        }else{
+            data = {'isAdmin':-1,'isCheck':1};
+        }
+        var page = "";
+        var pageInfo = localStorage.getItem('page');
+        if(pageInfo){
+            page="?page="+pageInfo;
+        }
         $.ajax({
-            url: "/expertInfo/list?size=0",
+            url: "/expertInfo/list"+page,
             type: "POST",
-            data: JSON.stringify({'isAdmin':-1,'isCheck':1}),
+            data: JSON.stringify(data),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
                     expertDatabase = [];
                     for(var i=0;i<e.data.list.length;i++){
                         var dataInfo = e.data.list[i];
-                        expertDatabase[i] = {id:dataInfo.id,memberId:dataInfo.member.id,accountId:dataInfo.member.account.id,name:dataInfo.member.name,cert:(dataInfo.expertCard==null?'':dataInfo.expertCard),company:dataInfo.member.account.accountName,title:(dataInfo.position==null?"":dataInfo.position),majorCategory:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[0]:''),major:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[1]:'').replace(";",""),idCard:(dataInfo.idCard==null?"":dataInfo.idCard),phone:(dataInfo.member.phone==null?'':dataInfo.member.phone)};
+                        expertDatabase[i] = {id:dataInfo.id,memberId:dataInfo.member.id,accountId:dataInfo.member.account.id,name:dataInfo.member.name,cert:(dataInfo.expertCard==null?'':dataInfo.expertCard),company:dataInfo.member.account.accountName,title:(dataInfo.position==null?"":dataInfo.position),majorCategory:(dataInfo.expertType!=null?dataInfo.expertType.split("-")[0]:''),major:(dataInfo.expertType!=null && dataInfo.expertType.split("-").length>1?dataInfo.expertType.split("-")[1].replace(";",""):''),idCard:(dataInfo.idCard==null?"":dataInfo.idCard),phone:(dataInfo.member.phone==null?'':dataInfo.member.phone)};
                     }
                     initExpertList();
+                    pageButton(e.data);
                 }else{
                     alert('查询专家信息失败：'+e.message);
                 }
@@ -819,13 +794,16 @@
                     alert("导入专家信息成功！");
                 }else{
                     alert("导入专家失败，原因："+e.message)
+                    window.location.reload();
                 }
             },
             error: function (e) {
                 alert("导入专家失败，原因："+e.message);
+                window.location.reload();
             }
         });
     });
+
     </script>
     <!-- InstanceEndEditable -->
 </body>
