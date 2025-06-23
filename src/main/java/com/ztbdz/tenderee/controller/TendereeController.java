@@ -1,7 +1,6 @@
 package com.ztbdz.tenderee.controller;
 
 
-import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.tenderee.service.TendereeService;
 import com.ztbdz.web.config.SystemConfig;

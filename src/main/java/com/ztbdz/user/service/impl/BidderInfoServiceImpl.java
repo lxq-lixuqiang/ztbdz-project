@@ -5,8 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.BidderInfoMapper;
 import com.ztbdz.user.pojo.BidderInfo;
-import com.ztbdz.user.pojo.ExpertInfo;
-import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.service.BidderInfoService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.web.util.Result;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service

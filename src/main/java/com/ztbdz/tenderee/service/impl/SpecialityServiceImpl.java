@@ -2,7 +2,6 @@ package com.ztbdz.tenderee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.SpecialityMapper;
-import com.ztbdz.tenderee.pojo.ReviewInfo;
 import com.ztbdz.tenderee.pojo.Speciality;
 import com.ztbdz.tenderee.service.SpecialityService;
 import lombok.extern.slf4j.Slf4j;

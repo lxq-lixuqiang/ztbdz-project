@@ -3,7 +3,6 @@ package com.ztbdz.tenderee.controller;
 
 import com.ztbdz.tenderee.pojo.EvaluationCriteria;
 import com.ztbdz.tenderee.service.EvaluationCriteriaService;
-import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;

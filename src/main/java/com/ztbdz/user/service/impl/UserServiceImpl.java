@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public Result create(User user,String code) {
         try{
             //TODO 对比短信验证码
-//            if(!code.equals("-1")){
+//            if(!code.equals(Common.DEFAULT_VALUE)){
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
 //            if(StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
@@ -228,7 +228,7 @@ public class UserServiceImpl implements UserService {
                 role.setType(dataMap.get(fields[4]));
                 member.setRole(role);
                 user.setMember(member);
-                Result result = this.create(user,"-1");
+                Result result = this.create(user,Common.DEFAULT_VALUE);
                 if(result.getStatus()!=200){
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     log.error("解析'"+fields[0]+"'为【"+message+"】创建失败，原因："+result.getMessage()+",具体参数："+JSON.toJSONString(dataMap));

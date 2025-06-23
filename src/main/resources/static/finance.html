@@ -82,6 +82,7 @@
             <!-- 项目数据将通过JavaScript动态填充 -->
             </tbody>
         </table>
+        <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
     </div>
     <!-- InstanceEndEditable -->
 </body>
@@ -94,13 +95,20 @@
     $(function(){
         verifyLogin();
     })
-
+    function initPageShow(){
+        loadProjects();
+    }
     function loadProjects() {
         $("#loadingMessage").show();
         $("#emptyMessage").hide();
         $("#projectsTable").hide();
+        var page = "";
+        var pageInfo = localStorage.getItem('page');
+        if(pageInfo){
+            page="?page="+pageInfo;
+        }
         $.ajax({
-            url: "/projectRegister/auditList",
+            url: "/projectRegister/auditList"+page,
             type: "POST",
             contentType: "application/json",
             success:function(e) {
@@ -108,6 +116,7 @@
                     renderProjects(e.data);
                     $("#loadingMessage").hide();
                     $("#projectsTable").show();
+                    pageButton(e.data);
                 }else{
                     $("#emptyMessage").show().text("加载失败："+e.message);
                     $("#loadingMessage").hide();

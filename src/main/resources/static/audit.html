@@ -42,6 +42,7 @@
                 <!-- 可以添加更多项目行 -->
             </tbody>
         </table>
+        <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
     </div>
     <script id="projectTemplate" type="text/x-handlebars-template">
         {{#if list}}
@@ -74,10 +75,18 @@
         verifyLogin();
         initData();
 
+        function initPageShow(){
+            initData();
+        }
         // 加载数据
         function initData(){
+            var page = "";
+            var pageInfo = localStorage.getItem('page');
+            if(pageInfo){
+                page="?page="+pageInfo;
+            }
             $.ajax({
-                url: "/tenderee/page",
+                url: "/tenderee/page"+page,
                 type: "POST",
                 data: JSON.stringify({"project":{"isAudit":12}}),
                 contentType: "application/json",
@@ -85,6 +94,7 @@
                     if(e.status == 200){
                         var newTemplate = Handlebars.compile($("#projectTemplate").html())(e.data);
                         $("#projectList tbody").html(newTemplate);
+                        pageButton(e.data);
                     }else{
                         alert("获取项目列表失败："+e.message);
                     }

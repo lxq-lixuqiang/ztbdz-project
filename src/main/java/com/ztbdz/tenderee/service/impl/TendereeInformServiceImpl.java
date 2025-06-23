@@ -6,7 +6,6 @@ import com.ztbdz.tenderee.pojo.TendereeInform;
 import com.ztbdz.tenderee.service.TendereeInformService;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

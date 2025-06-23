@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.EvaluationCriteriaMapper;
 import com.ztbdz.tenderee.pojo.EvaluationCriteria;
 import com.ztbdz.tenderee.pojo.Project;
-import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.tenderee.service.EvaluationCriteriaService;
 import com.ztbdz.tenderee.service.ProjectRegisterService;
 import com.ztbdz.tenderee.service.ProjectService;
@@ -20,7 +19,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.sql.Array;
 import java.util.*;
 
 

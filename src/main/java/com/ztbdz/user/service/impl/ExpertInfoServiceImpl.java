@@ -11,6 +11,7 @@ import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.user.service.UserService;
 import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
             user.setMember(expertInfo.getMember());
             user.setUsername(expertInfo.getMember().getPhone());
             user.setPassword(expertInfo.getMember().getPhone()+SystemConfig.DEFAULT_PASSWORD);
-            Result reslut = userService.create(user,"-1");
+            Result reslut = userService.create(user,Common.DEFAULT_VALUE);
             if(reslut.getStatus()!=200){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return reslut;

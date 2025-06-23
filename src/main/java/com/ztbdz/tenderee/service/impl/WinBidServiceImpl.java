@@ -2,7 +2,6 @@ package com.ztbdz.tenderee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ztbdz.tenderee.mapper.WinBidMapper;
-import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.tenderee.pojo.WinBid;
 import com.ztbdz.tenderee.service.WinBidService;
 import lombok.extern.slf4j.Slf4j;

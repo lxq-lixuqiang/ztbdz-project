@@ -1,11 +1,9 @@
 package com.ztbdz.tenderee.service;
 
-import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import com.ztbdz.web.util.Result;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 

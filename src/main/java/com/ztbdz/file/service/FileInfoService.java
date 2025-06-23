@@ -2,7 +2,6 @@ package com.ztbdz.file.service;
 
 import com.ztbdz.file.pojo.FileInfo;
 import com.ztbdz.web.util.Result;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -7,6 +7,7 @@ import com.ztbdz.user.service.MenuAuthorizeService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
 import com.ztbdz.web.config.SystemConfig;
+import com.ztbdz.web.util.Common;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -65,7 +66,7 @@ public class DataInitializer {
                     account.setAccountName("管理员单位");
                     member.setAccount(account);
                     user.setMember(member);
-                    userService.create(user,"-1");
+                    userService.create(user,Common.DEFAULT_VALUE);
                 }
                 if(userService.selectMember(null,"zj")==null){ // 专家组长
                     Member member = new Member();

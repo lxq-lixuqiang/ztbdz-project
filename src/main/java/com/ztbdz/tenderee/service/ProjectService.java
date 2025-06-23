@@ -2,7 +2,6 @@ package com.ztbdz.tenderee.service;
 
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Project;
-import com.ztbdz.user.pojo.Role;
 import com.ztbdz.web.util.Result;
 
 import java.util.List;

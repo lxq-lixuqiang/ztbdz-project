@@ -3,7 +3,6 @@ package com.ztbdz.tenderee.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.pojo.Category;
 import com.ztbdz.web.util.Result;
-import com.ztbdz.web.util.TreeNode;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

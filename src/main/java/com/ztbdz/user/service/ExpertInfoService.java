@@ -1,8 +1,6 @@
 package com.ztbdz.user.service;
 
 import com.github.pagehelper.PageInfo;
-import com.ztbdz.user.pojo.Account;
-import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.util.Result;
 import org.springframework.web.multipart.MultipartFile;

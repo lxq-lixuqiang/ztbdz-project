@@ -5,8 +5,6 @@ import com.ztbdz.tenderee.pojo.Tenderee;
 import com.ztbdz.web.util.Result;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 public interface TendereeService {
 
     /**

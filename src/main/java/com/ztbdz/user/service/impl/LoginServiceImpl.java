@@ -1,7 +1,9 @@
 package com.ztbdz.user.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.ztbdz.user.pojo.*;
+import com.ztbdz.user.pojo.Landlord;
+import com.ztbdz.user.pojo.Member;
+import com.ztbdz.user.pojo.Role;
+import com.ztbdz.user.pojo.User;
 import com.ztbdz.user.service.*;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.interceptor.AuthenticationInterceptor;

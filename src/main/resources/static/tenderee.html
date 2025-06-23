@@ -330,6 +330,7 @@
 
                     </tbody>
                 </table>
+                <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
             </div>
             <div class="tab-content" id="project2">
                 <h3>正在进行项目</h3>
@@ -660,14 +661,22 @@
 
     }
 
+
+    function initPageShow(){
+        loadPublishedProjects();
+    }
     function loadPublishedProjects() {
         // 直接显示静态数据，不发起请求
         $("#loadingMessage").show();
         $("#emptyMessage").hide();
         $("#publishedProjects").hide();
-
+        var page = "";
+        var pageInfo = localStorage.getItem('page');
+        if(pageInfo){
+            page="?page="+pageInfo;
+        }
         $.ajax({
-            url: "/tenderee/page",
+            url: "/tenderee/page"+page,
             type: "POST",
             contentType: "application/json",
             success:function(e) {
@@ -675,6 +684,7 @@
                     $("#publishedProjects tbody").html(Handlebars.compile($("#projectsTemplate").html())(e.data));
                     $("#loadingMessage").hide();
                     $("#publishedProjects").show();
+                    pageButton(e.data);
                 }else{
                     alert("获取项目列表失败："+e.message);
                 }

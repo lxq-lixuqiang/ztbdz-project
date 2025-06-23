@@ -12,6 +12,8 @@ public interface Common {
     Integer FAIL = 201;
     /** 错误状态 */
     Integer ERORR = 500;
+    /** 默认值状态 用在包括：创建人员不需要短信验证码 */
+    String DEFAULT_VALUE= "-1";
     /** 正常状态：启用，未删除 */
     Integer ENABL = 0;
     /** 关闭状态：停用，已删除 */

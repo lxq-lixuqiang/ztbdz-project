@@ -57,7 +57,7 @@
 
         <if test="speciality != null">
             <if test="speciality.expertType != null and speciality.expertType.length() >0">
-                and e.expert_type like concat(#{speciality.expertType},'%')
+                and e.expert_type like concat('%',#{speciality.expertType},'%')
             </if>
             <if test="speciality.reviewArea != null and speciality.reviewArea.length() >0">
                 and e.region == #{item.reviewArea}

@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta charset="utf-8">
@@ -292,6 +292,7 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+                    <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
                 </div>
                 <div class="tab-content" id="profile">
                     <h3>企业注册信息</h3>
@@ -686,9 +687,17 @@
                 }
             });
         }
+        function initPageShow(){
+            applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
+        }
         function applyingInit(state,tbody,template){
+            var page = "";
+            var pageInfo = localStorage.getItem('page');
+            if(pageInfo){
+                page="?page="+pageInfo;
+            }
             $.ajax({
-                url: "/projectRegister/listApplying",
+                url: "/projectRegister/listApplying"+page,
                 type: "POST",
                 data: JSON.stringify({"state":state}),
                 contentType: "application/json",
@@ -696,6 +705,7 @@
                     if(e.status == 200){
                         var newTemplate = template(e.data);
                         tbody.html(newTemplate);
+                        pageButton(e.data);
                     }else{
                         alert("获取正在报名项目列表失败："+e.message);
                     }
