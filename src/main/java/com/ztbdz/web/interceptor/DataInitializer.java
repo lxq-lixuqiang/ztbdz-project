@@ -43,7 +43,7 @@ public class DataInitializer {
 
             //初始化 角色
             if(redisTemplate.opsForValue().get("initRole") == null){
-                if(roleService.countByTypeAndTypeName(null,"admin","管理员")==0) roleService.insert(new Role("admin","管理员","管理员",0));
+                if(roleService.countByTypeAndTypeName(null,"admin","审核管理员")==0) roleService.insert(new Role("admin","审核管理员","审核管理员",0));
                 if(roleService.countByTypeAndTypeName(null,"tenderee","招标方")==0) roleService.insert(new Role("tenderee","招标方","招标方",0));
                 if(roleService.countByTypeAndTypeName(null,"bidder","投标方")==0) roleService.insert(new Role("bidder","投标方","投标方",0));
                 if(roleService.countByTypeAndTypeName(null,"expert","专家")==0) roleService.insert(new Role("expert","专家","专家",0));
@@ -61,9 +61,9 @@ public class DataInitializer {
                     user.setPassword("123456");
                     Member member = new Member();
                     member.setName("admin");
-                    member.setRole(new Role("admin","管理员","管理员",0));
+                    member.setRole(new Role("admin","审核管理员","审核管理员",0));
                     Account account = new Account();
-                    account.setAccountName("管理员单位");
+                    account.setAccountName("审核管理员单位");
                     member.setAccount(account);
                     user.setMember(member);
                     userService.create(user,Common.DEFAULT_VALUE);
@@ -97,19 +97,20 @@ public class DataInitializer {
                     }
                     Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
 
-                    // 菜单
+                    // 菜单 游客访问
                     MenuAuthorize index = new MenuAuthorize("首页","index","/index.html");
                     MenuAuthorize login = new MenuAuthorize("登录","login","/login.html");
                     MenuAuthorize login_out = new MenuAuthorize("退出","login-out","/login-out.html");
                     MenuAuthorize reg = new MenuAuthorize("注册","reg","/reg.html");
 
+                    // 菜单 登录访问
                     MenuAuthorize audit = new MenuAuthorize("项目审查页面","audit","/audit.html");
                     MenuAuthorize tenderee = new MenuAuthorize("招标方管理页面","tenderee","/tenderee.html");
                     MenuAuthorize bider = new MenuAuthorize("投标方管理页面","bider","/bider.html");
                     MenuAuthorize application = new MenuAuthorize("投标方报名详情页","application","/Application.html");
                     MenuAuthorize project_d = new MenuAuthorize("项目详情","project-d","/project-d.html");
                     MenuAuthorize expert = new MenuAuthorize("专家管理页面","expert","/expert.html");
-                    MenuAuthorize Bid_evaluation = new MenuAuthorize("专家评审页面","Bid evaluation","/Bid evaluation.html");
+                    MenuAuthorize bid_evaluation = new MenuAuthorize("专家评审页面","Bid evaluation","/Bid evaluation.html");
                     MenuAuthorize finance = new MenuAuthorize("财务管理页面","finance","/finance.html");
                     MenuAuthorize expertSelect = new MenuAuthorize("抽取专家页面","expertSelect","/expert-select.html");
                     MenuAuthorize manage = new MenuAuthorize("项目经理工作台","manage","/manage.html");
@@ -139,7 +140,7 @@ public class DataInitializer {
                     // 专家
                     List<MenuAuthorize> expertMenuList = new ArrayList();
                     expertMenuList.add(expert);
-                    expertMenuList.add(Bid_evaluation);
+                    expertMenuList.add(bid_evaluation);
                     expertMenuList.add(result);
                     expertMenuList.add(Bid_e_r);
                     expertMenuList.add(bid_invalid);
