@@ -122,12 +122,12 @@
                     renderProjectDetails(response.data.project);
                 } else {
                     // API失败时尝试从bider.html获取模拟数据
-                    loadMockProjectDetails(projectId);
+                    alert("获取数据失败，原因："+response.message);
                 }
             },
-            error: function() {
+            error: function(response) {
                 // API失败时尝试从bider.html获取模拟数据
-                loadMockProjectDetails(projectId);
+                alert("获取数据失败，原因："+response.message);
             }
         });
     }
@@ -144,19 +144,6 @@
             </table>
         `;
         $('#details-content').html(detailsHtml);
-    }
-
-    function loadMockProjectDetails(projectId) {
-        // 模拟从bider.html获取的数据
-        const mockData = {
-            projectName: "模拟项目-" + projectId,
-            projectCode: "MOCK-" + projectId,
-            money: "100,000",
-            enrollEndDate: "2023-12-31",
-            bidOpeningTime: "2024-01-15",
-            description: "这是从模拟数据加载的项目详情，实际数据应从后端API获取"
-        };
-        renderProjectDetails(mockData);
     }
 
     function requestInvoice() {
