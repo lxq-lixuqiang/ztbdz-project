@@ -154,6 +154,13 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
+                            var begin = new Date(e.data.project.enrollEndDate).getTime();
+                            var now = new Date().getTime();
+                            if(now>begin){
+                                alert("已超过报名截止日期，无法进行报名！");
+                                window.history.back();
+                                return;
+                            }
                             projectData(e.data.project);
                         }else{
                             alert("获取项目信息失败："+e.message);

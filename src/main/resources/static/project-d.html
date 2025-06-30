@@ -114,7 +114,7 @@
                     var now = new Date().getTime();
                     if(now>begin){
                         alert("已超过开标时间，无法上传投标文件！");
-                        location.href='/bider.html';
+                        window.history.back();
                         return;
                     }
                     $("#download-btn").attr("data-file-id",response.data.project.procurementDocuments);

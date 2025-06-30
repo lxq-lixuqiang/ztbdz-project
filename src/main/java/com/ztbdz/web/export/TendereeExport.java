@@ -4,11 +4,15 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class TendereeExport {
+
+    public static Map<Integer,String> IS_AUDIT = new HashMap(){{
+        put(0,"未审核");
+        put(1,"通过");
+        put(2,"不通过");
+    }};
 
     /**
      * 项目已报名_导出数据
@@ -38,19 +42,7 @@ public class TendereeExport {
                 pageExport.setProjectCode(tenderee.getProject().getProjectCode());
                 pageExport.setEnrollEndDate(tenderee.getProject().getEnrollEndDate());
                 pageExport.setMoney(tenderee.getProject().getMoney());
-                String state = "";
-                switch (tenderee.getProject().getIsAudit()){
-                    case 0:
-                        state = "未审核";
-                        break;
-                    case 1:
-                        state = "通过";
-                        break;
-                    case 2:
-                        state = "不通过";
-                        break;
-                }
-                pageExport.setState(state);
+                pageExport.setState(IS_AUDIT.get(tenderee.getProject().getIsAudit()));
                 selectByProjectExportList.add(pageExport);
             }
             return selectByProjectExportList;

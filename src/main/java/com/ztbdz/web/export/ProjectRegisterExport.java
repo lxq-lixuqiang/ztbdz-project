@@ -5,11 +5,29 @@ import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.ProjectRegister;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ProjectRegisterExport {
+
+    public static Map<Integer,String> STATE = new HashMap(){{
+        put(0,"报名审核中");
+        put(1,"报名通过");
+        put(2,"报名未通过");
+        put(3,"资质未审核");
+        put(4,"资质通过");
+        put(5,"资质不通过");
+    }};
+    public static Map<Integer,String> STATE_02 = new HashMap(){{
+        put(0,"未审核");
+        put(1,"已审核");
+    }};
+
+    public static Map<Integer,String> IS_INVOICE = new HashMap(){{
+        put(0,"待处理");
+        put(1,"已开票");
+    }};
+
+
 
     /**
      * 项目已报名_导出数据
@@ -39,28 +57,7 @@ public class ProjectRegisterExport {
                 selectByProjectExport.setEnrollEndDate(projectRegister.getProject().getEnrollEndDate());
                 selectByProjectExport.setTendereeName(projectRegister.getProject().getTenderee().getTendereeName());
                 selectByProjectExport.setAccountName(projectRegister.getMember().getAccount().getAccountName());
-                String state = "";
-                switch (projectRegister.getState()){
-                    case 0:
-                        state = "报名审核中";
-                        break;
-                    case 1:
-                        state = "报名通过";
-                        break;
-                    case 2:
-                        state = "报名未通过";
-                        break;
-                    case 3:
-                        state = "资质未审核";
-                        break;
-                    case 4:
-                        state = "资质通过";
-                        break;
-                    case 5:
-                        state = "资质不通过";
-                        break;
-                }
-                selectByProjectExport.setState(state);
+                selectByProjectExport.setState(STATE.get(projectRegister.getState()));
                 selectByProjectExportList.add(selectByProjectExport);
             }
             return selectByProjectExportList;
@@ -99,16 +96,7 @@ public class ProjectRegisterExport {
                 selectInvoiceExport.setAccountCode(projectRegister.getMember().getAccount().getAccountCode());
                 selectInvoiceExport.setEmail(projectRegister.getMember().getAccount().getEmail());
                 selectInvoiceExport.setPaymentMoney(projectRegister.getPaymentMoney());
-                String invoice = "";
-                switch (projectRegister.getIsInvoice()){
-                    case 0:
-                        invoice = "待处理";
-                        break;
-                    case 1:
-                        invoice = "已开票";
-                        break;
-                }
-                selectInvoiceExport.setInvoice(invoice);
+                selectInvoiceExport.setInvoice(IS_INVOICE.get(projectRegister.getIsInvoice()));
                 selectInvoiceExportList.add(selectInvoiceExport);
             }
             return selectInvoiceExportList;
@@ -143,16 +131,7 @@ public class ProjectRegisterExport {
                 pageExport.setEnrollEndDate(project.getEnrollEndDate());
                 pageExport.setTendereeName(project.getProjectRegisters().getProject().getTenderee().getTendereeName());
                 pageExport.setProjectOverview(project.getProjectOverview());
-                String state = "";
-                switch (project.getProjectRegisters().getState()){
-                    case 0:
-                        state = "未审核";
-                        break;
-                    default:
-                        state = "已审核";
-                        break;
-                }
-                pageExport.setState(state);
+                pageExport.setState(STATE_02.get(project.getProjectRegisters().getState()));
                 pageExportList.add(pageExport);
             }
             return pageExportList;
