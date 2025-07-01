@@ -725,6 +725,10 @@
                 alert("请填写所有必填字段");
                 return true;
             }
+            if(editAccountMoney && editAccountMoney<=0){
+                alert("注册资本必须大于0");
+                return true;
+            }
 
 
             var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountMoney":editAccountMoney,"accountCodeFileId":fileId};
