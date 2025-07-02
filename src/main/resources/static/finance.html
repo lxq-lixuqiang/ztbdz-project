@@ -218,10 +218,9 @@
             }
         }else{
             notPassInfo = prompt("请输入不通过的原因:");
-            if(!notPassInfo){
-                if(notPassInfo==""){
-                    alert("必须填写不通过原因");
-                }
+            if(!notPassInfo.trim()){
+                alert("必须填写不通过原因");
+                audit(isPass);
                 return ;
             }
             isUpdate = true;
@@ -256,17 +255,6 @@
 
     }
 
-
-    // 查看缴费金额
-    function showPaymentAmount(companyName) {
-        // 模拟缴费金额数据
-        const mockAmounts = {
-            "ABC科技有限公司": "5000元",
-            "XYZ信息系统有限公司": "3000元"
-        };
-
-        alert(`${companyName}的缴费金额：${mockAmounts[companyName] || '未缴费'}`);
-    }
 
     // 查看缴费凭证
     function showPaymentVoucher(companyName,fileId,registerId,state) {

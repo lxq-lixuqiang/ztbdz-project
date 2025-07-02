@@ -792,10 +792,9 @@
             }
         }else{
             notPassInfo = prompt("请输入不通过的原因:");
-            if(!notPassInfo){
-                if(notPassInfo==""){
-                    alert("必须填写不通过原因");
-                }
+            if(!notPassInfo.trim()){
+                alert("必须填写不通过原因");
+                approveSupplier(isApproved)
                 return ;
             }
             isUpdate = true;
