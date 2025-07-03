@@ -382,8 +382,12 @@
         <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
-            <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">修改</button>
-            <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;{{#eq project.isAudit 2}}{{else}}display:none;{{/eq}}">原因</button>
+            {{#ne project.isAudit 0}}
+                <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
+            {{/ne}}
+            {{#eq project.isAudit 2}}
+                <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">原因</button>
+            {{/eq}}
         </td>
     </tr>
     {{/each}}
@@ -600,7 +604,7 @@
                 if(response.status == 200) {
                     $("#overview").attr("data-id","");
                     $("#overview").attr("data-projectid","");
-                    alert("项目发布成功！");
+                    alert("发布项目正在审核中！");
                     loadPublishedProjects(); // 刷新项目列表
                     showProjectTabs();
                 } else {
