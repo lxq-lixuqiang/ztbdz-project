@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : new_xy
+ Source Server         : mysql
  Source Server Type    : MySQL
- Source Server Version : 50744
- Source Host           : 180.76.56.49:3306
+ Source Server Version : 50720
+ Source Host           : localhost:3306
  Source Schema         : ztbdz
 
  Target Server Type    : MySQL
- Target Server Version : 50744
+ Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 12/06/2025 14:42:48
+ Date: 03/07/2025 17:25:30
 */
 
 SET NAMES utf8mb4;
@@ -130,7 +130,7 @@ CREATE TABLE `expert_info`  (
   `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `political_status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `expert_state` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `expert_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_type` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `emergency_phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `id_card_front` bigint(20) NULL DEFAULT NULL,
@@ -138,6 +138,7 @@ CREATE TABLE `expert_info`  (
   `bid_evaluation_experience` bigint(20) NULL DEFAULT NULL,
   `project_register_id` bigint(20) NULL DEFAULT NULL,
   `professional_field` bigint(20) NULL DEFAULT NULL,
+  `position` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `certificate` bigint(20) NULL DEFAULT NULL,
   `annual_certificate` bigint(20) NULL DEFAULT NULL,
   `not_check_show` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
