@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 03/07/2025 17:25:30
+ Date: 07/07/2025 14:40:18
 */
 
 SET NAMES utf8mb4;
@@ -458,7 +458,7 @@ CREATE TABLE `tenderee_inform`  (
   `id` bigint(20) NOT NULL,
   `tenderee_id` bigint(20) NULL DEFAULT NULL,
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `tenderee_inform_field` bigint(20) NULL DEFAULT NULL,
+  `tenderee_inform_field` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `type` int(11) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `is_public` int(11) NULL DEFAULT NULL,

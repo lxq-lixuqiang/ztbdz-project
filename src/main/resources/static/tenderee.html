@@ -151,9 +151,12 @@
             <label style="display:block; margin-bottom:5px;">公告类型</label>
             <select id="announcementType" style="width:100%; padding:8px; border:1px solid #ddd;">
                 <option value="">请选择公告类型</option>
+                <option value="投标">投标公告</option>
+                <option value="中标">中标公告</option>
                 <option value="延期">延期公告</option>
                 <option value="废标">废标公告</option>
                 <option value="更正">更正公告</option>
+                <option value="其他">其他</option>
             </select>
         </div>
         <div style="margin-bottom:15px;">
@@ -162,8 +165,14 @@
         </div>
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">补充内容</label>
-            <input id="supplementaryContent" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+            <input id="supplementaryContent" type="text" style="width:100%; padding:8px; border:1px solid #ddd;">
         </div>
+
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">公告文件</label>
+            <input data-file-id="" id="tendereeInformField" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;">
+        </div>
+
         <div style="text-align:center;">
             <button onclick="submitAnnouncement()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">发布公告</button>
         </div>
@@ -638,6 +647,14 @@
             $("#fileUpload").attr("data-file-id",fileId);
         });
 
+        $("#tendereeInformField").on('change', function () {
+            if(this.files.length==0){
+                return;
+            }
+            var fileId = uploadFile(this.files);
+            $("#tendereeInformField").attr("data-file-id",fileId);
+        });
+
         // 加载已发布项目列表
         loadPublishedProjects();
     });
@@ -715,18 +732,20 @@
         $("#announcementModal").hide();
     }
 
+    var announcementModal = $("#announcementModal").html();
     // 提交公告
     function submitAnnouncement() {
         const title = $("#title").val();
         const type = $("#announcementType").val();
         const content = $("#announcementContent").val();
         const supplementaryContent = $("#supplementaryContent").val();
+        const tendereeInformField = $("#tendereeInformField").attr("data-file-id");
 
         if(!title || !type || !content) {
             alert("请填写完整的公告信息");
             return;
         }
-        var data = {"title":title,"content":content,"tendereeInformType":type,"supplementaryContent":supplementaryContent,"isPublic":1,"type":0};
+        var data = {"title":title,"content":content,"tendereeInformType":type,"supplementaryContent":supplementaryContent,"isPublic":1,"type":0,"tendereeInformField":tendereeInformField};
         $.ajax({
             url: "/tendereeInfo/create",
             type: "POST",
@@ -736,6 +755,7 @@
                 if(e.status == 200){
                     alert(`已成功发布${type}公告`);
                     closeAnnouncementModal();
+                    $("#announcementModal").html(announcementModal); // 清空数据
                 }else{
                     alert("发布公告失败："+e.message);
                 }

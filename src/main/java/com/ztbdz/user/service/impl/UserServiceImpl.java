@@ -212,7 +212,7 @@ public class UserServiceImpl implements UserService {
         try{
             if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
 
-            String[] fields = new String[]{"用户名","密码","姓名","企业名称","角色类型"};
+            String[] fields = new String[]{"用户名","密码","姓名","企业名称","角色类型","手机号"};
             List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);
             for(Map<String,String> dataMap : dataList){
                 String message = dataMap.get(fields[0]);
@@ -227,6 +227,7 @@ public class UserServiceImpl implements UserService {
                 Role role = new Role();
                 role.setType(dataMap.get(fields[4]));
                 member.setRole(role);
+                member.setPhone(dataMap.get(fields[5]));
                 user.setMember(member);
                 Result result = this.create(user,Common.DEFAULT_VALUE);
                 if(result.getStatus()!=200){

@@ -13,6 +13,7 @@ import com.ztbdz.web.token.LoginToken;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.JwtUtil;
 import com.ztbdz.web.util.TokenBlacklistService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 @Component
+@Slf4j
 public class AuthenticationInterceptor implements HandlerInterceptor {
     public UserService userService;
     public TokenBlacklistService blacklistService;
@@ -59,9 +61,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             CheckToken checkToken = method.getAnnotation(CheckToken.class);
             if (checkToken.required()) {
                 // 校验token
-                User user = this.verifyLogin(token);
-                SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
-                return true;
+                try{
+                    User user = this.verifyLogin(token);
+                    SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
+                    return true;
+                }catch (Exception e){
+                    log.error("访问地址："+httpServletRequest.getRequestURI());
+                    throw new RuntimeException(e.getMessage());
+                }
             }
         }
         return true;
