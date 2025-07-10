@@ -96,6 +96,9 @@
                             .replaceAll("[确定废标的日期]",nowDate)
                             .replaceAll("[报告日期]",nowDate);
                         $("#reportContent").html(content);
+                    }else{
+                        alert("获取项目信息错误："+e.message);
+                        window.history.back();
                     }
                 },
                 error:function(e) {

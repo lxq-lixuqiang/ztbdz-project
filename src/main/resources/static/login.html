@@ -25,16 +25,6 @@
     <div style="width:1040px; min-height:calc(100vh - 120px); display:flex; justify-content:center; align-items:center;">
         <div style="width:500px; padding:30px; background:#f5f5f5; border-radius:10px;">
             <h2 style="text-align:center; margin-bottom:30px;">用户登录</h2>
-            <!--<form action="login" method="post" onsubmit="return handleLogin()">-->
-            <script>
-                function handleLogin() {
-                    // 这里应该添加实际的登录逻辑
-                    // 登录成功后设置cookie并跳转
-                    document.cookie = "token=logged_in; path=/";
-                    document.cookie = "username=" + encodeURIComponent(document.querySelector('input[type="text"]').value) + "; path=/";
-                    return true;
-                }
-            </script>
                 <div style="margin-bottom:20px;">
                     <label style="display:block; margin-bottom:5px;">用户名</label>
                     <input name="username" type="text" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;">
@@ -44,7 +34,6 @@
                     <input type="password" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;">
                 </div>
                 <button type="submit" style="width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">登录</button>
-            <!--</form>-->
         </div>
     </div>
     <!-- InstanceEndEditable -->
