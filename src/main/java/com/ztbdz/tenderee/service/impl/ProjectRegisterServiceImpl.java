@@ -255,7 +255,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public ProjectRegister selectById(Long id) throws Exception {
         ProjectRegister projectRegister = projectRegisterMapper.selectProjectAndMemberById(id);
-        projectRegister.setBidMoneyUppercase(SystemConfig.digitUppercase(Double.valueOf(projectRegister.getBidMoney())));
+        if(!StringUtils.isEmpty(projectRegister.getBidMoney())) projectRegister.setBidMoneyUppercase(SystemConfig.digitUppercase(Double.valueOf(projectRegister.getBidMoney())));
         return projectRegister;
     }
 

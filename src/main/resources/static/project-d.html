@@ -53,7 +53,7 @@
         <!-- 4. 上传投标文件 -->
         <div>
             <button id="upload-btn" style="padding:10px 20px; background:#9C27B0; color:white; border:none; cursor:pointer;">
-                上传投标文件
+                未上传投标文件
             </button>
         </div>
     </div>
@@ -95,9 +95,9 @@
 
     function loadProjectDetails() {
         const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('id');
+        const id = urlParams.get('id');
 
-        if(!projectId) {
+        if(!id) {
             $('#details-content').html('<p>未指定项目ID</p>');
             alert("未指定项目ID，请联系管理员！")
             window.history.back();
@@ -106,7 +106,7 @@
 
         // 首先尝试从后端API获取数据
         $.ajax({
-            url: '/project/get/' + projectId,
+            url: '/projectRegister/get/' + id,
             type: 'GET',
             success: function(response) {
                 if(response.status == 200) {
@@ -118,11 +118,14 @@
                         return;
                     }
                     $("#download-btn").attr("data-file-id",response.data.project.procurementDocuments);
-
+                    if(response.data.bidDocumentId){
+                        $("#upload-btn").text("已上传投标文件");
+                    }
                     renderProjectDetails(response.data.project);
                 } else {
                     // API失败时尝试从bider.html获取模拟数据
                     alert("获取数据失败，原因："+response.message);
+                    window.history.back();
                 }
             },
             error: function(response) {
@@ -195,16 +198,17 @@
             }
             var fileId = uploadFile(this.files);
             const urlParams = new URLSearchParams(window.location.search);
-            const rid = urlParams.get('rid');
+            const id = urlParams.get('id');
 
             $.ajax({
                 url: '/projectRegister/update',
                 type: 'POST',
                 contentType: "application/json",
-                data: JSON.stringify({"id":rid,"bidDocumentId":fileId}),
+                data: JSON.stringify({"id":id,"bidDocumentId":fileId}),
                 success: function(response) {
                     if(response.status == 200) {
                         alert('投标文件上传成功');
+                        $("#upload-btn").text("已上传投标文件");
                     } else {
                         alert('上传失败: ' + response.message);
                     }
