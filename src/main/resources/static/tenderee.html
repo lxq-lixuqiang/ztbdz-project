@@ -207,7 +207,7 @@
         <div class="content-area">
             <div class="tab-header">
                 <div class="tab-item active" data-tab="overview">综合</div>
-                <div class="tab-item" data-tab="publish">发布项目</div>
+                <div class="tab-item" onclick="clearPublishInfo()" data-tab="publish">发布项目</div>
                 <div class="tab-item" data-tab="application">项目已报名</div>
                 <div class="tab-item" data-tab="project1">已发布项目</div>
                 <div class="tab-item" data-tab="project2">正在进行项目</div>
@@ -514,6 +514,13 @@
             }
         });
     }
+    var isClear = false;
+    function clearPublishInfo(){
+        if(isClear){
+            $("#publish").html(publishInfo);
+            isClear = false;
+        }
+    }
 
     function saveData(){
         var projectName = $("#projectName").val();
@@ -527,8 +534,8 @@
         var senrollStartDate = $("#senrollStartDate").val();
         var enrollEndDate = $("#enrollEndDate").val();
         var registrationFee = $("#registrationFee").val();
-        var id = $("#overview").attr("data-id");
-        var projectid = $("#overview").attr("data-projectid");
+        var id = $("#publishForm").attr("data-id");
+        var projectid = $("#publishForm").attr("data-projectid");
         var tendereeDate = $("#tendereeDate").val();
         if(money<0){
             alert("项目预算必须大于或等于0");
@@ -611,11 +618,13 @@
             contentType: "application/json",
             success: function(response) {
                 if(response.status == 200) {
-                    $("#overview").attr("data-id","");
-                    $("#overview").attr("data-projectid","");
+                    $("#publishForm").attr("data-id","");
+                    $("#publishForm").attr("data-projectid","");
                     alert("发布项目正在审核中！");
                     loadPublishedProjects(); // 刷新项目列表
                     showProjectTabs();
+                    isClear = true;
+                    clearPublishInfo();
                 } else {
                     alert("发布项目失败：" + (response.message || "未知错误"));
                 }
@@ -635,11 +644,13 @@
         });
     }
 
+    var publishInfo;
     $(function() {
         // 初始化
         verifyLogin();
+        publishInfo = $("#publish").html();
 
-        $("#fileUpload").on('change', function () {
+        $("body").on('change','#fileUpload', function () {
             if(this.files.length==0){
                 return;
             }
@@ -647,7 +658,7 @@
             $("#fileUpload").attr("data-file-id",fileId);
         });
 
-        $("#tendereeInformField").on('change', function () {
+        $("body").on('change','#tendereeInformField', function () {
             if(this.files.length==0){
                 return;
             }
@@ -1045,8 +1056,9 @@
     }
 
     function loadData(data){
-        $("#overview").attr("data-id",data.id);
-        $("#overview").attr("data-projectid",data.project.id);
+        isClear = true;
+        $("#publishForm").attr("data-id",data.id);
+        $("#publishForm").attr("data-projectid",data.project.id);
 
         $("#projectName").val(data.project.projectName);
         $("#projectCode").val(data.project.projectCode);
