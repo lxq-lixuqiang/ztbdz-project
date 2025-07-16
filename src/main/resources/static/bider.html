@@ -149,7 +149,6 @@
         document.getElementById('editContactPerson').value = document.getElementById('contactPerson').textContent;
         document.getElementById('editContactPhone').value = document.getElementById('contactPhone').textContent;
         document.getElementById('editContactEmail').value = document.getElementById('contactEmail').textContent;
-        document.getElementById('editAccountMoney').value = document.getElementById('accountMoney').textContent;
         
         // 切换显示/编辑模式
         document.getElementById('companyInfoDisplay').style.display = 'none';
@@ -178,7 +177,6 @@
         document.getElementById('contactPerson').textContent = document.getElementById('editContactPerson').value;
         document.getElementById('contactPhone').textContent = document.getElementById('editContactPhone').value;
         document.getElementById('contactEmail').textContent = document.getElementById('editContactEmail').value;
-        document.getElementById('accountMoney').textContent = document.getElementById('editAccountMoney').value;
         
         // 更新已上传文件显示
         const files = document.getElementById('certificateUpload').files;
@@ -285,7 +283,6 @@
                         <p><strong>联系人：</strong><span id="contactPerson"></span></p>
                         <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
-                        <p><strong>注册资本：</strong><span id="accountMoney"></span></p>
                         
                         <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                             <h4>资质文件</h4>
@@ -317,10 +314,6 @@
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">电子邮箱</label>
                             <input type="email" id="editContactEmail" style="width:100%; padding:8px; border:1px solid #ddd;" required>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">注册资本/元</label>
-                            <input type="number" id="editAccountMoney" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
 
                         <div style="margin:20px 0; border-top:1px solid #eee; padding-top:15px;">
@@ -565,7 +558,7 @@
                         success:function(e) {
                             if(e.status == 200){
                                 for(var i=0;i<e.data.length;i++){
-                                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）</a></p>";
+                                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）<span onclick='deleteFile(\""+e.data[i].id+"\")' id='delete"+e.data[i].id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
                                 }
                             }else{
                                 alert("获取文件信息失败："+e.message);
@@ -581,13 +574,18 @@
                     return;
                 }
                 var fileId = uploadFile(this.files);
-                var data = {"id":getMember().account.id,"accountCodeFileId":fileId}
-                $("#certificateUpload").attr("data-file-id",fileId);
+                var datafileid = $("#certificateUpload").attr("data-file-id");
+                if(datafileid){
+                    datafileid+=",";
+                }
+                datafileid+=fileId;
+                var data = {"id":getMember().account.id,"accountCodeFileId":datafileid}
+                $("#certificateUpload").attr("data-file-id",datafileid);
                 updateAccount(data);
                 var fileIds = fileId.split(",");
-                var fileName = "";
+                var fileName = $("#certificateFiles p").html();
                 for(var i=0;i<this.files.length;i++){
-                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileIds[i]+"\")' id='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
                 }
                 $("#certificateFiles p").html(fileName);
                 $("#uploadedFilesList p").html(fileName);
@@ -654,6 +652,29 @@
             }
 
         })
+
+        function deleteFile(id){
+            var a = $("#delete"+id).parent();
+            a.removeAttr("href");
+            var datafileid = $("#certificateUpload").attr("data-file-id");
+            if(datafileid){
+                var files = datafileid.split(",");
+                var fileId = "";
+                for(var i=0;i<files.length;i++){
+                    if(files[i] != id){
+                        if(fileId.length>0){
+                            fileId+=",";
+                        }
+                        fileId+=files[i];
+                    }
+                }
+                var data = {"id":getMember().account.id,"accountCodeFileId":fileId}
+                $("#certificateUpload").attr("data-file-id",fileId);
+                updateAccount(data);
+                a.parent().remove();
+                alert("删除成功！")
+            }
+        }
         function availableInit(state,tbody,template){
             $.ajax({
                 url: "/project/listAvailable",
@@ -701,20 +722,15 @@
             var editContactPerson = $("#editContactPerson").val();
             var editContactPhone = $("#editContactPhone").val();
             var editContactEmail = $("#editContactEmail").val();
-            var editAccountMoney = $("#editAccountMoney").val();
             var fileId = $("#certificateUpload").attr("data-file-id");
 
             if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone) {
                 alert("请填写所有必填字段");
                 return true;
             }
-            if(editAccountMoney && editAccountMoney<=0){
-                alert("注册资本必须大于0");
-                return true;
-            }
 
 
-            var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountMoney":editAccountMoney,"accountCodeFileId":fileId};
+            var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountCodeFileId":fileId};
             updateAccount(data);
             return false;
         };

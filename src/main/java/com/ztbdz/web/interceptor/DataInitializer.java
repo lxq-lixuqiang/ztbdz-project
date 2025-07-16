@@ -48,7 +48,7 @@ public class DataInitializer {
                 if(roleService.countByTypeAndTypeName(null,"bidder","投标方")==0) roleService.insert(new Role("bidder","投标方","投标方",0));
                 if(roleService.countByTypeAndTypeName(null,"expert","专家")==0) roleService.insert(new Role("expert","专家","专家",0));
                 if(roleService.countByTypeAndTypeName(null,"finance","财务")==0) roleService.insert(new Role("finance","财务","财务",0));
-                if(roleService.countByTypeAndTypeName(null,"expertSelect","抽取专家员")==0) roleService.insert(new Role("expertSelect","抽取专家员","抽取专家员",0));
+//                if(roleService.countByTypeAndTypeName(null,"expertSelect","抽取专家员")==0) roleService.insert(new Role("expertSelect","抽取专家员","抽取专家员",0));
                 if(roleService.countByTypeAndTypeName(null,"manage","项目经理")==0) roleService.insert(new Role("manage","项目经理","项目经理",0));
                 redisTemplate.opsForValue().set("initRole",true);
             }
@@ -152,9 +152,9 @@ public class DataInitializer {
                     saveDataMap.put("finance",treasurerMenuList);
 
                     // 抽取专家员
-                    List<MenuAuthorize> extractExpertMenuList = new ArrayList();
-                    extractExpertMenuList.add(expertSelect);
-                    saveDataMap.put("expertSelect",extractExpertMenuList);
+//                    List<MenuAuthorize> extractExpertMenuList = new ArrayList();
+//                    extractExpertMenuList.add(expertSelect);
+//                    saveDataMap.put("expertSelect",extractExpertMenuList);
 
                     // 项目经理
                     List<MenuAuthorize> projectManagerMenuList = new ArrayList();

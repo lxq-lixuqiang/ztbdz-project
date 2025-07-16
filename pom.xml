@@ -295,6 +295,69 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.hazendaz.maven</groupId>
+                <artifactId>htmlcompressor-maven-plugin</artifactId>
+                <version>1.7.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.googlecode.htmlcompressor</groupId>
+                        <artifactId>htmlcompressor</artifactId>
+                        <version>1.5.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>compress-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>html</goal>
+                        </goals>
+                        <configuration>
+                            <srcFolder>${project.basedir}/src/main/resources/static</srcFolder>
+                            <targetFolder>${project.build.outputDirectory}/static</targetFolder>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <id>compress-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <jswarn>false</jswarn>
+                    <force>false</force>
+                    <linebreakpos>-1</linebreakpos>
+                    <preProcessAggregates>true</preProcessAggregates>
+                    <nosuffix>true</nosuffix>
+                    <sourceDirectory>${project.basedir}/src/main/resources</sourceDirectory>
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                    <webappDirectory>${project.build.outputDirectory}</webappDirectory>
+                    <force>true</force>
+                    <includes>
+                        <include>**/*.js</include>
+                        <include>**/*.css</include>
+                    </includes>
+                    <!-- 以下目录和文件不会被压缩 -->
+                    <excludes>
+                        <exclude>**/*.min.js</exclude>
+                        <exclude>**/*.min.css</exclude>
+                        <exclude>**/db.js</exclude>
+                        <exclude>**/db-connection.js</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
