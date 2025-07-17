@@ -71,7 +71,7 @@
             <button onclick="showUploadDialog()" style="padding:10px 20px; margin-right:10px;">导入专家信息</button>
         </div>
         <table id="expertTable" style="width:100%; border-collapse:collapse; margin-top:20px;">
-            <thead>
+            <thead id="pageThead">
                 <tr style="background:#f0f0f0;">
                     <th style="padding:10px; border:1px solid #ddd;">序号</th>
                     <th style="padding:10px; border:1px solid #ddd;">姓名</th>
@@ -550,7 +550,7 @@
             
             selectedExperts.forEach((expert, index) => {
                 const row = `
-                    <tr data-id="${expert.id}">
+                    <tr data-id="${expert.memberId}">
                         <td style="padding:8px; border:1px solid #ddd; text-align:center">${index + 1}</td>
                         <td style="padding:8px; border:1px solid #ddd;">${expert.name}</td>
                         <td style="padding:8px; border:1px solid #ddd;">${expert.cert}</td>
@@ -568,7 +568,7 @@
         $(document).on('click', '.removeBtn', function() {
             const row = $(this).closest('tr');
             const expertId = parseInt(row.data('id'));
-            selectedExperts = selectedExperts.filter(e => e.id != expertId);
+            selectedExperts = selectedExperts.filter(e => e.memberId != expertId);
             updateSelectedExpertList();
 
             $("#selectedExpertButton").parent().show();

@@ -189,8 +189,6 @@
                 fileItem.textContent = `${i+1}. ${files[i].name}`;
                 certificateFilesDiv.appendChild(fileItem);
             }
-        } else if(!fileId){
-            certificateFilesDiv.innerHTML = '<p>没有上传文件</p>';
         }
         
         // 切换回显示模式
@@ -262,7 +260,7 @@
                 <div class="tab-content" id="applying">
                     <h3>正在报名项目</h3>
                     <table style="width:100%; border-collapse:collapse;">
-                        <thead>
+                        <thead id="pageThead">
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                                 <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
@@ -558,11 +556,14 @@
                         success:function(e) {
                             if(e.status == 200){
                                 for(var i=0;i<e.data.length;i++){
-                                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）<span onclick='deleteFile(\""+e.data[i].id+"\")' id='delete"+e.data[i].id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）<span onclick='deleteFile(\""+e.data[i].id+"\")' class='delete"+e.data[i].id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
                                 }
                             }else{
                                 alert("获取文件信息失败："+e.message);
                             }
+                        },
+                        error:function(e) {
+                            alert("获取文件信息失败："+e.message);
                         }
                     });
                 }
@@ -576,16 +577,17 @@
                 var fileId = uploadFile(this.files);
                 var datafileid = $("#certificateUpload").attr("data-file-id");
                 if(datafileid){
-                    datafileid+=",";
+                    datafileid+=","+fileId;
+                }else{
+                    datafileid=fileId;
                 }
-                datafileid+=fileId;
                 var data = {"id":getMember().account.id,"accountCodeFileId":datafileid}
                 $("#certificateUpload").attr("data-file-id",datafileid);
                 updateAccount(data);
                 var fileIds = fileId.split(",");
                 var fileName = $("#certificateFiles p").html();
                 for(var i=0;i<this.files.length;i++){
-                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileIds[i]+"\")' id='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileIds[i]+"\")' class='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
                 }
                 $("#certificateFiles p").html(fileName);
                 $("#uploadedFilesList p").html(fileName);
@@ -654,7 +656,7 @@
         })
 
         function deleteFile(id){
-            var a = $("#delete"+id).parent();
+            var a = $(".delete"+id).parent();
             a.removeAttr("href");
             var datafileid = $("#certificateUpload").attr("data-file-id");
             if(datafileid){
@@ -789,18 +791,18 @@
                         }
                         companies.forEach(company => {
                             const row = document.createElement('tr');
-                        row.style.border = '1px solid #ddd';
-                        row.innerHTML = `<td colspan="5" style="padding:10px;">没有评审结果</td>`;
-                        if(e.data.length>0){
-                            row.innerHTML = `
-                                <td style="padding:10px;">${company.name}</td>
-                                <td style="padding:10px;">${company.contact}</td>
-                                <td style="padding:10px;">${company.phone}</td>
-                                <td style="padding:10px;">${company.winBidState=="1"?'中标':(company.winBidState=="2"?'未中标':'未公布')}</td>
-                            `;
-                        }
-                        tbody.appendChild(row);
-                    });
+                            row.style.border = '1px solid #ddd';
+                            row.innerHTML = `<td colspan="5" style="padding:10px;">没有评审结果</td>`;
+                            if(e.data.length>0){
+                                row.innerHTML = `
+                                    <td style="padding:10px;">${company.name}</td>
+                                    <td style="padding:10px;">${company.contact}</td>
+                                    <td style="padding:10px;">${company.phone}</td>
+                                    <td style="padding:10px;">${company.winBidState=="1"?'中标':(company.winBidState=="2"?'未中标':'未公布')}</td>
+                                `;
+                            }
+                            tbody.appendChild(row);
+                        });
                         // 显示弹窗
                         document.getElementById('applicationModal2').style.display = 'block';
                     }else{

@@ -151,7 +151,7 @@
 
     function requestInvoice() {
         const urlParams = new URLSearchParams(window.location.search);
-        const rid = urlParams.get('rid');
+        const rid = urlParams.get('id');
         var memberInfo = getMember();
         if(memberInfo.account.email == undefined ||
             memberInfo.account.email == null ||

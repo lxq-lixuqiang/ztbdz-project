@@ -471,6 +471,7 @@
         var isError = false;
         // 计算并更新汇总显示
         passedSuppliers.forEach(supplier => {
+            const name = supplier.name;
             const priceInput = form.querySelector(`input[name="supplier${supplier.id}_price"]`);
             const techInput = form.querySelector(`input[name="supplier${supplier.id}_tech"]`);
             const performanceInput = form.querySelector(`input[name="supplier${supplier.id}_performance"]`);
@@ -497,7 +498,7 @@
                 return;
             }
             if(total>100){
-                alert("总分不能超过100分！");
+                alert("【"+name+"】供应商合计分数："+total+"，总分不能超过100分，请重新修改分数！");
                 isError = true;
                 return;
             }
@@ -670,7 +671,7 @@
                 bidInfo={"total":total,"id":id,"name":name};
             }
             if(total>100){
-                alert("总分不能超过100分！");
+                alert("【"+name+"】供应商合计分数："+total+"，总分不能超过100分，请重新修改分数！");
                 isError = true;
                 return;
             }

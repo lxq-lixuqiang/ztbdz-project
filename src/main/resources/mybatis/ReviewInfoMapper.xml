@@ -29,7 +29,7 @@
 
     <select id="randomExpert" resultMap="ExpertInfoAndMember" >
         select
-          e.*,m.name as mName
+          e.*,m.name as mName,m.phone as mPhone
         from
           expert_info e
         left join member m on e.member_id=m.id
@@ -69,5 +69,6 @@
     <resultMap id="ExpertInfoAndMember" type="ExpertInfo">
         <result property="member.id" column="member_id"/>
         <result property="member.name" column="mName"/>
+        <result property="member.phone" column="mPhone"/>
     </resultMap>
 </mapper>

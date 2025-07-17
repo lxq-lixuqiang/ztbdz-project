@@ -56,7 +56,7 @@
         and m.is_stop = 0
         and r.type='expert'
         <if test="expertIds != null and expertIds.size()>0">
-            and e.id in
+            and m.id in
             <foreach collection='expertIds' item='item' open='(' separator=',' close=')'>
                 #{item}
             </foreach>

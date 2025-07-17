@@ -185,6 +185,11 @@ function pageButton(data){
         localStorage.setItem('page',1);
         $("#pageInfo").html("");
     }
+
+    var pageThead = document.getElementById("pageThead"); // 放到 table标签下的thead里的id
+    if(pageThead && pageThead.getBoundingClientRect().top<0){ // 如果滚动条超过了标签就为负数开启进行跳转
+        pageThead.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 function pageShow(page){
     localStorage.setItem('page', page);

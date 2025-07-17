@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.TendereeMapper">
 	<select id="selectProject" resultMap="TendereeAndProject">
 		select
-			*
+			*,p.state as pstate
 		from
 		   tenderee t
 		left join project p on t.project_id=p.id
@@ -23,7 +23,7 @@
 		<result property="project.isPushBiddingWebsite" column="is_push_bidding_website"/>
 		<result property="project.bidWinningPriceType" column="bid_winning_price_type"/>
 		<result property="project.projectOverview" column="project_overview"/>
-		<result property="project.state" column="state"/>
+		<result property="project.state" column="pstate"/>
 		<result property="project.bidOpeningTime" column="bid_opening_time"/>
 		<result property="project.numberReviewExpert" column="number_review_expert"/>
 		<result property="project.answerEndDate" column="answer_end_date"/>
@@ -42,7 +42,7 @@
 
 	<select id="selectListProject" resultMap="TendereeAndProject">
 		select
-			*
+			*,p.state as pstate
 		from
 		   tenderee t
 		left join project p on t.project_id=p.id
