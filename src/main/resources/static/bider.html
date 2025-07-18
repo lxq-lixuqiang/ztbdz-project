@@ -729,8 +729,13 @@
             if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone) {
                 alert("请填写所有必填字段");
                 return true;
+            }else if(!regBox.regMobilePhone.test(editContactPhone)){
+                alert("手机号格式错误");
+                return true;
+            }else if(!regBox.regEmail.test(editContactEmail)){
+                alert("邮箱格式错误");
+                return true;
             }
-
 
             var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountCodeFileId":fileId};
             updateAccount(data);

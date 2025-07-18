@@ -303,6 +303,14 @@
                     idCard: $('#expertIdCard').val().trim(),
                     phone: $('#expertPhone').val().trim()
                 };
+                if(!regBox.regMobilePhone.test(newExpert.phone)){
+                    alert('手机号格式错误');
+                    return;
+                }
+                if(newExpert.idCard && !regBox.regIdCard.test(newExpert.idCard)){
+                    alert('身份证号格式错误');
+                    return;
+                }
                 
                 if(newExpert.name && newExpert.cert) {
                     if(id){

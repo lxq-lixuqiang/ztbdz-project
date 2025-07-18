@@ -13,6 +13,15 @@ $(function() {
             alert("请选择用户类型！");
             return;
         }
+        if(!regBox.regName.test(username)){
+            alert("用户名必须是2~16位的字母数字_-");
+            return ;
+        }
+        if(!regBox.regPassword.test(password)){
+            alert("密码必须是6~16位的字母数字@$_-");
+            return ;
+        }
+
         var account = {accountName:username};
         var role = {type:userType};
         var member = {name:username,account:account,role:role};
