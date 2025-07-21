@@ -676,7 +676,7 @@
     });
 
     function deleteInfo(id){
-        if(!confirm('确定要删除专家吗？')) {
+        if(!confirm('确定要删除吗？')) {
             return;
         }
         $.ajax({
@@ -685,10 +685,10 @@
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    alert('删除专家成功');
+                    alert('删除成功');
                     window.location.reload();
                 }else{
-                    alert('删除专家信息失败：'+e.message);
+                    alert('删除信息失败：'+e.message);
                 }
             }
         });

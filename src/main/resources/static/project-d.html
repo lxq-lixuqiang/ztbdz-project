@@ -45,14 +45,14 @@
 
         <!-- 3. 下载采购文件 -->
         <div style="margin-bottom:30px;">
-            <button id="download-btn" style="padding:10px 20px; background:#607D8B; color:white; border:none; cursor:pointer;">
+            <button hide id="download-btn" style="padding:10px 20px; background:#607D8B; color:white; border:none; cursor:pointer;">
                 下载采购文件
             </button>
         </div>
 
         <!-- 4. 上传投标文件 -->
         <div>
-            <button id="upload-btn" style="padding:10px 20px; background:#9C27B0; color:white; border:none; cursor:pointer;">
+            <button id="upload-btn" style="padding:10px 20px; background:#9C27B0; color:white; border:none; cursor:pointer;display: none;">
                 未上传投标文件
             </button>
         </div>
@@ -98,8 +98,7 @@
         const id = urlParams.get('id');
 
         if(!id) {
-            $('#details-content').html('<p>未指定项目ID</p>');
-            alert("未指定项目ID，请联系管理员！")
+            alert("未指定项目ID！")
             window.history.back();
             return;
         }
@@ -113,14 +112,15 @@
                     var begin = new Date(response.data.project.bidOpeningTime).getTime();
                     var now = new Date().getTime();
                     if(now>begin){
-                        alert("已超过开标时间，无法上传投标文件！");
-                        window.history.back();
-                        return;
+                        $("#upload-btn").parent().html("");
+                    }else{
+                        $("#upload-btn").show();
+                        if(response.data.bidDocumentId){
+                            $("#upload-btn").text("已上传投标文件");
+                        }
                     }
                     $("#download-btn").attr("data-file-id",response.data.project.procurementDocuments);
-                    if(response.data.bidDocumentId){
-                        $("#upload-btn").text("已上传投标文件");
-                    }
+
                     renderProjectDetails(response.data.project);
                 } else {
                     // API失败时尝试从bider.html获取模拟数据
