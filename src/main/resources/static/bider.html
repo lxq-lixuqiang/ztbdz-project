@@ -504,7 +504,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{reviewEndDate}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass 1}}废标{{else}}{{#eq projectRegisters.winBidState 0}}未公布{{/eq}}{{#eq projectRegisters.winBidState 1}}已中标{{/eq}}{{#eq projectRegisters.winBidState 2}}未中标{{/eq}}{{/eq}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass 1}}废标{{else}}{{#eq projectRegisters.winBidState 0}}未公布{{/eq}}{{#eq projectRegisters.winBidState 1}}中标{{/eq}}{{#eq projectRegisters.winBidState 2}}未中标{{/eq}}{{/eq}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 <button onclick="showApplicationModal2('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>
             </td>
@@ -820,7 +820,7 @@
 
         // 显示报名结果弹窗
         function showProgress(projectName,id) {
-            alert("请发送邮箱到 “2817899794@qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “报名不通过” 的项目 进行退费审核！");
+            alert(config.refundReason);
         }
         // 显示报名结果弹窗
         function signUp(id) {

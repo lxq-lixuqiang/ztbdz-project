@@ -47,14 +47,14 @@
                 <h2 style="margin-bottom:15px;">付款信息</h2>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
                     <div>
-                        <p><strong>收款账户：</strong>四川中天阳光招标代理有限公司</p>
-                        <p><strong>银行账号：</strong>6310 05716</p>
-                        <p><strong>开户银行：</strong>中国民生银行成都铁像寺支行</p>
+                        <p><strong>收款账户：</strong><span id="receivingAccount"></span></p>
+                        <p><strong>银行账号：</strong><span id="bankAccountNumber"></span></p>
+                        <p><strong>开户银行：</strong><span id="bankDeposit"></span></p>
                         <p><strong>付款金额：</strong>¥<span id="registrationFee"></span>（报名费）</p>
                     </div>
                     <div style="text-align:center;">
                         <p><strong>扫码支付</strong></p>
-                        <img src="images/payment-qr.jpg" alt="付款二维码" style="width:150px; height:150px; border:1px solid #eee; margin-top:10px;">
+                        <img id="qrCode" alt="付款二维码" style="width:150px; height:150px; border:1px solid #eee; margin-top:10px;">
                         <p style="font-size:12px; color:#666;">请使用微信扫码支付</p>
                     </div>
                 </div>
@@ -119,6 +119,11 @@
     <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="config/token.js" type="text/javascript"></script>
     <script>
+        $("#receivingAccount").text(config.pay.receivingAccount);
+        $("#bankDeposit").text(config.pay.bankDeposit);
+        $("#bankAccountNumber").text(config.pay.bankAccountNumber);
+        $("#qrCode").attr("src",config.pay.qrCode);
+
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");
             var data = {"id":new URLSearchParams(window.location.search).get("pid"),"state":0,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text()};
