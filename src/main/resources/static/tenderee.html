@@ -170,7 +170,11 @@
 
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">公告文件</label>
-            <input data-file-id="" id="tendereeInformField" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;">
+            <button onclick="showUploadDialog2()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传文件</button>
+            <div id="certificateFiles2">
+
+            </div>
+            <input data-file-id="" id="tendereeInformField" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
         </div>
 
         <div style="text-align:center;">
@@ -258,7 +262,11 @@
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">上传采购文件</label>
-                        <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        <button onclick="showUploadDialog()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;">上传采购文件</button>
+                        <div id="certificateFiles" style="display: inline-block;margin-left:10px;">
+
+                        </div>
+                        <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" required>
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">招标方名称</label>
@@ -657,6 +665,12 @@
             }
             var fileId = uploadFile(this.files);
             $("#fileUpload").attr("data-file-id",fileId);
+            var fileName = "";
+            for(var i=0;i<this.files.length;i++){
+                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileId+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+            }
+            $("#certificateFiles").html(fileName);
+
         });
 
         $("body").on('change','#tendereeInformField', function () {
@@ -665,6 +679,13 @@
             }
             var fileId = uploadFile(this.files);
             $("#tendereeInformField").attr("data-file-id",fileId);
+
+            var fileName = "";
+            var fileIds = fileId.split(",");
+            for(var i=0;i<this.files.length;i++){
+                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+            }
+            $("#certificateFiles2").html(fileName);
         });
 
         // 加载已发布项目列表
@@ -1072,10 +1093,34 @@
         $("#senrollStartDate").attr("value",data.project.senrollStartDate);
         $("#enrollEndDate").attr("value",data.project.enrollEndDate);
         $("#fileUpload").attr("data-file-id",data.project.procurementDocuments);
-
+        getFile(data.project.procurementDocuments)
         $("#tendereeName").val(data.tendereeName);
         $("#tendereeDate").attr("value",data.tendereeDate);
 
+    }
+
+    function getFile(id){
+        $.ajax({
+            url: "/file/get/" + id,
+            type: "GET",
+            contentType: "application/json",
+            success: function (e) {
+                if(e.status == 200){
+                    var fileName = "<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）</a></p>";
+                    $("#certificateFiles").html(fileName);
+                }else{
+                    alert("获取采购文件失败："+e.message);
+                }
+            }
+        });
+    }
+
+    function showUploadDialog() {
+        document.getElementById('fileUpload').click();
+    }
+
+    function showUploadDialog2() {
+        document.getElementById('tendereeInformField').click();
     }
 
 
