@@ -57,7 +57,7 @@
 
         <!-- 其他部分内容省略，保持类似结构 -->
 
-        <div id="sumitButton" style="text-align:center; margin-top:40px;" hidden="hidden">
+        <div id="sumitButton" style="text-align:center; margin-top:40px;display: none;" >
             <button onclick="submitReviewInfo()" style="padding:10px 30px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer;">确定提交</button>
         </div>
     </div>
@@ -87,7 +87,7 @@
                         }
                         $("input[name='reviewDate']").attr("value",new Date().toLocaleDateString('zh-CN', {year: 'numeric',month: '2-digit',day: '2-digit'}).replaceAll("/","-"));
                         $("input[name='budgetCapital']").attr("value",e.data.project.moneyUppercase.replaceAll("元整",""));
-                        $("input[name='budgetNumber']").attr("value",e.data.project.money);
+                        $("input[name='budgetNumber']").attr("value",parseFloat(e.data.project.money).toLocaleString('en-US'));
                     }else{
                         alert("获取项目信息失败："+e.message);
                         window.history.back();
@@ -110,7 +110,7 @@
                 $("textarea[name='purchaseContent']").text($("textarea[name='purchaseContent']").val());
                 $("textarea[name='purchaseRequirement']").text($("textarea[name='purchaseRequirement']").val());
                 $("input[name='fundSource'][value="+$("input[name='sfundSource']:checked").val()+"]").attr("checked","checked");
-
+                $("#sumitButton").hide();
                 var project={"id":$("#sumitButton").attr("data-projectid"),"isPass":0};
                 var data = {"project":project,"state":1,"resultReport":$("#reportContent").html()};
                 $.ajax({
@@ -125,6 +125,8 @@
                         }else{
                             alert('评审报告提交失败：'+e.message);
                         }
+                    },error: function (e) {
+                        alert("评审报告提交失败：" +e.message );
                     }
                 });
             }

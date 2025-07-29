@@ -121,10 +121,6 @@
                     $("#emptyMessage").show().text("加载失败："+e.message);
                     $("#loadingMessage").hide();
                 }
-            },
-            error: function() {
-                $("#emptyMessage").show().text("请求失败，请检查网络连接");
-                $("#loadingMessage").hide();
             }
         });
     }
@@ -184,7 +180,7 @@
                                     <td style="padding:10px;">${register.member.account.member==null?'':register.member.account.member}</td>
                                     <td style="padding:10px;">${register.member.account.phone==null?'':register.member.account.phone}</td>
                                     <td style="padding:10px;">${register.createDate==null?'':register.createDate}</td>
-                                    <td style="padding:10px;">${register.paymentMoney==null?'':register.paymentMoney}元</td>
+                                    <td style="padding:10px;">${register.paymentMoney==null?'':parseFloat(register.paymentMoney).toLocaleString('en-US')}元</td>
                                     <td style="padding:10px;">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
                                     <td style="padding:10px;">
                                         <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}')"
@@ -245,10 +241,6 @@
                 }else{
                     alert(e.message)
                 }
-            },
-            error: function() {
-                $("#emptyMessage").show().text("请求失败，请检查网络连接");
-                $("#loadingMessage").hide();
             }
         });
 
@@ -321,7 +313,7 @@
                         <td style="padding:10px;">${list.member.account.accountName}</td>
                         <td style="padding:10px;">${list.member.account.accountCode}</td>
                         <td style="padding:10px;">${list.member.account.email}</td>
-                        <td style="padding:10px;">${list.paymentMoney}元</td>
+                        <td style="padding:10px;">${parseFloat(list.paymentMoney).toLocaleString('en-US')}元</td>
                         <td style="padding:10px;">${list.isInvoice==0?'待处理':'已开票'}</td>
                         <td style="padding:10px;">
                             <button onclick="processInvoiceRequest('${list.id}','${list.project.projectName}')"

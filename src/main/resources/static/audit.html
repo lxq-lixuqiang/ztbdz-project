@@ -51,7 +51,7 @@
                     <td style="padding:10px; border:1px solid #ddd;">{{project.projectCode}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">{{project.projectName}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">{{tendereeName}}</td>
-                    <td style="padding:10px; border:1px solid #ddd;">¥{{project.money}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">￥{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">
                         <button onclick="downloadFile('{{project.procurementDocuments}}','{{project.projectName}}')" style="padding:5px 10px; margin-right:5px;">下载采购文件</button>

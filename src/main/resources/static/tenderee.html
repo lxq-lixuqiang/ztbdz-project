@@ -395,7 +395,7 @@
         <td style="padding:10px;">{{project.projectName}}</td>
         <td style="padding:10px;">{{project.projectCode}}</td>
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
-        <td style="padding:10px;">{{project.money}}</td>
+        <td style="padding:10px;">{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
         <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
@@ -545,12 +545,8 @@
         var id = $("#publishForm").attr("data-id");
         var projectid = $("#publishForm").attr("data-projectid");
         var tendereeDate = $("#tendereeDate").val();
-        if(money<0){
-            alert("项目预算必须大于或等于0");
-            return;
-        }
-        if(registrationFee<0){
-            alert("报名费必须大于或等于0");
+        if(!regBox.regMoney.test(money) || !regBox.regMoney.test(registrationFee)){
+            alert("项目预算或报名费不能是负数和带小数点！");
             return;
         }
 
@@ -637,18 +633,8 @@
                 } else {
                     alert("发布项目失败：" + (response.message || "未知错误"));
                 }
-            },
-            error: function(xhr) {
-                let errorMsg = "请求失败: ";
-                if(xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMsg += xhr.responseJSON.message;
-                } else if(xhr.statusText) {
-                    errorMsg += xhr.statusText;
-                } else {
-                    errorMsg += "未知错误";
-                }
-                console.error("详细错误:", xhr);
-                alert(errorMsg);
+            },error: function (e) {
+                alert("发布项目失败：" +e.message );
             }
         });
     }
@@ -792,6 +778,8 @@
                 }else{
                     alert("发布公告失败："+e.message);
                 }
+            },error: function (e) {
+                alert("发布公告失败：" +e.message );
             }
         });
     }
@@ -875,6 +863,8 @@
                 }else{
                     alert("审核失败："+e.message);
                 }
+            },error: function(e) {
+                alert('审核失败：'+e.message);
             }
         });
 

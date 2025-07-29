@@ -131,6 +131,8 @@
                     }else{
                         alert('添加专家信息失败：'+e.message);
                     }
+                },error: function (e) {
+                    alert("添加专家信息失败：" +e.message );
                 }
             });
         }
@@ -159,6 +161,8 @@
                     }else{
                         alert('修改专家信息失败：'+e.message);
                     }
+                },error: function(e) {
+                    alert('修改专家信息失败：'+e.message);
                 }
             });
         }

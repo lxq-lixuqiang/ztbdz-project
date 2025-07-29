@@ -77,3 +77,12 @@ Handlebars.registerHelper("gtNowDate", function(v1, options) {
         return options.inverse(this);
     }
 });
+
+//金额千位分隔符
+Handlebars.registerHelper("moneyDelimiter", function(v1, options) {
+    if(!v1){
+        return '';
+    }
+    return parseFloat(v1).toLocaleString('en-US');
+});
+

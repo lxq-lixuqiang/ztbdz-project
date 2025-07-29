@@ -32,7 +32,7 @@
                     <div>
                         <p><strong>项目名称：</strong><span></span></p>
                         <p><strong>项目编号：</strong><span></span></p>
-                        <p><strong>项目金额：</strong>¥<span></span></p>
+                        <p><strong>项目金额：</strong>￥<span></span></p>
                     </div>
                     <div>
                         <p><strong>报名截止：</strong><span></span></p>
@@ -50,7 +50,7 @@
                         <p><strong>收款账户：</strong><span id="receivingAccount"></span></p>
                         <p><strong>银行账号：</strong><span id="bankAccountNumber"></span></p>
                         <p><strong>开户银行：</strong><span id="bankDeposit"></span></p>
-                        <p><strong>付款金额：</strong>¥<span id="registrationFee"></span>（报名费）</p>
+                        <p><strong>付款金额：</strong>￥<span id="registrationFee"></span>（报名费）</p>
                     </div>
                     <div style="text-align:center;">
                         <p><strong>扫码支付</strong></p>
@@ -177,12 +177,10 @@
                 var infos = $("#projectInfo span");
                 $(infos[0]).text(data.projectName);
                 $(infos[1]).text(data.projectCode);
-                $(infos[2]).text(data.money);
+                $(infos[2]).text(parseFloat(data.money).toLocaleString('en-US'));
                 $(infos[3]).text(data.enrollEndDate);
                 $(infos[4]).text(daysBetweenDates(new Date(data.senrollStartDate),new Date(data.enrollEndDate)));
-                $("#registrationFee").text(data.registrationFee);
-
-                registrationFee
+                $("#registrationFee").text(parseFloat(data.registrationFee).toLocaleString('en-US'));
             }
             $("#paymentProof").on('change', function () {
                 if(this.files.length==0){
