@@ -63,9 +63,9 @@ function verifyLogin(){
             'url' : window.location.pathname
         },
         error:function(e) {
-            removeToken();
             alert("token失效，请重新登陆！");
             location.href = "/login.html";
+            removeToken();
         }
     });
     $.ajax({
