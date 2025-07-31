@@ -21,7 +21,11 @@ public class ProjectRegisterExport {
         put(0,"未审核");
         put(1,"已审核");
     }};
-
+    public static Map<Integer,String> STATE_03 = new HashMap(){{
+        put(0,"未审核");
+        put(1,"通过");
+        put(2,"不通过");
+    }};
     public static Map<Integer,String> IS_INVOICE = new HashMap(){{
         put(0,"待处理");
         put(1,"已开票");
@@ -123,15 +127,43 @@ public class ProjectRegisterExport {
         @ExcelProperty("审核状态")
         private String state;
 
+        @ExcelProperty("投标单位")
+        private String accountName;
+
+        @ExcelProperty("联系人")
+        private String member;
+
+        @ExcelProperty("联系电话")
+        private String phone;
+
+        @ExcelProperty("报名时间")
+        private Date startDate;
+
+        @ExcelProperty("缴费金额")
+        private String money;
+
+        @ExcelProperty("报名审核状态")
+        private String signUpState;
+
+        @ExcelProperty("付款凭证")
+        private String payUrl;
+
         public static List<PageExport> converter(List<Project> projectList){
             List<PageExport> pageExportList = new ArrayList();
             for(Project project : projectList){
                 PageExport pageExport = new PageExport();
                 pageExport.setProjectName(project.getProjectName());
                 pageExport.setEnrollEndDate(project.getEnrollEndDate());
-                pageExport.setTendereeName(project.getProjectRegisters().getProject().getTenderee().getTendereeName());
+                pageExport.setTendereeName(project.getTenderee().getTendereeName());
                 pageExport.setProjectOverview(project.getProjectOverview());
-                pageExport.setState(STATE_02.get(project.getProjectRegisters().getState()));
+                pageExport.setState(STATE_02.get(project.getState()));
+                pageExport.setAccountName(project.getProjectRegisters().getMember().getAccount().getAccountName());
+                pageExport.setMember(project.getProjectRegisters().getMember().getAccount().getMember());
+                pageExport.setPhone(project.getProjectRegisters().getMember().getAccount().getPhone());
+                pageExport.setStartDate(project.getProjectRegisters().getCreateDate());
+                pageExport.setMoney(project.getProjectRegisters().getPaymentMoney().toString());
+                pageExport.setSignUpState(STATE_03.get(project.getProjectRegisters().getState()));
+                pageExport.setPayUrl("/file/preview/"+project.getProjectRegisters().getPaymentVoucher());
                 pageExportList.add(pageExport);
             }
             return pageExportList;

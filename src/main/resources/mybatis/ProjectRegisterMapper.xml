@@ -157,4 +157,20 @@
 		order by pr.is_invoice asc,p.update_date desc
 	</select>
 
+	<select id="selectProjectByProjectIds" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
+		select
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
+		from
+		project_register pr
+		left join project p on pr.project_id=p.id
+		left join tenderee t on t.project_id=p.id
+		left join member m on m.id=pr.member_id
+		left join account a on a.id=m.account_id
+		where
+		p.id in
+		<foreach collection='projectIds' item='item' open='(' separator=',' close=')'>
+			#{item}
+		</foreach>
+	</select>
+
 </mapper>

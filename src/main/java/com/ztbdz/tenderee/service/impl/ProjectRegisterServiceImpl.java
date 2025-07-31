@@ -17,6 +17,7 @@ import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.export.ProjectRegisterExport;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -121,6 +122,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                 for(Project project1 : projectList) {
                     ProjectRegister projectRegister = mapProjectRegister.get(project1.getId().toString());
                     if(projectRegister!=null){
+                        project1.setTenderee(projectRegister.getProject().getTenderee());
                         project1.setProjectRegisters(projectRegister);
                     }
                 }
@@ -185,7 +187,23 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                 case 1:
                     Result result = this.page(1,0,project,3);
                     List<Project> projectList = ((PageInfo)result.getData()).getList();
-                    return SystemConfig.excelExport("项目列表",ProjectRegisterExport.PageExport.converter(projectList),ProjectRegisterExport.PageExport.class);
+                    List<Long> projectId = new ArrayList();
+                    Map<Long,Project> projectMap = new HashMap();
+                    for(Project project1 : projectList){
+                        projectId.add(project1.getId());
+                        projectMap.put(project1.getId(),project1);
+                    }
+                    List<ProjectRegister> projectRegisterList1 = projectRegisterMapper.selectProjectByProjectIds(projectId);
+                    List<Project> newProject = new ArrayList();
+                    for(ProjectRegister projectRegister : projectRegisterList1){
+                        if(projectRegister.getState()==0 || projectRegister.getState()==1 || projectRegister.getState()==2){
+                            Project project1 = SerializationUtils.clone(projectMap.get(projectRegister.getProject().getId()));
+                            project1.setState(project1.getProjectRegisters().getState());
+                            project1.setProjectRegisters(projectRegister);
+                            newProject.add(project1);
+                        }
+                    }
+                    return SystemConfig.excelExport("项目列表",ProjectRegisterExport.PageExport.converter(newProject),ProjectRegisterExport.PageExport.class);
             }
             return ResponseEntity.notFound().build();
         }catch (Exception e){
