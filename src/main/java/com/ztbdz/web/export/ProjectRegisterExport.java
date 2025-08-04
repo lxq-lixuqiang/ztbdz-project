@@ -8,6 +8,8 @@ import lombok.Data;
 import java.util.*;
 
 public class ProjectRegisterExport {
+    // 预览文件地址
+    public static String FILE_PREVIEW_URL = "/file/preview/";
 
     public static Map<Integer,String> STATE = new HashMap(){{
         put(0,"报名审核中");
@@ -30,7 +32,6 @@ public class ProjectRegisterExport {
         put(0,"待处理");
         put(1,"已开票");
     }};
-
 
 
     /**
@@ -163,7 +164,7 @@ public class ProjectRegisterExport {
                 pageExport.setStartDate(project.getProjectRegisters().getCreateDate());
                 pageExport.setMoney(project.getProjectRegisters().getPaymentMoney().toString());
                 pageExport.setSignUpState(STATE_03.get(project.getProjectRegisters().getState()));
-                pageExport.setPayUrl("/file/preview/"+project.getProjectRegisters().getPaymentVoucher());
+                pageExport.setPayUrl(FILE_PREVIEW_URL+project.getProjectRegisters().getPaymentVoucher());
                 pageExportList.add(pageExport);
             }
             return pageExportList;

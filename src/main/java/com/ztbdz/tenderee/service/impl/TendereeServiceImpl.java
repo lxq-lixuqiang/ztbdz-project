@@ -10,6 +10,7 @@ import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.export.TendereeExport;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +181,31 @@ public class TendereeServiceImpl implements TendereeService {
         try{
             PageInfo<Tenderee> tendereePageInfo = this.selectList( 1, 0,tenderee);
             List<Tenderee> tendereeList = tendereePageInfo.getList();
-            return SystemConfig.excelExport("已发布项目",TendereeExport.PageExport.converter(tendereeList),TendereeExport.PageExport.class);
+
+            List<Long> projectId = new ArrayList();
+            Map<Long,Tenderee> tenderee1Map = new HashMap();
+            for(Tenderee tenderee1 : tendereeList){
+                projectId.add(tenderee1.getProject().getId());
+                tenderee1Map.put(tenderee1.getProject().getId(),tenderee1);
+            }
+            List<ProjectRegister> projectRegisterList1 = projectRegisterService.selectProjectByProjectIds(projectId);
+            List<Tenderee> newTendereeList = new ArrayList();
+            Map<Long,String> projectRegisterMap = new HashMap();
+            for(ProjectRegister projectRegister : projectRegisterList1){
+                if(projectRegister.getState()==1){
+                    Tenderee tenderee1 = SerializationUtils.clone(tenderee1Map.get(projectRegister.getProject().getId()));
+                    tenderee1.getProject().setProjectRegisters(projectRegister);
+                    newTendereeList.add(tenderee1);
+                    projectRegisterMap.put(projectRegister.getProject().getId(),"");
+                }
+            }
+            for(Tenderee tenderee1 : tendereeList){
+                if(projectRegisterMap.get(tenderee1.getProject().getId())==null){
+                    newTendereeList.add(tenderee1);
+                }
+            }
+
+            return SystemConfig.excelExport("已发布项目",TendereeExport.PageExport.converter(newTendereeList),TendereeExport.PageExport.class);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return ResponseEntity.notFound().build();

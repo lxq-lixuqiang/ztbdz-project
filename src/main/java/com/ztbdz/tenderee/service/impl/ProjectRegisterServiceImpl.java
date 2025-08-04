@@ -193,7 +193,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                         projectId.add(project1.getId());
                         projectMap.put(project1.getId(),project1);
                     }
-                    List<ProjectRegister> projectRegisterList1 = projectRegisterMapper.selectProjectByProjectIds(projectId);
+                    List<ProjectRegister> projectRegisterList1 = this.selectProjectByProjectIds(projectId);
                     List<Project> newProject = new ArrayList();
                     for(ProjectRegister projectRegister : projectRegisterList1){
                         if(projectRegister.getState()==0 || projectRegister.getState()==1 || projectRegister.getState()==2){
@@ -406,6 +406,11 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
         queryWrapper.in("project_id",projectId.toString());
         queryWrapper.in("member_id",memberId.toString());
         return projectRegisterMapper.delete(queryWrapper);
+    }
+
+    @Override
+    public List<ProjectRegister> selectProjectByProjectIds(List<Long> projectIds) throws Exception {
+        return projectRegisterMapper.selectProjectByProjectIds(projectIds);
     }
 
 

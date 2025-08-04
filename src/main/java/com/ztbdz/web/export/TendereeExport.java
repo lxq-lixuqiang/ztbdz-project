@@ -3,6 +3,7 @@ package com.ztbdz.web.export;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ztbdz.tenderee.pojo.Tenderee;
 import lombok.Data;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -34,6 +35,18 @@ public class TendereeExport {
         @ExcelProperty("状态")
         private String state;
 
+        @ExcelProperty("投标单位")
+        private String accountName;
+
+        @ExcelProperty("联系人")
+        private String contact;
+
+        @ExcelProperty("联系电话")
+        private String phone;
+
+        @ExcelProperty("报名时间")
+        private Date createDate;
+
         public static List<PageExport> converter(List<Tenderee> tendereeList){
             List<PageExport> selectByProjectExportList = new ArrayList();
             for(Tenderee tenderee : tendereeList){
@@ -43,6 +56,12 @@ public class TendereeExport {
                 pageExport.setEnrollEndDate(tenderee.getProject().getEnrollEndDate());
                 pageExport.setMoney(tenderee.getProject().getMoney());
                 pageExport.setState(IS_AUDIT.get(tenderee.getProject().getIsAudit()));
+                if(!StringUtils.isEmpty(tenderee.getProject().getProjectRegisters())){
+                    pageExport.setAccountName(tenderee.getProject().getProjectRegisters().getMember().getAccount().getAccountName());
+                    pageExport.setContact(tenderee.getProject().getProjectRegisters().getMember().getAccount().getMember());
+                    pageExport.setPhone(tenderee.getProject().getProjectRegisters().getMember().getAccount().getPhone());
+                    pageExport.setCreateDate(tenderee.getProject().getProjectRegisters().getCreateDate());
+                }
                 selectByProjectExportList.add(pageExport);
             }
             return selectByProjectExportList;

@@ -195,4 +195,12 @@ public interface ProjectRegisterService {
      * @throws Exception
      */
     Integer deletesByProjectIdAndMemberId(Long projectId,Long memberId) throws Exception;
+
+    /**
+     * 根据多个项目id查询投标信息包括项目
+     * @param projectIds
+     * @return
+     * @throws Exception
+     */
+    List<ProjectRegister> selectProjectByProjectIds(List<Long> projectIds) throws Exception;
 }
