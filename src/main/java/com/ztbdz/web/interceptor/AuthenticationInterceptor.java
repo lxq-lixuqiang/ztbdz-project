@@ -83,7 +83,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public User verifyLogin(String token) throws Exception{
         // 执行认证
         if (token == null) {
-            throw new RuntimeException("无token，请重新登录");
+            throw new RuntimeException("无token认证，请重新登录！");
         }
 
         // 获取 token 中的 user id
@@ -91,7 +91,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         try {
             userId = JWT.decode(token).getClaim("id").asString();
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("token错误！");
+            throw new RuntimeException("token无效！");
         }
         if(userId==null){
             throw new RuntimeException("token无效！");
@@ -99,7 +99,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         User user = userService.selectMember(Long.valueOf(userId),null);
         if (user == null) {
             Landlord landlord = landlordService.getById(Long.valueOf(userId));
-            if(landlord==null) throw new RuntimeException("用户不存在，请重新登录");
+            if(landlord==null) throw new RuntimeException("用户已不存在，请重新登录！");
             user = landlord.toUser();
         }
         Boolean verify = true;

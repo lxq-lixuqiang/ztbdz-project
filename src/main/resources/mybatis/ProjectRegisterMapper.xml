@@ -18,6 +18,12 @@
 			<if test="project.id != null">
 				and p.id=#{project.id}
 			</if>
+			<if test="project.projectName != null ">
+				and p.project_name like concat('%',#{project.projectName},'%')
+			</if>
+			<if test="project.enrollEndDateSearch != null">
+				and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
+			</if>
 		</if>
 		<if test="memberId != null">
 			<if test="state==0">

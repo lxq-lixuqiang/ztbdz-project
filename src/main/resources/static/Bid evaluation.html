@@ -323,8 +323,6 @@
                 if(e.status != 200){
                     alert("资格评审提交失败："+e.message);
                 }
-            },error: function (e) {
-                alert("资格评审提交失败：" +e.message );
             }
         });
 
@@ -720,8 +718,6 @@
                         notPass = [];
                     }
                 }
-            },error: function (e) {
-                alert("资格评审提交失败：" +e.message );
             }
         });
         $("#resultInfo").html($("#resultScore").html());

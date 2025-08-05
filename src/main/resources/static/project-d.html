@@ -127,10 +127,6 @@
                     alert("获取数据失败，原因："+response.message);
                     window.history.back();
                 }
-            },
-            error: function(response) {
-                // API失败时尝试从bider.html获取模拟数据
-                alert("获取数据失败，原因："+response.message);
             }
         });
     }
@@ -177,9 +173,6 @@
                 } else {
                     alert('发票申请失败: ' + response.message);
                 }
-            },
-            error: function() {
-                alert('发票申请失败');
             }
         });
     }
@@ -212,9 +205,6 @@
                     } else {
                         alert('上传失败: ' + response.message);
                     }
-                },
-                error: function() {
-                    alert('上传失败');
                 }
             });
         });

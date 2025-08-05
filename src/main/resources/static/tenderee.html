@@ -299,10 +299,16 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <h3>项目报名情况</h3>
                     <div>
-                        <button onclick="loadApplicationData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新数据</button>
-                        <button onclick="exportToExcel(0, '报名情况')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                        <button onclick="loadApplicationData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; ">刷新数据</button>
+                        <button onclick="exportToExcel(0, '报名情况')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;margin-right:10px;">导出Excel</button>
                     </div>
                 </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    项目名称<input type="text" id="projectNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    报名截止时间<input type="date" id="enrollEndDateSearch" style="flex:1; padding:4px;margin: 0 20px 0 5px;" >
+                    <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;">查询</button>
+                </div>
+
                 <div id="applicationLoading" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
                 <div id="applicationEmpty" style="text-align:center; padding:20px; display:none;">没有报名</div>
                 <table id="applicationTable" style="width:100%; border-collapse:collapse;">
@@ -325,7 +331,7 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <h3>已发布项目管理</h3>
                     <div>
-                        <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                        <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
                         <button onclick="exportToExcel(1, '已发布项目')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
                         <button onclick="showAnnouncementModal()" style="padding:5px 10px; background:#9C27B0; color:white; border:none; cursor:pointer;">发布公告</button>
                     </div>
@@ -633,8 +639,6 @@
                 } else {
                     alert("发布项目失败：" + (response.message || "未知错误"));
                 }
-            },error: function (e) {
-                alert("发布项目失败：" +e.message );
             }
         });
     }
@@ -684,10 +688,21 @@
         $("#applicationEmpty").hide();
         $("#applicationTable").hide();
 
+        var projectName = $("#projectNameSearch").val();
+        var enrollEndDate = $("#enrollEndDateSearch").val();
+        var data = {};
+        if(projectName){
+            data["projectName"] = projectName;
+        }
+        if(enrollEndDate){
+            data["enrollEndDateSearch"] = enrollEndDate;
+        }
+
         $.ajax({
             url: "/projectRegister/selectByProject",
             type: "POST",
             contentType: "application/json",
+            data: JSON.stringify(data),
             success:function(e) {
                 if(e.status == 200){
                     $("#applicationTable tbody").html(Handlebars.compile($("#projects2Template").html())(e.data));
@@ -734,7 +749,23 @@
     // 导出Excel功能
     function exportToExcel(state, fileName) {
         if(state==0){
-            window.open('/projectRegister/selectByProjectExport', '_blank');
+            var projectName = $("#projectNameSearch").val();
+            var enrollEndDate = $("#enrollEndDateSearch").val();
+            var data = "";
+            if(projectName){
+                data += "projectName="+projectName;
+            }
+            if(enrollEndDate){
+                if(data){
+                    data=data+"&";
+                }
+                data += "enrollEndDateSearch="+enrollEndDate;
+            }
+            if(data){
+                data="?"+data;
+            }
+
+            window.open('/projectRegister/selectByProjectExport'+data, '_blank');
         }else if(state==1){
             window.open('/tenderee/pageExport?member.id='+getMember().id, '_blank');
         }
@@ -778,8 +809,6 @@
                 }else{
                     alert("发布公告失败："+e.message);
                 }
-            },error: function (e) {
-                alert("发布公告失败：" +e.message );
             }
         });
     }
@@ -975,7 +1004,7 @@
                             `;
                     }
                     tbody.appendChild(row);
-                });
+                    ss});
                     // 显示弹窗
                     document.getElementById('applicationModal').style.display = 'block';
                 }else{

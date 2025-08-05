@@ -292,9 +292,6 @@
                 } else {
                     alert('查询开具发票申请列表失败: ' + e.message);
                 }
-            },
-            error: function() {
-                alert('查询开具发票申请列表失败');
             }
         });
 
@@ -345,9 +342,6 @@
                     } else {
                         alert('发票处理失败: ' + response.message);
                     }
-                },
-                error: function() {
-                    alert('发票处理失败');
                 }
             });
         }

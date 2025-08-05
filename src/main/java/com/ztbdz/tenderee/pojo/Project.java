@@ -84,6 +84,8 @@ public class Project extends Model<Project> implements Serializable {
     @ApiModelProperty(value = "投标报名截止时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date enrollEndDate;
+    @TableField(exist = false)
+    private String enrollEndDateSearch;
     @ApiModelProperty(value = "答疑截止时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date answerEndDate;

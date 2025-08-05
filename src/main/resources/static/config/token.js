@@ -52,6 +52,7 @@ function decoded(encryptionStr){
 }
 
 // 校验token是否有效
+var isSystemError = false;
 function verifyLogin(){
     if(!getToken()){
         location.href = "/login.html";
@@ -63,9 +64,17 @@ function verifyLogin(){
             'url' : window.location.pathname
         },
         error:function(e) {
-            alert("token失效，请重新登陆！");
-            location.href = "/login.html";
-            removeToken();
+            if(e.responseText.indexOf("token")>-1){
+                if(isSystemError){
+                    return;
+                }
+                isSystemError = true;
+                alert(e.responseText);
+                location.href = "/login.html";
+                removeToken();
+            }else{
+                alert(decoded("57O757uf6ZSZ6K+v77yM")+e.responseText); // 系统错误，
+            }
         }
     });
     $.ajax({
@@ -87,14 +96,14 @@ function verifyLogin(){
 
 window.onload = function()  {
     // 退出登录
-    $("body").on("click", "a:contains('退出')", function() {
+    $("body").on("click", "a:contains('"+decoded("6YCA5Ye6")+"')", function() {
         $.ajax({
             url: "/user/logout",
             type: "POST",
             contentType: "application/json",
             success:function(e) {
                 if(e.status != 200){
-                    alert("退出失败："+e.message);
+                    alert(e.message);
                 }
             }
         });
@@ -115,17 +124,14 @@ function uploadImg(files) {
         type: 'POST',
         data: formData,
         async: false,
-        contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-        processData: false, // 告诉jQuery不要去处理发送的数据
+        contentType: false,
+        processData: false,
         success: function (e) {
             if(e.status == 200){
                 fileId = e.data;
             }else{
-                alert("上传图片失败！")
+                alert(e.message)
             }
-        },
-        error: function () {
-            alert("上传图片失败！")
         }
     });
     return fileId;
@@ -143,17 +149,14 @@ function uploadFile(files) {
         type: 'POST',
         data: formData,
         async: false,
-        contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-        processData: false, // 告诉jQuery不要去处理发送的数据
+        contentType: false,
+        processData: false,
         success: function (e) {
             if(e.status == 200){
                 fileId = e.data;
             }else{
-                alert("上传图片失败！")
+                alert(e.message)
             }
-        },
-        error: function () {
-            alert("上传文件失败！")
         }
     });
     return fileId;
