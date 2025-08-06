@@ -25,7 +25,25 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthenticationInterceptor(userService,blacklistService,landlordService,memberService))
-                .addPathPatterns("/**");    // 拦截所有请求，通过判断是否有 @LoginRequired 注解 决定是否需要登录
+                .addPathPatterns("/**") // 拦截所有请求，通过判断是否有 @LoginRequired 注解 决定是否需要登录
+                .excludePathPatterns(   // 放行请求
+                        "/",
+                        "/user/login",
+                        "/user/register",
+                        "/static/**",
+                        "/config/**",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+                        "/plugin/**",
+                        "/*.txt",
+                        "/*.html",
+                        "/*.htm",
+                        "/*.js",
+                        "/*.css",
+                        "/*.ico",
+                        "/*.xml"
+                );
     }
 
 }

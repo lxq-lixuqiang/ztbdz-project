@@ -14,8 +14,7 @@ $(function(){
             success:function(e) {
                 if(e.status == 200){
                     setToken(e.data.token);
-                    verifyLogin();
-                    var roleType = getMember().role.type;
+                    var roleType = e.data.type;
                     if(roleType == "admin"){ // 管理员
                         location.href = "/audit.html";
                     }else if(roleType == "expert"){ // 专家

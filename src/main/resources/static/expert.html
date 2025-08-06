@@ -139,12 +139,17 @@
                 <div class="tab-header">
                     <div class="tab-item active" data-tab="overview">综合</div>
                     <div class="tab-item" data-tab="project1">可评审项目</div>
-                    <div class="tab-item" data-tab="project2">正在评审项目</div>
+                    <!--<div class="tab-item" data-tab="project2">正在评审项目</div>-->
                     <div class="tab-item" data-tab="project3">评审结束项目</div>
                 </div>
                 <div class="tab-content active" id="overview">这里是综合信息概览</div>
                 <div class="tab-content" id="project1">
                     <h3>可评审项目列表</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        项目名称<input type="text" id="projectNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                        截止时间<input type="date" id="enrollEndDateSearch" style="flex:1; padding:4px;margin: 0 20px 0 5px;" >
+                        <button id="searchBtn" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;">查询</button>
+                    </div>
                     <table style="width:100%; border-collapse:collapse;">
                         <thead>
                             <tr style="background:#f5f5f5;">
@@ -275,10 +280,13 @@
             verifyLogin();
             var isAdmin = false;
             getIsAdmin();
-            reviewProject($("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+            reviewProjectInit();
 
             $("body").on("click", "div[data-tab=project1]", function() {
-                reviewProject($("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+                reviewProjectInit();
+            });
+            $("body").on("click", "#searchBtn", function() {
+                reviewProjectInit();
             });
             $("body").on("click", "div[data-tab=project2]", function() {
                 runReviewProjectInit($("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
@@ -327,16 +335,29 @@
                     }
                 });
             }
+            function reviewProjectInit(){
+                reviewProject($("#project1 tbody"),Handlebars.compile($("#project1Template").html()));
+            }
 
             function reviewProject(tbody,template){
                 var url = "/project/expertReviewProject";
                 if(isAdmin){
                     url = "/project/reviewProject";
                 }
+                var projectName = $("#projectNameSearch").val();
+                var enrollEndDate = $("#enrollEndDateSearch").val();
+                var data = {};
+                if(projectName){
+                    data["projectName"] = projectName;
+                }
+                if(enrollEndDate){
+                    data["enrollEndDateSearch"] = enrollEndDate;
+                }
                 $.ajax({
                     url: url,
                     type: "POST",
                     contentType: "application/json",
+                    data: JSON.stringify(data),
                     success:function(e) {
                         if(e.status == 200){
                             e.data.isAdmit = isAdmin;

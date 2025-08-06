@@ -15,6 +15,12 @@
 				<if test="project.state != null">
 					and p.state = #{project.state}
 				</if>
+				<if test="project.projectName != null ">
+					and p.project_name like concat('%',#{project.projectName},'%')
+				</if>
+				<if test="project.enrollEndDateSearch != null">
+					and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
+				</if>
 			</if>
 		<if test="state==-1">
 			and p.is_audit = 1
@@ -54,7 +60,15 @@
 		where
 			1=1
 			<if test="project != null">
-
+				<if test="project.id != null">
+					and p.id=#{project.id}
+				</if>
+				<if test="project.projectName != null ">
+					and p.project_name like concat('%',#{project.projectName},'%')
+				</if>
+				<if test="project.enrollEndDateSearch != null">
+					and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
+				</if>
 			</if>
 			and Now() >= p.enroll_end_date
 			and (p.state=1 or p.state=2)
@@ -86,6 +100,12 @@
 			<if test="project != null">
 				<if test="project.state != null">
 					and p.state = #{project.state}
+				</if>
+				<if test="project.projectName != null ">
+					and p.project_name like concat('%',#{project.projectName},'%')
+				</if>
+				<if test="project.enrollEndDateSearch != null">
+					and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
 				</if>
 			</if>
 			and wb.member_id=#{memberId}

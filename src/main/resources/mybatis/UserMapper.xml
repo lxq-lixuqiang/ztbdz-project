@@ -5,10 +5,11 @@
 <mapper namespace="com.ztbdz.user.mapper.UserMapper">
 	<select id="selectMember" resultMap="UserAndMember">
 		select 
-			*,m.is_stop as mIsStop
+			*,m.is_stop as mIsStop,r.type as roleType
 		from
 		   user u
 		left join member m on u.member_id=m.id
+		left join role r on r.id = m.role_id
 		WHERE
 			u.is_delete = 0
 			and m.is_delete = 0
@@ -31,5 +32,7 @@
 		<result property="member.account.id" column="account_id"/>
 		<result property="member.role.id" column="role_id"/>
 		<result property="member.isStop" column="mIsStop"/>
+
+		<result property="member.role.type" column="roleType"/>
 	</resultMap>
 </mapper>
