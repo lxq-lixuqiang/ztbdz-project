@@ -159,7 +159,11 @@
 		left join account a on a.id=m.account_id
 		where
 		1=1
-		and  pr.is_invoice=0
+		<if test="projectRegisters != null">
+			<if test="projectRegisters.isInvoice != null">
+				and  pr.is_invoice=#{projectRegisters.isInvoice}
+			</if>
+		</if>
 		order by pr.is_invoice asc,p.update_date desc
 	</select>
 

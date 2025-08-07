@@ -33,7 +33,7 @@
             <h3>开具发票申请列表</h3>
             <div>
                 <button onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出发票记录</button>
             </div>
         </div>
         <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
@@ -284,6 +284,7 @@
             url: '/projectRegister/pageInvoice',
             type: 'POST',
             contentType: "application/json",
+            data: JSON.stringify({'projectRegisters':{'isInvoice':0}}),
             success: function(e) {
                 if(e.status == 200) {
                     renderInvoiceRequests(e.data);

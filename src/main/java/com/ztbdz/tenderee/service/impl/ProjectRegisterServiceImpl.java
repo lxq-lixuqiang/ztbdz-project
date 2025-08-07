@@ -138,6 +138,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public Result pageInvoice(Integer page, Integer size, Project project) {
         try{
+            PageHelper.startPage(page, size);
             return Result.ok("查询成功！",new PageInfo(this.selectInvoice(project)));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
