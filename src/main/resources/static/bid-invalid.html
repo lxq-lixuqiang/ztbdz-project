@@ -74,38 +74,42 @@
     <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="config/token.js" type="text/javascript"></script>
     <script>
+        verifyLogin();
         $(function () {
             // 初始化
-            verifyLogin();
+            initData();
 
-            $.ajax({
-                url: "/project/get/"+new URLSearchParams(window.location.search).get("id"),
-                type: "GET",
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status == 200){
-                        var content = $("#reportContent").html();
-                        var nowDate = new Date().toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'});
-                        content = content.replaceAll("[具体项目编号]",e.data.project.projectCode)
-                            .replaceAll("[详细项目名称]",e.data.project.projectName)
-                            .replaceAll("[采购单位全称]",e.data.tendereeName)
-                            .replaceAll("[公开招标/邀请招标/竞争性谈判/竞争性磋商/单一来源采购/询价等]",e.data.project.procurementMethod)
-                            .replaceAll("[具体金额]",parseFloat(e.data.project.money).toLocaleString('en-US'))
-                            .replaceAll("[发布采购公告的日期]",new Date(e.data.createDate).toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'}))
-                            .replaceAll("[原定开标日期]",new Date(e.data.project.bidOpeningTime).toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'}))
-                            .replaceAll("[确定废标的日期]",nowDate)
-                            .replaceAll("[报告日期]",nowDate);
-                        $("#reportContent").html(content);
-                    }else{
-                        alert("获取项目信息错误："+e.message);
+            function initData(){
+                $.ajax({
+                    url: "/project/get/"+new URLSearchParams(window.location.search).get("id"),
+                    type: "GET",
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            var content = $("#reportContent").html();
+                            var nowDate = new Date().toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'});
+                            content = content.replaceAll("[具体项目编号]",e.data.project.projectCode)
+                                .replaceAll("[详细项目名称]",e.data.project.projectName)
+                                .replaceAll("[采购单位全称]",e.data.tendereeName)
+                                .replaceAll("[公开招标/邀请招标/竞争性谈判/竞争性磋商/单一来源采购/询价等]",e.data.project.procurementMethod)
+                                .replaceAll("[具体金额]",parseFloat(e.data.project.money).toLocaleString('en-US'))
+                                .replaceAll("[发布采购公告的日期]",new Date(e.data.createDate).toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'}))
+                                .replaceAll("[原定开标日期]",new Date(e.data.project.bidOpeningTime).toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'}))
+                                .replaceAll("[确定废标的日期]",nowDate)
+                                .replaceAll("[报告日期]",nowDate);
+                            $("#reportContent").html(content);
+                        }else{
+                            alert("获取项目信息错误："+e.message);
+                            window.history.back();
+                        }
+                    },
+                    error:function(e) {
+                        alert("获取项目信息错误！");
                         window.history.back();
                     }
-                },
-                error:function(e) {
-                    alert("获取项目信息错误！");
-                    window.history.back();
-                }
-            });
+                });
+            }
+
         })
 
 

@@ -119,6 +119,7 @@
     <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="config/token.js" type="text/javascript"></script>
     <script>
+        verifyLogin();
         $("#receivingAccount").text(config.pay.receivingAccount);
         $("#bankDeposit").text(config.pay.bankDeposit);
         $("#bankAccountNumber").text(config.pay.bankAccountNumber);
@@ -149,7 +150,6 @@
 
         $(function() {
             // 初始化
-            verifyLogin();
             initData();
 
             function initData(){

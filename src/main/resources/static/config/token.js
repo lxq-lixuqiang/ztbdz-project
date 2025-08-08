@@ -73,7 +73,7 @@ function verifyLogin(){
                 location.href = "/login.html";
                 removeToken();
             }else{
-                alert(decoded("57O757uf6ZSZ6K+v77yM")+e.responseText); // 系统错误，
+                alert(decoded("57O757uf6ZSZ6K+v77ya")+e.responseText); // 系统错误：
             }
         }
     });

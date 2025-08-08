@@ -1066,51 +1066,56 @@
     <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
     <script src="config/token.js" type="text/javascript"></script>
     <script>
+        verifyLogin();
+
         $(function() {
             // 初始化
-            verifyLogin();
+            loadData();
 
-            $.ajax({
-                url: "/projectRegister/getProjectSuccess/"+new URLSearchParams(window.location.search).get("id"),
-                type: "GET",
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status == 200){
-                        localStorage.setItem('data', JSON.stringify(e)); //缓存数据 方便后面查询
-                        if(e.data.length==0){
-                            $("#notEnoughSuppliers").attr("checked","checked");
+            function loadData(){
+                $.ajax({
+                    url: "/projectRegister/getProjectSuccess/"+new URLSearchParams(window.location.search).get("id"),
+                    type: "GET",
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            localStorage.setItem('data', JSON.stringify(e)); //缓存数据 方便后面查询
+                            if(e.data.length==0){
+                                $("#notEnoughSuppliers").attr("checked","checked");
+                                initPDFViewer(-1);
+                                alert("没有供应商参与报名，请选择废标操作!");
+                                disqualifyBtn.disabled = false;
+                                disqualifyBtn.style.opacity = '1';
+                                disqualifyBtn.style.cursor = 'pointer';
+                                return;
+                            }
+                            for(var i=0;i<e.data.length;i++){
+                                var fileIds = [];
+                                var bidDocumentIds = e.data[i].bidDocumentIds;
+                                if(!bidDocumentIds){
+                                    bidDocumentIds = [];
+                                }
+                                for(var j=0;j<bidDocumentIds.length;j++){
+                                    fileIds.push(bidDocumentIds[j].name+"（"+bidDocumentIds[j].fileSize+"）_"+bidDocumentIds[j].id);
+                                }
+                                supplierFiles[i+1] = fileIds;
+                                var option = document.createElement("option");
+                                option.setAttribute("value",i+1);
+                                option.innerText=`供应商${i+1}：${e.data[i].member.account.accountName}`;
+                                document.getElementById('supplierSelect').appendChild(option)
+                            }
+                            var newTemplate = Handlebars.compile($("#gysTemplate").html())(e);
+                            $("div#gys").html(newTemplate);
+                            // 最后初始化PDF查看器
                             initPDFViewer(-1);
-                            alert("没有供应商参与报名，请选择废标操作!");
-                            disqualifyBtn.disabled = false;
-                            disqualifyBtn.style.opacity = '1';
-                            disqualifyBtn.style.cursor = 'pointer';
-                            return;
+                            initData();
+                        }else{
+                            alert("获取投标方失败："+e.message);
                         }
-                        for(var i=0;i<e.data.length;i++){
-                            var fileIds = [];
-                            var bidDocumentIds = e.data[i].bidDocumentIds;
-                            if(!bidDocumentIds){
-                                bidDocumentIds = [];
-                            }
-                            for(var j=0;j<bidDocumentIds.length;j++){
-                                fileIds.push(bidDocumentIds[j].name+"（"+bidDocumentIds[j].fileSize+"）_"+bidDocumentIds[j].id);
-                            }
-                            supplierFiles[i+1] = fileIds;
-                            var option = document.createElement("option");
-                            option.setAttribute("value",i+1);
-                            option.innerText=`供应商${i+1}：${e.data[i].member.account.accountName}`;
-                            document.getElementById('supplierSelect').appendChild(option)
-                        }
-                        var newTemplate = Handlebars.compile($("#gysTemplate").html())(e);
-                        $("div#gys").html(newTemplate);
-                        // 最后初始化PDF查看器
-                        initPDFViewer(-1);
-                        initData();
-                    }else{
-                        alert("获取投标方失败："+e.message);
                     }
-                }
-            });
+                });
+            }
+
 
             function initData(){
                 var member = {'id':getMember().id};

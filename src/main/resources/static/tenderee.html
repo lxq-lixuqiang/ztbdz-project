@@ -490,6 +490,8 @@
 <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
 <script src="config/token.js" type="text/javascript"></script>
 <script>
+    verifyLogin();
+
     $("body").on("click", "div[data-tab=project2]", function() {
         runProjectInit($("#project2 tbody"),Handlebars.compile($("#project2Template").html()));
     });
@@ -646,7 +648,6 @@
     var publishInfo;
     $(function() {
         // 初始化
-        verifyLogin();
         publishInfo = $("#publish").html();
 
         $("body").on('change','#fileUpload', function () {
