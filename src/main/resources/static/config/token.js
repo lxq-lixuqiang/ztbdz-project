@@ -26,7 +26,7 @@ function removeToken() {
 var config = {
     refundReason  : decoded("6K+35Y+R6YCB6YKu566x5YiwIOKAnDI4MTc4OTk3OTRxcS5jb23igJ3vvIzor7TmmI7pgIDotLnljp/lm6DlubbpmYTkuIog4oCc5pSv5LuY5oiQ5Yqf55qE5oiq5Zu+4oCdIOWSjOaIquWbvumhtemdouaciSDigJzmiqXlkI3kuI3pgJrov4figJ0g55qE6aG555uuIOi/m+ihjOmAgOi0ueWuoeaguO+8gQ=="), //....退费流程说明 "请发送邮箱到 “2817899794qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “报名不通过” 的项目 进行退费审核！"
     consultPhone : decoded("6aG555uu5ZKo6K+i55S16K+d77yaMDI4LTg2NzE2Mjg5"), //....咨询电话 "项目咨询电话：028-86716289"
-    skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMTkxLTQxMjYtOTkzNQ=="), //....技术电话 "平台技术电话：191-4126-9935"
+    skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMTM4LTgxMTItMzIwNA=="), //....技术电话 "平台技术电话：138-8112-3204"
     pay : {
         receivingAccount : decoded("5Zub5bed5Lit5aSp6Ziz5YWJ5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....收款账户 "四川中天阳光招标代理有限公司"
         bankAccountNumber : decoded("NjMxMCAwNTcxNg=="), //....银行账号 "6310 05716"
