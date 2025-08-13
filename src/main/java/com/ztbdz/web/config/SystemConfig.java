@@ -91,6 +91,18 @@ public class SystemConfig {
     @Value("${ztbdz.default.pageSize}")
     private Integer pageSize;
 
+    /**
+     * 角色登录页面
+     */
+    public static Map<String,String> LOGIN_URL = new HashMap(){{
+        put("admin","audit"); // 管理员
+        put("expert","expert"); // 专家
+        put("tenderee","tenderee"); // 招标方
+        put("bidder","bider"); // 投标方
+        put("finance","finance"); // 财务
+        put("manage","manage"); // 项目经理
+    }};
+
     @PostConstruct
     public void init() {
         UPLOAD_FILE_URL = uploadFileUrl;

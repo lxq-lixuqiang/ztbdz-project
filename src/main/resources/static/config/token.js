@@ -64,11 +64,11 @@ function verifyLogin(){
             'url' : window.location.pathname
         },
         error:function(e) {
+            if(isSystemError){
+                return;
+            }
+            isSystemError = true;
             if(e.responseText.indexOf("token")>-1){
-                if(isSystemError){
-                    return;
-                }
-                isSystemError = true;
                 alert(e.responseText);
                 location.href = "/login.html";
                 removeToken();

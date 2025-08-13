@@ -91,15 +91,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         try {
             userId = JWT.decode(token).getClaim("id").asString();
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("token无效！");
+            throw new RuntimeException("token解析信息无效，请重新登录！");
         }
         if(userId==null){
-            throw new RuntimeException("token无效！");
+            throw new RuntimeException("token解析信息无效，请重新登录！");
         }
         User user = userService.selectMember(Long.valueOf(userId),null);
         if (user == null) {
             Landlord landlord = landlordService.getById(Long.valueOf(userId));
-            if(landlord==null) throw new RuntimeException("用户已不存在，请重新登录！");
+            if(landlord==null) throw new RuntimeException("token解析信息不存在，请重新登录！");
             user = landlord.toUser();
         }
         Boolean verify = true;
@@ -109,10 +109,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             throw new RuntimeException("token已过期，请重新登录！");
         }
         if (!verify) {
-            throw new RuntimeException("非法访问！");
+            throw new RuntimeException("token验证失败，请重新登录！");
         }
         if (blacklistService.isBlacklisted(token)) {
-            throw new RuntimeException("Token已失效！");
+            throw new RuntimeException("Token已失效，请重新登录！");
         }
         return user;
     }

@@ -52,7 +52,7 @@ public class LoginServiceImpl implements LoginService {
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user);
             Map returnToken = new HashMap();
             returnToken.put("token",token);
-            returnToken.put("type",user.getMember().getRole().getType());
+            returnToken.put("url",SystemConfig.LOGIN_URL.get(user.getMember().getRole().getType()));
             return Result.ok("登录成功！",returnToken);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);

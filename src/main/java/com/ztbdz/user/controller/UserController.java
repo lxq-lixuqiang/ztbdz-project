@@ -28,14 +28,10 @@ public class UserController {
     private UserService userService;
 
     @ApiOperation(value = "用户登录")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "username", value = "用户名", required=true, dataType = "String"),
-            @ApiImplicitParam(name = "password", value = "密码", required=true, dataType = "String")
-    })
     @LoginToken
     @PostMapping("login")
-    public Result login(String username,String password) {
-        return loginService.login(username,password);
+    public Result login(@RequestBody User user) {
+        return loginService.login(user.getUsername(),user.getPassword());
     }
 
     @ApiOperation(value = "登录退出")
@@ -112,4 +108,5 @@ public class UserController {
     public Result uploadExcel( @RequestParam("file") MultipartFile file) {
         return userService.uploadExcel(file);
     }
+
 }

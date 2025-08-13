@@ -13,7 +13,6 @@
 		WHERE
 			u.is_delete = 0
 			and m.is_delete = 0
-			and m.is_stop = 0
 		<if test="username != null and username.length() >0">
 			and u.username = #{username}
 		</if>
