@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result create(User user,String code) {
+    public synchronized Result create(User user,String code) {
         try{
             //TODO 对比短信验证码
 //            if(!code.equals(Common.DEFAULT_VALUE)){

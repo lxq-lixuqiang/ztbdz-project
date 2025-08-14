@@ -178,7 +178,7 @@
         </div>
 
         <div style="text-align:center;">
-            <button onclick="submitAnnouncement()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">发布公告</button>
+            <button onclick="submitAnnouncement()" id="gonggao" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">发布公告</button>
         </div>
     </div>
 </div>
@@ -553,8 +553,8 @@
         var id = $("#publishForm").attr("data-id");
         var projectid = $("#publishForm").attr("data-projectid");
         var tendereeDate = $("#tendereeDate").val();
-        if(!regBox.regMoney.test(money) || !regBox.regMoney.test(registrationFee)){
-            alert("项目预算或报名费不能是负数和带小数点！");
+        if(!regBox.regMoney.regEx.test(money) || !regBox.regMoney.regEx.test(registrationFee)){
+            alert("项目预算或报名费"+regBox.regMoney.message);
             return;
         }
 
@@ -786,6 +786,7 @@
     var announcementModal = $("#announcementModal").html();
     // 提交公告
     function submitAnnouncement() {
+        $("#gonggao").attr("disabled","true");
         const title = $("#title").val();
         const type = $("#announcementType").val();
         const content = $("#announcementContent").val();
@@ -794,6 +795,7 @@
 
         if(!title || !type || !content) {
             alert("请填写完整的公告信息");
+            $("#gonggao").removeAttr("disabled");
             return;
         }
         var data = {"title":title,"content":content,"tendereeInformType":type,"supplementaryContent":supplementaryContent,"isPublic":1,"type":0,"tendereeInformField":tendereeInformField};
@@ -808,6 +810,7 @@
                     closeAnnouncementModal();
                     $("#announcementModal").html(announcementModal); // 清空数据
                 }else{
+                    $("#gonggao").removeAttr("disabled");
                     alert("发布公告失败："+e.message);
                 }
             }
@@ -1005,7 +1008,7 @@
                             `;
                     }
                     tbody.appendChild(row);
-                    ss});
+                    });
                     // 显示弹窗
                     document.getElementById('applicationModal').style.display = 'block';
                 }else{

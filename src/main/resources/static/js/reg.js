@@ -1,24 +1,31 @@
 $(function() {
 
     // 注册按钮
-    $("body").on("click", "button[type=submit]", function() {
+    $('#reg').on('submit', function(e) {
+        e.preventDefault();
+
+        $("button[type=submit]").attr("disabled","true");
         var username = $("input[name=username]").val();
         var password = $("input[name=password]").val();
         var userType = $("select[name=user_type]").find("option:selected").val();
         if(username == "" || password == ""){
             alert("用户名和密码不能为空！");
+            $("button[type=submit]").removeAttr("disabled");
             return;
         }
         if(userType == ""){
             alert("请选择用户类型！");
+            $("button[type=submit]").removeAttr("disabled");
             return;
         }
-        if(!regBox.regName.test(username)){
-            alert("用户名必须是2~16位的字母数字_-");
+        if(!regBox.regName.regEx.test(username)){
+            alert(regBox.regName.message);
+            $("button[type=submit]").removeAttr("disabled");
             return ;
         }
-        if(!regBox.regPassword.test(password)){
-            alert("密码必须是6~16位的字母数字@$_-");
+        if(!regBox.regPassword.regEx.test(password)){
+            alert(regBox.regPassword.message);
+            $("button[type=submit]").removeAttr("disabled");
             return ;
         }
 
@@ -36,6 +43,7 @@ $(function() {
                     alert(e.message);
                     location.href = "/login.html";
                 }else{
+                    $("button[type=submit]").removeAttr("disabled");
                     alert("注册失败："+e.message);
                 }
             }

@@ -37,13 +37,34 @@ var config = {
 
 // 正则表达式校验
 var regBox = {
-    regEmail : /^([a-zA-Z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,   //....邮箱："邮箱格式错误"
-    regName : /^[a-zA-Z0-9_-]{2,16}$/,                       //....用户名："用户名必须是2~16位的字母数字_-"
-    regPassword : /^[a-zA-Z0-9@$_-]{6,16}$/,                 //....密码："密码必须是6~16位的字母数字@$_-"
-    regIdCard : /^[1-9]([0-9]{13}|[0-9]{16})[0-9xX]$/,       //....身份证号："身份证号格式错误"
-    regMobilePhone : /^0?1[3|4|5|8][0-9]\d{8}$/,                 //....手机："手机号格式错误"
-    regTelephone : /^0[\d]{2,3}-[\d]{7,8}$/,                    //....电话："电话号码格式错误"
-    regMoney : /^[0-9]\d*$/                                  //....金额："不能包含小数和负数"
+    regEmail : { //....邮箱："邮箱格式错误"
+        regEx : /^([a-zA-Z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
+        message : decoded("6YKu566x5qC85byP6ZSZ6K+v")
+    },
+    regName : { //....用户名："用户名必须是2~16位的字母数字_-"
+        regEx : /^[a-zA-Z0-9_-]{2,16}$/,
+        message : decoded("55So5oi35ZCN5b+F6aG75pivMn4xNuS9jeeahOWtl+avjeaVsOWtl18t")
+    },
+    regPassword : { //....密码："密码必须是6~16位的字母数字@$_-"
+        regEx : /^[a-zA-Z0-9@$_-]{6,16}$/,
+        message : decoded("5a+G56CB5b+F6aG75pivNn4xNuS9jeeahOWtl+avjeaVsOWtl0AkXy0=")
+    },
+    regIdCard : { //....身份证号："身份证号格式错误"
+        regEx : /^[1-9]([0-9]{13}|[0-9]{16})[0-9xX]$/,
+        message : decoded("6Lqr5Lu96K+B5Y+35qC85byP6ZSZ6K+v")
+    },
+    regMobilePhone : { //....手机："手机号格式错误"
+        regEx : /^0?1[3|4|5|8][0-9]\d{8}$/,
+        message : decoded("5omL5py65Y+35qC85byP6ZSZ6K+v")
+    },
+    regTelephone : { //....电话："电话号码格式错误"
+        regEx : /^0[\d]{2,3}-[\d]{7,8}$/,
+        message : decoded("55S16K+d5Y+356CB5qC85byP6ZSZ6K+v")
+    },
+    regMoney :{ //....金额："不能包含小数和负数"
+        regEx : /^[0-9]\d*$/ ,
+        message : decoded("5LiN6IO95YyF5ZCr5bCP5pWw5ZKM6LSf5pWw")
+    }
 }
 
 // 解密

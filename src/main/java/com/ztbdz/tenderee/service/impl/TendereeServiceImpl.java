@@ -39,7 +39,7 @@ public class TendereeServiceImpl implements TendereeService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Result create(Tenderee tenderee) {
+    public synchronized Result create(Tenderee tenderee) {
         try{
             // 判断 投标报名，截止时间，开标时间 必填
             if(StringUtils.isEmpty(tenderee.getProject().getSenrollStartDate()) || StringUtils.isEmpty(tenderee.getProject().getEnrollEndDate()))  return Result.fail("投标开始时间和投标截止时间不能为空！");

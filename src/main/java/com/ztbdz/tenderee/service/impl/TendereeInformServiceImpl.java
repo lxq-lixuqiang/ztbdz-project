@@ -28,7 +28,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
     }
 
     @Override
-    public Result create(TendereeInform tendereeInform) {
+    public synchronized Result create(TendereeInform tendereeInform) {
         try{
             if(this.insert(tendereeInform)<=0) return Result.fail("发布失败！");
             return Result.ok("发布成功！");

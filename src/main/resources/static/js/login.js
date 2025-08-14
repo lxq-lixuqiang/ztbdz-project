@@ -1,6 +1,7 @@
 $(function(){
     // 登录按钮
-    $("body").on("click", "button[type=submit]", function() {
+    $('#login').on('submit', function(e){
+        e.preventDefault();
         var username = $("input[name=username]").val();
         var password = $("input[type=password]").val();
         if(username == "" || password == ""){

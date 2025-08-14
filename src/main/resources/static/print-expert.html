@@ -311,8 +311,8 @@
                     alert('手机号格式错误');
                     return;
                 }
-                if(newExpert.idCard && !regBox.regIdCard.test(newExpert.idCard)){
-                    alert('身份证号格式错误');
+                if(newExpert.idCard && !regBox.regIdCard.regEx.test(newExpert.idCard)){
+                    alert(regBox.regIdCard.message);
                     return;
                 }
                 

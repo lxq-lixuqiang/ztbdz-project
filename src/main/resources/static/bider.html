@@ -745,11 +745,11 @@
             if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone) {
                 alert("请填写所有必填字段");
                 return true;
-            }else if(!regBox.regMobilePhone.test(editContactPhone)){
-                alert("手机号格式错误");
+            }else if(!regBox.regMobilePhone.regEx.test(editContactPhone)){
+                alert(regBox.regMobilePhone.message);
                 return true;
-            }else if(!regBox.regEmail.test(editContactEmail)){
-                alert("邮箱格式错误");
+            }else if(!regBox.regEmail.regEx.test(editContactEmail)){
+                alert(regBox.regEmail.message);
                 return true;
             }
 
