@@ -54,7 +54,7 @@ var regBox = {
         message : decoded("6Lqr5Lu96K+B5Y+35qC85byP6ZSZ6K+v")
     },
     regMobilePhone : { //....手机："手机号格式错误"
-        regEx : /^0?1[3|4|5|8][0-9]\d{8}$/,
+        regEx : /^0?1[3-9][0-9]\d{8}$/,
         message : decoded("5omL5py65Y+35qC85byP6ZSZ6K+v")
     },
     regTelephone : { //....电话："电话号码格式错误"
