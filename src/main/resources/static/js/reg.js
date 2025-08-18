@@ -29,7 +29,7 @@ $(function() {
             return ;
         }
 
-        var account = {accountName:username};
+        var account = {accountName:""};
         var role = {type:userType};
         var member = {name:username,account:account,role:role};
         var data = {member:member,password:password,username:username};
