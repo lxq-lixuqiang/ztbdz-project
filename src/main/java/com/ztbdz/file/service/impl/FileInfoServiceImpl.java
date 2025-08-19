@@ -53,7 +53,7 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     @Override
     public String uploadFile(MultipartFile multipartFile,Integer classify) throws Exception{
-        if(multipartFile.getSize()>0) {
+        if(multipartFile!=null) {
             FileInfo fileInfo = new FileInfo(multipartFile.getOriginalFilename(),multipartFile.getContentType(),multipartFile.getSize());
             fileInfo.setClassify(classify);
             this.insert(fileInfo);
