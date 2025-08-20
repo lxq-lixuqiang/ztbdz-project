@@ -160,11 +160,15 @@
 		where
 		1=1
 		<if test="projectRegisters != null">
-			<if test="projectRegisters.isInvoice != null">
+			<if test="projectRegisters.isInvoice != null and projectRegisters.isInvoice == -1">
+				and  pr.is_invoice is not null
+				order by pr.is_invoice desc,p.project_name,a.account_name,pr.invoice_type
+			</if>
+			<if test="projectRegisters.isInvoice != null and projectRegisters.isInvoice != -1">
 				and  pr.is_invoice=#{projectRegisters.isInvoice}
+				order by pr.is_invoice desc,p.update_date desc
 			</if>
 		</if>
-		order by pr.is_invoice asc,p.update_date desc
 	</select>
 
 	<select id="selectProjectByProjectIds" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">

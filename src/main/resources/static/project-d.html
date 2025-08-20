@@ -37,9 +37,9 @@
                 申请开具报名费发票
             </button>
             <div id="confirm-dialog" style="display:none; margin-top:15px; padding:15px; background:#f5f5f5; border:1px solid #ddd;">
-                <p>是否需要开具发票？</p>
-                <button id="confirm-yes" style="padding:5px 15px; margin-right:10px; background:#4CAF50; color:white; border:none; cursor:pointer;">是</button>
-                <button id="confirm-no" style="padding:5px 15px; background:#f44336; color:white; border:none; cursor:pointer;">否</button>
+                <p>请选择开具发票类型？</p>
+                <button id="confirm-invoice01" style="padding:5px 15px; margin-right:10px; background:#4CAF50; color:white; border:none; cursor:pointer;">专票</button>
+                <button id="confirm-invoice02" style="padding:5px 15px; background:#4CAF50; color:white; border:none; cursor:pointer;">普票</button>
             </div>
         </div>
 
@@ -74,12 +74,13 @@
             $("#confirm-dialog").show();
         });
 
-        $("#confirm-yes").click(function() {
-            requestInvoice();
+        $("#confirm-invoice01").click(function() {
+            requestInvoice($(this).text());
             $("#confirm-dialog").hide();
         });
 
-        $("#confirm-no").click(function() {
+        $("#confirm-invoice02").click(function() {
+            requestInvoice($(this).text());
             $("#confirm-dialog").hide();
         });
 
@@ -146,7 +147,7 @@
         $('#details-content').html(detailsHtml);
     }
 
-    function requestInvoice() {
+    function requestInvoice(type) {
         const urlParams = new URLSearchParams(window.location.search);
         const rid = urlParams.get('id');
         var memberInfo = getMember();
@@ -167,7 +168,7 @@
             url: '/projectRegister/update',
             type: 'POST',
             contentType: "application/json",
-            data: JSON.stringify({"id":rid,"isInvoice":0}),
+            data: JSON.stringify({"id":rid,"isInvoice":0,"invoiceType":type}),
             success: function(response) {
                 if(response.status == 200) {
                     alert('发票申请已提交，财务人员将尽快处理');

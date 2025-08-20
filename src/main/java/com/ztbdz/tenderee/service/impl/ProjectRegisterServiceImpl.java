@@ -183,6 +183,10 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
         try{
             switch (exportType){
                 case 0:
+                    if(project.getProjectRegisters()==null){
+                        project.setProjectRegisters(new ProjectRegister());
+                    }
+                    project.getProjectRegisters().setIsInvoice(-1);
                     List<ProjectRegister> projectRegisterList = this.selectInvoice(project);
                     return SystemConfig.excelExport("开具发票申请列表",ProjectRegisterExport.SelectInvoiceExport.converter(projectRegisterList),ProjectRegisterExport.SelectInvoiceExport.class);
                 case 1:

@@ -162,7 +162,7 @@
                             var begin = new Date(e.data.project.enrollEndDate).getTime();
                             var now = new Date().getTime();
                             if(now>begin){
-                                alert("已超过报名截止日期，无法进行报名！");
+                                alert("已超过报名截止日期，报名已截止！");
                                 window.history.back();
                                 return;
                             }
