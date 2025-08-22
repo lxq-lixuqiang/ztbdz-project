@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : new_xy
+ Source Server         : mysql
  Source Server Type    : MySQL
- Source Server Version : 50744
- Source Host           : 180.76.56.49:3306
+ Source Server Version : 50720
+ Source Host           : localhost:3306
  Source Schema         : ztbdz
 
  Target Server Type    : MySQL
- Target Server Version : 50744
+ Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 24/07/2025 10:43:01
+ Date: 22/08/2025 10:05:25
 */
 
 SET NAMES utf8mb4;
@@ -300,6 +300,7 @@ CREATE TABLE `project_register`  (
   `payment_voucher` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `bid_money` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `is_invoice` int(11) NULL DEFAULT NULL,
+  `invoice_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `earnest_money` double(20, 0) NULL DEFAULT NULL,
   `earnest_money_state` int(11) NULL DEFAULT NULL,
   `earnest_money_account_date` datetime(0) NULL DEFAULT NULL,
