@@ -1,7 +1,7 @@
 $(function() {
     var isClose= true;
     $(".contactusdiyou").hover(function() {
-        if(isClose) return;
+        isClose= false;
         $(".hoverimg").attr("src","images/hoverbtnbg1.gif");
         $('.diyoumask').fadeIn();
         $('.contactusdiyou').animate({right:'0'},300);
