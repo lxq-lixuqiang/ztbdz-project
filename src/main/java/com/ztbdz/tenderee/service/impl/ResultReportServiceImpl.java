@@ -14,6 +14,9 @@ import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -25,6 +28,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "resultReport")
 public class ResultReportServiceImpl implements ResultReportService {
     @Autowired
     private ResultReportMapper resultReportMapper;
@@ -34,6 +38,7 @@ public class ResultReportServiceImpl implements ResultReportService {
     private ProjectRegisterService projectRegisterService;
 
 
+    @CacheEvict(cacheNames = "resultReport",allEntries = true)
     @Override
     public Integer insert(ResultReport abandonedBid) throws Exception {
         return resultReportMapper.insert(abandonedBid);
@@ -81,16 +86,19 @@ public class ResultReportServiceImpl implements ResultReportService {
         }
     }
 
+    @CacheEvict(cacheNames = "resultReport",allEntries = true)
     @Override
     public Integer updateById(ResultReport resultReport) throws Exception {
         return resultReportMapper.updateById(resultReport);
     }
 
+    @Cacheable
     @Override
     public ResultReport selectById(Long id) throws Exception {
         return resultReportMapper.selectById(id);
     }
 
+    @Cacheable
     @Override
     public Result selectByProjectId(Long projectId) {
         try{
@@ -105,6 +113,7 @@ public class ResultReportServiceImpl implements ResultReportService {
         }
     }
 
+    @Cacheable
     @Override
     public List<ResultReport> select(ResultReport resultReport) throws Exception {
         QueryWrapper<ResultReport> queryWrapper = new QueryWrapper();

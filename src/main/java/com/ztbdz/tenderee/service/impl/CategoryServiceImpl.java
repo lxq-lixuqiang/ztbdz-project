@@ -13,6 +13,9 @@ import com.ztbdz.web.util.TreeNode;
 import com.ztbdz.web.util.TreeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,12 +29,14 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "category")
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
 
 
+    @CacheEvict(cacheNames = "category",allEntries = true)
     @Override
     public Integer insert(Category category) throws Exception {
         category.setCategoryPath(this.getPath(category));
@@ -75,11 +80,13 @@ public class CategoryServiceImpl implements CategoryService {
         return pathString;
     }
 
+    @Cacheable
     @Override
     public Category selectById(Long id) throws Exception {
         return categoryMapper.selectById(id);
     }
 
+    @Cacheable
     @Override
     public List<Category> selectByIds(List<Long> ids) throws Exception {
         QueryWrapper<Category> queryWrapper = new QueryWrapper();
@@ -87,6 +94,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.selectList(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public List<Category> selectList(Category category) throws Exception {
         QueryWrapper<Category> queryWrapper = new QueryWrapper();
@@ -100,6 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.selectList(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public Integer countByTypeCode(String id, String typeCode) throws Exception {
         QueryWrapper<Category> queryWrapper = new QueryWrapper();
@@ -108,6 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.selectCount(queryWrapper);
     }
 
+    @CacheEvict(cacheNames = "category",allEntries = true)
     @Override
     public Integer deletes(List<Long> ids) throws Exception {
         QueryWrapper<Category> queryWrapper = new QueryWrapper();
@@ -115,11 +125,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.delete(queryWrapper);
     }
 
+    @CacheEvict(cacheNames = "category",allEntries = true)
     @Override
     public Integer updateById(Category category) throws Exception {
         return categoryMapper.updateById(category);
     }
 
+    @Cacheable
     @Override
     public PageInfo<Category> selectPage(Integer page, Integer size, Category category) throws Exception {
         PageHelper.startPage(page, size);

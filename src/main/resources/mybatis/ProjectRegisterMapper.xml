@@ -42,7 +42,13 @@
 			order by pr.state asc,p.update_date desc
 		</if>
 		<if test="state==4">
-			order by pr.state desc,p.update_date desc,p.project_name
+			order by
+			CASE
+				WHEN pr.state = 3 THEN 0
+				ELSE 1
+			END,
+			p.project_name,
+			p.update_date desc
 		</if>
 	</select>
 	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">
