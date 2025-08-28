@@ -68,7 +68,6 @@ public class FileInfoServiceImpl implements FileInfoService {
         return "";
     }
 
-    @CacheEvict(cacheNames = "fileInfo",allEntries = true)
     @Override
     public Integer insert(FileInfo file) throws Exception {
         return fileMapper.insert(file);

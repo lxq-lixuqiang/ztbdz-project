@@ -138,48 +138,34 @@ window.onload = function()  {
 
 // 上传图片
 function uploadImg(files) {
-    var formData = new FormData();
     var error = decoded("5LiK5Lyg5Zu+54mH5aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); // 上传图片大小不能超过50M！
-    for(var i=0;i<files.length;i++){
-        if(files[i].size>(50*1024*1024)){
-            alert(error)
-            throw error;
-        }
-        formData.append('files', files[i]); // 'file'是后端接收的文件参数名
-    }
-    var fileId = "";
-    $.ajax({
-        url: '/file/uploadImg',
-        type: 'POST',
-        data: formData,
-        async: false,
-        contentType: false,
-        processData: false,
-        success: function (e) {
-            if(e.status == 200){
-                fileId = e.data;
-            }else{
-                alert(e.message)
-            }
-        }
-    });
-    return fileId;
+    return upload(files,"img",error);
 }
 
 // 上传文件
 function uploadFile(files) {
-    var formData = new FormData();
     var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); //上传文件大小不能超过50M！
+    return upload(files,"file",error);
+}
+
+// 上传
+function upload(files,url,errorMagger){
+    var formData = new FormData();
     for(var i=0;i<files.length;i++){
         if(files[i].size>(50*1024*1024)){
-            alert(error)
-            throw error;
+            alert(errorMagger)
+            throw errorMagger;
         }
         formData.append('files', files[i]); // 'file'是后端接收的文件参数名
     }
+    if(url == "img"){
+        url = "/file/uploadImg";
+    }else if(url == "file"){
+        url = "/file/upload";
+    }
     var fileId = "";
     $.ajax({
-        url: '/file/upload',
+        url: url,
         type: 'POST',
         data: formData,
         async: false,

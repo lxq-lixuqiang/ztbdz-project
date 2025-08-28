@@ -7,6 +7,9 @@ import com.ztbdz.tenderee.service.TendereeInformService;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,11 +17,12 @@ import java.util.List;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "tendereeInform")
 public class TendereeInformServiceImpl implements TendereeInformService {
     @Autowired
     private TendereeInformMapper tendereeInformMapper;
 
-
+    @Cacheable
     @Override
     public List<TendereeInform> selectListByTendereeId(Long tendereeId) throws Exception {
         QueryWrapper<TendereeInform> queryWrapper = new QueryWrapper();
@@ -38,6 +42,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         }
     }
 
+    @CacheEvict(cacheNames = "tendereeInform",allEntries = true)
     @Override
     public Integer insert(TendereeInform tendereeInform) throws Exception {
         return tendereeInformMapper.insert(tendereeInform);
@@ -54,6 +59,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         }
     }
 
+    @CacheEvict(cacheNames = "tendereeInform",allEntries = true)
     @Override
     public Integer updateById(TendereeInform tendereeInform) throws Exception {
         return tendereeInformMapper.updateById(tendereeInform);
@@ -69,6 +75,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         }
     }
 
+    @Cacheable
     @Override
     public List<TendereeInform> select(TendereeInform tendereeInform) throws Exception {
         QueryWrapper<TendereeInform> queryWrapper = new QueryWrapper();
@@ -88,6 +95,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         }
     }
 
+    @Cacheable
     @Override
     public TendereeInform selectById(Long id) throws Exception {
         return tendereeInformMapper.selectById(id);
