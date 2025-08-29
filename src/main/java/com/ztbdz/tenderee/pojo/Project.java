@@ -57,7 +57,7 @@ public class Project extends Model<Project> implements Serializable {
     @ApiModelProperty(value = "上传采购文件")
     private String procurementDocuments;
     @ApiModelProperty(value = "预算")
-    private Long money;
+    private Double money;
     @ApiModelProperty(value = "预算金额大写")
     @TableField(exist = false)
     private String moneyUppercase;

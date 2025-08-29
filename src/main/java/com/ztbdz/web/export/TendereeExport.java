@@ -30,7 +30,7 @@ public class TendereeExport {
         private Date enrollEndDate;
 
         @ExcelProperty("预算金额")
-        private Long money;
+        private Double money;
 
         @ExcelProperty("状态")
         private String state;

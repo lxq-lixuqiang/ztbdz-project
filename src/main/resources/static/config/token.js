@@ -61,9 +61,9 @@ var regBox = {
         regEx : /^0[\d]{2,3}-[\d]{7,8}$/,
         message : decoded("55S16K+d5Y+356CB5qC85byP6ZSZ6K+v")
     },
-    regMoney :{ //....金额："不能包含小数和负数"
-        regEx : /^[0-9]\d*$/ ,
-        message : decoded("5LiN6IO95YyF5ZCr5bCP5pWw5ZKM6LSf5pWw")
+    regMoney :{ //....金额："格式不正确"
+        regEx : /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
+        message : decoded("5qC85byP5LiN5q2j56Gu")
     }
 }
 
