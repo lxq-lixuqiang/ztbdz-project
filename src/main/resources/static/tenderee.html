@@ -409,7 +409,7 @@
                 <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
             {{/eq}}{{/ne}}
             {{#eq project.isAudit 2}}
-                <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">原因</button>
+                <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">不通过原因</button>
             {{/eq}}
         </td>
     </tr>

@@ -452,11 +452,11 @@
                 {{#eq  projectRegisters.state 2}}
                     <button onclick="showProgress()" style="padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">退费说明</button>
                     <button onclick="signUp2('{{id}}')" style="margin-top:3px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新报名</button>
-                    <button onclick="alert('报名不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:3px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">原因</button>
+                    <button onclick="alert('报名不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:3px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
                 {{#eq  projectRegisters.state 5}}
                     <button onclick="signUp3('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新报名</button>
-                    <button onclick="alert('资质不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:3px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">原因</button>
+                    <button onclick="alert('资质不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:3px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
             </td>
         </tr>
