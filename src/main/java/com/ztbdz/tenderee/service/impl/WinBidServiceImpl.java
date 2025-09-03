@@ -6,6 +6,9 @@ import com.ztbdz.tenderee.pojo.WinBid;
 import com.ztbdz.tenderee.service.WinBidService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,16 +17,19 @@ import java.util.List;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "winBid")
 public class WinBidServiceImpl implements WinBidService {
     @Autowired
     private WinBidMapper winBidMapper;
 
 
+    @CacheEvict(cacheNames = "winBid",allEntries = true)
     @Override
     public Integer insert(WinBid winBid) throws Exception{
         return winBidMapper.insert(winBid);
     }
 
+    @CacheEvict(cacheNames = "winBid",allEntries = true)
     @Override
     public Integer delete(Long winBidId) throws Exception {
         QueryWrapper<WinBid> queryWrapper = new QueryWrapper();
@@ -31,6 +37,7 @@ public class WinBidServiceImpl implements WinBidService {
         return winBidMapper.delete(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public List<WinBid> selectList(Long memberId, Long winBidId) throws Exception {
         QueryWrapper<WinBid> queryWrapper = new QueryWrapper();
