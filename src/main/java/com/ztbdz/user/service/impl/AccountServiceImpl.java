@@ -10,12 +10,16 @@ import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "account")
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -23,11 +27,13 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @CacheEvict(cacheNames = "account",allEntries = true)
     @Override
     public Integer insert(Account account) throws Exception {
         return accountMapper.insert(account);
     }
 
+    @CacheEvict(cacheNames = "account",allEntries = true)
     @Override
     public Integer delete(Long id) throws Exception {
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
@@ -35,6 +41,7 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.delete(queryWrapper);
     }
 
+    @CacheEvict(cacheNames = "account",allEntries = true)
     @Override
     public Integer updateById(Account account) throws Exception {
         redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
@@ -43,6 +50,7 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.update(account,queryWrapper);
     }
 
+    @Cacheable
     @Override
     public Account getById(Long id) throws Exception {
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
@@ -50,6 +58,7 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.selectOne(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public PageInfo<Account> selectList(Integer page, Integer size, Account account) throws Exception {
         PageHelper.startPage(page, size);
@@ -95,6 +104,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Cacheable
     @Override
     public Integer count(Account account) throws Exception {
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
