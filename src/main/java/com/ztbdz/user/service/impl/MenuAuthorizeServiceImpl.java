@@ -10,6 +10,9 @@ import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "menuAuthorize")
 public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
 
     @Autowired
@@ -25,12 +29,14 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @CacheEvict(cacheNames = "menuAuthorize",allEntries = true)
     @Override
     public Integer insert(MenuAuthorize menuAuthorize) throws Exception {
         redisTemplate.delete(SystemConfig.REDIS_ALL_MENU);
         return menuAuthorizeMapper.insert(menuAuthorize);
     }
 
+    @CacheEvict(cacheNames = "menuAuthorize",allEntries = true)
     @Override
     public Integer delete(Long id) throws Exception {
         redisTemplate.delete(SystemConfig.REDIS_ALL_MENU);
@@ -39,6 +45,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         return menuAuthorizeMapper.delete(queryWrapper);
     }
 
+    @CacheEvict(cacheNames = "menuAuthorize",allEntries = true)
     @Override
     public Integer updateById(MenuAuthorize menuAuthorize) throws Exception {
         redisTemplate.delete(SystemConfig.REDIS_ALL_MENU);
@@ -47,6 +54,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         return menuAuthorizeMapper.update(menuAuthorize,queryWrapper);
     }
 
+    @Cacheable
     @Override
     public MenuAuthorize select(MenuAuthorize menuAuthorize) throws Exception {
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
@@ -55,6 +63,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         return menuAuthorizeMapper.selectOne(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public List<MenuAuthorize> selectList(MenuAuthorize menuAuthorize) throws Exception {
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
@@ -63,6 +72,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         return menuAuthorizeMapper.selectList(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public PageInfo<MenuAuthorize> selectList(Integer page, Integer size, MenuAuthorize menuAuthorize) throws Exception {
         PageHelper.startPage(page, size);
@@ -112,6 +122,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         }
     }
 
+    @Cacheable
     @Override
     public Integer count(MenuAuthorize menuAuthorize) throws Exception {
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
@@ -134,6 +145,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         }
     }
 
+    @Cacheable
     @Override
     public List<MenuAuthorize> selectByIds(List<Long> ids) throws Exception{
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
@@ -141,6 +153,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         return menuAuthorizeMapper.selectList(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public Integer countBySign(String id, String sign) throws Exception {
         QueryWrapper<MenuAuthorize> queryWrapper = new QueryWrapper();
