@@ -56,7 +56,7 @@ public class SystemConfig {
     /**
      * 默认密码后缀
      */
-    public static String DEFAULT_PASSWORD = "1234";
+    public static String DEFAULT_PASSWORD = "12345678";
 
     /**
      * token时效 默认3小时

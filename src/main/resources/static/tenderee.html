@@ -151,7 +151,7 @@
             <label style="display:block; margin-bottom:5px;">公告类型</label>
             <select id="announcementType" style="width:100%; padding:8px; border:1px solid #ddd;">
                 <option value="">请选择公告类型</option>
-                <option value="投标">投标公告</option>
+                <option value="采购">采购公告</option>
                 <option value="中标">中标公告</option>
                 <option value="延期">延期公告</option>
                 <option value="废标">废标公告</option>
@@ -491,6 +491,12 @@
 <script src="config/token.js" type="text/javascript"></script>
 <script>
     verifyLogin();
+    // 添加回车键搜索功能
+    $('#projectNameSearch').on('keypress', function(e) {
+        if(e.which === 13) { // 回车键
+            $('#searchBtn').click();
+        }
+    });
 
     $("body").on("click", "div[data-tab=project2]", function() {
         runProjectInit($("#project2 tbody"),Handlebars.compile($("#project2Template").html()));

@@ -59,7 +59,7 @@
                     success: function (e) {
                         if(e.status == 200) {
                             if (e.data.length == 0) {
-                                alert("项目还没有抽取评审专家！");
+                                alert("项目没有抽取评审专家，请联系项目经理抽取！");
                                 window.history.back();
                                 return;
                             }

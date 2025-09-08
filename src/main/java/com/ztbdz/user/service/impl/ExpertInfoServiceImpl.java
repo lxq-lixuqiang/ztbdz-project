@@ -43,17 +43,23 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     @Override
     public Result create(ExpertInfo expertInfo) {
         try{
+            if(StringUtils.isEmpty(expertInfo.getMember())){
+                return Result.fail("专家信息不能为空！");
+            }
             // 手机号不能为空
-            if(StringUtils.isEmpty(expertInfo.getMember()) || StringUtils.isEmpty(expertInfo.getMember().getPhone())){
+            if( StringUtils.isEmpty(expertInfo.getMember().getPhone())){
                 return Result.fail("专家手机号不能为空！");
+            }
+            if( StringUtils.isEmpty(expertInfo.getIdCard())){
+                return Result.fail("专家身份证号不能为空！");
             }
             User user = new User();
             Role role = new Role();
             role.setType("expert");
             expertInfo.getMember().setRole(role);
             user.setMember(expertInfo.getMember());
-            user.setUsername(expertInfo.getMember().getPhone());
-            user.setPassword(expertInfo.getMember().getPhone()+SystemConfig.DEFAULT_PASSWORD);
+            user.setUsername(expertInfo.getIdCard());
+            user.setPassword(expertInfo.getIdCard()+SystemConfig.DEFAULT_PASSWORD);
             Result reslut = userService.create(user,Common.DEFAULT_VALUE);
             if(reslut.getStatus()!=200){
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

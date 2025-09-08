@@ -533,6 +533,12 @@
         $(function(){
             // 初始化
             availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
+            // 添加回车键搜索功能
+            $('#projectNameSearch').on('keypress', function(e) {
+                if(e.which === 13) { // 回车键
+                    $('#searchBtn').click();
+                }
+            });
 
             $("body").on("click", "div[data-tab=available]", function() {
                 availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));

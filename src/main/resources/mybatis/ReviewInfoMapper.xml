@@ -38,7 +38,6 @@
         WHERE
           m.is_delete = 0
           and m.is_stop = 0
-          and e.is_admin !=1
           and e.is_check =1
           and r.type='expert'
         <if test="hideExperts != null and hideExperts.size >0">
