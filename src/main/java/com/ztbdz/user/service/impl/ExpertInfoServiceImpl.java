@@ -163,7 +163,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     @Override
     public Result uploadExcel(MultipartFile file) {
         try{
-            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
+            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型错误，请上传Excel文件的xls，xlsx");
 
             String[] fields = new String[]{"姓名","手机号","企业名称","专家编号","身份证号","专家证号","职称","专家类型","银行名称","银行卡号","是否组长（0=不是 1=是）","参加工作日期"};
             List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);

@@ -282,7 +282,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Result uploadExcel(MultipartFile file) {
         try{
-            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
+            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型错误，请上传Excel文件的xls，xlsx");
 
             String[] fields = new String[]{"类别名称","类别分类","类别代码","父ID"};
             List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);

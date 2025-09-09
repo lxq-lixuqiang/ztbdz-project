@@ -116,9 +116,6 @@
 			<if test="state==2">
 				and p.id in (select ec.project_id from evaluation_criteria ec where p.id=ec.project_id and ec.member_id=#{memberId} )
 			</if>
-			<if test="state==1">
-				and p.id not in (select ec.project_id from evaluation_criteria ec where p.id=ec.project_id and ec.member_id=#{memberId} )
-			</if>
 		order by
 			p.update_date desc
 	</select>

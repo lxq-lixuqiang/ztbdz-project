@@ -44,7 +44,7 @@ public class LoginServiceImpl implements LoginService {
             if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) return Result.fail("用户名和密码不能为空！");
             User user = userService.selectMember(null,username);
             String passwordMD5 = MD5.md5String(password);
-            if(user == null) return Result.fail("用户名或密码错误！");
+            if(user == null) return this.loginLandlord(username, password, Common.DEFAULT_VALUE);
             if(!user.getPassword().equals(passwordMD5)) return Result.fail("用户名或密码错误！");
             if(user.getIsStop() !=0 || user.getMember().getIsStop()!=0) return Result.fail("账号已被停用！");
 
@@ -76,25 +76,27 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Result loginLandlord(String username, String phone, String code) {
+    public Result loginLandlord(String username, String password, String code) {
         try{
             //TODO 对比短信验证码
+            if(!code.equals(Common.DEFAULT_VALUE)) {
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
 //            if(!StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
+            }
 
             Landlord landlord = new Landlord();
             landlord.setName(username);
             landlord = landlordService.select(landlord);
-            String passwordMD5 = MD5.md5String(phone+SystemConfig.DEFAULT_PASSWORD);
-            if(landlord == null) return Result.fail("没有查询到登录用户名！");
-            if(!landlord.getName().equals(username)) return Result.fail("用户名不正确！");
-            if(!landlord.getPassword().equals(passwordMD5)) return Result.fail("密码不正确！");
+            String passwordMD5 = MD5.md5String(password);
+            if(landlord == null) return Result.fail("用户名或密码错误！");
+            if(!landlord.getPassword().equals(passwordMD5)) return Result.fail("用户名或密码错误！");
 
             SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,landlord.getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, landlord.toUser());
             Map returnToken = new HashMap();
             returnToken.put("token",token);
+            returnToken.put("url","bider");//TODO 业主登录跳转页面未定
             return Result.ok("登录成功！",returnToken);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);

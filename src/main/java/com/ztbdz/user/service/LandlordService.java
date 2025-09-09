@@ -3,6 +3,7 @@ package com.ztbdz.user.service;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.Landlord;
 import com.ztbdz.web.util.Result;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -104,4 +105,11 @@ public interface LandlordService{
      * @return
      */
     Result deleteList(List<Long> ids);
+
+    /**
+     * 上传Excel业主文件
+     * @param file
+     * @return
+     */
+    Result uploadExcel(MultipartFile file);
 }

@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -96,4 +97,14 @@ public class LandlordController {
         return landlordService.deleteList(ids);
     }
 
+
+    @ApiOperation(value = "上传Excel业主文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping(value = "uploadExcel",consumes = "multipart/form-data")
+    public Result uploadExcel( @RequestParam("file") MultipartFile file) {
+        return landlordService.uploadExcel(file);
+    }
 }

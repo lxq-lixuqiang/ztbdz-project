@@ -102,6 +102,9 @@
                 initScoringPage();
                 break;
         }
+        if(stage=='result'){
+            printContents[3] =$("body").html();
+        }
     }
     
     // PDF查看器相关变量
@@ -227,6 +230,102 @@
         console.log('弹出窗口PDF路径:', pdfPath);
         window.open(pdfPath, '_blank');
     }
+
+    var printContents = ["","","",""];
+    // 打印页面
+    function print(){
+        if(printContents[0].length === 0) {
+            alert('请先提交评审');
+            return;
+        }
+        var printContent = "";
+        for(var i=0;i<printContents.length;i++){
+            printContent+=printContents[i];
+        }
+
+        // 创建打印专用窗口
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`<html>
+                    <head>
+                        <title>专家抽取表</title>
+                       <style>
+                        .evaluation-container {
+                            display: flex;
+                            flex-direction: column;
+                            height: 100%;
+                        }
+                        .progress-bar {
+                            height: 80px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: #f5f5f5;
+                            margin-bottom: 20px;
+                        }
+                        .progress-step {
+                            display: flex;
+                            align-items: center;
+                            padding: 0 20px;
+                        }
+                        .progress-step.active {
+                            font-weight: bold;
+                            color: #2196F3;
+                        }
+                        .progress-arrow {
+                            margin: 0 10px;
+                            font-size: 20px;
+                        }
+                        .review-content {
+                            display: flex;
+                            flex: 1;
+                            gap: 20px;
+                        }
+                        .file-viewer {
+                            width: 600px;
+                            border: 1px solid #ddd;
+                            padding: 10px;
+                        }
+                        .pdf-container {
+                            height: 600px;
+                            border: 1px solid #eee;
+                            margin-bottom: 10px;
+                            overflow: auto;
+                        }
+                        .pdf-toolbar {
+                            display: flex;
+                            gap: 10px;
+                        }
+                        .pdf-toolbar button {
+                            padding: 5px 10px;
+                            background: #4CAF50;
+                            color: white;
+                            border: none;
+                            cursor: pointer;
+                        }
+                        .review-panel {
+                            flex: 1;
+                            border: 1px solid #ddd;
+                            padding: 20px;
+                        }
+                        .criteria-section {
+                            display: none;
+                        }
+                        .criteria-section.active {
+                            display: block;
+                        }
+                    </style>
+                    </head>
+                    <body>
+                        ${printContent}
+                    </body>
+                </html>`);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    }
     
     // 切换废标按钮状态
     function toggleDisqualify() {
@@ -303,6 +402,7 @@
             return;
         }
 
+        $("#enoughSuppliers").attr("checked","checked");
         var e = JSON.parse(localStorage.getItem('data'));
         // 保存评审数据
         var saveDataList = [];
@@ -311,9 +411,14 @@
             var data = e.data[i];
             var isPass = $("input[name='supplier"+data.id+"']:checked").val()=='pass'?0:1;
             var reviewDescription = $("textarea[name='supplier1_comment"+data.id+"']").val();
+
+            $("textarea[name='supplier1_comment"+data.id+"']").text(reviewDescription);
+            $("input[name='supplier"+data.id+"']:checked").attr("checked","checked");
+
             var saveData={"sort":i+1,"evaluationCriteriaName":"资格评审标准","reviewType":"1","isPass":isPass,"reviewDescription":reviewDescription,"projectId":projectId,"projectRegisterId":data.id};
             saveDataList.push(saveData);
         }
+        printContents[0] =$("body").html();
         $.ajax({
             url: "/evaluation/create",
             type: "POST",
@@ -416,6 +521,7 @@
             return;
         }
 
+        $("#enoughCompliantSuppliers").attr("checked","checked");
         // 保存评审数据
         var e = JSON.parse(localStorage.getItem('data'));
         var saveDataList = [];
@@ -424,6 +530,10 @@
             var data = e.data[i];
             var isPass = $("input[name='supplier"+data.id+"_compliance']:checked").val()=='pass'?0:1;
             var reviewDescription = $("textarea[name='supplier"+data.id+"_compliance_comment']").val();
+
+            $("textarea[name='supplier"+data.id+"_compliance_comment']").text(reviewDescription);
+            $("input[name='supplier"+data.id+"_compliance']:checked").attr("checked","checked");
+
             if($("input[name='supplier"+data.id+"_compliance']")){
                 var saveData={"sort":i+1,"evaluationCriteriaName":"实质性符合标准","reviewType":"2","isPass":isPass,"reviewDescription":reviewDescription,"projectId":projectId,"projectRegisterId":data.id};
                 if(isPass == 1){
@@ -435,6 +545,8 @@
                 saveDataList.push(saveData);
             }
         }
+
+        printContents[1] =$("body").html();
         $.ajax({
             url: "/evaluation/create",
             type: "POST",
@@ -663,6 +775,11 @@
             const tech = form.querySelector(`input[name="supplier${id}_tech"]`)? parseInt(form.querySelector(`input[name="supplier${id}_tech"]`).value) : 0;
             const performance = form.querySelector(`input[name="supplier${id}_performance"]`)? parseInt(form.querySelector(`input[name="supplier${id}_performance"]`).value) : 0;
             const solution = form.querySelector(`input[name="supplier${id}_solution"]`)? parseInt(form.querySelector(`input[name="supplier${id}_solution"]`).value) : 0;
+            $(`input[name="supplier${id}_price"]`).attr("value",price);
+            $(`input[name="supplier${id}_tech"]`).attr("value",tech);
+            $(`input[name="supplier${id}_performance"]`).attr("value",performance);
+            $(`input[name="supplier${id}_solution"]`).attr("value",solution);
+
             if(isError){
                 return;
             }
@@ -682,6 +799,10 @@
             const techReason = form.querySelector(`input[name="supplier${id}_tech_reason"]`)? form.querySelector(`input[name="supplier${id}_tech_reason"]`).value : 0;
             const performanceReason = form.querySelector(`input[name="supplier${id}_performance_reason"]`)? form.querySelector(`input[name="supplier${id}_performance_reason"]`).value : 0;
             const solutionReason = form.querySelector(`input[name="supplier${id}_solution_reason"]`)? form.querySelector(`input[name="supplier${id}_solution_reason"]`).value : 0;
+            $(`input[name="supplier${id}_price_reason"]`).attr("value",priceReason);
+            $(`input[name="supplier${id}_tech_reason"]`).attr("value",techReason);
+            $(`input[name="supplier${id}_performance_reason"]`).attr("value",performanceReason);
+            $(`input[name="supplier${id}_solution_reason"]`).attr("value",solutionReason);
 
             saveDataList.push({"sort":1,"evaluationCriteriaName":"价格分","score":price,"deductionReason":priceReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
             saveDataList.push({"sort":2,"evaluationCriteriaName":"技术参数分","score":tech,"deductionReason":techReason,"reviewType":"3","projectId":projectId,"projectRegisterId":id});
@@ -705,6 +826,7 @@
         localStorage.setItem('bidInfo', JSON.stringify(bidInfo)); // 中标信息
 
         calculateScores();
+        printContents[2] =$("body").html();
         $.ajax({
             url: "/evaluation/create",
             type: "POST",
@@ -825,6 +947,7 @@
                         <button onclick="zoomIn()">放大</button>
                         <button onclick="zoomOut()">缩小</button>
                         <button onclick="openInNewWindow()">弹出</button>
+                        <button onclick="print()">打印</button>
                     </div>
                 </div>
                 

@@ -51,11 +51,11 @@ public class UserServiceImpl implements UserService {
     public synchronized Result create(User user,String code) {
         try{
             //TODO 对比短信验证码
-//            if(!code.equals(Common.DEFAULT_VALUE)){
+            if(!code.equals(Common.DEFAULT_VALUE)){
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
 //            if(StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
-//            }
+            }
 
             if(StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getPassword())) return Result.fail("用户名和密码不能为空！");
             if(StringUtils.isEmpty(user.getMember()) ||StringUtils.isEmpty(user.getMember().getRole()) || StringUtils.isEmpty(user.getMember().getRole().getType())) return Result.fail("请选择用户类型！");
@@ -210,7 +210,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result uploadExcel(MultipartFile file) {
         try{
-            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型不对，请上传Excel文件的xls，xlsx");
+            if(file.getOriginalFilename().indexOf("xls")<0) return Result.fail("文件类型错误，请上传Excel文件的xls，xlsx");
 
             String[] fields = new String[]{"用户名","密码","姓名","企业名称","角色类型","手机号","邮箱"};
             List<Map<String,String>> dataList = SystemConfig.importExcelData(file,fields);
