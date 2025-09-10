@@ -84,4 +84,12 @@ public interface ExpertInfoService {
      * @return
      */
     List<ExpertInfo> selectExpertTo(List<Long> expertIds) throws Exception;
+
+
+    /**
+     * 获取项目评审专家
+     * @param projectId
+     * @return
+     */
+    Result get(Long projectId);
 }

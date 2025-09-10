@@ -53,6 +53,8 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     private String selectExpert;
     @ApiModelProperty(value = "备选专家名单")
     private String spareExpert;
+    @ApiModelProperty(value = "项目专家组长")
+    private Long expertLeader;
     @ApiModelProperty(value = "分配评审专家")
     @TableField(exist = false)
     private List<Long> expertIds;

@@ -48,8 +48,16 @@ public class ResultReportServiceImpl implements ResultReportService {
     @Override
     public Result createOrUpdate(ResultReport resultReport) {
         try{
+            if (StringUtils.isEmpty(resultReport.getProject()) || StringUtils.isEmpty(resultReport.getProject().getId())) return Result.fail("项目id不能为空！");
+            if(StringUtils.isEmpty(resultReport.getId())) {
+                Long memberId = SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
+                resultReport.setMember(new Member(memberId)); // 保存创建人
+                List<ResultReport> resultReports = this.select(resultReport);
+                if (resultReports.size() > 0) {
+                    resultReport.setId(resultReports.get(0).getId());
+                }
+            }
             if(StringUtils.isEmpty(resultReport.getId())){
-                if(StringUtils.isEmpty(resultReport.getProject()) || StringUtils.isEmpty(resultReport.getProject().getId())) return Result.fail("项目id不能为空！");
                 // 不通过 废标操作
                 if("1".equals(resultReport.getProject().getIsPass().toString())){
                     List<ProjectRegister> projectRegisterList = projectRegisterService.selectByProjectId(resultReport.getProject().getId(),null);
@@ -67,7 +75,6 @@ public class ResultReportServiceImpl implements ResultReportService {
                     project.setReviewEndDate(new Date());
                     projectService.updateById(project); // 更新项目状态
                 }
-                resultReport.setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID))); // 保存创建人
                 Integer num = this.insert(resultReport);
                 if(num<=0) {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -102,14 +109,20 @@ public class ResultReportServiceImpl implements ResultReportService {
     @Override
     public Result selectByProjectId(Long projectId) {
         try{
-            ResultReport abandonedBid = new ResultReport();
+            ResultReport resultReport = new ResultReport();
             Project project = new Project();
             project.setId(projectId);
-            abandonedBid.setProject(project);
-            return Result.ok("查询成功！",this.select(abandonedBid));
+            resultReport.setProject(project);
+            resultReport.setMember(new Member(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID)));
+            List<ResultReport> resultReports = this.select(resultReport);
+            if(resultReports.size()>0){
+                return Result.ok("查询成功！",resultReports.get(0));
+            }else{
+                return Result.error("未查询到报告信息！");
+            }
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
-            return Result.error("查询废标异常，原因："+e.getMessage());
+            return Result.error("查询异常，原因："+e.getMessage());
         }
     }
 

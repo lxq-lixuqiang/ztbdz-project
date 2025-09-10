@@ -39,6 +39,7 @@
         </div>
         
         <button id="submitBtn" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">提交结果</button>
+        <button id="returnBtn" onclick="window.history.back();" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;display: none">返回</button>
 
 
         <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
@@ -51,6 +52,11 @@
             init();
             var isEnd = false;
             var memberScore = {};
+            var isLeader = new URLSearchParams(window.location.search).get("isLeader");
+            if(!isLeader){
+                $("#submitBtn").remove();
+                $("#returnBtn").show();
+            }
             function init(){
                 $.ajax({
                     url: "/project/winDid/"+new URLSearchParams(window.location.search).get("id"),
@@ -205,6 +211,7 @@
 
                             // 提交按钮事件
                             document.getElementById('submitBtn').addEventListener('click', function() {
+                                if(!isLeader) return;
                                 if(!isEnd){
                                     alert('还有专家未进行评审，无法提交结果！');
                                     return;

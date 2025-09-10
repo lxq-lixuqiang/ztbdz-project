@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ztbdz.tenderee.pojo.ReviewInfo;
+import com.ztbdz.tenderee.service.ReviewInfoService;
 import com.ztbdz.user.mapper.ExpertInfoMapper;
 import com.ztbdz.user.pojo.*;
 import com.ztbdz.user.service.AccountService;
@@ -22,6 +24,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +41,8 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     private UserService userService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private ReviewInfoService reviewInfoService;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -207,5 +213,56 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     @Override
     public List<ExpertInfo> selectExpertTo(List<Long> expertIds)  throws Exception{
         return expertInfoMapper.selectExpertTo(expertIds);
+    }
+
+    @Override
+    public Result get(Long projectId) {
+        try{
+            ReviewInfo reviewInfo = reviewInfoService.selectByProjectId(projectId);
+            if(reviewInfo==null) return Result.error("未抽取专家，请联系项目经理！");
+            List<Long> expertId = new ArrayList();
+            if(!StringUtils.isEmpty(reviewInfo.getExpertLeader())){
+                expertId.add(reviewInfo.getExpertLeader());//专家组长
+            }
+            if(!StringUtils.isEmpty(reviewInfo.getSelectExpert())){
+                String[] ids = reviewInfo.getSelectExpert().split(",");//专家名单
+                for(String id : ids){
+                    expertId.add(Long.valueOf(id));
+                }
+            }
+            if(!StringUtils.isEmpty(reviewInfo.getSpareExpert())){
+                String[] ids = reviewInfo.getSpareExpert().split(",");//备选专家名单
+                for(String id : ids){
+                    expertId.add(Long.valueOf(id));
+                }
+            }
+            List<ExpertInfo> expertInfoList = this.selectExpertTo(expertId);
+            ExpertInfo expertLeader = null;
+            List<ExpertInfo> selectExpert = new ArrayList();
+            List<ExpertInfo> spareExpert = new ArrayList();
+            for(ExpertInfo expertInfo : expertInfoList){
+                String id = String.valueOf(expertInfo.getMember().getId());
+                if(id.equals(String.valueOf(reviewInfo.getExpertLeader()))){
+                    expertLeader = expertInfo;
+                }
+                if(reviewInfo.getSelectExpert().indexOf(id)>-1){
+                    selectExpert.add(expertInfo);
+                    continue;
+                }
+                if(reviewInfo.getSpareExpert().indexOf(id)>-1){
+                    spareExpert.add(expertInfo);
+                    continue;
+                }
+            }
+            Map<String,Object> param = new HashMap();
+            param.put("id",reviewInfo.getId());
+            param.put("expertLeader",expertLeader); // 项目专家组长
+            param.put("selectExpert",selectExpert); // 专家名单
+            param.put("spareExpert",spareExpert); // 备选专家名单
+            return Result.ok("查询成功！",param);
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("获取项目评审专家异常，原因："+e.getMessage());
+        }
     }
 }

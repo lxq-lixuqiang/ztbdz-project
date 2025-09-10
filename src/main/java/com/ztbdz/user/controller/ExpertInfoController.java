@@ -80,4 +80,16 @@ public class ExpertInfoController {
     }
 
 
+    @ApiOperation(value = "获取项目评审专家")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("get/{projectId}")
+    public Result get(@PathVariable Long projectId) {
+        return expertInfoService.get(projectId);
+    }
+
+
 }

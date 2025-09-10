@@ -248,4 +248,16 @@ function pageShow(page){
     initPageShow(JSON.parse(localStorage.getItem('data')));
 }
 
+// 打印html页面
+function printHtml(html){
+    var printWindow = window.open('', '_blank');
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(function(){
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+
 

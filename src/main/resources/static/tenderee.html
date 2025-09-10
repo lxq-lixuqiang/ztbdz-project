@@ -404,7 +404,8 @@
         <td style="padding:10px;">{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
         <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
-            <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
+            <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
+            <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">分配专家</button>
             {{#ne project.isAudit 0}}{{#eq project.state 1}}
                 <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
             {{/eq}}{{/ne}}
@@ -961,6 +962,32 @@
         </div>
     </div>
 </div>
+<div id="applicationModal3" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 id="modalTitle3">分配专家</h3>
+            <button onclick="closeModal3()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <h4>项目专家组长：<span id="expertLeader"></span></h4>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+            <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">专家姓名</th>
+                <th style="padding:10px; border:1px solid #ddd;">专家证号</th>
+                <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                <th style="padding:10px; border:1px solid #ddd;">状态</th>
+                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+            </tr>
+            </thead>
+            <tbody id="modalApplicationTable3">
+            <!-- 模拟数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+        <div style="text-align:center; margin-top:20px;">
+            <button onclick="closeModal3()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
+        </div>
+    </div>
+</div>
 <script>
     // 显示报名情况弹窗
     function showApplicationModal(projectName,id) {
@@ -1024,6 +1051,69 @@
         });
 
     }
+    var expertInfoSetting;
+    // 分配专家组长
+    function showTeamLeaderList(projectName,id){
+        $.ajax({
+            url: "/expertInfo/get/"+id,
+            type: "GET",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    // 设置弹窗标题
+                    document.getElementById('modalTitle3').textContent = projectName + ' - 分配专家组长';
+
+                    // 填充模拟数据
+                    const tbody = document.getElementById('modalApplicationTable3');
+                    tbody.innerHTML = '';
+                    expertInfoSetting = e;
+                    if(e.data.expertLeader){
+                        $("#expertLeader").text(e.data.expertLeader.member.name);
+                    }
+                    var companies = [{name: '没有评审专家'}];
+                    if(e.data.selectExpert.length>0){
+                        companies = [];
+                        for(var i=0;i<e.data.selectExpert.length;i++){
+                            var selectExpert = e.data.selectExpert[i];
+                            var name = selectExpert.member.name;
+                            var cert = selectExpert.expertCard;
+                            var phone = selectExpert.member.phone;
+                            companies.push({memberId:selectExpert.member.id,name: name, cert: cert, phone: phone, state:"选中"})
+                        }
+                    }
+                    if(e.data.spareExpert.length>0){
+                        for(var i=0;i<e.data.spareExpert.length;i++){
+                            var spareExpert = e.data.spareExpert[i];
+                            var name = spareExpert.member.name;
+                            var cert = spareExpert.expertCard;
+                            var phone = spareExpert.member.phone;
+                            companies.push({memberId:selectExpert.member.id,name: name, cert: cert, phone: phone, state:"备选"})
+                        }
+                    }
+                    companies.forEach(company => {
+                        const row = document.createElement('tr');
+                    row.style.border = '1px solid #ddd';
+                    row.innerHTML = `
+                                <td style="padding:10px;">${company.name}</td>
+                                <td style="padding:10px;">${company.cert}</td>
+                                <td style="padding:10px;">${company.phone}</td>
+                                <td style="padding:10px;">${company.state}</td>
+                                <td style="padding:10px;">
+                                    <button onclick="leaderBtn('${company.memberId}','${e.data.id}','${company.name}')" style="padding:3px 8px; background:#4CAF50; color:#fff; border:none;cursor: pointer;${company.state=='选中'?'':'display:none;'}">任命组长</button>
+                                </td>
+                            `;
+                    tbody.appendChild(row);
+                });
+                    // 显示弹窗
+                    document.getElementById('applicationModal3').style.display = 'block';
+                }else{
+                    alert(e.message);
+                }
+            }
+        });
+    }
+
+
     // 显示报名结果弹窗
     function showApplicationModal2(projectName,id) {
 
@@ -1160,6 +1250,27 @@
     // 关闭弹窗
     function closeModal2() {
         document.getElementById('applicationModal2').style.display = 'none';
+    }
+    // 关闭弹窗
+    function closeModal3() {
+        document.getElementById('applicationModal3').style.display = 'none';
+    }
+    function leaderBtn(memberId,id,name){
+        var data = {"id":id,"expertLeader":memberId};
+        $.ajax({
+            url: "/review/update",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    $("#expertLeader").text(name);
+                    alert("任命组长成功！");
+                }else{
+                    alert('任命组长失败：'+e.message);
+                }
+            }
+        });
     }
 </script>
 </body>

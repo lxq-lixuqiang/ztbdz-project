@@ -245,7 +245,17 @@
 
         // 创建打印专用窗口
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<html>
+        printWindow.document.write(printHTML(printContent));
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    }
+
+    function printHTML(printContent){
+        var content = `<html>
                     <head>
                         <title>专家抽取表</title>
                        <style>
@@ -318,13 +328,8 @@
                     <body>
                         ${printContent}
                     </body>
-                </html>`);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-        }, 500);
+                </html>`;
+        return content;
     }
     
     // 切换废标按钮状态
@@ -1265,8 +1270,28 @@
             }
         });
         function submitResult(){
-            alert("评审报告生成成功！");
-            location.href = "/Bid-e-r.html?id="+new URLSearchParams(window.location.search).get("id");
+            // 将页面保存
+            var printContent = "";
+            for(var i=0;i<printContents.length;i++){
+                printContent+=printContents[i];
+            }
+            var project={"id":new URLSearchParams(window.location.search).get("id"),"isPass":0};
+            var data = {"project":project,"state":1,"resultHtml":printHTML(printContent)};
+            $.ajax({
+                url: "/resultReport/createOrUpdate",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        alert("评审报告生成成功！");
+                        location.href = "/Bid-e-r.html?id="+new URLSearchParams(window.location.search).get("id");
+                    }else{
+                        alert('评审报告生成失败：'+e.message);
+                    }
+                }
+            });
+
         }
     </script>
 </body>
