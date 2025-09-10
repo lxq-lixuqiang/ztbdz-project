@@ -79,11 +79,11 @@ public class LoginServiceImpl implements LoginService {
     public Result loginLandlord(String username, String password, String code) {
         try{
             //TODO 对比短信验证码
-            if(!code.equals(Common.DEFAULT_VALUE)) {
+//            if(!code.equals(Common.DEFAULT_VALUE)) {
 //            Object codeRedis = redisTemplate.opsForValue().get(user.getMember().getPhone()+SystemConfig.SMS);
 //            if(!StringUtils.isEmpty(codeRedis)) return Result.fail("验证码已失效，请重新发送！");
 //            if(!codeRedis.toString().equals(code))  return Result.fail("验证码错误！");
-            }
+//            }
 
             Landlord landlord = new Landlord();
             landlord.setName(username);
