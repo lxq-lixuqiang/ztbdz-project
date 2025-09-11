@@ -444,9 +444,9 @@
                             html = e.data.resultHtml;
                         }else if(state == 2){
                             if(isPass==0){
-                                html = e.data.resultReport;
+                                html = `<html><head><title>政府采购项目评审报告</title></head><body>${e.data.resultReport.replaceAll("textarea","div").replaceAll("height:80px;","white-space:pre-wrap;box-sizing:border-box;")}</body></html>`;
                             }else{
-                                html = `<h2 style="text-align:center;margin-bottom:30px;">政府采购废标报告</h2><div style="white-space: pre-wrap;font-family:Arial; font-size:14px; line-height:1.5;">${e.data.resultReport}</div>`;
+                                html = `<html><head><title>政府采购废标报告</title></head><body><h2 style="text-align:center;margin-bottom:30px;">政府采购废标报告</h2><div style="white-space: pre-wrap;font-family:Arial; font-size:14px; line-height:1.5;">${e.data.resultReport}</div></body></html>`;
                             }
                         }
                         printHtml(html);

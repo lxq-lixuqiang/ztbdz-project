@@ -405,10 +405,12 @@
         <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
-            <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">分配专家</button>
-            {{#ne project.isAudit 0}}{{#eq project.state 1}}
-                <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
-            {{/eq}}{{/ne}}
+           {{#ne project.isAudit 0}}
+                {{#eq project.state 1}}
+                    <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">分配专家</button>
+                    <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
+                {{/eq}}
+            {{/ne}}
             {{#eq project.isAudit 2}}
                 <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">不通过原因</button>
             {{/eq}}
