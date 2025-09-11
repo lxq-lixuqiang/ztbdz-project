@@ -211,17 +211,22 @@
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#if ../this.isAdmit}}
                     <a href="result.html?id={{id}}">
-                        <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看评分汇总</button>
+                        <button style="margin-top: 5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看评分汇总</button>
                     </a>
                 {{else}}
                     {{#ne reviewProgress 100}}
                         <a href="Bid evaluation.html?id={{id}}">
-                            <button style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
+                            <button style="margin-top: 5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">进入评审</button>
                         </a>
                     {{/ne}}
                     {{#eq reviewProgress 100}}
-                        <button style="padding:5px 10px; background:#9ca1a5; color:white; border:none;" disabled=true >已评审</button>
+                        <button style="margin-top: 5px;padding:5px 10px; background:#9ca1a5; color:white; border:none;" disabled=true >已评审</button>
                     {{/eq}}
+                    {{#if isProjectExpertLeader}}
+                        <a href="result.html?isLeader=true&id={{id}}">
+                            <button style="margin-top: 5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">进行评分汇总</button>
+                        </a>
+                    {{/if}}
                 {{/if}}
             </td>
         </tr>
@@ -390,6 +395,13 @@
                     success:function(e) {
                         if(e.status == 200){
                             e.data.isAdmit = isAdmin;
+                            for(var i=0;i<e.data.list.length;i++){
+                                if(e.data.list[i].projectExpertLeader == getMember().id){
+                                    e.data.list[i].isProjectExpertLeader = true;
+                                }else{
+                                    e.data.list[i].isProjectExpertLeader = false;
+                                }
+                            }
                             var newTemplate = template(e.data);
                             tbody.html(newTemplate);
                         }else{

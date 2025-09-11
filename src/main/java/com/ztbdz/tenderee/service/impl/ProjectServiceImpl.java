@@ -155,6 +155,10 @@ public class ProjectServiceImpl  implements ProjectService {
     public Result get(Long id) {
         try{
             Project project = this.selectById(id);
+            ReviewInfo reviewInfo = reviewInfoService.selectByProjectId(id);
+            if(!StringUtils.isEmpty(reviewInfo) && !StringUtils.isEmpty(reviewInfo.getExpertLeader())){
+                project.setProjectExpertLeader(String.valueOf(reviewInfo.getExpertLeader()));
+            }
             // 公告附件
             Tenderee tenderee = tendereeService.selectByProjectId(id);
             List<TendereeInform> tendereeInformList =  tendereeInformService.selectListByTendereeId(tenderee.getId());

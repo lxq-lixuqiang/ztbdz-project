@@ -90,6 +90,7 @@
 			p.project_name,
 			p.bid_opening_time,
 			p.enroll_end_date,
+			ri.expert_leader as projectExpertLeader,
 			case (SELECT max(review_type) FROM evaluation_criteria ec WHERE p.id = ec.project_id and ec.member_id=#{memberId}) when 1 then 30 when 2 then 60 when 3 then 100 else 0 end as review_progress
 		from
 			project p

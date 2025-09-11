@@ -1054,6 +1054,7 @@
     var expertInfoSetting;
     // 分配专家组长
     function showTeamLeaderList(projectName,id){
+        $("#expertLeader").text("");
         $.ajax({
             url: "/expertInfo/get/"+id,
             type: "GET",
@@ -1070,9 +1071,8 @@
                     if(e.data.expertLeader){
                         $("#expertLeader").text(e.data.expertLeader.member.name);
                     }
-                    var companies = [{name: '没有评审专家'}];
+                    var companies = [];
                     if(e.data.selectExpert.length>0){
-                        companies = [];
                         for(var i=0;i<e.data.selectExpert.length;i++){
                             var selectExpert = e.data.selectExpert[i];
                             var name = selectExpert.member.name;
@@ -1087,7 +1087,7 @@
                             var name = spareExpert.member.name;
                             var cert = spareExpert.expertCard;
                             var phone = spareExpert.member.phone;
-                            companies.push({memberId:selectExpert.member.id,name: name, cert: cert, phone: phone, state:"备选"})
+                            companies.push({memberId:spareExpert.member.id,name: name, cert: cert, phone: phone, state:"备选"})
                         }
                     }
                     companies.forEach(company => {

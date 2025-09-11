@@ -105,7 +105,6 @@ public class ResultReportServiceImpl implements ResultReportService {
         return resultReportMapper.selectById(id);
     }
 
-    @Cacheable
     @Override
     public Result selectByProjectId(Long projectId) {
         try{

@@ -1203,6 +1203,7 @@
             loadData();
 
             function loadData(){
+                if(!new URLSearchParams(window.location.search).get("id")) return;
                 $.ajax({
                     url: "/projectRegister/getProjectSuccess/"+new URLSearchParams(window.location.search).get("id"),
                     type: "GET",

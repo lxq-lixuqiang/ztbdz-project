@@ -77,6 +77,9 @@ public class Project extends Model<Project> implements Serializable {
     private Tenderee tenderee;
     @ApiModelProperty("报名费")
     private Long registrationFee;
+    @ApiModelProperty(value = "项目专家组长")
+    @TableField(exist = false)
+    private String projectExpertLeader;
 
     @ApiModelProperty(value = "投标报名开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
