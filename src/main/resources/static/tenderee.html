@@ -196,6 +196,7 @@
         <div id="examine" style="text-align:center;">
             <button onclick="approveSupplier(true)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:15px;">通过审核</button>
             <button onclick="approveSupplier(false)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+            <button onclick="updateApprove('3','')" id="backApprove" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;display:none;">撤回审核</button>
         </div>
     </div>
 </div>
@@ -441,7 +442,7 @@
             {{#eq state 5}}资质不通过{{/eq}}
         </td>
         <td style="padding:10px;">
-            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{#eq state 3}}0{{else}}1{{/eq}}')" style="padding:5px 10px; background:{{#eq state 3}}red{{else}}#4CAF50{{/eq}}; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
+            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{state}}')" style="padding:5px 10px; background:{{#eq state 3}}red{{else}}#4CAF50{{/eq}}; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
         </td>
     </tr>
     {{/each}}
@@ -523,6 +524,7 @@
             }
         });
     }
+
     function projectInit(tbody,template){
         $.ajax({
             url: "/tenderee/page",
@@ -828,11 +830,16 @@
 
     // 查看供应商资质
     function viewSupplierQualification(id,memberId,state) {
-        if(state==0){
-            $("#examine").show();
+        if(state==3){
+            $("#examine>button").show();
+            $("#backApprove").hide();
         }else{
-            $("#examine").hide();
+            $("#examine>button").hide();
+            if(state == 4 || state == 5){
+                $("#backApprove").show();
+            }
         }
+
         $.ajax({
             url: "/member/get/"+memberId,
             type: "GET",
@@ -891,6 +898,10 @@
 
         var state = 5;
         if(isApproved) state = 4;
+        updateApprove(state,notPassInfo);
+    }
+
+    function updateApprove(state,notPassInfo){
         var id = $("#accountInfo").attr("data-id");
         $.ajax({
             url: "/projectRegister/update",
@@ -900,17 +911,19 @@
             success:function(e) {
                 if(e.status == 200){
                     loadApplicationData(); // 刷新列表
-                    alert(`审核成功！`);
+                    if(state==3){
+                        alert(`撤回成功！`);
+                    }else{
+                        alert(`审核成功！`);
+                    }
                     $("#qualificationModal").hide();
                 }else{
-                    alert("审核失败："+e.message);
+                    alert("失败："+e.message);
                 }
             },error: function(e) {
-                alert('审核失败：'+e.message);
+                alert('失败：'+e.message);
             }
         });
-
-
     }
 </script>
 

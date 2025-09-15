@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 22/08/2025 10:05:25
+ Date: 12/09/2025 16:07:06
 */
 
 SET NAMES utf8mb4;
@@ -256,7 +256,7 @@ CREATE TABLE `project`  (
   `project_qualification_conditions` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `project_overview` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `member_id` bigint(20) NULL DEFAULT NULL,
-  `money` int(11) NULL DEFAULT NULL,
+  `money` double(11, 2) NULL DEFAULT NULL,
   `bid_opening_time` datetime(0) NULL DEFAULT NULL,
   `procurement_documents` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `number_review_expert` int(11) NULL DEFAULT NULL,
@@ -319,9 +319,10 @@ CREATE TABLE `result_report`  (
   `member_id` bigint(20) NULL DEFAULT NULL,
   `project_id` bigint(20) NULL DEFAULT NULL,
   `state` int(11) NULL DEFAULT NULL,
-  `describe` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `description` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `result_report_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `result_report` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `result_html` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `update_date` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
@@ -343,6 +344,7 @@ CREATE TABLE `review_info`  (
   `hide_account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `select_expert` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `spare_expert` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `expert_leader` bigint(20) NULL DEFAULT NULL,
   `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
