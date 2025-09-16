@@ -248,34 +248,34 @@
                         <h3 style="margin-top:0;">添加专家</h3>
                         <form id="expertForm">
                             <div style="margin-bottom:10px;">
-                                <label style="display:block; margin-bottom:5px;">专家姓名:</label>
+                                <label style="display:block; margin-bottom:5px;">专家姓名<span style="color:red;">*</span></label>
                                 <input type="text" id="expertName" style="width:100%; padding:8px;box-sizing: border-box;" required>
                             </div>
                             <div style="margin-bottom:10px;">
-                                <label style="display:block; margin-bottom:5px;">专家证号:</label>
+                                <label style="display:block; margin-bottom:5px;">专家证号<span style="color:red;">*</span></label>
                                 <input type="text" id="expertCert" style="width:100%; padding:8px;box-sizing: border-box;" required>
                             </div>
                             <div style="margin-bottom:10px;">
-                                <label style="display:block; margin-bottom:5px;">工作单位:</label>
+                                <label style="display:block; margin-bottom:5px;">工作单位</label>
                                 <input type="text" id="expertCompany" style="width:100%; padding:8px;box-sizing: border-box;">
                             </div>
                             <div style="margin-bottom:10px;">
-                                <label style="display:block; margin-bottom:5px;">职称:</label>
+                                <label style="display:block; margin-bottom:5px;">职称</label>
                                 <input type="text" id="expertTitle" style="width:100%; padding:8px;box-sizing: border-box;">
                             </div>
                             <div style="margin-bottom:10px;">
-                                <label style="display:block; margin-bottom:5px;">专业:</label>
+                                <label style="display:block; margin-bottom:5px;">专业<span style="color:red;">*</span></label>
                                 <select id="expertMajor" style="width:100%; padding:8px;box-sizing: border-box;">
                                     <option value="">请选择</option>
                                     ${categories}
                                 </select>
                             </div>
                             <div style="margin-bottom:10px;">
-                                <label style="display:block; margin-bottom:5px;">身份证号:</label>
+                                <label style="display:block; margin-bottom:5px;">身份证号<span style="color:red;">*</span></label>
                                 <input type="text" id="expertIdCard" style="width:100%; padding:8px;box-sizing: border-box;">
                             </div>
                             <div style="margin-bottom:15px;">
-                                <label style="display:block; margin-bottom:5px;">电话号码:</label>
+                                <label style="display:block; margin-bottom:5px;">电话号码<span style="color:red;">*</span></label>
                                 <input type="text" id="expertPhone" style="width:100%; padding:8px;box-sizing: border-box;">
                             </div>
                             <div style="text-align:right;">
@@ -325,7 +325,7 @@
                         addExpert(newExpert);
                     }
                 } else {
-                    alert('姓名和专家证号不能为空!');
+                    alert('请填写带 * 字段为必填项！');
                 }
             });
             

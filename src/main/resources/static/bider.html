@@ -299,23 +299,23 @@
                     </div>
                     <form id="companyInfoForm" style="max-width:600px; display:none;" enctype="multipart/form-data">
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">企业名称</label>
+                            <label style="display:block; margin-bottom:5px;">企业名称<span style="color:red;">*</span></label>
                             <input type="text" id="editCompanyName" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">统一社会信用代码</label>
+                            <label style="display:block; margin-bottom:5px;">统一社会信用代码<span style="color:red;">*</span></label>
                             <input type="text" id="editCreditCode" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">联系人</label>
+                            <label style="display:block; margin-bottom:5px;">联系人<span style="color:red;">*</span></label>
                             <input type="text" id="editContactPerson" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">联系电话</label>
+                            <label style="display:block; margin-bottom:5px;">联系电话<span style="color:red;">*</span></label>
                             <input type="tel" id="editContactPhone" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">电子邮箱</label>
+                            <label style="display:block; margin-bottom:5px;">电子邮箱<span style="color:red;">*</span></label>
                             <input type="email" id="editContactEmail" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
 
@@ -749,7 +749,7 @@
             var fileId = $("#certificateUpload").attr("data-file-id");
 
             if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone) {
-                alert("请填写所有必填字段");
+                alert("请填写带 * 字段为必填项！");
                 return true;
             }else if(!regBox.regMobilePhone.regEx.test(editContactPhone)){
                 alert(regBox.regMobilePhone.message);
