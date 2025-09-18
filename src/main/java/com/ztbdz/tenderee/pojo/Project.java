@@ -56,6 +56,8 @@ public class Project extends Model<Project> implements Serializable {
     private String projectOverview;
     @ApiModelProperty(value = "上传采购文件")
     private String procurementDocuments;
+    @ApiModelProperty(value = "报名涵文件")
+    private String descriptionFile;
     @ApiModelProperty(value = "预算")
     private Double money;
     @ApiModelProperty(value = "预算金额大写")

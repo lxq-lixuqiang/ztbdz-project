@@ -1,5 +1,6 @@
 package com.ztbdz.tenderee.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -17,14 +18,14 @@ import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -38,6 +39,8 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
     private WinBidService winBidService;
     @Autowired
     private ExpertInfoService expertInfoService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
 
     @Override
@@ -332,6 +335,64 @@ public class ReviewInfoServiceImpl implements ReviewInfoService {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("分配评审专家异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
+    public Result voteLeader(String id, String memberId, String num) {
+        try{
+            String data = redisTemplate.opsForValue().get("voteLeader:" + id);
+            Map<String,String> dataMap;
+            if(StringUtils.isEmpty(data)){
+                dataMap = new HashMap();
+            }else{
+                dataMap = JSON.parseObject(data,Map.class);
+            }
+            Object object = dataMap.get(memberId.toString());
+            if(StringUtils.isEmpty(object)){
+                dataMap.put(memberId.toString(),"1");
+            }else{
+                Long hasNum = Long.valueOf(object.toString())+1;
+                dataMap.put(memberId.toString(),hasNum.toString());
+                Long currenNum  = 0L;
+
+                double[] sortScore = new double[dataMap.size()];
+                int i=-1;
+                for(String key : dataMap.keySet()){
+                    String value = dataMap.get(key);
+                    currenNum+=Long.valueOf(value);
+                    i++;
+                    sortScore[i]=Double.valueOf(value);
+                }
+                // 投票结束
+                if(currenNum >= Long.valueOf(num)){
+                    String winbidId = "";
+                    Arrays.sort(sortScore);
+                    for(String key : dataMap.keySet()){
+                        if(Double.valueOf(dataMap.get(key))== sortScore[i]){
+                            winbidId = key;
+                            break;
+                        }
+                    }
+                    if(!StringUtils.isEmpty(winbidId)){
+                        // 更新组长
+                        ReviewInfo reviewInfo  = new ReviewInfo();
+                        reviewInfo.setId(Long.valueOf(id));
+                        reviewInfo.setExpertLeader(Long.valueOf(winbidId));
+                        this.updateById(reviewInfo);
+                        redisTemplate.opsForValue().set("Leader:" + id, winbidId, SystemConfig.TOKEN_VALIDITY*2, TimeUnit.MILLISECONDS);
+                        redisTemplate.delete("voteLeader:" + id);
+                        return Result.ok("投票成功，已选出组长！");
+                    }
+                }
+            }
+            String jsonStr = JSON.toJSONString(dataMap);
+            redisTemplate.opsForValue().set("voteLeader:" + id, jsonStr, SystemConfig.TOKEN_VALIDITY*2, TimeUnit.MILLISECONDS);
+            redisTemplate.delete("Leader:" + id);
+            return Result.ok("汇总评审专家投票成功！");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("汇总评审专家投票异常，原因："+e.getMessage());
         }
     }
 }

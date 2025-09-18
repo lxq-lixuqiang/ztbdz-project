@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,8 @@ import java.util.List;
 public class ReviewInfoController {
     @Autowired
     private ReviewInfoService reviewInfoService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
 
     @ApiOperation(value = "查询评审")
@@ -146,5 +149,34 @@ public class ReviewInfoController {
     public Result assignReviewExperts(@RequestBody ReviewInfo reviewInfo) {
         return reviewInfoService.assignReviewExperts(reviewInfo);
     }
+
+    @ApiOperation(value = "汇总评审专家投票")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "id", value = "评审id", required=true, dataType = "String"),
+            @ApiImplicitParam(name = "memberId", value = "人员id", required=true, dataType = "String"),
+            @ApiImplicitParam(name = "num", value = "总人数", required=true, dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("voteLeader")
+    public Result assignReviewExperts(@RequestParam String id,@RequestParam String memberId,@RequestParam String num) {
+        return reviewInfoService.voteLeader(id,memberId,num);
+    }
+
+    @ApiOperation(value = "获取专家组长")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "id", value = "评审id", required=true, dataType = "Long")
+    })
+    @CheckToken
+    @GetMapping("getLeader/{id}")
+    public Result getLeader(@PathVariable Long id) {
+        Object member = redisTemplate.opsForValue().get("Leader:" + id);
+        if(StringUtils.isEmpty(member)){
+            return Result.fail("未选取专家组长！");
+        }
+        return Result.ok("查询成功！",member);
+    }
+
 
 }

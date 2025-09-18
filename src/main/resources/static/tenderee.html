@@ -282,6 +282,14 @@
                         <input id="registrationFee" type="number" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">上传报名涵</label>
+                        <button onclick="showUploadDialog3()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;">上传报名涵</button>
+                        <div id="certificateFiles3" style="display: inline-block;margin-left:10px;">
+
+                        </div>
+                        <input id="fileUpload3" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" required>
+                    </div>
+                    <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">投标报名开始时间<span style="color:red;">*</span></label>
                         <input id="senrollStartDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
@@ -406,10 +414,10 @@
         <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
-           {{#ne project.isAudit 0}}
+            <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
+            {{#ne project.isAudit 0}}
                 {{#gtNowDate project.bidOpeningTime}}
-                        <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">分配专家</button>
-                        <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
+                         <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
                 {{/gtNowDate}}
             {{/ne}}
             {{#eq project.isAudit 2}}
@@ -571,6 +579,7 @@
         }
 
         var fileId = $("#fileUpload").attr("data-file-id");
+        var fileId3 = $("#fileUpload3").attr("data-file-id");
         var tender={"tenderName":projectName};
         var tenders=[tender];
         var project = {
@@ -587,6 +596,7 @@
             "projectScoringRequirements": projectScoringRequirements,
             "procurementMethod": procurementMethod,
             "procurementDocuments": fileId,
+            "descriptionFile": fileId3,
             "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
             "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
             "answerEndDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"), // 已经是ISO格式
@@ -680,6 +690,19 @@
             $("#certificateFiles").html(fileName);
 
         });
+        $("body").on('change','#fileUpload3', function () {
+            if(this.files.length==0){
+                return;
+            }
+            var fileId = uploadFile(this.files);
+            $("#fileUpload3").attr("data-file-id",fileId);
+            var fileName = "";
+            for(var i=0;i<this.files.length;i++){
+                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileId+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileId+"\")' class='delete"+fileId+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+            }
+            $("#certificateFiles3").html(fileName);
+
+        });
 
         $("body").on('change','#tendereeInformField', function () {
             if(this.files.length==0){
@@ -700,6 +723,11 @@
         loadPublishedProjects();
     });
 
+    function deleteFile(id){
+        $(".delete"+id).parent().removeAttr("href");
+        $("#certificateFiles3").html("");
+        $("#fileUpload3").attr("data-file-id","");
+    }
     // 加载已发布项目列表
     function loadApplicationData() {
         $("#applicationLoading").show();
@@ -997,7 +1025,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">专家证号</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                 <th style="padding:10px; border:1px solid #ddd;">状态</th>
-                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                <!--<th style="padding:10px; border:1px solid #ddd;">操作</th>-->
             </tr>
             </thead>
             <tbody id="modalApplicationTable3">
@@ -1083,7 +1111,7 @@
             success:function(e) {
                 if(e.status == 200){
                     // 设置弹窗标题
-                    document.getElementById('modalTitle3').textContent = projectName + ' - 分配专家组长';
+                    document.getElementById('modalTitle3').textContent = projectName + ' - 专家信息';
 
                     // 填充模拟数据
                     const tbody = document.getElementById('modalApplicationTable3');
@@ -1119,9 +1147,9 @@
                                 <td style="padding:10px;">${company.cert}</td>
                                 <td style="padding:10px;">${company.phone}</td>
                                 <td style="padding:10px;">${company.state}</td>
-                                <td style="padding:10px;">
-                                    <button onclick="leaderBtn('${company.memberId}','${e.data.id}','${company.name}')" style="padding:3px 8px; background:#4CAF50; color:#fff; border:none;cursor: pointer;${company.state=='选中'?'':'display:none;'}">任命组长</button>
-                                </td>
+                                <!--<td style="padding:10px;">-->
+                                    <!--<button onclick="leaderBtn('${company.memberId}','${e.data.id}','${company.name}')" style="padding:3px 8px; background:#4CAF50; color:#fff; border:none;cursor: pointer;${company.state=='选中'?'':'display:none;'}">任命组长</button>-->
+                                <!--</td>-->
                             `;
                     tbody.appendChild(row);
                 });
@@ -1233,13 +1261,16 @@
         $("#senrollStartDate").attr("value",data.project.senrollStartDate);
         $("#enrollEndDate").attr("value",data.project.enrollEndDate);
         $("#fileUpload").attr("data-file-id",data.project.procurementDocuments);
-        getFile(data.project.procurementDocuments)
+        getFile(data.project.procurementDocuments,"certificateFiles");
+        $("#fileUpload3").attr("data-file-id",data.project.descriptionFile);
+        getFile(data.project.descriptionFile,"certificateFiles3")
         $("#tendereeName").val(data.tendereeName);
-        $("#tendereeDate").attr("value",data.tendereeDate);
+        $("#tendereeDate").attr("value",data.project.bidOpeningTime);
 
     }
 
-    function getFile(id){
+    function getFile(id,idName){
+        if(!id) return;
         $.ajax({
             url: "/file/get/" + id,
             type: "GET",
@@ -1247,7 +1278,10 @@
             success: function (e) {
                 if(e.status == 200){
                     var fileName = "<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）</a></p>";
-                    $("#certificateFiles").html(fileName);
+                    if(idName=="certificateFiles3"){
+                        fileName="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）<span onclick='deleteFile(\""+e.data.id+"\")' class='delete"+e.data.id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                    }
+                    $("#"+idName).html(fileName);
                 }else{
                     alert("获取采购文件失败："+e.message);
                 }
@@ -1257,6 +1291,9 @@
 
     function showUploadDialog() {
         document.getElementById('fileUpload').click();
+    }
+    function showUploadDialog3() {
+        document.getElementById('fileUpload3').click();
     }
 
     function showUploadDialog2() {

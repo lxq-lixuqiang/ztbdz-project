@@ -140,4 +140,10 @@ public interface ReviewInfoService {
      * @return
      */
     Result assignReviewExperts(ReviewInfo reviewInfo);
+
+    /**
+     * 汇总评审专家投票
+     * @return
+     */
+    Result voteLeader(String id, String memberId, String num);
 }

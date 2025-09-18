@@ -418,7 +418,12 @@
                 <td style="padding:10px; border:1px solid #ddd;">{{enrollEndDate}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">{{#moneyDelimiter money}}{{/moneyDelimiter}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">
-                    <button onclick="signUp('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</button>
+                    <button onclick="signUp('{{id}}')" style="margin-right:5px;margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</button>
+                    {{#if descriptionFile}}
+                        <a target="_blank" href="/file/download/{{descriptionFile}}" style="margin-right:5px;text-decoration: none;cursor: pointer">
+                            <button style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">报名涵</button>
+                        </a>
+                    {{/if}}
                 </td>
             </tr>
         {{/each}}
@@ -493,7 +498,11 @@
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#gtNowDate bidOpeningTime}}等待评审{{else}}评审中{{/gtNowDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
-                <!-- <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">报名记录</button> -->
+                {{#gtNowDate bidOpeningTime}}{{else}}
+                    <a href="" style="text-decoration: none;cursor: pointer">
+                        <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">进入澄清</button>
+                    </a>
+                {{/gtNowDate}}
             </td>
         </tr>
         {{/each}}
