@@ -45,10 +45,12 @@
 			order by
 			CASE
 				WHEN pr.state = 3 THEN 0
-				ELSE 1
+				ELSE (CASE WHEN pr.state = 5 THEN 1
+				ELSE (CASE WHEN pr.state = 4 THEN 2
+				ELSE 3 END) END)
 			END,
-			p.project_name,
-			p.update_date desc
+			p.update_date desc,
+			p.project_name
 		</if>
 	</select>
 	<resultMap id="ProjectRegisterAndProjectAndMemberAndAccount" type="ProjectRegister">

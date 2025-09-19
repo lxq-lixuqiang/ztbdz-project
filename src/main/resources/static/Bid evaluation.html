@@ -105,6 +105,7 @@
         }
         if(stage=='result'){
             printContents[3] =$("body").html();
+            savePrintContent();
         }
     }
     
@@ -239,10 +240,7 @@
             alert('请先提交评审');
             return;
         }
-        var printContent = "";
-        for(var i=0;i<printContents.length;i++){
-            printContent+=printContents[i];
-        }
+        var printContent = getPrintContent();
 
         // 创建打印专用窗口
         const printWindow = window.open('', '_blank');
@@ -253,6 +251,25 @@
             printWindow.print();
             printWindow.close();
         }, 500);
+    }
+
+    function getPrintContent(){
+        var printContent = "";
+        for(var i=0;i<printContents.length;i++){
+            printContent+="<div style='margin-bottom:20px;'>"+printContents[i]+"</div>";
+        }
+        return printContent;
+    }
+
+    function savePrintContent(){
+        var data = {"project":{"id":new URLSearchParams(window.location.search).get("id")},"member":{"id":getMember().id},"resultHtml":getPrintContent()};
+        $.ajax({
+            url: "/resultReport/savePrintContents",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {}
+        });
     }
 
     function printHTML(printContent){
@@ -425,6 +442,7 @@
             saveDataList.push(saveData);
         }
         printContents[0] =$("body").html();
+        savePrintContent();
         $.ajax({
             url: "/evaluation/create",
             type: "POST",
@@ -553,6 +571,7 @@
         }
 
         printContents[1] =$("body").html();
+        savePrintContent();
         $.ajax({
             url: "/evaluation/create",
             type: "POST",
@@ -996,12 +1015,17 @@
                                     </button>
                                 </div>
                                 
-                                <div style="display:flex; gap:10px;">
+                                <div style="display:flex; gap:10px;margin-bottom:15px;">
                                     <button type="button" onclick="submitQualificationReview()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
                                         继续评审
                                     </button>
                                     <button type="button" id="disqualifyBtn" onclick="disqualifyProject()" style="padding:10px 20px; background:#f44336; color:white; border:none; cursor:not-allowed; font-size:16px; opacity:0.6;" disabled>
                                         废标
+                                    </button>
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <button type="button" onclick="showApplicationModal()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
+                                        澄清
                                     </button>
                                 </div>
                             </form>
@@ -1101,12 +1125,17 @@
                                     </button>
                                 </div>
                                 
-                                <div style="display:flex; gap:10px;">
+                                <div style="display:flex; gap:10px;margin-bottom:15px;">
                                     <button type="button" onclick="submitComplianceReview()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
                                         继续评审
                                     </button>
                                     <button type="button" id="complianceDisqualifyBtn" onclick="disqualifyProject()" style="padding:10px 20px; background:#f44336; color:white; border:none; cursor:not-allowed; font-size:16px; opacity:0.6;" disabled>
                                         废标
+                                    </button>
+                                </div>
+                                <div style="display:flex; gap:10px;">
+                                    <button type="button" onclick="showApplicationModal()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
+                                        澄清
                                     </button>
                                 </div>
                             </form>
@@ -1153,6 +1182,9 @@
                                 <button type="button" onclick="submitScoring()" style="padding:10px 30px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
                                     确认提交
                                 </button>
+                                <button type="button" onclick="showApplicationModal()" style="margin-left:10px;padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
+                                    澄清
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -1163,12 +1195,40 @@
                         <div id="resultInfo"></div>
                         <div id="bidInfo"></div>
                         <div style="margin:20px 0; text-align:center;">
-                            <button onclick="submitResult()" style="margin-top:20px;padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer;">
+                            <button onclick="submitResult()" style="margin-top:20px;padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;"">
                                 生成评审报告
+                            </button>
+                            <button type="button" onclick="showApplicationModal()" style="margin-left:10px;padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
+                                澄清
                             </button>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- 报名情况弹窗 -->
+    <div id="applicationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 id="modalTitle">澄清情况</h3>
+                <button onclick="closeModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+            </div>
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                <tr style="background:#f5f5f5;">
+                    <th style="padding:10px; border:1px solid #ddd;">序号</th>
+                    <th style="padding:10px; border:1px solid #ddd;">供应商名称</th>
+                    <th style="padding:10px; border:1px solid #ddd;">响应状态</th>
+                    <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                </tr>
+                </thead>
+                <tbody id="modalApplicationTable">
+                <!-- 模拟数据将通过JavaScript动态填充 -->
+                </tbody>
+            </table>
+            <div style="text-align:center; margin-top:20px;">
+                <button onclick="closeModal()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
             </div>
         </div>
     </div>
@@ -1222,6 +1282,7 @@
                                 disqualifyBtn.style.cursor = 'pointer';
                                 return;
                             }
+                            var companies = [];
                             for(var i=0;i<e.data.length;i++){
                                 var fileIds = [];
                                 var bidDocumentIds = e.data[i].bidDocumentIds;
@@ -1236,7 +1297,29 @@
                                 option.setAttribute("value",i+1);
                                 option.innerText=`供应商${i+1}：${e.data[i].member.account.accountName}`;
                                 document.getElementById('supplierSelect').appendChild(option)
+                                companies.push({id:e.data[i].member.account.id,projectId:e.data[i].project.id,name: e.data[i].member.account.accountName, sort:(i+1),state:"未发起响应"})
                             }
+
+                            const tbody = document.getElementById('modalApplicationTable');
+                            companies.forEach(company => {
+                                const row = document.createElement('tr');
+                                row.style.border = '1px solid #ddd';
+                                if(e.data.length>0){
+                                    row.innerHTML = `
+                                        <td style="padding:10px;">${company.sort}</td>
+                                        <td style="padding:10px;">${company.name}</td>
+                                        <td style="padding:10px;" data-id="${company.id}">${company.state}</td>
+                                        <td style="padding:10px;">
+                                            <a target="_blank" href="clarify.html?id=${company.id}&projectId=${company.projectId}&isExpert=true">
+                                                <button style="padding:3px 8px; background:#4CAF50; color:#fff; border:none;cursor: pointer;">详情</button>
+                                            </a>
+                                        </td>
+                                    `;
+                                }
+                                tbody.appendChild(row);
+                            });
+
+
                             var newTemplate = Handlebars.compile($("#gysTemplate").html())(e);
                             $("div#gys").html(newTemplate);
                             // 最后初始化PDF查看器
@@ -1310,13 +1393,13 @@
                 "<div>我以（专家、采购人代表）身份参与"+name+"（采购项目编号："+code+"）评审活动。我确认：自己身体健康，无重大疾病，并具备有关政府采购的政策水平和对本项目的业务评审能力。</div>" +
                 "<div>我郑重承诺：评审中严格执行《中华人民共和国政府采购法》及相关法规规定，履行以下职责与义务、遵守以下纪律：</div>" +
                 "<div>一、履行以下职责：</div>" +
-                "<div>（一）熟悉和理解采购文件(包括招标文件、谈判文件、询价通知书、磋商文件、单一来源采购文件等，下同);</div>" +
-                "<div>（二）审查供应商投标(响应)文件等是否满足采购文件要求，并作出评价;</div>" +
-                "<div>（三）对响应交件进行比较和评价;</div>" +
-                "<div>（四）根据需要要求采购组织单位对采购文件作出解释;根据需要要求供应商对投标(响应)文件有关事项作出澄清、说明或者更正;</div>" +
-                "<div>（五）推荐中标(成交)候选供应商，或者受采购人委托确定中标(成交)供应商;</div>" +
-                "<div>（六）起草评审报告并进行签署;</div>" +
-                "<div>（七）向采购人、代理机构或者有关部门报告评审中发现的违法行为;</div>" +
+                "<div>（一）熟悉和理解采购文件（包括招标文件、谈判文件、询价通知书、磋商文件、单一来源采购文件等，下同）；</div>" +
+                "<div>（二）审查供应商投标（响应）文件等是否满足采购文件要求，并作出评价；</div>" +
+                "<div>（三）对响应文件进行比较和评价；</div>" +
+                "<div>（四）根据需要要求采购组织单位对采购文件作出解释；根据需要要求供应商对投标（响应）文件有关事项作出澄清、说明或者更正；</div>" +
+                "<div>（五）推荐中标（成交）候选供应商，或者受采购人委托确定中标（成交）供应商；</div>" +
+                "<div>（六）起草评审报告并进行签署；</div>" +
+                "<div>（七）向采购人、代理机构或者有关部门报告评审中发现的违法行为；</div>" +
                 "<div>（八）法律、法规和规章规定的其他职责。</div>" +
                 "<div>二、履行下列义务:</div>" +
                 "<div>（一）遵守评审工作纪律;</div>" +
@@ -1429,6 +1512,15 @@
                     }
                 });
             },1000)
+        }
+
+        // 显示弹窗
+        function showApplicationModal() {
+            document.getElementById('applicationModal').style.display = 'block';
+        }
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('applicationModal').style.display = 'none';
         }
 
     </script>

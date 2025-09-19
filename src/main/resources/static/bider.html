@@ -456,7 +456,7 @@
                 {{/eq}}
                 {{#eq  projectRegisters.state 2}}
                     <button onclick="showProgress()" style="padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">退费说明</button>
-                    <button onclick="signUp2('{{id}}')" style="margin-top:3px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新报名</button>
+                    <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">重新缴费</button>
                     <button onclick="alert('报名不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:3px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
                 {{#eq  projectRegisters.state 5}}
@@ -499,7 +499,7 @@
             <td style="padding:10px; border:1px solid #ddd;">{{#gtNowDate bidOpeningTime}}等待评审{{else}}评审中{{/gtNowDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#gtNowDate bidOpeningTime}}{{else}}
-                    <a href="" style="text-decoration: none;cursor: pointer">
+                    <a href="clarify.html?id={{../this.accountId}}&projectId={{id}}" style="text-decoration: none;cursor: pointer">
                         <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">进入澄清</button>
                     </a>
                 {{/gtNowDate}}
@@ -650,6 +650,7 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
+                            e.data.accountId = getMember().account.id;
                             var newTemplate = template(e.data);
                             tbody.html(newTemplate);
                         }else{
@@ -857,7 +858,7 @@
         }
         // 显示报名结果弹窗
         function signUp(id) {
-            if(confirm('确认报名项目吗？')) {
+            if(confirm('请仔细核对上传的报名资料与项目是否一致，确认报名此项目吗?')) {
                 var account = getMember().account;
                 if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
                     alert("请先完善个人信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，资质文件")
@@ -901,7 +902,7 @@
                         }else{
                             applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
                         }
-                        alert('报名成功,正在审核企业资质！');
+                        alert('正在审核企业资质！');
                     }else{
                         alert("报名失败："+e.message);
                     }

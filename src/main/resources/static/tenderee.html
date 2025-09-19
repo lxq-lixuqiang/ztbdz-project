@@ -190,6 +190,7 @@
             <h3>供应商资质信息</h3>
             <button onclick="$('#qualificationModal').hide()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
         </div>
+        <h4 id="gongyingshang"></h4>
         <div id="qualificationContent" style="margin-bottom:20px;">
             <!-- 资质内容将通过JavaScript动态填充 -->
         </div>
@@ -451,7 +452,7 @@
             {{#eq state 5}}资质不通过{{/eq}}
         </td>
         <td style="padding:10px;">
-            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{state}}')" style="padding:5px 10px; background:{{#eq state 3}}red{{else}}#4CAF50{{/eq}}; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
+            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{state}}','{{project.projectName}}')" style="padding:5px 10px; background:{{#eq state 3}}red{{else}}#4CAF50{{/eq}}; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
         </td>
     </tr>
     {{/each}}
@@ -863,7 +864,7 @@
     }
 
     // 查看供应商资质
-    function viewSupplierQualification(id,memberId,state) {
+    function viewSupplierQualification(id,memberId,state,projectName) {
         if(state==3){
             $("#examine>button").show();
             $("#backApprove").hide();
@@ -888,6 +889,7 @@
                             fileInfo+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+account.accountCodeFileIds[i].id+"'>"+account.accountCodeFileIds[i].name+"（"+account.accountCodeFileIds[i].fileSize+"）</a></p>";
                         }
                     }
+                    $("#gongyingshang").html("项目名称："+projectName);
                     // 模拟加载资质数据
                     $("#qualificationContent").html(`
                             <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>

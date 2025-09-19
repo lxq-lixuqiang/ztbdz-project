@@ -118,6 +118,7 @@ public class DataInitializer {
                     MenuAuthorize result = new MenuAuthorize("专家评分汇总","result","/result.html");
                     MenuAuthorize Bid_e_r = new MenuAuthorize("评标报告","Bid-e-r","/Bid-e-r.html");
                     MenuAuthorize bid_invalid = new MenuAuthorize("政府采购废标报告","bid-invalid","/bid-invalid.html");
+                    MenuAuthorize clarify = new MenuAuthorize("澄清页面","clarify","/clarify.html");
 
                     // 角色与菜单关联
                     // 管理员
@@ -125,16 +126,17 @@ public class DataInitializer {
                     adminMenuList.add(audit);
                     saveDataMap.put("admin",adminMenuList);
 
-                    // 招标方
+                    // 招标方/代理
                     List<MenuAuthorize> tendereeMenuList = new ArrayList();
                     tendereeMenuList.add(tenderee);
                     saveDataMap.put("tenderee",tendereeMenuList);
 
-                    // 投标方
+                    // 投标方/供应商
                     List<MenuAuthorize> bidderMenuList = new ArrayList();
                     bidderMenuList.add(bider);
                     bidderMenuList.add(application);
                     bidderMenuList.add(project_d);
+                    bidderMenuList.add(clarify);
                     saveDataMap.put("bidder",bidderMenuList);
 
                     // 专家
@@ -144,6 +146,7 @@ public class DataInitializer {
                     expertMenuList.add(result);
                     expertMenuList.add(Bid_e_r);
                     expertMenuList.add(bid_invalid);
+                    expertMenuList.add(clarify);
                     saveDataMap.put("expert",expertMenuList);
 
                     // 财务
