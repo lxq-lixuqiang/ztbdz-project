@@ -33,13 +33,23 @@ public class TendereeInform extends Model<TendereeInform> implements Serializabl
     private String supplementaryContent;
     @ApiModelProperty(value = "招标id")
     private Long tendereeId;
-    @ApiModelProperty("公告文件id")
+    @ApiModelProperty(value = "关联id")
+    private Long associationId;
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
+    @ApiModelProperty("文件id")
     private String tendereeInformField;
+    @ApiModelProperty("回复内容")
+    private String replyContent;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty(value = "回复时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private Date replyDate;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "上传时间",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
-    @ApiModelProperty(value = "类型（0=公告文件 1=磋商文件 2=澄清与答疑文件）")
+    @ApiModelProperty(value = "类型（0=公告 1=澄清信息 2=其他）")
     private Integer type;
     @ApiModelProperty(value = "是否公布（0=未公布 1=公布）")
     private Integer isPublic;

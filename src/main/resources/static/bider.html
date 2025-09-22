@@ -288,11 +288,11 @@
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
                         
                         <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                            <h4>资质文件</h4>
+                            <h4>报名文件</h4>
                             <div id="certificateFiles">
                                 <p>没有上传文件</p>
                             </div>
-                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传资质文件</button>
+                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传报名文件</button>
                         </div>
                         
                         <button onclick="enableEditMode()" style="padding:8px 16px; background:#2196F3; color:white; border:none; cursor:pointer; margin-top:15px;">更改信息</button>
@@ -320,7 +320,7 @@
                         </div>
 
                         <div style="margin:20px 0; border-top:1px solid #eee; padding-top:15px;">
-                            <h4>资质文件</h4>
+                            <h4>报名文件</h4>
                             <input type="file" id="certificateUpload" name="certificateFiles" style="margin-bottom:10px;display: none;" multiple>
                             <div id="uploadedFilesList" style="margin-top:10px;">
                                 <p>未选择文件</p>
@@ -861,7 +861,7 @@
             if(confirm('请仔细核对上传的报名资料与项目是否一致，确认报名此项目吗?')) {
                 var account = getMember().account;
                 if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
-                    alert("请先完善个人信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，资质文件")
+                    alert("请先完善个人信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，报名文件")
                     return ;
                 }
                 var data = {"project":{"id":id}};
@@ -902,7 +902,7 @@
                         }else{
                             applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
                         }
-                        alert('正在审核企业资质！');
+                        alert('正在审核企业报名文件！');
                     }else{
                         alert("报名失败："+e.message);
                     }

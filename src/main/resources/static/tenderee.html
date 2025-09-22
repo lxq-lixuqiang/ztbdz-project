@@ -183,16 +183,16 @@
     </div>
 </div>
 
-<!-- 供应商资质弹窗 -->
+<!-- 供应商报名弹窗 -->
 <div id="qualificationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
     <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3>供应商资质信息</h3>
+            <h3>供应商报名信息</h3>
             <button onclick="$('#qualificationModal').hide()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
         </div>
         <h4 id="gongyingshang"></h4>
         <div id="qualificationContent" style="margin-bottom:20px;">
-            <!-- 资质内容将通过JavaScript动态填充 -->
+            <!-- 报名内容将通过JavaScript动态填充 -->
         </div>
         <div id="examine" style="text-align:center;">
             <button onclick="approveSupplier(true)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:15px;">通过审核</button>
@@ -328,7 +328,7 @@
                         <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名单位</th>
-                        <th style="padding:10px; border:1px solid #ddd;">资质状态</th>
+                        <th style="padding:10px; border:1px solid #ddd;">报名状态</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -412,7 +412,7 @@
         <td style="padding:10px;">{{project.projectCode}}</td>
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
         <td style="padding:10px;">{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
-        <td style="padding:10px;">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
+        <td style="padding:10px;{{#eq project.isAudit 0}}color:red;{{/eq}}">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
             <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
@@ -443,7 +443,7 @@
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
         <td style="padding:10px;">{{project.tenderee.tendereeName}}</td>
         <td style="padding:10px;">{{member.account.accountName}}</td>
-        <td style="padding:10px;">
+        <td style="padding:10px;{{#eq state 3}}color:red;{{/eq}}">
             {{#eq state 0}}报名审核中{{/eq}}
             {{#eq state 1}}报名通过{{/eq}}
             {{#eq state 2}}报名未通过{{/eq}}
@@ -452,7 +452,7 @@
             {{#eq state 5}}资质不通过{{/eq}}
         </td>
         <td style="padding:10px;">
-            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{state}}','{{project.projectName}}')" style="padding:5px 10px; background:{{#eq state 3}}red{{else}}#4CAF50{{/eq}}; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
+            <button onclick="viewSupplierQualification('{{id}}','{{member.id}}','{{state}}','{{project.projectName}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq state 3}}审核资质{{else}}查看资质{{/eq}}</button>
         </td>
     </tr>
     {{/each}}
@@ -882,7 +882,7 @@
             success:function(e) {
                 if(e.status == 200){
                     var account = e.data.account;
-                    var fileInfo = "没有上传资质文件";
+                    var fileInfo = "没有上传报名文件";
                     if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
                         fileInfo = "";
                         for(var i=0;i<account.accountCodeFileIds.length;i++){
@@ -890,7 +890,7 @@
                         }
                     }
                     $("#gongyingshang").html("项目名称："+projectName);
-                    // 模拟加载资质数据
+                    // 模拟加载报名数据
                     $("#qualificationContent").html(`
                             <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>
                             <p>企业名称: <span>`+(account.accountName!=null?account.accountName:"")+`</span></p>
@@ -899,7 +899,7 @@
                             <p>联系电话: <span>`+(account.phone!=null?account.phone:"")+`</span></p>
                             <p>电子邮箱: <span>`+(account.email!=null?account.email:"")+`</span></p>
 
-                            <h4 style="margin-top:20px;">资质文件</h4>
+                            <h4 style="margin-top:20px;">报名文件</h4>
                             `+fileInfo+`
                         `);
                     $("#qualificationModal").show();

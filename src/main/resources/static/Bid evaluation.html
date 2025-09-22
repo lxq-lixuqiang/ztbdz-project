@@ -426,7 +426,7 @@
         }
 
         $("#enoughSuppliers").attr("checked","checked");
-        var e = JSON.parse(localStorage.getItem('data'));
+        var e = JSON.parse(localStorage.getItem('data'+getMember().id));
         // 保存评审数据
         var saveDataList = [];
         var projectId = new URLSearchParams(window.location.search).get("id");
@@ -547,7 +547,7 @@
 
         $("#enoughCompliantSuppliers").attr("checked","checked");
         // 保存评审数据
-        var e = JSON.parse(localStorage.getItem('data'));
+        var e = JSON.parse(localStorage.getItem('data'+getMember().id));
         var saveDataList = [];
         var projectId = new URLSearchParams(window.location.search).get("id");
         for(var i=0;i<e.data.length;i++){
@@ -1272,7 +1272,7 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
-                            localStorage.setItem('data', JSON.stringify(e)); //缓存数据 方便后面查询
+                            console.info("测试11111111111")
                             if(e.data.length==0){
                                 $("#notEnoughSuppliers").attr("checked","checked");
                                 initPDFViewer(-1);
@@ -1282,6 +1282,7 @@
                                 disqualifyBtn.style.cursor = 'pointer';
                                 return;
                             }
+                            localStorage.setItem('data'+getMember().id, JSON.stringify(e)); //缓存数据 方便后面查询
                             var companies = [];
                             for(var i=0;i<e.data.length;i++){
                                 var fileIds = [];

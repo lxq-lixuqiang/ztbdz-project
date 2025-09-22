@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <!-- InstanceBeginEditable name="doctitle" -->
     <title>澄清页面</title>
+    <link href="plugin/layer-animate/layer-animate.css" rel="stylesheet">
     <!-- InstanceEndEditable -->
     <!-- InstanceBeginEditable name="head" -->
     <script src="/js/db-connection.js"></script>
@@ -92,8 +93,9 @@
 <div style="width:1040px; min-height:calc(100vh - 120px);">
     <div class="evaluation-container">
         <!-- 评审进度导航条 -->
-        <div class="progress-bar">
-            <div id="step-qualification" class="progress-step"></div>
+        <div class="progress-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h4 id="step-qualification" class="progress-step"></h4>
+            <h4  id="step-qualification2" class="progress-step"></h4>
         </div>
 
         <!-- 评审内容区域 -->
@@ -106,6 +108,7 @@
                     <select id="supplierSelect" style="padding: 5px; min-width: 200px;" onchange="switchSupplier(this.value)">
                         <option value="">-- 请选择专家 --</option>
                     </select>
+                    <button type="button" onclick="refresh()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新评审页面</button>
                 </div>
                 <div class="pdf-container" id="pdf-viewer" style="overflow: hidden;">
                     <p style="text-align:center;">请选择专家查看评审内容进度</p>
@@ -120,14 +123,24 @@
 
             <!-- 右侧评审标准区 -->
             <div class="review-panel">
-                <h3>澄清</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>澄清</h3>
+                    <div>
+                        <button type="button" id="clarifyButton" onclick="showModal()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;display: none;">
+                            发起澄清
+                        </button>
+                        <button onclick="refreshData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">
+                            刷新列表
+                        </button>
+                    </div>
+                </div>
                 <div id="project" style="margin-bottom:10px;" >
                     <table style="width:100%; border-collapse:collapse;">
                         <thead>
                         <tr style="background:#f5f5f5;">
                             <th style="padding:10px; border:1px solid #ddd;">序号</th>
                             <th style="padding:10px; border:1px solid #ddd;">内容</th>
-                            <th style="padding:10px; border:1px solid #ddd;">应答状态</th>
+                            <th style="padding:10px; border:1px solid #ddd;">响应时间</th>
                             <th style="padding:10px; border:1px solid #ddd;">操作</th>
                         </tr>
                         </thead>
@@ -136,17 +149,72 @@
                         </tbody>
                     </table>
                 </div>
-                <div style="display:flex; gap:10px;margin-bottom:15px;">
-                    <button type="button" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; font-size:16px;">
-                        澄清
-                    </button>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- 澄清弹窗 -->
+<div id="announcementModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>澄清内容</h3>
+            <button onclick="closeModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">采购包号（采购包名称）<span style="color:red;">*</span></label>
+            <input id="name" type="text" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;" required>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">澄清原因<span style="color:red;">*</span></label>
+            <input id="reason" type="text" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">澄清要求<span style="color:red;">*</span></label>
+            <textarea id="require" style="width:100%; height:150px; padding:8px; border:1px solid #ddd;box-sizing: border-box;"></textarea>
+        </div>
+
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">澄清文件</label>
+            <button onclick="showUploadDialog()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传文件</button>
+            <div id="fileId">
+
+            </div>
+            <input data-file-id="" id="field" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
+        </div>
+
+        <div style="text-align:center;">
+            <button onclick="submit()" id="gonggao" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">提交澄清</button>
+        </div>
+    </div>
+</div>
+
+<script id="projectTemplate" type="text/x-handlebars-template">
+    {{#if data}}
+    {{#each data}}
+    <tr style="border:1px solid #ddd;">
+        <td style="padding:10px;">{{#addition @index 1 }}{{/addition}}</td>
+        {{#gt supplementaryContent.length 30 }}
+            <td style="margin:10px;overflow: hidden;-webkit-line-clamp: 3;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;">{{supplementaryContent}}</td>
+        {{else}}
+            <td style="padding:10px;">{{supplementaryContent}}</td>
+        {{/gt}}
+        <td style="padding:10px;">{{replyDate}}</td>
+        <td style="padding:10px;">
+            <button onclick="deail('{{id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">详情</button>
+        </td>
+    </tr>
+    {{/each}}
+    {{else}}
+        <tr>
+            <td colspan="6" style="padding:10px; border:1px solid #ddd;">没有数据</td>
+        </tr>
+    {{/if}}
+</script>
 <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
+<script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
+<script src="plugin/layer-animate/method.js"></script>
 <script src="config/token.js" type="text/javascript"></script>
 <script>
     verifyLogin();
@@ -155,9 +223,15 @@
     var urlProjectId = new URLSearchParams(window.location.search).get("projectId");
     var urlIsExpert = new URLSearchParams(window.location.search).get("isExpert");
     var account;
+    var dataInfo={};
 
     $(function() {
         initData();
+        loadData();
+
+        if(!urlIsExpert){
+            $("#clarifyButton").show();
+        }
 
         function initData(){
             $.ajax({
@@ -167,7 +241,21 @@
                 success: function (e) {
                     if(e.status == 200){
                         account = e.data;
-                        $("#step-qualification").html("供应商："+e.data.accountName);
+                        $("#step-qualification2").html("供应商："+e.data.accountName);
+                    }else{
+                        alert(e.message);
+                    }
+                }
+            });
+
+            $.ajax({
+                url: "/project/get/" + urlProjectId,
+                type: "GET",
+                contentType: "application/json",
+                success: function (e) {
+                    if(e.status == 200){
+                        account = e.data;
+                        $("#step-qualification").html("采购人："+e.data.project.projectName);
                     }else{
                         alert(e.message);
                     }
@@ -201,8 +289,33 @@
         }
     });
 
+    function loadData(){
+        var data = {"projectId":urlProjectId,"associationId":urlAccountId};
+        $.ajax({
+            url: "/tendereeInfo/list",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    $("#project tbody").html(Handlebars.compile($("#projectTemplate").html())(e));
+                    if(e.data.length>0){
+                        for(var i=0;i<e.data.length;i++){
+                            dataInfo[e.data[i].id] = e.data[i];
+                        }
+                    }
+                }else{
+                    alert("查询失败："+e.message);
+                }
+            }
+        });
+    }
+
+    var selectMemberId;
     // 切换供应商
     function switchSupplier(memberId) {
+        selectMemberId = memberId;
+        if(!memberId) return;
         getPrintContents(memberId,urlProjectId);
     }
     var scale = 0.5;
@@ -220,28 +333,40 @@
                 }
                 $("#pdf-viewer>p").hide();
                 openPrintHTML = printHTML(e.data);
-                $("#iframeInfo").contents().find("body").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;").html(openPrintHTML);
+                $("#iframeInfo").contents().find("body").html(openPrintHTML);
+                $("#iframeInfo").contents().find("body>#contentInfo").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;");
                 $("#iframeInfo").show();
-
             }
         });
+    }
+
+    function refresh(){
+        if(!selectMemberId){
+            alert("请选择专家");
+            return;
+        }
+        switchSupplier(selectMemberId);
     }
 
     // 放大
     function zoomIn() {
         scale += 0.25;
-        $("#iframeInfo").contents().find("body").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;");
+        $("#iframeInfo").contents().find("body>#contentInfo").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;");
     }
 
     // 缩小
     function zoomOut() {
         if (scale > 0.25) {
             scale -= 0.25;
-            $("#iframeInfo").contents().find("body").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;");
+            $("#iframeInfo").contents().find("body>#contentInfo").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;");
         }
     }
     //弹出
     function openInNewWindow(){
+        if(!openPrintHTML){
+            alert("请先选择专家！")
+            return;
+        }
         const printWindow = window.open('', '_blank');
         printWindow.document.write(openPrintHTML);
     }
@@ -249,7 +374,7 @@
     function printHTML(printContent){
         var content = `<html>
                     <head>
-                        <title>评审页面</title>
+                        <title>已评审页面</title>
                         <style>
                         .evaluation-container {
                             display: flex;
@@ -317,13 +442,142 @@
                     </style>
                     </head>
                     <body>
-                        <div id="readDiv" style="opacity: 0;z-index:9999;position: absolute;left:0;top:0;">
+                        <div id="readDiv" style="opacity: 0;z-index:9999;position: fixed;left:0;top:0;width:100%;height:100%;"></div>
+                        <div id="contentInfo">
                             ${printContent}
                         </div>
-                        ${printContent}
                     </body>
                 </html>`;
         return content;
+    }
+
+    // 显示弹窗
+    function showModal() {
+        $("#announcementModal").show();
+    }
+
+    function closeModal(){
+        $("#announcementModal").hide();
+    }
+
+    function showUploadDialog() {
+        document.getElementById('field').click();
+    }
+
+    $("body").on('change','#field', function () {
+        if(this.files.length==0){
+            return;
+        }
+        var fileId = uploadFile(this.files);
+        $("#field").attr("data-file-id",fileId);
+
+        var fileName = "";
+        var fileIds = fileId.split(",");
+        for(var i=0;i<this.files.length;i++){
+            fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+        }
+        $("#fileId").html(fileName);
+    });
+    var replyId;
+    $("body").delegate(".layer-commit","click",function(){
+        replyMessage();
+    });
+    $("body").delegate(".layer-commit2","click",function(){
+        alert("回复内容："+replMessage)
+    });
+
+    function replyMessage(){
+        var replyContent = prompt("请输入回复内容:");
+        if(!replyContent.trim()){
+            alert("请填写回复内容");
+            replyMessage();
+            return ;
+        }
+
+        var data = {"id":replyId,"replyContent":replyContent,"replyDate":new Date().toLocaleString().replaceAll("/","-")};
+        $.ajax({
+            url: "/tendereeInfo/update",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    loadData();
+                    alert("回复成功！");
+                }else{
+                    alert("回复失败："+e.message);
+                }
+                method.msg_close();
+            }
+        });
+    }
+    var replMessage;
+    function deail(id){
+        var btnInfo = ["关闭"];
+        if(dataInfo[id].replyContent){
+            replMessage = dataInfo[id].replyContent;
+            btnInfo = ["关闭","0","查看回复"];
+        }
+        if(urlIsExpert){
+            btnInfo = ["关闭","回复"];
+            if(dataInfo[id].replyContent){
+                replMessage = dataInfo[id].replyContent;
+                btnInfo = ["关闭","回复","查看回复"];
+            }
+        }
+
+        var obj={
+            type:"layer-fadeIn",
+            title:"澄清说明",
+            content:dataInfo[id].content,
+            btn:btnInfo
+        };
+        method.msg_layer(obj);
+    }
+
+    function refreshData(){
+        loadData();
+        alert("刷新列表成功!")
+    }
+
+    var announcementModal = $("#announcementModal").html();
+    function submit(){
+        $("#gonggao").attr("disabled","true");
+        var name = $("#name").val();
+        var reason = $("#reason").val();
+        var require = $("#require").val();
+        var fileId = $("#field").attr("data-file-id");
+        var content = "<table style='white-space: pre-wrap;font-family:Arial; font-size:14px; line-height:2;text-align: left;'>";
+        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>采购包号（采购包名称）：</td><td style='text-align: left;'><div style='max-height: 60px;overflow: auto;'>"+name+"</div></td></tr>";
+        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>澄清原因：</td><td style='text-align: left;'><div style='max-height: 60px;overflow: auto;'>"+reason+"</div></td></tr>";
+        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>澄清要求：</td><td style='text-align: left;width:76%;'><div style='max-height: 300px;overflow: auto;'>"+require+"<div></div></td></tr>";
+        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'><p>响应文件原文：</p></td><td style='text-align: left;'><div style='max-height: 150px;overflow: auto;'>"+$("#fileId").html()+"</td></div></tr>";
+        content += "</table>";
+
+        if(!name || !reason || !require) {
+            alert("请填写带 * 字段为必填项！");
+            $("#gonggao").removeAttr("disabled");
+            return;
+        }
+        var data = {"projectId":urlProjectId,"associationId":urlAccountId,"title":name,"supplementaryContent":reason,"content":content,"isPublic":1,"type":1,"tendereeInformField":fileId};
+        $.ajax({
+            url: "/tendereeInfo/create",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    alert("提交澄清内容成功！");
+                    closeModal();
+                    $("#announcementModal").html(announcementModal); // 清空数据
+                    loadData();
+                }else{
+                    $("#gonggao").removeAttr("disabled");
+                    alert("提交澄清内容失败："+e.message);
+                }
+            }
+        });
+
     }
 
 </script>

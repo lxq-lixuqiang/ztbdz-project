@@ -79,9 +79,12 @@ public class TendereeInformServiceImpl implements TendereeInformService {
     @Override
     public List<TendereeInform> select(TendereeInform tendereeInform) throws Exception {
         QueryWrapper<TendereeInform> queryWrapper = new QueryWrapper();
-        queryWrapper.orderByAsc("create_date");
+        queryWrapper.orderByDesc("create_date");
         queryWrapper.eq("is_public","1");
         if(!StringUtils.isEmpty(tendereeInform.getTitle())) queryWrapper.like("title", tendereeInform.getTitle());
+        if(!StringUtils.isEmpty(tendereeInform.getAssociationId())) queryWrapper.like("association_id", tendereeInform.getAssociationId());
+        if(!StringUtils.isEmpty(tendereeInform.getTendereeId())) queryWrapper.like("tenderee_id", tendereeInform.getTendereeId());
+        if(!StringUtils.isEmpty(tendereeInform.getProjectId())) queryWrapper.like("project_id", tendereeInform.getProjectId());
         return tendereeInformMapper.selectList(queryWrapper);
     }
 
