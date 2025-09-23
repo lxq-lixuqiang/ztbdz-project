@@ -3,6 +3,7 @@ package com.ztbdz.tenderee.controller;
 
 import com.ztbdz.tenderee.pojo.TendereeInform;
 import com.ztbdz.tenderee.service.TendereeInformService;
+import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
 import com.ztbdz.web.util.Result;
 import io.swagger.annotations.Api;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "招标公告")
@@ -54,4 +56,19 @@ public class TendereeInformController {
         return tendereeInformService.get(id);
     }
 
+
+    @ApiOperation(value = "获取澄清列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
+    })
+    @CheckToken
+    @PostMapping("page")
+    public Result page(@RequestParam(required = false, defaultValue = "1") Integer page,
+                       @RequestParam(required = false) Integer size,
+                       @RequestBody(required = false) TendereeInform tendereeInform) {
+        if(StringUtils.isEmpty(size)) size=SystemConfig.PAGE_SIZE;
+        return tendereeInformService.page(page,size,tendereeInform);
+    }
 }

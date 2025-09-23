@@ -72,4 +72,14 @@ public interface TendereeInformService {
      * @return
      */
     TendereeInform selectById(Long id) throws Exception;
+
+
+    /**
+     * 查询列表
+     * @param page
+     * @param size
+     * @param tendereeInform
+     * @return
+     */
+    Result page(Integer page, Integer size, TendereeInform tendereeInform);
 }

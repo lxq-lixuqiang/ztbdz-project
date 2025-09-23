@@ -12,5 +12,7 @@ ALTER TABLE `tenderee_inform`
 ADD COLUMN `project_id` bigint(20) NULL AFTER `tenderee_id`;
 
 ALTER TABLE `tenderee_inform`
-ADD COLUMN `reply_content` varchar(255) NULL AFTER `is_public`,
+ADD COLUMN `reply_content` longtext NULL AFTER `is_public`,
 ADD COLUMN `reply_date` datetime(0) NULL AFTER `reply_content`;
+
+

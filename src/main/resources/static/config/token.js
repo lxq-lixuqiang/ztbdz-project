@@ -85,6 +85,7 @@ function verifyLogin(){
             'url' : window.location.pathname
         },
         error:function(e) {
+            if(!e) return;
             if(isSystemError){
                 return;
             }
@@ -245,7 +246,14 @@ function pageButton(data){
 }
 function pageShow(page){
     localStorage.setItem('page', page);
-    initPageShow(JSON.parse(localStorage.getItem('data')));
+    var data = localStorage.getItem('data');
+    if(!data){
+        initPageShow("");
+    }else if(data.indexOf(":")>-1){
+        initPageShow(JSON.parse(data));
+    }else{
+        initPageShow(data);
+    }
 }
 
 // 打印html页面

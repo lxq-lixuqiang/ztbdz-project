@@ -1,9 +1,12 @@
 package com.ztbdz.tenderee.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.TendereeInformMapper;
 import com.ztbdz.tenderee.pojo.TendereeInform;
 import com.ztbdz.tenderee.service.TendereeInformService;
+import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +88,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         if(!StringUtils.isEmpty(tendereeInform.getAssociationId())) queryWrapper.like("association_id", tendereeInform.getAssociationId());
         if(!StringUtils.isEmpty(tendereeInform.getTendereeId())) queryWrapper.like("tenderee_id", tendereeInform.getTendereeId());
         if(!StringUtils.isEmpty(tendereeInform.getProjectId())) queryWrapper.like("project_id", tendereeInform.getProjectId());
+        if(!StringUtils.isEmpty(tendereeInform.getType())) queryWrapper.like("type", tendereeInform.getType());
         return tendereeInformMapper.selectList(queryWrapper);
     }
 
@@ -102,6 +106,17 @@ public class TendereeInformServiceImpl implements TendereeInformService {
     @Override
     public TendereeInform selectById(Long id) throws Exception {
         return tendereeInformMapper.selectById(id);
+    }
+
+    @Override
+    public Result page(Integer page, Integer size, TendereeInform tendereeInform) {
+        try{
+            PageHelper.startPage(page, size);
+            return Result.ok("查询成功！",new PageInfo(this.select(tendereeInform)));
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("查询澄清列表异常，原因："+e.getMessage());
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ztbdz.tenderee.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.ztbdz.tenderee.pojo.ResultReport;
 import com.ztbdz.tenderee.pojo.ReviewInfo;
 import com.ztbdz.tenderee.service.ResultReportService;
@@ -12,8 +13,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Api(tags = "评审结果报告")
@@ -68,6 +72,43 @@ public class ResultReportController {
     public Result getPrintContents(@PathVariable Long memberId,@PathVariable Long projectId) {
         Object data = redisTemplate.opsForValue().get("printContents:" +projectId+memberId);
         return Result.ok("查询成功！",data);
+    }
+
+    @ApiOperation(value = "更新澄清响应状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "String"),
+            @ApiImplicitParam(name = "accountId", value = "供应商id", required=true, dataType = "String"),
+            @ApiImplicitParam(name = "state", value = "状态", required=true, dataType = "String")
+    })
+    @CheckToken
+    @GetMapping("updateState/{projectId}/{accountId}/{state}")
+    public Result updateState(@PathVariable String projectId,@PathVariable String accountId,@PathVariable String state) {
+        Object data = redisTemplate.opsForValue().get("clarifyState:" +projectId);
+        Map<String,String> map = new HashMap();
+        if(!StringUtils.isEmpty(data)){
+            map = JSON.parseObject(data.toString(),Map.class);
+        }
+        map.put(projectId+"|"+accountId,state);
+        redisTemplate.opsForValue().set("clarifyState:" + projectId,JSON.toJSONString(map),SystemConfig.TOKEN_VALIDITY*2, TimeUnit.MILLISECONDS);
+        return Result.ok("更新澄清响应状态成功！");
+    }
+
+    @ApiOperation(value = "获取澄清响应状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "String"),
+            @ApiImplicitParam(name = "accountId", value = "供应商id", required=true, dataType = "String")
+    })
+    @CheckToken
+    @GetMapping("getState/{projectId}")
+    public Result getState(@PathVariable String projectId) {
+        Object data = redisTemplate.opsForValue().get("clarifyState:" +projectId);
+        Map<String,String> map = new HashMap();
+        if(!StringUtils.isEmpty(data)){
+            map = JSON.parseObject(data.toString(),Map.class);
+        }
+        return Result.ok("获取澄清响应状态成功！",map);
     }
 
 
