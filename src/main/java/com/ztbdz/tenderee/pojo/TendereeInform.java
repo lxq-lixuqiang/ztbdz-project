@@ -41,7 +41,6 @@ public class TendereeInform extends Model<TendereeInform> implements Serializabl
     private String tendereeInformField;
     @ApiModelProperty("回复内容")
     private String replyContent;
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "回复时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date replyDate;

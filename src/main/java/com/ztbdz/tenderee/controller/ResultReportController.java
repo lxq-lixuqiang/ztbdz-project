@@ -54,7 +54,6 @@ public class ResultReportController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
-    @CheckToken
     @PostMapping("savePrintContents")
     public Result savePrintContents(@RequestBody ResultReport resultReport) {
         redisTemplate.opsForValue().set("printContents:" + resultReport.getProject().getId()+resultReport.getMember().getId(),resultReport.getResultHtml(),SystemConfig.TOKEN_VALIDITY*2, TimeUnit.MILLISECONDS);
@@ -67,7 +66,6 @@ public class ResultReportController {
             @ApiImplicitParam(name = "memberId", value = "人员id", required=true, dataType = "Long"),
             @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "Long")
     })
-    @CheckToken
     @GetMapping("getPrintContents/{memberId}/{projectId}")
     public Result getPrintContents(@PathVariable Long memberId,@PathVariable Long projectId) {
         Object data = redisTemplate.opsForValue().get("printContents:" +projectId+memberId);
@@ -81,7 +79,6 @@ public class ResultReportController {
             @ApiImplicitParam(name = "accountId", value = "供应商id", required=true, dataType = "String"),
             @ApiImplicitParam(name = "state", value = "状态", required=true, dataType = "String")
     })
-    @CheckToken
     @GetMapping("updateState/{projectId}/{accountId}/{state}")
     public Result updateState(@PathVariable String projectId,@PathVariable String accountId,@PathVariable String state) {
         Object data = redisTemplate.opsForValue().get("clarifyState:" +projectId);
@@ -100,7 +97,6 @@ public class ResultReportController {
             @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "String"),
             @ApiImplicitParam(name = "accountId", value = "供应商id", required=true, dataType = "String")
     })
-    @CheckToken
     @GetMapping("getState/{projectId}")
     public Result getState(@PathVariable String projectId) {
         Object data = redisTemplate.opsForValue().get("clarifyState:" +projectId);

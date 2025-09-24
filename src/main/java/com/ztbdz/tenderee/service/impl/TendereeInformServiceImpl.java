@@ -38,7 +38,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
     public synchronized Result create(TendereeInform tendereeInform) {
         try{
             if(this.insert(tendereeInform)<=0) return Result.fail("发布失败！");
-            return Result.ok("发布成功！");
+            return Result.ok("发布成功！",tendereeInform.getId());
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("发布招标公告异常，原因："+e.getMessage());

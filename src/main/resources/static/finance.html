@@ -95,7 +95,7 @@
 <script>
     verifyLogin();
 
-    function initPageShow(){
+    function initPageShow(data){
         loadProjects();
     }
     function loadProjects() {
@@ -198,7 +198,7 @@
                                     <td style="padding:10px;">${register.member.account.phone==null?'':register.member.account.phone}</td>
                                     <td style="padding:10px;">${register.createDate==null?'':register.createDate}</td>
                                     <td style="padding:10px;">${register.paymentMoney==null?'':parseFloat(register.paymentMoney).toLocaleString('en-US')}元</td>
-                                    <td style="padding:10px;">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
+                                    <td style="padding:10px;${register.state==0?'color:red;':''}">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
                                     <td style="padding:10px;">
                                         <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}')"
                                                 style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">

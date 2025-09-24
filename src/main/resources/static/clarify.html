@@ -5,6 +5,7 @@
     <!-- InstanceBeginEditable name="doctitle" -->
     <title>澄清页面</title>
     <link href="plugin/layer-animate/layer-animate.css" rel="stylesheet">
+    <link href="plugin/naranja/naranja.min.css" rel="stylesheet">
     <!-- InstanceEndEditable -->
     <!-- InstanceBeginEditable name="head" -->
     <script src="/js/db-connection.js"></script>
@@ -94,8 +95,8 @@
     <div class="evaluation-container">
         <!-- 评审进度导航条 -->
         <div class="progress-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h4 id="step-qualification" class="progress-step"></h4>
-            <h4  id="step-qualification2" class="progress-step"></h4>
+            <h4 id="projectTitle" class="progress-step"></h4>
+            <h4  id="step-qualification" class="progress-step"></h4>
         </div>
 
         <!-- 评审内容区域 -->
@@ -108,7 +109,7 @@
                     <select id="supplierSelect" style="padding: 5px; min-width: 200px;" onchange="switchSupplier(this.value)">
                         <option value="">-- 请选择专家 --</option>
                     </select>
-                    <button type="button" onclick="refresh()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新评审页面</button>
+                    <button type="button" onclick="refresh()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新评审界面</button>
                 </div>
                 <div class="pdf-container" id="pdf-viewer" style="overflow: hidden;">
                     <p style="text-align:center;">请选择专家查看评审内容进度</p>
@@ -135,7 +136,7 @@
                     <table style="width:100%; border-collapse:collapse;">
                         <thead>
                         <tr style="background:#f5f5f5;">
-                            <th style="padding:10px; border:1px solid #ddd;width: 110px;">内容</th>
+                            <th style="padding:10px; border:1px solid #ddd;width: 110px;">澄清原因</th>
                             <th style="padding:10px; border:1px solid #ddd;">响应截止时间</th>
                             <th style="padding:10px; border:1px solid #ddd;">操作</th>
                         </tr>
@@ -151,7 +152,7 @@
 </div>
 
 <!-- 澄清弹窗 -->
-<div id="announcementModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+<div id="announcementModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100000;">
     <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3>回复澄清</h3>
@@ -188,7 +189,7 @@
         {{/gt}}
         <td style="padding:10px;">{{replyDate}}</td>
         <td style="padding:10px;">
-            <button onclick="deail('{{id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">详情</button>
+            <button onclick="deail('{{id}}','{{#gtNowDate replyDate}}false{{else}}true{{/gtNowDate}}')" style="margin-top:5px;padding:5px 10px; color:white; border:none; cursor:pointer;{{#if replyContent}}background:#4CAF50;{{else}}{{#gtNowDate replyDate}}background:red;{{else}}background:#9ca1a5;{{/gtNowDate}}{{/if}}">{{#if replyContent}}查看{{else}}{{#gtNowDate replyDate}}回复{{else}}超时{{/gtNowDate}}{{/if}}</button>
         </td>
     </tr>
     {{/each}}
@@ -202,6 +203,7 @@
 <script src="plugin/handlebars-v4.0.11-dist/handlebars-v4.0.11.min.js" type="text/javascript"></script>
 <script src="plugin/handlebars-v4.0.11-dist/handlebars-ext.js" type="text/javascript"></script>
 <script src="plugin/layer-animate/method.js" type="text/javascript"></script>
+<script src="plugin/naranja/naranja.js" type="text/javascript"></script>
 <script src="config/token.js" type="text/javascript"></script>
 <script>
     verifyLogin();
@@ -228,7 +230,7 @@
                 success: function (e) {
                     if(e.status == 200){
                         account = e.data;
-                        $("#step-qualification2").html("供应商："+e.data.accountName);
+                        $("#step-qualification").html("供应商："+e.data.accountName);
                     }else{
                         alert(e.message);
                     }
@@ -242,7 +244,7 @@
                 success: function (e) {
                     if(e.status == 200){
                         account = e.data;
-                        $("#step-qualification").html("采购人："+e.data.tendereeName);
+                        $("#projectTitle").html("项目名称："+e.data.project.projectName)
                     }else{
                         alert(e.message);
                     }
@@ -272,6 +274,7 @@
                     }
                 }
             });
+            responseInfo();
 
         }
     });
@@ -420,7 +423,7 @@
                             border: 1px solid #ddd;
                             padding: 20px;
                         }
-                        .criteria-section {
+                        .criteria-section ,.naranja-notification-box,#bidder_info{
                             display: none;
                         }
                         .criteria-section.active {
@@ -469,26 +472,44 @@
     $("body").delegate(".layer-commit","click",function(){
         showModal();
     });
+    $("body").delegate(".layer-cancel","click",function(){
+        messageShow = true;
+    });
     $("body").delegate(".layer-commit2","click",function(){
-        alert("回复内容："+replMessage)
+        var obj={
+            type:"layer-fadeIn",
+            title:"回复内容",
+            content:dataInfo[replyId].replyContent
+        };
+        method.msg_layer(obj);
     });
 
     var replMessage;
-    function deail(id){
+    function deail(id,isTimeout){
         replyId = id;
         var btnInfo = ["关闭","回复澄清"];
         if(dataInfo[id].replyContent){
             replMessage = dataInfo[id].replyContent;
             btnInfo = ["关闭","0","查看回复"];
+        }else{
+            if(isTimeout == "true"){
+                btnInfo = ["关闭"];
+            }
         }
 
         var obj={
             type:"layer-fadeIn",
             title:"澄清说明",
+            close:"false",
             content:dataInfo[id].content,
             btn:btnInfo
         };
         method.msg_layer(obj);
+        if(!dataInfo[id].replyContent && isTimeout == "true"){
+            setTimeout(function(){
+                alert("已超时，无法回复澄清！")
+            },500)
+        }
     }
 
     function refreshData(){
@@ -501,12 +522,12 @@
         $("#gonggao").attr("disabled","true");
         var require = $("#require").val();
         var fileId = $("#field").attr("data-file-id");
-        var content = "<table style='white-space: pre-wrap;font-family:Arial; font-size:14px; line-height:2;text-align: left;'>";
+        var content = "<table style='white-space: pre-wrap;font-family:Arial; font-size:15px; line-height:2;text-align: left;'>";
         content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>回复内容：</td><td style='text-align: left;width:76%;'><div style='max-height: 300px;overflow: auto;'>"+require+"<div></div></td></tr>";
         content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'><p>回复文件：</p></td><td style='text-align: left;'><div style='max-height: 150px;overflow: auto;'>"+$("#fileId").html()+"</td></div></tr>";
         content += "</table>";
 
-        if(!name || !reason || !require) {
+        if(!require) {
             alert("请填写带 * 字段为必填项！");
             $("#gonggao").removeAttr("disabled");
             return;
@@ -514,16 +535,18 @@
         verifyLogin();
         var data = {"id":replyId,"replyContent":content,"tendereeInformField":fileId};
         $.ajax({
-            url: "/tendereeInfo/create",
+            url: "/tendereeInfo/update",
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
+                    loadData();
                     alert("提交回复成功！");
                     closeModal();
                     $("#announcementModal").html(announcementModal); // 清空数据
-                    responseInfo(0);
+                    updateResponseInfo();
+                    $(".layer-cancel").click();
                 }else{
                     $("#gonggao").removeAttr("disabled");
                     alert("提交回复失败："+e.message);
@@ -533,12 +556,69 @@
     }
 
     // 响应状态
-    function responseInfo(state){
+    function updateResponseInfo(){
         $.ajax({
-            url: "/resultReport/updateState/"+urlProjectId+"/"+urlAccountId+"/"+state,
+            url: "/resultReport/updateState/"+urlProjectId+"/"+urlAccountId+"/0",
             type: "GET",
             contentType: "application/json"
         });
+    }
+
+    // 响应状态
+    function responseInfo(){
+        $.ajax({
+            url: "/resultReport/getState/"+new URLSearchParams(window.location.search).get("projectId"),
+            type: "GET",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    var isShow = false;
+                    var id ="";
+                    Object.keys(e.data).forEach(key => {
+                        var datas = key.split("|");
+                        if(e.data[key] != "0" && e.data[key] != "1" && datas[1]==new URLSearchParams(window.location.search).get("id")){
+                            isShow=true;
+                            id = e.data[key];
+                            return;
+                        }
+                    });
+                    if(isShow){
+                        if(messageShow){
+                            narn('log','专家发起了澄清内容，请及时回复！',id);
+                        }
+                    }
+                    setTimeout(responseInfo,10000);
+                }
+            }
+        });
+    }
+
+    var messageShow = true;
+    // 消息弹框
+    function narn (type,message,id) {
+        messageShow = false;
+        naranja()[type]({
+            title: '消息提示',
+            isHideClose: true,
+            text: message,
+            timeout: 'keep',
+            buttons: [{
+                text: '查看',
+                click: function (e) {
+                    loadData();
+                    e.closeNotification();
+                    setTimeout(function(){
+                        deail(id,'false');
+                    },200);
+                }
+            },{
+                text: '关闭',
+                click: function (e) {
+                    e.closeNotification();
+                    messageShow = true;
+                }
+            }]
+        })
     }
 
 
