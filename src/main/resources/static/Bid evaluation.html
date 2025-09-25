@@ -227,9 +227,14 @@
     
     // 弹出窗口查看
     function openInNewWindow() {
+        var dataFileId = $("#pdf-viewer").attr("data-fileId");
+        if(!dataFileId){
+            alert("请先选择供应商！");
+            return;
+        }
         const pdfPath = window.location.protocol === 'file:' 
-            ? new URL("/file/preview/"+$("#pdf-viewer").attr("data-fileId"), window.location.href).href
-            : "/file/preview/"+$("#pdf-viewer").attr("data-fileId");
+            ? new URL("/file/preview/"+dataFileId, window.location.href).href
+            : "/file/preview/"+dataFileId;
         console.log('弹出窗口PDF路径:', pdfPath);
         window.open(pdfPath, '_blank');
     }
@@ -898,7 +903,7 @@
         
         bidderInfo.innerHTML = `
             <div style="margin-bottom: 10px;">
-                <strong>当前供应商文件:</strong>
+                <strong>供应商投标文件:</strong>
                 <div style="margin-top: 5px;padding-left:40px;">
                     ${fileList.map(file => `<div><button style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;" onclick='initPDFViewer("${file.split("）_")[1]}")'>${file.split("）_")[0]+"）"}</button></div>`).join('')}
                 </div>
@@ -1488,7 +1493,7 @@
                 "<div>（一）遵守评审工作纪律;</div>" +
                 "<div>（二）按照客观、公正、审慎的原则，根据采购文件规定的评审程序、评审方法和评审标准进行独立评审;</div>" +
                 "<div>（三）不泄露评审文件、评审情况和在评审过程中获悉的商业秘密;</div>" +
-                "<div>（四）及时向监督管理部门报告评审过程中的违法违执情况，包括采购人、代理机构向评审专家作出倾向性、误导性的解释或者说明情况，供应商行贿、提供虚假材料或者串通情况，其他丰法于预评审情况等</div>" +
+                "<div>（四）及时向监督管理部门报告评审过程中的违法违执情况，包括采购人、代理机构向评审专家作出倾向性、误导性的解释或者说明情况，供应商行贿、提供虚假材料或者串通情况，其他非法于预评审情况等</div>" +
                 "<div>（五）发现采购文件内容违反国家有关强制性规定或者存在歧义、重大缺路导致评审工作无法讲行时，信止评审并通讨交易系统向代理机构书面说明情况，说明停止评南的情开幼具体理中</div>" +
                 "<div>（六）配合答复处理供应商的询问、质疑和投诉等事项;</div>" +
                 "<div>（七）法律、法规和规章规定的其他义务</div>" +
@@ -1496,9 +1501,9 @@
                 "<div>（一）遵行《中华人民共和国政府采购法》第十二条和《中华人民共和国政府采购法实施条例》第九条及财政部关于回避的规定</div>" +
                 "<div>（二）评审前，应当将通讯工具或者相关电子设备交由代理机构统一保管。</div>" +
                 "<div>（三）评审过程中，不与外界联系，因发生不可预见情况，确实需要与外界联系的，在监督人员监督之下办理。</div>" +
-                "<div>（四）评审过程中，不干成省饰工评审工作、不发表倾向性、引导性意见，不修改或细化采购文件确定的评种巷房、许审方法、许南因素材车南标巷，不海受片立南主动是出的经青酶释，不化自乐响人代表的德见，不法商评分，不违反规定的译南格式饰评分和出与评南意见，不的自己的许审意见盗字样议。</div>" +
+                "<div>（四）评审过程中，不干预或者影响正常评审工作、不发表倾向性、引导性意见，不修改或细化采购文件确定的评审程序、评审方法、评审因素和评审标准，不接收供应商主动提出的澄清和解释，不征询采购人代表的意见，不协商评分，不违反规定的评审格式评分和撰写评审意见，不拒绝对自己的评审意见签字确认。</div>" +
                 "<div>（五）在评审过程中和评审结束后，不得记录、复制或带走任何评审资料，除因配合答复处理供应商的询问、质疑和投诉等事项外，不得向外界透露评审内容。</div>" +
-                "<div>（六）服从评审现场代理机构的现场秩序管理，接受评审现场监督人员的合法监督</div>" +
+                "<div>（六）服从评审现场代理机构的现场秩序管理，接受评审现场监督人员的合法监督。</div>" +
                 "<div>（七）遵守有关廉洁自律规定，不得私下接触供应商，不得收受供应商及有关业务单位和个人的财物或好处，不得接受采购人、代理机构的请托。</div>" +
                 "</div>",
                 btn:["不同意","同意"]

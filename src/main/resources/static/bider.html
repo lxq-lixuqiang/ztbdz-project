@@ -421,7 +421,7 @@
                     <button onclick="signUp('{{id}}')" style="margin-right:5px;margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">立即报名</button>
                     {{#if descriptionFile}}
                         <a target="_blank" href="/file/download/{{descriptionFile}}" style="margin-right:5px;text-decoration: none;cursor: pointer">
-                            <button style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">报名涵</button>
+                            <button onclick="javascrip:alert('请仔细阅读附件的廉洁告知书，补充完整登记表信息盖章和报名资料一起在“我的信息”列表中上传！');" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">报名文件</button>
                         </a>
                     {{/if}}
                 </td>
@@ -455,8 +455,8 @@
                     <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
                 {{/eq}}
                 {{#eq  projectRegisters.state 2}}
-                    <button onclick="showProgress()" style="padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">退费说明</button>
-                    <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">重新缴费</button>
+                    <button onclick="showProgress()" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">退费说明</button>
+                    <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="margin-top:3px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">重新缴费</button>
                     <button onclick="alert('报名不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:3px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
                 {{#eq  projectRegisters.state 5}}

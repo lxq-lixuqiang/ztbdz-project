@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 12/09/2025 16:07:06
+ Date: 25/09/2025 13:07:42
 */
 
 SET NAMES utf8mb4;
@@ -259,6 +259,7 @@ CREATE TABLE `project`  (
   `money` double(11, 2) NULL DEFAULT NULL,
   `bid_opening_time` datetime(0) NULL DEFAULT NULL,
   `procurement_documents` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `description_file` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `number_review_expert` int(11) NULL DEFAULT NULL,
   `state` int(11) NULL DEFAULT NULL,
   `is_pass` int(11) NULL DEFAULT NULL,
@@ -462,11 +463,15 @@ DROP TABLE IF EXISTS `tenderee_inform`;
 CREATE TABLE `tenderee_inform`  (
   `id` bigint(20) NOT NULL,
   `tenderee_id` bigint(20) NULL DEFAULT NULL,
+  `project_id` bigint(20) NULL DEFAULT NULL,
+  `association_id` bigint(20) NULL DEFAULT NULL,
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `tenderee_inform_field` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `type` int(11) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `is_public` int(11) NULL DEFAULT NULL,
+  `reply_content` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `reply_date` datetime(0) NULL DEFAULT NULL,
   `content` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `tenderee_inform_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `supplementary_content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,

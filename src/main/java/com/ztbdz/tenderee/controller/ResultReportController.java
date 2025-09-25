@@ -56,7 +56,7 @@ public class ResultReportController {
     })
     @PostMapping("savePrintContents")
     public Result savePrintContents(@RequestBody ResultReport resultReport) {
-        redisTemplate.opsForValue().set("printContents:" + resultReport.getProject().getId()+resultReport.getMember().getId(),resultReport.getResultHtml(),SystemConfig.TOKEN_VALIDITY*2, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("printContents:" + resultReport.getProject().getId()+resultReport.getMember().getId(),resultReport.getResultHtml(),SystemConfig.TOKEN_VALIDITY*4, TimeUnit.MILLISECONDS);
         return Result.ok("临时保存专家评审页面成功！");
     }
 
@@ -87,7 +87,7 @@ public class ResultReportController {
             map = JSON.parseObject(data.toString(),Map.class);
         }
         map.put(projectId+"|"+accountId,state);
-        redisTemplate.opsForValue().set("clarifyState:" + projectId,JSON.toJSONString(map),SystemConfig.TOKEN_VALIDITY*2, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("clarifyState:" + projectId,JSON.toJSONString(map),SystemConfig.TOKEN_VALIDITY*4, TimeUnit.MILLISECONDS);
         return Result.ok("更新澄清响应状态成功！");
     }
 
