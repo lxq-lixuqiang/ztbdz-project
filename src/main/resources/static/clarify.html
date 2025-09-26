@@ -189,7 +189,7 @@
         {{/gt}}
         <td style="padding:10px;">{{replyDate}}</td>
         <td style="padding:10px;">
-            <button onclick="deail('{{id}}','{{#gtNowDate replyDate}}false{{else}}true{{/gtNowDate}}')" style="margin-top:5px;padding:5px 10px; color:white; border:none; cursor:pointer;{{#if replyContent}}background:#4CAF50;{{else}}{{#gtNowDate replyDate}}background:red;{{else}}background:#9ca1a5;{{/gtNowDate}}{{/if}}">{{#if replyContent}}查看{{else}}{{#gtNowDate replyDate}}回复{{else}}超时{{/gtNowDate}}{{/if}}</button>
+            <button onclick="deail('{{id}}','{{#gtNowDate replyDate}}false{{else}}true{{/gtNowDate}}')" style="margin-top:5px;padding:5px 10px; color:white; border:none; cursor:pointer;{{#if replyContent}}background:#4CAF50;{{else}}{{#gtNowDate replyDate}}background:#2196F3;{{else}}background:#9ca1a5;{{/gtNowDate}}{{/if}}">{{#if replyContent}}查看{{else}}{{#gtNowDate replyDate}}回复{{else}}超时{{/gtNowDate}}{{/if}}</button>
         </td>
     </tr>
     {{/each}}
