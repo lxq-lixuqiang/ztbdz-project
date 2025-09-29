@@ -183,7 +183,7 @@
     {{#each data}}
     <tr style="border:1px solid #ddd;">
         {{#gt supplementaryContent.length 5 }}
-            <td style="margin:10px;overflow: hidden;-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;">{{supplementaryContent}}</td>
+            <td style="margin:14px 10px;overflow: hidden;-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;">{{supplementaryContent}}</td>
         {{else}}
             <td style="padding:10px;">{{supplementaryContent}}</td>
         {{/gt}}
@@ -597,6 +597,7 @@
     // 消息弹框
     function narn (type,message,id) {
         messageShow = false;
+        loadData();
         naranja()[type]({
             title: '消息提示',
             isHideClose: true,
@@ -605,17 +606,13 @@
             buttons: [{
                 text: '查看',
                 click: function (e) {
-                    loadData();
                     e.closeNotification();
-                    setTimeout(function(){
-                        deail(id,'false');
-                    },200);
+                    deail(id,'false');
                 }
             },{
                 text: '关闭',
                 click: function (e) {
                     e.closeNotification();
-                    messageShow = true;
                 }
             }]
         })
