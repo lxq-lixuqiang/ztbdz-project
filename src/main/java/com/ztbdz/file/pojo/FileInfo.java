@@ -25,18 +25,18 @@ public class FileInfo extends Model<FileInfo> implements Serializable {
     private static final long serialVersionUID = -7553919406996194012L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "文件名称")
+    @ApiModelProperty("文件名称")
     private String name;
-    @ApiModelProperty(value = "文件类型")
+    @ApiModelProperty("文件类型")
     private String type;
-    @ApiModelProperty(value = "文件大小")
+    @ApiModelProperty("文件大小")
     private Long size;
     @ApiModelProperty("显示文件大小")
     @TableField(exist = false)
     private String fileSize;
-    @ApiModelProperty(value = "文件分类（0=文件 1=内部文档 2=图片）")
+    @ApiModelProperty("文件分类（0=文件 1=内部文档 2=图片）")
     private Integer classify;
 
     @TableField(fill = FieldFill.INSERT)

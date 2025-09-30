@@ -19,28 +19,28 @@ public class BidderInfo extends Model<BidderInfo> implements Serializable {
     @Getter
     private static final long serialVersionUID = 3784542354294997198L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "人员id")
+    @ApiModelProperty("人员id")
     private Long memberId;
-    @ApiModelProperty(value = "人员信息")
+    @ApiModelProperty("人员信息")
     @TableField(exist = false)
     private Member member;
-    @ApiModelProperty(value = "投标方编号")
+    @ApiModelProperty("投标方编号")
     private String bidderCode;
-    @ApiModelProperty(value = "是否审核通过（0=等待审核 1=审核通过 1=未通过）")
+    @ApiModelProperty("是否审核通过（0=等待审核 1=审核通过 1=未通过）")
     private Integer isCheck;
-    @ApiModelProperty(value = "审核不通过原因")
+    @ApiModelProperty("审核不通过原因")
     private String notCheckShow;
-    @ApiModelProperty(value = "资质证明文件01")
+    @ApiModelProperty("资质证明文件01")
     private String qualificationCertificate01;
-    @ApiModelProperty(value = "资质证明文件02")
+    @ApiModelProperty("资质证明文件02")
     private String qualificationCertificate02;
-    @ApiModelProperty(value = "资质证明文件03")
+    @ApiModelProperty("资质证明文件03")
     private String qualificationCertificate03;
-    @ApiModelProperty(value = "资质证明文件04")
+    @ApiModelProperty("资质证明文件04")
     private String qualificationCertificate04;
-    @ApiModelProperty(value = "资质证明文件05")
+    @ApiModelProperty("资质证明文件05")
     private String qualificationCertificate05;
 
 

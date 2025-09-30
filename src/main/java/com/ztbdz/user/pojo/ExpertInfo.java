@@ -19,72 +19,72 @@ public class ExpertInfo extends Model<ExpertInfo> implements Serializable {
     @Getter
     private static final long serialVersionUID = -1818102567495388210L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "人员id")
+    @ApiModelProperty("人员id")
     private Long memberId;
-    @ApiModelProperty(value = "人员信息")
+    @ApiModelProperty("人员信息")
     @TableField(exist = false)
     private Member member;
-    @ApiModelProperty(value = "专家编号")
+    @ApiModelProperty("专家编号")
     private String expertCode;
-    @ApiModelProperty(value = "身份证号")
+    @ApiModelProperty("身份证号")
     private String idCard;
-    @ApiModelProperty(value = "专家证号")
+    @ApiModelProperty("专家证号")
     private String expertCard;
-    @ApiModelProperty(value = "工作状态")
+    @ApiModelProperty("工作状态")
     private String workState;
-    @ApiModelProperty(value = "最高学历")
+    @ApiModelProperty("最高学历")
     private String educational;
-    @ApiModelProperty(value = "职称")
+    @ApiModelProperty("职称")
     private String position;
-    @ApiModelProperty(value = "民族")
+    @ApiModelProperty("民族")
     private String nation;
-    @ApiModelProperty(value = "所在区域")
+    @ApiModelProperty("所在区域")
     private String region;
-    @ApiModelProperty(value = "政治面貌")
+    @ApiModelProperty("政治面貌")
     private String politicalStatus;
-    @ApiModelProperty(value = "专家状态")
+    @ApiModelProperty("专家状态")
     private String expertState;
-    @ApiModelProperty(value = "专家类型")
+    @ApiModelProperty("专家类型")
     private String expertType;
-    @ApiModelProperty(value = "是否审核通过（0=等待审核 1=审核通过 2=未通过）")
+    @ApiModelProperty("是否审核通过（0=等待审核 1=审核通过 2=未通过）")
     private Integer isCheck;
-    @ApiModelProperty(value = "审核不通过原因")
+    @ApiModelProperty("审核不通过原因")
     private String notCheckShow;
-    @ApiModelProperty(value = "紧急联系人电话")
+    @ApiModelProperty("紧急联系人电话")
     private String emergencyPhone;
-    @ApiModelProperty(value = "备注")
+    @ApiModelProperty("备注")
     private String description;
-    @ApiModelProperty(value = "是否组长（0=不是 1=是）")
+    @ApiModelProperty("是否组长（0=不是 1=是）")
     private Integer isAdmin;
-    @ApiModelProperty(value = "银行名称")
+    @ApiModelProperty("银行名称")
     private String bankName;
-    @ApiModelProperty(value = "银行卡号")
+    @ApiModelProperty("银行卡号")
     private String bankCard;
-    @ApiModelProperty(value = "身份证正面文件id")
+    @ApiModelProperty("身份证正面文件id")
     private Long idCardFront;
-    @ApiModelProperty(value = "身份证反面文件id")
+    @ApiModelProperty("身份证反面文件id")
     private Long idCardBack;
-    @ApiModelProperty(value = "专家证书文件id")
+    @ApiModelProperty("专家证书文件id")
     private Long certificate;
-    @ApiModelProperty(value = "年检证明文件id")
+    @ApiModelProperty("年检证明文件id")
     private Long annualCertificate;
-    @ApiModelProperty(value = "专业领域文件id")
+    @ApiModelProperty("专业领域文件id")
     private Long professionalField;
-    @ApiModelProperty(value = "评标经验文件id")
+    @ApiModelProperty("评标经验文件id")
     private Long bidEvaluationExperience;
-    @ApiModelProperty(value = "参加工作日期")
+    @ApiModelProperty("参加工作日期")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date workDate;
 
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "创建日期",hidden = true)
+    @ApiModelProperty(value ="创建日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    @ApiModelProperty(value = "更新日期",hidden = true)
+    @ApiModelProperty(value ="更新日期",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date updateDate;
 
