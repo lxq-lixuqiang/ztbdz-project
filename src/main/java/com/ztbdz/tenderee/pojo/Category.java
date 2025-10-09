@@ -20,21 +20,21 @@ public class Category extends Model<Tenderee> implements Serializable{
     @Getter
     private static final long serialVersionUID = -2964770934932383907L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "类别名称")
+    @ApiModelProperty("类别名称")
     private String categoryName;
-    @ApiModelProperty(value = "类别序号")
+    @ApiModelProperty("类别序号")
     private Integer categorySort;
-    @ApiModelProperty(value = "类别分类")
+    @ApiModelProperty("类别分类")
     private String categoryClassify;
-    @ApiModelProperty(value = "类别代码")
+    @ApiModelProperty("类别代码")
     private String categoryCode;
-    @ApiModelProperty(value = "类别路径")
+    @ApiModelProperty("类别路径")
     private String categoryPath;
-    @ApiModelProperty(value = "父Id")
+    @ApiModelProperty("父Id")
     private Long parentId;
-    @ApiModelProperty(value = "是否使用（0=未使用 1=使用）")
+    @ApiModelProperty("是否使用（0=未使用 1=使用）")
     private Integer isUse;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

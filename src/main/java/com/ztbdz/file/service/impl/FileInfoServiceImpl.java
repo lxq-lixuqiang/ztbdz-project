@@ -10,9 +10,6 @@ import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +24,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@CacheConfig(cacheNames = "fileInfo")
 public class FileInfoServiceImpl implements FileInfoService {
 
     @Autowired
@@ -92,7 +88,6 @@ public class FileInfoServiceImpl implements FileInfoService {
         }
     }
 
-    @Cacheable
     @Override
     public FileInfo getById(Long id) throws Exception {
         return fileMapper.selectById(id);
@@ -131,7 +126,6 @@ public class FileInfoServiceImpl implements FileInfoService {
         }
     }
 
-    @Cacheable
     @Override
     public List<FileInfo> listByIds(List<Long> ids) throws Exception {
         QueryWrapper<FileInfo> queryWrapper = new QueryWrapper();
