@@ -183,9 +183,9 @@
     {{#each data}}
     <tr style="border:1px solid #ddd;">
         {{#gt supplementaryContent.length 5 }}
-            <td style="margin:14px 10px;overflow: hidden;-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;">{{supplementaryContent}}</td>
+            <td title="{{supplementaryContent}}" style="margin:14px 10px;overflow: hidden;-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;">{{supplementaryContent}}</td>
         {{else}}
-            <td style="padding:10px;">{{supplementaryContent}}</td>
+            <td title="{{supplementaryContent}}" style="padding:10px;">{{supplementaryContent}}</td>
         {{/gt}}
         <td style="padding:10px;">{{replyDate}}</td>
         <td style="padding:10px;">
@@ -479,6 +479,7 @@
         var obj={
             type:"layer-fadeIn",
             title:"回复内容",
+            btn: ["关闭"],
             content:dataInfo[replyId].replyContent
         };
         method.msg_layer(obj);

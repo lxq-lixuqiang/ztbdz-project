@@ -15,7 +15,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     public ResponseEntity<Object> handleException(Exception exception) {
         // 记录日志
-        log.error("报错日志输出：",exception);
+        if(!(exception.getMessage().indexOf("token")>-1)){
+            log.error("报错输出：",exception);
+        }
         // 返回自定义的错误信息
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

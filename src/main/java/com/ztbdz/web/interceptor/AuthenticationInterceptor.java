@@ -66,7 +66,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
                     return true;
                 }catch (Exception e){
-                    log.error("访问地址："+httpServletRequest.getRequestURI());
+                    log.error("访问地址："+httpServletRequest.getRequestURI()+"，"+e.getMessage());
                     throw new RuntimeException(e.getMessage());
                 }
             }
@@ -91,10 +91,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         try {
             userId = JWT.decode(token).getClaim("id").asString();
         } catch (JWTDecodeException j) {
-            throw new RuntimeException("token解析信息无效，请重新登录！");
+            throw new RuntimeException("token无效，请重新登录！");
         }
         if(userId==null){
-            throw new RuntimeException("token解析信息无效，请重新登录！");
+            throw new RuntimeException("token无效，请重新登录！");
         }
         User user = userService.selectMember(Long.valueOf(userId),null);
         if (user == null) {
@@ -112,7 +112,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             throw new RuntimeException("token验证失败，请重新登录！");
         }
         if (blacklistService.isBlacklisted(token)) {
-            throw new RuntimeException("Token已失效，请重新登录！");
+            throw new RuntimeException("token已失效，请重新登录！");
         }
         return user;
     }
