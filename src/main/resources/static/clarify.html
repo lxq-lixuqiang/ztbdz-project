@@ -134,7 +134,7 @@
                 </div>
                 <div id="project" style="margin-bottom:10px;" >
                     <table style="width:100%; border-collapse:collapse;">
-                        <thead>
+                        <thead id="pageThead">
                         <tr style="background:#f5f5f5;">
                             <th style="padding:10px; border:1px solid #ddd;width: 110px;">澄清原因</th>
                             <th style="padding:10px; border:1px solid #ddd;">响应截止时间</th>
@@ -145,6 +145,7 @@
 
                         </tbody>
                     </table>
+                    <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
                 </div>
             </div>
         </div>
@@ -179,8 +180,8 @@
 </div>
 
 <script id="projectTemplate" type="text/x-handlebars-template">
-    {{#if data}}
-    {{#each data}}
+    {{#if list}}
+    {{#each list}}
     <tr style="border:1px solid #ddd;">
         {{#gt supplementaryContent.length 5 }}
             <td title="{{supplementaryContent}}" style="margin:14px 10px;overflow: hidden;-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;">{{supplementaryContent}}</td>
@@ -279,21 +280,30 @@
         }
     });
 
+    function initPageShow(data){
+        loadData();
+    }
     function loadData(){
+        var page = "?size=10";
+        var pageInfo = localStorage.getItem('page');
+        if(pageInfo){
+            page+="&page="+pageInfo;
+        }
         var data = {"projectId":urlProjectId,"associationId":urlAccountId};
         $.ajax({
-            url: "/tendereeInfo/list",
+            url: "/tendereeInfo/page"+page,
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    $("#project tbody").html(Handlebars.compile($("#projectTemplate").html())(e));
-                    if(e.data.length>0){
-                        for(var i=0;i<e.data.length;i++){
-                            dataInfo[e.data[i].id] = e.data[i];
+                    $("#project tbody").html(Handlebars.compile($("#projectTemplate").html())(e.data));
+                    if(e.data.list.length>0){
+                        for(var i=0;i<e.data.list.length;i++){
+                            dataInfo[e.data.list[i].id] = e.data.list[i];
                         }
                     }
+                    pageButton(e.data);
                 }else{
                     alert("查询失败："+e.message);
                 }
@@ -514,6 +524,7 @@
     }
 
     function refreshData(){
+        localStorage.setItem('page',1);
         loadData();
         alert("刷新列表成功!")
     }
@@ -598,6 +609,7 @@
     // 消息弹框
     function narn (type,message,id) {
         messageShow = false;
+        localStorage.setItem('page',1);
         loadData();
         naranja()[type]({
             title: '消息提示',

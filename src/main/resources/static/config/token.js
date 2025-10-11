@@ -227,7 +227,7 @@ function pageButton(data){
             if(data.navigatepageNums[i] != data.pageNum){
                 noDisabled = "cursor: pointer;";
             }
-            pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;"+noDisabled+"\" "+disabled+"  onclick=\"pageShow('"+data.navigatepageNums[i]+"')\" >"+data.navigatepageNums[i]+"</button>";
+            pageInfo +="<button style=\"margin-top:5px;width:40px;height:40px;margin-right:10px;"+noDisabled+"\" "+disabled+"  onclick=\"pageShow('"+data.navigatepageNums[i]+"')\" >"+data.navigatepageNums[i]+"</button>";
         }
         if(data.pages!= data.navigateLastPage){
             pageInfo +="<span style=\"margin:0 10px;\">...</span>";

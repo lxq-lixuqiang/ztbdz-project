@@ -66,7 +66,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
                     return true;
                 }catch (Exception e){
-                    log.error("访问地址："+httpServletRequest.getRequestURI()+"，"+e.getMessage());
+                    log.error("访问地址："+httpServletRequest.getRequestURI()+"，错误原因："+e.getMessage());
                     throw new RuntimeException(e.getMessage());
                 }
             }
