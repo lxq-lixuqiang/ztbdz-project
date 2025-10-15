@@ -171,7 +171,7 @@
             data: JSON.stringify({"id":rid,"isInvoice":0,"invoiceType":type}),
             success: function(response) {
                 if(response.status == 200) {
-                    alert('发票申请已提交，财务将尽快处理');
+                    alert('发票申请已提交，将会发送到电子邮箱。请注意查收！');
                 } else {
                     alert('发票申请失败: ' + response.message);
                 }

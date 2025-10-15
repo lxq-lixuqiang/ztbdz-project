@@ -20,94 +20,94 @@ public class Project extends Model<Project> implements Serializable {
     private static final long serialVersionUID = -5549757568868991272L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "项目名称")
+    @ApiModelProperty("项目名称")
     private String projectName;
-    @ApiModelProperty(value = "项目编号")
+    @ApiModelProperty("项目编号")
     private String projectCode;
-    @ApiModelProperty(value = "行业分类")
+    @ApiModelProperty("行业分类")
     private String projectClassify;
-    @ApiModelProperty(value = "项目分类")
+    @ApiModelProperty("项目分类")
     private Long categoryId;
-    @ApiModelProperty(value = "采购方式")
+    @ApiModelProperty("采购方式")
     private String procurementMethod;
-    @ApiModelProperty(value = "联合体投标（0=支持 1=不支持）")
+    @ApiModelProperty("联合体投标（0=支持 1=不支持）")
     private Integer consortiumBidding;
-    @ApiModelProperty(value = "开标方式（0=电子标 1=纸质标）")
+    @ApiModelProperty("开标方式（0=电子标 1=纸质标）")
     private Integer bidOpeningMethod;
-    @ApiModelProperty(value = "是否推送招标网（0=是 1=否）")
+    @ApiModelProperty("是否推送招标网（0=是 1=否）")
     private Integer isPushBiddingWebsite;
-    @ApiModelProperty(value = "中标价格类型（0=价格 1=其他）")
+    @ApiModelProperty("中标价格类型（0=价格 1=其他）")
     private Integer bidWinningPriceType;
-    @ApiModelProperty(value = "是否划分标段（0=是 1=否）")
+    @ApiModelProperty("是否划分标段（0=是 1=否）")
     private Integer isDivisionSection;
-    @ApiModelProperty(value = "审核状态（0=未审核 1=通过 2=不通过）")
+    @ApiModelProperty("审核状态（0=未审核 1=通过 2=不通过）")
     private Integer isAudit;
-    @ApiModelProperty(value = "不通过原因")
+    @ApiModelProperty("不通过原因")
     private String notPassInfo;
-    @ApiModelProperty(value = "项目资格条件")
+    @ApiModelProperty("项目资格条件")
     private String projectQualificationConditions;
-    @ApiModelProperty(value = "项目符合性条件")
+    @ApiModelProperty("项目符合性条件")
     private String projectComplianceConditions;
-    @ApiModelProperty(value = "项目打分要求")
+    @ApiModelProperty("项目打分要求")
     private String projectScoringRequirements;
-    @ApiModelProperty(value = "项目概况")
+    @ApiModelProperty("项目概况")
     private String projectOverview;
-    @ApiModelProperty(value = "上传采购文件")
+    @ApiModelProperty("上传采购文件")
     private String procurementDocuments;
-    @ApiModelProperty(value = "报名涵文件")
+    @ApiModelProperty("报名涵文件")
     private String descriptionFile;
-    @ApiModelProperty(value = "预算")
+    @ApiModelProperty("预算")
     private Double money;
-    @ApiModelProperty(value = "预算金额大写")
+    @ApiModelProperty("预算金额大写")
     @TableField(exist = false)
     private String moneyUppercase;
-    @ApiModelProperty(value = "标段")
+    @ApiModelProperty("标段")
     @TableField(exist = false)
     private List<Tender> tenders;
-    @ApiModelProperty(value = "评标标准")
+    @ApiModelProperty("评标标准")
     @TableField(exist = false)
     private List<EvaluationCriteria> evaluationCriterias;
-    @ApiModelProperty(value = "投标报名")
+    @ApiModelProperty("投标报名")
     @TableField(exist = false)
     private ProjectRegister projectRegisters;
     @ApiModelProperty("创建人")
     private Long memberId;
-    @ApiModelProperty(value = "招标信息")
+    @ApiModelProperty("招标信息")
     @TableField(exist = false)
     private Tenderee tenderee;
     @ApiModelProperty("报名费")
     private Long registrationFee;
-    @ApiModelProperty(value = "项目专家组长")
+    @ApiModelProperty("项目专家组长")
     @TableField(exist = false)
     private String projectExpertLeader;
 
-    @ApiModelProperty(value = "投标报名开始时间")
+    @ApiModelProperty("投标报名开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date senrollStartDate;
-    @ApiModelProperty(value = "投标报名截止时间")
+    @ApiModelProperty("投标报名截止时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date enrollEndDate;
     @TableField(exist = false)
     private String enrollEndDateSearch;
-    @ApiModelProperty(value = "答疑截止时间")
+    @ApiModelProperty("答疑截止时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date answerEndDate;
-    @ApiModelProperty(value = "评审结束时间")
+    @ApiModelProperty("评审结束时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date reviewEndDate;
 
-    @ApiModelProperty(value = "项目状态（1=可以报名项目 2=正在进行项目 3=评审结束项目）")
+    @ApiModelProperty("项目状态（1=可以报名项目 2=正在进行项目 3=评审结束项目）")
     private Integer state;
-    @ApiModelProperty(value = "开标时间")
+    @ApiModelProperty("开标时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date bidOpeningTime;
-    @ApiModelProperty(value = "评审专家人数")
+    @ApiModelProperty("评审专家人数")
     private Integer numberReviewExpert;
-    @ApiModelProperty(value = "评审进度")
+    @ApiModelProperty("评审进度")
     private Integer reviewProgress;
-    @ApiModelProperty(value = "评审是否通过（0=通过 1=废标）")
+    @ApiModelProperty("评审是否通过（0=通过 1=废标）")
     private Integer isPass;
 
     @TableField(fill = FieldFill.INSERT)
