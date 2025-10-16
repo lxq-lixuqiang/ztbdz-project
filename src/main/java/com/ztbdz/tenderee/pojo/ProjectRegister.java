@@ -24,54 +24,54 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private static final long serialVersionUID = 7975316725026196398L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "项目id")
+    @ApiModelProperty("项目id")
     @TableField(value = "project_id",el = "project.id")
     private Project project;
-    @ApiModelProperty(value = "投标人id")
+    @ApiModelProperty("投标人id")
     @TableField(value = "member_id",el = "member.id")
     private Member member;
-    @ApiModelProperty(value = "审核状态（0=审核中 1=通过 2=不通过 3=资质审核中 4=资质通过 5=资质不通过）")
+    @ApiModelProperty("审核状态（0=审核中 1=通过 2=不通过 3=资质审核中 4=资质通过 5=资质不通过）")
     private Integer state;
-    @ApiModelProperty(value = "不通过原因")
+    @ApiModelProperty("不通过原因")
     private String notPassInfo;
-    @ApiModelProperty(value = "报名数量")
+    @ApiModelProperty("报名数量")
     private Integer num;
-    @ApiModelProperty(value = "保证金金额")
+    @ApiModelProperty("保证金金额")
     private double earnestMoney;
-    @ApiModelProperty(value = "保证金状态（0=不收取 1=收取）")
+    @ApiModelProperty("保证金状态（0=不收取 1=收取）")
     private Integer earnestMoneyState;
-    @ApiModelProperty(value = "总分数")
+    @ApiModelProperty("总分数")
     private Integer score;
-    @ApiModelProperty(value = "标书")
+    @ApiModelProperty("标书")
     private String bidDocumentId;
-    @ApiModelProperty(value = "标书集合")
+    @ApiModelProperty("标书集合")
     @TableField(exist = false)
     private List<FileInfo> bidDocumentIds;
-    @ApiModelProperty(value = "中标金额")
+    @ApiModelProperty("中标金额")
     private String bidMoney;
-    @ApiModelProperty(value = "中标金额大写")
+    @ApiModelProperty("中标金额大写")
     @TableField(exist = false)
     private String bidMoneyUppercase;
-    @ApiModelProperty(value = "合同盖章文件")
+    @ApiModelProperty("合同盖章文件")
     private String contractImprint;
-    @ApiModelProperty(value = "评标报告文件")
+    @ApiModelProperty("评标报告文件")
     private String bidEvaluationReport;
-    @ApiModelProperty(value = "报名费")
+    @ApiModelProperty("报名费")
     private Long paymentMoney;
-    @ApiModelProperty(value = "付款凭证")
+    @ApiModelProperty("付款凭证")
     private String paymentVoucher;
-    @ApiModelProperty(value = "中标情况（0=未公布 1=已中标 2=未中标）")
+    @ApiModelProperty("中标情况（0=未公布 1=已中标 2=未中标）")
     private Integer winBidState;
-    @ApiModelProperty(value = "发票状态（0=待处理 1=已开票）")
+    @ApiModelProperty("发票状态（0=待处理 1=已开票）")
     private Integer isInvoice;
-    @ApiModelProperty(value = "发票类型")
+    @ApiModelProperty("发票类型")
     private String invoiceType;
-    @ApiModelProperty(value = "保证金到账时间")
+    @ApiModelProperty("保证金到账时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date earnestMoneyAccountDate;
-    @ApiModelProperty(value = "保证金退款时间")
+    @ApiModelProperty("保证金退款时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date earnestMoneyRefundDate;
     @TableField(fill = FieldFill.INSERT)
