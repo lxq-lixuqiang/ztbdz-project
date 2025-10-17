@@ -19,19 +19,19 @@ public class ResultReport extends Model<EvaluationCriteria> implements Serializa
     @Getter
     private static final long serialVersionUID = 7588680521620216025L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "类型（0=废标报告 1=评审报告）")
+    @ApiModelProperty("类型（0=废标报告 1=评审报告）")
     private Integer state;
-    @ApiModelProperty(value = "描述")
+    @ApiModelProperty("描述")
     private String description;
-    @ApiModelProperty(value = "评审报告")
+    @ApiModelProperty("评审报告")
     private String resultReport;
-    @ApiModelProperty(value = "评审报告文件id")
+    @ApiModelProperty("评审报告文件id")
     private String resultReportId;
-    @ApiModelProperty(value = "评审页面")
+    @ApiModelProperty("评审页面")
     private String resultHtml;
-    @ApiModelProperty(value = "评审项目")
+    @ApiModelProperty("评审项目")
     @TableField(value = "project_id",el = "project.id")
     private Project project;
     @ApiModelProperty("操作人员")
