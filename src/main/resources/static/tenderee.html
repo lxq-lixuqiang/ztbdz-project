@@ -419,11 +419,11 @@
             <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
             {{#ne project.isAudit 0}}
                 {{#gtNowDate project.bidOpeningTime}}
-                         <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
+                         <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
                 {{/gtNowDate}}
             {{/ne}}
             {{#eq project.isAudit 2}}
-                <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">修改</button>
+                <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
                 <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">原因</button>
             {{/eq}}
         </td>
