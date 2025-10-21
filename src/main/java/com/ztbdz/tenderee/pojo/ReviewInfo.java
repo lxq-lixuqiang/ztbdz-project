@@ -22,43 +22,43 @@ public class ReviewInfo extends Model<ReviewInfo> implements Serializable {
     @Getter
     private static final long serialVersionUID = 100867934119363498L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "项目")
+    @ApiModelProperty("项目")
     @TableField(value = "project_id",el = "project.id")
     private Project project;
-    @ApiModelProperty(value = "抽取数量")
+    @ApiModelProperty("抽取数量")
     private Integer number;
-    @ApiModelProperty(value = "备选数量")
+    @ApiModelProperty("备选数量")
     private Integer spareNumber;
-    @ApiModelProperty(value = "抽取状态（0=未开始 1=已结束）")
+    @ApiModelProperty("抽取状态（0=未开始 1=已结束）")
     private Integer state;
-    @ApiModelProperty(value = "评审时长")
+    @ApiModelProperty("评审时长")
     private Integer duration;
-    @ApiModelProperty(value = "评审日期")
+    @ApiModelProperty("评审日期")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date reviewDate;
-    @ApiModelProperty(value = "评审地址")
+    @ApiModelProperty("评审地址")
     private String address;
-    @ApiModelProperty(value = "备注")
+    @ApiModelProperty("备注")
     private String remark;
-    @ApiModelProperty(value = "屏蔽专家名称")
+    @ApiModelProperty("屏蔽专家名称")
     private String hideExpert;
-    @ApiModelProperty(value = "屏蔽工作单位")
+    @ApiModelProperty("屏蔽工作单位")
     private String hideAccount;
-    @ApiModelProperty(value = "专业要求")
+    @ApiModelProperty("专业要求")
     @TableField(exist = false)
     private List<Speciality> speciality;
-    @ApiModelProperty(value = "专家名单")
+    @ApiModelProperty("专家名单")
     private String selectExpert;
-    @ApiModelProperty(value = "备选专家名单")
+    @ApiModelProperty("备选专家名单")
     private String spareExpert;
-    @ApiModelProperty(value = "项目专家组长")
+    @ApiModelProperty("项目专家组长")
     private Long expertLeader;
-    @ApiModelProperty(value = "分配评审专家")
+    @ApiModelProperty("分配评审专家")
     @TableField(exist = false)
     private List<Long> expertIds;
-    @ApiModelProperty(value = "专家名单")
+    @ApiModelProperty("专家名单")
     @TableField(exist = false)
     private List<ExpertInfo> selectExpertList;
 
