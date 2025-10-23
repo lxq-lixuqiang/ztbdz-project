@@ -20,23 +20,23 @@ public class Tender extends Model<Tender> implements Serializable {
     private static final long serialVersionUID = 3606387046825433497L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "标段名称")
+    @ApiModelProperty("标段名称")
     private String tenderName;
-    @ApiModelProperty(value = "标段编号")
+    @ApiModelProperty("标段编号")
     private String tenderCode;
-    @ApiModelProperty(value = "标段内容")
+    @ApiModelProperty("标段内容")
     private String tenderContent;
-    @ApiModelProperty(value = "序号")
+    @ApiModelProperty("序号")
     private Integer tenderSort;
-    @ApiModelProperty(value = "招标控制价")
+    @ApiModelProperty("招标控制价")
     private Double tenderSumLimit;
-    @ApiModelProperty(value = "价格备注")
+    @ApiModelProperty("价格备注")
     private String priceRemark;
-    @ApiModelProperty(value = "报名费")
+    @ApiModelProperty("报名费")
     private Double registrationFee;
-    @ApiModelProperty(value = "项目id")
+    @ApiModelProperty("项目id")
     private Long projectId;
 
     @TableField(fill = FieldFill.INSERT)
