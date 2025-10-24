@@ -23,33 +23,33 @@ public class Tenderee extends Model<Tenderee> implements Serializable {
     @Getter
     private static final long serialVersionUID = 6199551224611535701L;
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "招标方名称")
+    @ApiModelProperty("招标方名称")
     private String tendereeName;
-    @ApiModelProperty(value = "招标方代码类型")
+    @ApiModelProperty("招标方代码类型")
     private String tendereeCodeType;
-    @ApiModelProperty(value = "招标方代码")
+    @ApiModelProperty("招标方代码")
     private String tendereeCode;
-    @ApiModelProperty(value = "所在行政区域")
+    @ApiModelProperty("所在行政区域")
     private String administrationPlace;
-    @ApiModelProperty(value = "单位性质")
+    @ApiModelProperty("单位性质")
     private String accountQuality;
-    @ApiModelProperty(value = "信息申报责任人联系电话")
+    @ApiModelProperty("信息申报责任人联系电话")
     private String responsibilityPhone;
-    @ApiModelProperty(value = "电子邮箱")
+    @ApiModelProperty("电子邮箱")
     private String email;
-    @ApiModelProperty(value = "通讯地址")
+    @ApiModelProperty("通讯地址")
     private String contactPlace;
-    @ApiModelProperty(value = "招标范围")
+    @ApiModelProperty("招标范围")
     private String tendereeRange;
-    @ApiModelProperty(value = "项目")
+    @ApiModelProperty("项目")
     @TableField(value = "project_id",el = "project.id")
     private Project project;
-    @ApiModelProperty(value = "招标公告")
+    @ApiModelProperty("招标公告")
     @TableField(exist = false)
     private List<TendereeInform> tendereeInforms;
-    @ApiModelProperty(value = "招标时间")
+    @ApiModelProperty("招标时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date tendereeDate;
 
