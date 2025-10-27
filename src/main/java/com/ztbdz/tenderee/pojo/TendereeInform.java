@@ -21,36 +21,36 @@ public class TendereeInform extends Model<TendereeInform> implements Serializabl
     private static final long serialVersionUID = 2262965491235147490L;
 
     @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty(value = "标题")
+    @ApiModelProperty("标题")
     private String title;
-    @ApiModelProperty(value = "公告内容")
+    @ApiModelProperty("公告内容")
     private String content;
-    @ApiModelProperty(value = "公告类型")
+    @ApiModelProperty("公告类型")
     private String tendereeInformType;
-    @ApiModelProperty(value = "补充内容")
+    @ApiModelProperty("补充内容")
     private String supplementaryContent;
-    @ApiModelProperty(value = "招标id")
+    @ApiModelProperty("招标id")
     private Long tendereeId;
-    @ApiModelProperty(value = "关联id")
+    @ApiModelProperty("关联id")
     private Long associationId;
-    @ApiModelProperty(value = "项目id")
+    @ApiModelProperty("项目id")
     private Long projectId;
     @ApiModelProperty("文件id")
     private String tendereeInformField;
     @ApiModelProperty("回复内容")
     private String replyContent;
-    @ApiModelProperty(value = "回复时间")
+    @ApiModelProperty("回复时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date replyDate;
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "上传时间",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
-    @ApiModelProperty(value = "类型（0=公告 1=澄清信息 2=其他）")
+    @ApiModelProperty("类型（0=公告 1=澄清信息 2=其他）")
     private Integer type;
-    @ApiModelProperty(value = "是否公布（0=未公布 1=公布）")
+    @ApiModelProperty("是否公布（0=未公布 1=公布）")
     private Integer isPublic;
 
     @Override
