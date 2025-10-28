@@ -16,9 +16,9 @@ public class WinBid extends Model<WinBid> implements Serializable {
     @Getter
     private static final long serialVersionUID = 6866972172611477739L;
 
-    @ApiModelProperty(value = "人员id")
+    @ApiModelProperty("人员id")
     private Long memberId;
-    @ApiModelProperty(value = "中标id")
+    @ApiModelProperty("中标id")
     private Long winBidId;
 
     @Override
