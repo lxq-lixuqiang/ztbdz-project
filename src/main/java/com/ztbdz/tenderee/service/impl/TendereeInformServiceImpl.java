@@ -6,7 +6,6 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.TendereeInformMapper;
 import com.ztbdz.tenderee.pojo.TendereeInform;
 import com.ztbdz.tenderee.service.TendereeInformService;
-import com.ztbdz.user.pojo.ExpertInfo;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
