@@ -2,7 +2,6 @@ package com.ztbdz.tenderee.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.ztbdz.tenderee.pojo.ResultReport;
-import com.ztbdz.tenderee.pojo.ReviewInfo;
 import com.ztbdz.tenderee.service.ResultReportService;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.token.CheckToken;
@@ -56,7 +55,8 @@ public class ResultReportController {
     })
     @PostMapping("savePrintContents")
     public Result savePrintContents(@RequestBody ResultReport resultReport) {
-        redisTemplate.opsForValue().set("printContents:" + resultReport.getProject().getId()+resultReport.getMember().getId(),resultReport.getResultHtml(),SystemConfig.TOKEN_VALIDITY*4, TimeUnit.MILLISECONDS);
+        // 临时保存专家评审页面 时效为2周
+        redisTemplate.opsForValue().set("printContents:" + resultReport.getProject().getId()+resultReport.getMember().getId(),resultReport.getResultHtml(),SystemConfig.TOKEN_VALIDITY*112, TimeUnit.MILLISECONDS);
         return Result.ok("临时保存专家评审页面成功！");
     }
 
