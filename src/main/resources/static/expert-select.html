@@ -446,11 +446,25 @@
                                 });
                             }
                         });
+
+                        const numLabel = document.createElement('label');
+                        numLabel.style.marginLeft = '10px';
+                        numLabel.textContent = '专家数量: ';
+                        const numInput = document.createElement('input');
+                        numInput.className = 'num-category';
+                        numInput.style.width='30px';
+                        numInput.type='number';
+                        numInput.value='1';
+                        numInput.min='1';
+                        numInput.style.padding = '5px';
+                        numInput.style.marginLeft = '5px';
                         
                         div.appendChild(mainLabel);
                         div.appendChild(mainSelect);
                         div.appendChild(subLabel);
                         div.appendChild(subSelect);
+                        div.appendChild(numLabel);
+                        div.appendChild(numInput);
                         expertSelection.appendChild(div);
                     }
                     
@@ -505,11 +519,25 @@
                                     });
                                 }
                             });
+
+                            const numLabel = document.createElement('label');
+                            numLabel.style.marginLeft = '10px';
+                            numLabel.textContent = '专家数量: ';
+                            const numInput = document.createElement('input');
+                            numInput.className = 'backup-num-category';
+                            numInput.style.width='30px';
+                            numInput.type='number';
+                            numInput.value='1';
+                            numInput.min='1';
+                            numInput.style.padding = '5px';
+                            numInput.style.marginLeft = '5px';
                             
                             div.appendChild(mainLabel);
                             div.appendChild(mainSelect);
                             div.appendChild(subLabel);
                             div.appendChild(subSelect);
+                            div.appendChild(numLabel);
+                            div.appendChild(numInput);
                             backupExpertSelection.appendChild(div);
                             console.log(`已添加备选专家 ${i+1} 的选择控件`);
                         }
@@ -531,7 +559,6 @@
             const backupExperts = [];
             selectedExpertIds = [];
             var planNum = Number(count)+Number(backupCount);
-            
             // 统一选择模式
             const isUniform = document.getElementById('uniformSelection').checked;
             if (isUniform) {
@@ -551,7 +578,7 @@
             } 
             // 非统一选择模式
             else {
-
+                var newCount = 0;
                 const expertSelections = document.querySelectorAll('#expertSelection > div');
                 const backupSelections = document.querySelectorAll('#backupExpertSelection > div');
                 var specialityList = [];
@@ -567,11 +594,16 @@
                     if (selection) {
                         const mainCat = selection.querySelector('.main-category')?.value;
                         const subCat = selection.querySelector('.sub-category')?.value;
-                        
+                        const numCat = selection.querySelector('.num-category')?.value;
+                        if(1>numCat){
+                            alert('专家数量不能少于一人');
+                            return;
+                        }
                         if (mainCat) {
-                            specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat,'sort':Number(i)+1};
+                            newCount = Number(newCount)+Number(numCat);
+                            specialityList[i] = {'planNum':count,'num':numCat,'expertType':mainCat,'sort':Number(i)+1};
                             if (subCat) {
-                                specialityList[i] = {'planNum':count,'num':1,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+1};
+                                specialityList[i] = {'planNum':count,'num':numCat,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+1};
                             }
                         }else{
                             alert('请选择专家'+(Number(i)+1)+'的主类别');
@@ -586,11 +618,16 @@
                     if (selection) {
                         const mainCat = selection.querySelector('.backup-main-category')?.value;
                         const subCat = selection.querySelector('.backup-sub-category')?.value;
+                        const numCat = selection.querySelector('.backup-num-category')?.value;
+                        if(1>numCat){
+                            alert('专家数量不能少于一人');
+                            return;
+                        }
                         
                         if (mainCat) {
-                            specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat,'sort':Number(i)+count+1};
+                            specialityList[i+count] = {'planNum':count,'num':numCat,'expertType':mainCat,'sort':Number(i)+count+1};
                             if (subCat) {
-                                specialityList[i+count] = {'planNum':count,'num':1,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+count+1};
+                                specialityList[i+count] = {'planNum':count,'num':numCat,'expertType':mainCat+"-"+subCat+";",'sort':Number(i)+count+1};
                             }
 
                         }else{
@@ -599,9 +636,9 @@
                         }
                     }
                 }
+                expertSelect(newCount,backupCount,specialityList);
             }
 
-            expertSelect(count,backupCount,specialityList);
         });
         
         // 打印按钮
