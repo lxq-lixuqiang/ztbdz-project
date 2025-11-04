@@ -348,6 +348,7 @@
                                 displayResult(selectedExperts, backupExperts);
                             }
                             document.getElementById('expertModal').style.display = 'none';
+                            alert("自动抽取专家成功！")
                         }else{
                             alert('自动抽取专家失败：'+e.message);
                             isError = true;
@@ -553,6 +554,10 @@
         
         // 确认抽取按钮
         document.getElementById('confirmBtn').addEventListener('click', function() {
+            if(!confirm("确定要自动抽取专家吗?")){
+                return;
+            }
+
             const count = parseInt(document.getElementById('expertCount').value) || 1;
             const backupCount = parseInt(document.getElementById('backupCount').value) || 0;
             const selectedExperts = [];
