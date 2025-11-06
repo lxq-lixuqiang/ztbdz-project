@@ -15,7 +15,6 @@ import com.ztbdz.web.util.JwtUtil;
 import com.ztbdz.web.util.TokenBlacklistService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
