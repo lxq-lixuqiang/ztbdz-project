@@ -71,6 +71,7 @@
         <table id="projectsTable" style="width:100%; border-collapse:collapse;">
             <thead id="pageThead">
             <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;"><input id="checkboxAll" type="checkbox"></th>
                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                 <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                 <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
@@ -153,6 +154,7 @@
             projectsToShow.forEach(project => {
                 const row = $(`
                     <tr style="border:1px solid #ddd;">
+                        <td style="padding:10px;"><input class="item" data-id="${project.id}" type="checkbox"></td>
                         <td style="padding:10px;">${project.projectName==null?'':project.projectName}</td>
                         <td style="padding:10px;">${project.enrollEndDate==null?'':project.enrollEndDate}</td>
                         <td style="padding:10px;">${project.projectRegisters.project.tenderee.tendereeName==null?'':project.projectRegisters.project.tenderee.tendereeName}</td>
@@ -200,7 +202,7 @@
                                     <td style="padding:10px;">${register.paymentMoney==null?'':parseFloat(register.paymentMoney).toLocaleString('en-US')}元</td>
                                     <td style="padding:10px;${register.state==0?'color:red;':''}">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
                                     <td style="padding:10px;">
-                                        <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}')"
+                                        <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}','${register.project.bidOpeningTime}')"
                                                 style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">
                                             查看凭证
                                         </button>
@@ -222,11 +224,13 @@
         $("#applicationModal").hide();
     }
 
-    function audit(isPass){
+    function audit(isPass,isBack){
         var notPassInfo="";
         var isUpdate = false;
         if(isPass){
-            if(confirm('确定要审核吗？')) {
+            var content = '确定要审核吗？';
+            if(isBack) content='确定要撤销审核吗？';
+            if(confirm(content)) {
                 isUpdate = true;
             }
         }else{
@@ -243,6 +247,9 @@
         }
 
         var state = isPass?1:2;
+        if(isBack){
+            state = 0;
+        }
         var registerId = $("#voucherImage").attr("data-id");
         $.ajax({
             url: "/projectRegister/update",
@@ -253,7 +260,11 @@
                 if(e.status == 200){
                     loadProjects()
                     showApplicationModal(localStorage.getItem('projectName'),localStorage.getItem('projectId'));
-                    alert("审核成功!");
+                    if(isBack){
+                        alert("撤销审核成功!");
+                    }else{
+                        alert("审核成功!");
+                    }
                     closeVoucherModal();
                 }else{
                     alert(e.message)
@@ -266,7 +277,8 @@
 
 
     // 查看缴费凭证
-    function showPaymentVoucher(companyName,fileId,registerId,state) {
+    function showPaymentVoucher(companyName,fileId,registerId,state,bidDate) {
+        $("#backButton").hide();
         $("#voucherModal").show();
         $("#voucherImage").attr("src", "");
         $("#voucherImage").attr("src", "/file/preview/"+fileId);
@@ -274,6 +286,12 @@
         $("#voucherImage").attr("data-id",registerId);
         if(state!=0){
             $("#buttonHide").hide();
+            // 超过了 开标时间 就无法撤回审核
+            var nowDate = new Date().getTime();
+            var endDate = new Date(bidDate).getTime();
+            if(endDate >= nowDate){
+                $("#backButton").show();
+            }
         }else{
             $("#buttonHide").show();
         }
@@ -369,9 +387,41 @@
     // 导出Excel功能
     function exportToExcel(state, fileName) {
         // 模拟导出功能
-        window.open('/projectRegister/invoiceOrAuditExport/'+state, '_blank');
+        if(state==0){
+            window.open('/projectRegister/invoiceOrAuditExport/'+state, '_blank');
+        }else{
+            var ids = "";
+            var checkboxes = document.querySelectorAll('.item');
+            checkboxes.forEach(function(checkbox) {
+                if(checkbox.checked){
+                    if(ids.length!=0){
+                        ids+=",";
+                    }
+                    ids+=$(checkbox).attr('data-id');
+                }
+            });
+            if(!ids){
+                alert("请先选择导出的项目!");
+                return;
+            }
+            window.open('/projectRegister/auditExport/'+state+'/'+ids, '_blank');
+        }
         alert(`已将${fileName}导出为Excel文件`);
     }
+
+    // 全选或取消全选
+    $("#checkboxAll").click(function(){
+        var checkboxes = document.querySelectorAll('.item'); // 获取所有带有class 'item'的checkbox
+        var selectAllCheckbox = document.getElementById('checkboxAll'); // 获取全选checkbox
+
+        // 当全选checkbox状态改变时触发
+        selectAllCheckbox.addEventListener('change', function() {
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked; // 根据全选checkbox的状态设置每个项的选中状态
+            });
+        });
+
+    })
 
 </script>
 
@@ -412,8 +462,11 @@
             </div>
             <img id="voucherImage" src="" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">
             <div style="text-align:center; margin-top:15px;" id="buttonHide">
-                <button onclick="audit(true)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
-                <button onclick="audit(false)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+                <button onclick="audit(true,false)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>
+                <button onclick="audit(false,false)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
+            </div>
+            <div style="text-align:center; margin-top:15px;" id="backButton">
+                <button onclick="audit(true,true)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">撤销审核</button>
             </div>
         </div>
     </div>

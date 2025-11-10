@@ -78,7 +78,7 @@ public interface ProjectRegisterService {
      * 查询项目报名列表
      * @return
      */
-    ResponseEntity<byte[]> invoiceOrAuditExport(Project project, Integer exportType);
+    ResponseEntity<byte[]> invoiceOrAuditExport(Project project, Integer exportType,String[] ids);
 
     /**
      * 校验报名资质

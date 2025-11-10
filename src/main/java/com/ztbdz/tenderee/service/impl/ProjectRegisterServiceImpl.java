@@ -179,7 +179,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
-    public  ResponseEntity<byte[]> invoiceOrAuditExport( Project project, Integer exportType) {
+    public  ResponseEntity<byte[]> invoiceOrAuditExport( Project project, Integer exportType,String[] ids) {
         try{
             switch (exportType){
                 case 0:
@@ -190,20 +190,23 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                     List<ProjectRegister> projectRegisterList = this.selectInvoice(project);
                     return SystemConfig.excelExport("开具发票申请列表",ProjectRegisterExport.SelectInvoiceExport.converter(projectRegisterList),ProjectRegisterExport.SelectInvoiceExport.class);
                 case 1:
-                    Result result = this.page(1,0,project,3);
-                    List<Project> projectList = ((PageInfo)result.getData()).getList();
                     List<Long> projectId = new ArrayList();
-                    Map<Long,Project> projectMap = new HashMap();
-                    for(Project project1 : projectList){
-                        projectId.add(project1.getId());
-                        projectMap.put(project1.getId(),project1);
+                    for (String str : ids) {
+                        try {
+                            projectId.add(Long.parseLong(str));
+                        } catch (NumberFormatException e) {
+                            log.error("无法转换字符串为Long: " + str);
+                        }
                     }
                     List<ProjectRegister> projectRegisterList1 = this.selectProjectByProjectIds(projectId);
                     List<Project> newProject = new ArrayList();
                     for(ProjectRegister projectRegister : projectRegisterList1){
                         if(projectRegister.getState()==0 || projectRegister.getState()==1 || projectRegister.getState()==2){
-                            Project project1 = SerializationUtils.clone(projectMap.get(projectRegister.getProject().getId()));
-                            project1.setState(project1.getProjectRegisters().getState());
+                            Project project1 = projectRegister.getProject();
+                            project1.setState(projectRegister.getState());
+                            if(projectRegister.getState()==2){
+                                project1.setState(0);
+                            }
                             project1.setProjectRegisters(projectRegister);
                             newProject.add(project1);
                         }

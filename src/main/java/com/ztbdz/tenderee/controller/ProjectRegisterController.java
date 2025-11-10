@@ -224,7 +224,18 @@ public class ProjectRegisterController {
     })
     @GetMapping("invoiceOrAuditExport/{exportType}")
     public ResponseEntity<byte[]> invoiceOrAuditExport(Project project,@PathVariable Integer exportType) {
-        return projectRegisterService.invoiceOrAuditExport(project,exportType);
+        return projectRegisterService.invoiceOrAuditExport(project,exportType,null);
+    }
+
+    @ApiOperation(value = "导出审核的报名")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "exportType", value = "状态", required=true, dataType = "Integer"),
+            @ApiImplicitParam(name = "ids", value = "导出id", required=true, dataType = "String")
+    })
+    @GetMapping("auditExport/{exportType}/{ids}")
+    public ResponseEntity<byte[]> invoiceOrAuditExport(@PathVariable Integer exportType,@PathVariable String ids) {
+        String[] idList = ids.split(",");
+        return projectRegisterService.invoiceOrAuditExport(new Project(),exportType,idList);
     }
 
     @ApiOperation(value = "查询投标报名审核状态列表")
