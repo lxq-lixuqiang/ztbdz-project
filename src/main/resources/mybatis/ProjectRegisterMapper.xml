@@ -5,7 +5,7 @@
 <mapper namespace="com.ztbdz.tenderee.mapper.ProjectRegisterMapper">
 	<select id="selectByCountProjectId" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select 
-			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
+			pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,p.senroll_start_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
 		from
 		   project_register pr
 		left join project p on pr.project_id=p.id
@@ -20,6 +20,9 @@
 			</if>
 			<if test="project.projectName != null ">
 				and p.project_name like concat('%',#{project.projectName},'%')
+			</if>
+			<if test="project.projectCode != null ">
+				and p.project_Code like concat('%',#{project.projectCode},'%')
 			</if>
 			<if test="project.enrollEndDateSearch != null">
 				and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
@@ -62,6 +65,7 @@
 		<result property="project.projectName" column="project_name"/>
 		<result property="project.projectCode" column="project_code"/>
 		<result property="project.enrollEndDate" column="enroll_end_date"/>
+		<result property="project.senrollStartDate" column="senroll_start_date"/>
 		<result property="project.bidOpeningTime" column="bid_opening_time"/>
 		<result property="project.projectOverview" column="project_overview"/>
 
@@ -81,7 +85,7 @@
 
 	<select id="getProject" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,p.senroll_start_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id
@@ -106,7 +110,7 @@
 
 	<select id="selectProjectAndMemberById" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,p.senroll_start_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id
@@ -158,7 +162,7 @@
 
 	<select id="selectInvoice" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,p.senroll_start_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id
@@ -181,7 +185,7 @@
 
 	<select id="selectProjectByProjectIds" resultMap="ProjectRegisterAndProjectAndMemberAndAccount">
 		select
-		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
+		pr.*,pr.member_id as prMemberId,m.account_id,a.account_name as unitName,a.member,a.phone as aPhone,t.id as tid,t.tenderee_name,p.procurement_documents,p.review_end_date,p.money,p.procurement_method,p.project_name,p.project_code,p.enroll_end_date,p.senroll_start_date,p.senroll_start_date,a.account_code as aCode,a.email as aEmail,p.bid_opening_time,p.project_overview
 		from
 		project_register pr
 		left join project p on pr.project_id=p.id

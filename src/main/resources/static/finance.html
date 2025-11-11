@@ -66,6 +66,14 @@
                 <button onclick="exportToExcel(1, '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
             </div>
         </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <div>
+                项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
+            </div>
+            <div></div>
+        </div>
         <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
         <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有项目</div>
         <table id="projectsTable" style="width:100%; border-collapse:collapse;">
@@ -73,6 +81,7 @@
             <tr style="background:#f5f5f5;">
                 <th style="padding:10px; border:1px solid #ddd;"><input id="checkboxAll" type="checkbox"></th>
                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                 <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                 <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
                 <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
@@ -97,9 +106,9 @@
     verifyLogin();
 
     function initPageShow(data){
-        loadProjects();
+        loadProjects(data);
     }
-    function loadProjects() {
+    function loadProjects(data) {
         $("#loadingMessage").show();
         $("#emptyMessage").hide();
         $("#projectsTable").hide();
@@ -108,9 +117,11 @@
         if(pageInfo){
             page="?page="+pageInfo;
         }
+        if(!data) data = {};
         $.ajax({
             url: "/projectRegister/auditList"+page,
             type: "POST",
+            data: JSON.stringify(data),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
@@ -132,30 +143,12 @@
 
         if(data.list.length > 0) {
             // 只显示前20个项目
-            var noInfo = {};
-            var yesInfo = {};
-            for(var i=0;i<data.list.length;i++){
-                if(data.list[i].projectRegisters.state==0){
-                    noInfo[data.list[i].id] = data.list[i];
-                }else{
-                    yesInfo[data.list[i].id] = data.list[i];
-                }
-            }
-            var sortList=[];
-            Object.values(noInfo).forEach(value => {
-                sortList.push(value);
-            });
-            Object.values(yesInfo).forEach(value => {
-                sortList.push(value);
-            });
-
-            const projectsToShow = sortList;
-
-            projectsToShow.forEach(project => {
+            data.list.forEach(project => {
                 const row = $(`
                     <tr style="border:1px solid #ddd;">
                         <td style="padding:10px;"><input class="item" data-id="${project.id}" type="checkbox"></td>
                         <td style="padding:10px;">${project.projectName==null?'':project.projectName}</td>
+                        <td style="padding:10px;">${project.projectCode==null?'':project.projectCode}</td>
                         <td style="padding:10px;">${project.enrollEndDate==null?'':project.enrollEndDate}</td>
                         <td style="padding:10px;">${project.projectRegisters.project.tenderee.tendereeName==null?'':project.projectRegisters.project.tenderee.tendereeName}</td>
                         <td style="padding:10px;">${project.projectOverview==null?'':project.projectOverview}</td>
@@ -198,6 +191,7 @@
                                     <td style="padding:10px;">${register.member.account.accountName==null?'':register.member.account.accountName}</td>
                                     <td style="padding:10px;">${register.member.account.member==null?'':register.member.account.member}</td>
                                     <td style="padding:10px;">${register.member.account.phone==null?'':register.member.account.phone}</td>
+                                    <td style="padding:10px;">${register.member.account.email==null?'':register.member.account.email}</td>
                                     <td style="padding:10px;">${register.createDate==null?'':register.createDate}</td>
                                     <td style="padding:10px;">${register.paymentMoney==null?'':parseFloat(register.paymentMoney).toLocaleString('en-US')}元</td>
                                     <td style="padding:10px;${register.state==0?'color:red;':''}">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
@@ -348,7 +342,7 @@
                         <td style="padding:10px;">${list.member.account.email}</td>
                         <td style="padding:10px;">${list.invoiceType==null?'':list.invoiceType}</td>
                         <td style="padding:10px;">${parseFloat(list.paymentMoney).toLocaleString('en-US')}元</td>
-                        <td style="padding:10px;">${list.isInvoice==0?'待处理':'已开票'}</td>
+                        <td style="padding:10px;${list.isInvoice==0?'color:red;':''}">${list.isInvoice==0?'待处理':'已开票'}</td>
                         <td style="padding:10px;">
                             <button onclick="processInvoiceRequest('${list.id}','${list.project.projectName}')"
                                     style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;${list.isInvoice==0?'':'display:none;'}">
@@ -400,11 +394,25 @@
                     ids+=$(checkbox).attr('data-id');
                 }
             });
-            if(!ids){
-                alert("请先选择导出的项目!");
-                return;
+            if(ids){
+                window.open('/projectRegister/auditExport/'+state+'/'+ids, '_blank');//多选框
+            }else{
+                var projectNameSearch = $('#projectNameSearch').val().trim();
+                var param = "";
+                if(projectNameSearch){
+                    param = "?projectName="+projectNameSearch;
+                }
+                var projectCodeSearch = $('#projectCodeSearch').val().trim();
+                if(projectCodeSearch){
+                    if(param){
+                        param+="&";
+                    }else{
+                        param+="?";
+                    }
+                    param += "projectCode="+projectCodeSearch;
+                }
+                window.open('/projectRegister/invoiceOrAuditExport/'+state+param, '_blank');//默认
             }
-            window.open('/projectRegister/auditExport/'+state+'/'+ids, '_blank');
         }
         alert(`已将${fileName}导出为Excel文件`);
     }
@@ -422,6 +430,28 @@
         });
 
     })
+    // 确保DOM完全加载后执行
+    $(document).ready(function() {
+        // 添加回车键搜索功能
+        $('#projectNameSearch').on('keypress', function(e) {
+            if(e.which === 13) { // 回车键
+                $('#searchBtn').click();
+            }
+        });
+        $('#projectCodeSearch').on('keypress', function(e) {
+            if(e.which === 13) { // 回车键
+                $('#searchBtn').click();
+            }
+        });
+    });
+
+    // 查询
+    function loadApplicationData(){
+        localStorage.setItem('page','1');
+        var data ={projectName:$('#projectNameSearch').val().trim(),projectCode:$('#projectCodeSearch').val().trim()};
+        localStorage.setItem('data',JSON.stringify(data));
+        loadProjects(data)
+    }
 
 </script>
 
@@ -438,6 +468,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系人</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                <th style="padding:10px; border:1px solid #ddd;">邮箱</th>
                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
                 <th style="padding:10px; border:1px solid #ddd;">缴费金额</th>
                 <th style="padding:10px; border:1px solid #ddd;">审核状态</th>

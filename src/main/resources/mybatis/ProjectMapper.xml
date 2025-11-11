@@ -169,4 +169,21 @@
 		order by enroll_end_date asc
 	</select>
 
+	<select id="selectByIds" resultType="Project">
+		select
+			p.*
+		from
+			project p
+			left join project_register pr on pr.project_id = p.id
+		where
+		<if test="ids != null and ids.size() >0">
+		   p.id in
+			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+		group by p.id
+		order by pr.state,update_date desc
+	</select>
+
 </mapper>

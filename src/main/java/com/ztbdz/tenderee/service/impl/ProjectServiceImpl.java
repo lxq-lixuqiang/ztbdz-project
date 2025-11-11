@@ -215,10 +215,7 @@ public class ProjectServiceImpl  implements ProjectService {
 
     @Override
     public List<Project> selectByIds(List<Long> ids) throws Exception {
-        QueryWrapper<Project> queryWrapper = new QueryWrapper();
-        queryWrapper.orderByDesc("update_date");
-        queryWrapper.in("id",ids);
-        return projectMapper.selectList(queryWrapper);
+        return projectMapper.selectByIds(ids);
     }
 
 }

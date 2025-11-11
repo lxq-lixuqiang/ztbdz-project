@@ -44,8 +44,6 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Autowired
     private WinBidService winBidService;
     @Autowired
-    private TendereeService tendereeService;
-    @Autowired
     private FileInfoService fileInfoService;
 
 
@@ -93,7 +91,6 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public Result page(Integer page, Integer size, Project project,Integer state) {
         try{
-            Object id = SystemConfig.getCreateMember().getId();
             List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
             if(state==3){ // 进行去重操作
                 List<ProjectRegister> newProjectRegisterList = new ArrayList();
@@ -113,6 +110,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             }
             List<Project> projectList = new ArrayList();
             if(projectIds.size()>0){
+                PageHelper.startPage(page, size);
                 projectList = projectService.selectByIds(projectIds);
                 Map<String,ProjectRegister> mapProjectRegister = new HashMap();
                 for (ProjectRegister projectRegister : projectRegisterList) {
@@ -127,7 +125,6 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                     }
                 }
             }
-            PageHelper.startPage(page, size);
             return Result.ok("查询成功！",new PageInfo(projectList));
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -191,14 +188,25 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                     return SystemConfig.excelExport("开具发票申请列表",ProjectRegisterExport.SelectInvoiceExport.converter(projectRegisterList),ProjectRegisterExport.SelectInvoiceExport.class);
                 case 1:
                     List<Long> projectId = new ArrayList();
-                    for (String str : ids) {
-                        try {
-                            projectId.add(Long.parseLong(str));
-                        } catch (NumberFormatException e) {
-                            log.error("无法转换字符串为Long: " + str);
+                    if(ids!=null && ids.length>0){//多选框导出
+                        for (String str : ids) {
+                            try {
+                                projectId.add(Long.parseLong(str));
+                            } catch (NumberFormatException e) {
+                                log.error("无法转换字符串为Long: " + str);
+                            }
+                        }
+                    }else{//默认导出
+                        Result result = this.page(1,0,project,3);
+                        List<Project> projectList = ((PageInfo)result.getData()).getList();
+                        Map<Long,Project> projectMap = new HashMap();
+                        for(Project project1 : projectList){
+                            projectId.add(project1.getId());
+                            projectMap.put(project1.getId(),project1);
                         }
                     }
                     List<ProjectRegister> projectRegisterList1 = this.selectProjectByProjectIds(projectId);
+
                     List<Project> newProject = new ArrayList();
                     for(ProjectRegister projectRegister : projectRegisterList1){
                         if(projectRegister.getState()==0 || projectRegister.getState()==1 || projectRegister.getState()==2){

@@ -120,6 +120,12 @@ public class ProjectRegisterExport {
         @ExcelProperty("项目名称")
         private String projectName;
 
+        @ExcelProperty("项目编号")
+        private String projectCode;
+
+        @ExcelProperty("报名开始时间")
+        private Date senrollStartDate;
+
         @ExcelProperty("报名截止时间")
         private Date enrollEndDate;
 
@@ -141,6 +147,9 @@ public class ProjectRegisterExport {
         @ExcelProperty("联系电话")
         private String phone;
 
+        @ExcelProperty("邮箱")
+        private String email;
+
         @ExcelProperty("报名时间")
         private Date startDate;
 
@@ -158,6 +167,8 @@ public class ProjectRegisterExport {
             for(Project project : projectList){
                 PageExport pageExport = new PageExport();
                 pageExport.setProjectName(project.getProjectName());
+                pageExport.setProjectCode(project.getProjectCode());
+                pageExport.setSenrollStartDate(project.getSenrollStartDate());
                 pageExport.setEnrollEndDate(project.getEnrollEndDate());
                 pageExport.setTendereeName(project.getTenderee().getTendereeName());
                 pageExport.setProjectOverview(project.getProjectOverview());
@@ -165,6 +176,7 @@ public class ProjectRegisterExport {
                 pageExport.setAccountName(project.getProjectRegisters().getMember().getAccount().getAccountName());
                 pageExport.setMember(project.getProjectRegisters().getMember().getAccount().getMember());
                 pageExport.setPhone(project.getProjectRegisters().getMember().getAccount().getPhone());
+                pageExport.setEmail(project.getProjectRegisters().getMember().getAccount().getEmail());
                 pageExport.setStartDate(project.getProjectRegisters().getCreateDate());
                 pageExport.setMoney(project.getProjectRegisters().getPaymentMoney().toString());
                 pageExport.setSignUpState(STATE_03.get(project.getProjectRegisters().getState()));
