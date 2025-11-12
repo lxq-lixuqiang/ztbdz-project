@@ -55,7 +55,7 @@
                     </div>
                     <div style="text-align:center;">
                         <p><strong>扫码支付</strong></p>
-                        <img id="qrCode" alt="付款二维码" style="width:150px; height:150px; border:1px solid #eee; margin-top:10px;">
+                        <img id="qrCode" alt="付款二维码" title="点击放大" style="width:150px; border:1px solid #eee; margin-top:10px;cursor: pointer;">
                         <p style="font-size:12px; color:#666;">请使用微信扫码支付</p>
                     </div>
                 </div>
@@ -125,6 +125,9 @@
         $("#bankDeposit").text(config.pay.bankDeposit);
         $("#bankAccountNumber").text(config.pay.bankAccountNumber);
         $("#qrCode").attr("src",config.pay.qrCode);
+        $("#qrCode").click(function () {
+            window.open(config.pay.qrCode, '_blank');
+        })
 
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");

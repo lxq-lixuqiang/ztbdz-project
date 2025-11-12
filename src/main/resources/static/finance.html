@@ -47,7 +47,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
                 <th style="padding:10px; border:1px solid #ddd;">发票类型</th>
                 <th style="padding:10px; border:1px solid #ddd;">发票金额</th>
-                <th style="padding:10px; border:1px solid #ddd;">状态</th>
+                <th style="padding:10px;width:50px; border:1px solid #ddd;">状态</th>
                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
             </tr>
             </thead>
@@ -67,12 +67,9 @@
             </div>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <div>
-                项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
-            </div>
-            <div></div>
+            项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
         </div>
         <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
         <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有项目</div>
@@ -85,7 +82,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                 <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
                 <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
-                <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                <th style="padding:10px; border:1px solid #ddd;width:50px;">审核状态</th>
                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
             </tr>
             </thead>
@@ -202,9 +199,9 @@
                                         </button>
                                     </td>
                                 </tr>
-                          `);
-                    tbody.append(row);
-                });
+                         `);
+                        tbody.append(row);
+                    });
                 } else {
                     tbody.append('<tr><td colspan="4" style="padding:10px;">没有报名</td></tr>');
                 }
@@ -230,7 +227,7 @@
         }else{
             notPassInfo = prompt("请输入不通过的原因:");
             if(!notPassInfo.trim()){
-                alert("必须填写不通过原因");
+                alert("必须填写不通过原因！");
                 audit(isPass);
                 return ;
             }
@@ -471,7 +468,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">邮箱</th>
                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
                 <th style="padding:10px; border:1px solid #ddd;">缴费金额</th>
-                <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                <th style="padding:10px; border:1px solid #ddd;width:50px; ">审核状态</th>
                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
             </tr>
             </thead>
