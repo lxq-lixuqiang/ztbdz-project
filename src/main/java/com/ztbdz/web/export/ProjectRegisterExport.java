@@ -86,6 +86,9 @@ public class ProjectRegisterExport {
         @ExcelProperty("电子邮箱")
         private String email;
 
+        @ExcelProperty("开标时间")
+        private Date bidOpeningTime;
+
         @ExcelProperty("发票类型")
         private String type;
 
@@ -103,6 +106,7 @@ public class ProjectRegisterExport {
                 selectInvoiceExport.setAccountName(projectRegister.getMember().getAccount().getAccountName());
                 selectInvoiceExport.setAccountCode(projectRegister.getMember().getAccount().getAccountCode());
                 selectInvoiceExport.setEmail(projectRegister.getMember().getAccount().getEmail());
+                selectInvoiceExport.setBidOpeningTime(projectRegister.getProject().getBidOpeningTime());
                 selectInvoiceExport.setType(projectRegister.getInvoiceType());
                 selectInvoiceExport.setPaymentMoney(projectRegister.getPaymentMoney());
                 selectInvoiceExport.setInvoice(IS_INVOICE.get(projectRegister.getIsInvoice()));

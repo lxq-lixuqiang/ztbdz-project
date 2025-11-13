@@ -170,20 +170,53 @@
 	</select>
 
 	<select id="selectByIds" resultType="Project">
-		select
+		(select
 			p.*
 		from
 			project p
 			left join project_register pr on pr.project_id = p.id
 		where
+			1=1
 		<if test="ids != null and ids.size() >0">
-		   p.id in
+		   and p.id in
 			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
 				#{item}
 			</foreach>
 		</if>
+		and pr.state = 0
+		group by p.id)
+		UNION All
+		(select
+		p.*
+		from
+		project p
+		left join project_register pr on pr.project_id = p.id
+		where
+		1=1
+		<if test="ids != null and ids.size() >0">
+			and p.id in
+			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+		and p.id not in (select
+		p.id
+		from
+		project p
+		left join project_register pr on pr.project_id = p.id
+		where
+		1=1
+		<if test="ids != null and ids.size() >0">
+			and p.id in
+			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+		and pr.state = 0
+		group by p.id)
 		group by p.id
-		order by pr.state,update_date desc
+		order  by update_date desc)
+
 	</select>
 
 </mapper>
