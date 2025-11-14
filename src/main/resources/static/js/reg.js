@@ -31,8 +31,8 @@ $(function() {
 
         var account = {accountName:""};
         var role = {type:userType};
-        var member = {name:username,account:account,role:role};
-        var data = {member:member,password:password,username:username};
+        var member = {name:username.trim(),account:account,role:role};
+        var data = {member:member,password:password.trim(),username:username.trim()};
         $.ajax({
             url: "/user/register",
             type: "POST",

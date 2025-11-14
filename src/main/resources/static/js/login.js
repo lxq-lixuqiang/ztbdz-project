@@ -11,7 +11,7 @@ $(function(){
         $.ajax({
             url: "/user/login",
             type: "POST",
-            data: JSON.stringify({"username":username,"password":password}),
+            data: JSON.stringify({"username":username.trim(),"password":password.trim()}),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
