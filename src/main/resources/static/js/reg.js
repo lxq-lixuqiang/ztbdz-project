@@ -8,7 +8,7 @@ $(function() {
         var username = $("input[name=username]").val();
         var password = $("input[name=password]").val();
         var userType = $("select[name=user_type]").find("option:selected").val();
-        if(username == "" || password == ""){
+        if(username.trim() == "" || password.trim() == ""){
             alert("用户名和密码不能为空！");
             $("button[type=submit]").removeAttr("disabled");
             return;

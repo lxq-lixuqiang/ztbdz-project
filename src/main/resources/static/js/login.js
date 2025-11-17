@@ -4,7 +4,7 @@ $(function(){
         e.preventDefault();
         var username = $("input[name=username]").val();
         var password = $("input[type=password]").val();
-        if(username == "" || password == ""){
+        if(username.trim() == "" || password.trim() == ""){
             alert("用户名和密码不能为空！");
             return;
         }
