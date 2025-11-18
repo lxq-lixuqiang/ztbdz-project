@@ -1,13 +1,17 @@
 function showLoading(content){
-    $("body").append("<div id='loading' class=\"loader\">\n" +
-        "  <h1></h1>\n" +
-        "  <div class=\"loading_box\">\n" +
-        "    <div class=\"symbol\">\n" +
-        "      <p>"+content+"...</p>\n" +
-        "      <div></div>\n" +
-        "    </div>\n" +
-        "  </div>\n" +
-        "</div>");
+    if($("#loading").length>0){
+        $("#loading p").text(content+"...");
+    }else{
+        $("body").append("<div id='loading' class=\"loader\">\n" +
+            "  <h1></h1>\n" +
+            "  <div class=\"loading_box\">\n" +
+            "    <div class=\"symbol\">\n" +
+            "      <p>"+content+"...</p>\n" +
+            "      <div></div>\n" +
+            "    </div>\n" +
+            "  </div>\n" +
+            "</div>");
+    }
 }
 
 function loading(){
