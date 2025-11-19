@@ -18,11 +18,6 @@ $(function() {
             $("button[type=submit]").removeAttr("disabled");
             return;
         }
-        // if(!regBox.regName.regEx.test(username)){
-        //     alert(regBox.regName.message);
-        //     $("button[type=submit]").removeAttr("disabled");
-        //     return ;
-        // }
         if(!regBox.regPassword.regEx.test(password)){
             alert(regBox.regPassword.message);
             $("button[type=submit]").removeAttr("disabled");
@@ -49,7 +44,5 @@ $(function() {
             }
         });
     });
-
-
 
 });
