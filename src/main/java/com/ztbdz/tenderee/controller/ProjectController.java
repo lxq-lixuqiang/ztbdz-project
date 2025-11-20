@@ -21,7 +21,6 @@ public class ProjectController {
     @Autowired
     private ProjectService projectService;
 
-
     @ApiOperation(value = "查询项目列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
