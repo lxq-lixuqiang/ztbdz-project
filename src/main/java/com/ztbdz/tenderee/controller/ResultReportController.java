@@ -94,8 +94,7 @@ public class ResultReportController {
     @ApiOperation(value = "获取澄清响应状态")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
-            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "String"),
-            @ApiImplicitParam(name = "accountId", value = "供应商id", required=true, dataType = "String")
+            @ApiImplicitParam(name = "projectId", value = "项目id", required=true, dataType = "String")
     })
     @GetMapping("getState/{projectId}")
     public Result getState(@PathVariable String projectId) {
