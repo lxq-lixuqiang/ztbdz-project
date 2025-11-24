@@ -270,4 +270,13 @@ function printHtml(html){
     }, 500);
 }
 
+// 项目经理添加返回工作台
+function manage(){
+    var a = $("<a></a>").attr("href","manage.html").attr("style","text-decoration:none; color:#333;").text("返回工作台");
+    var user = getMember();
+    if(user.role.type=="manage"){
+        a.insertBefore($("a:contains('"+decoded("6L+U5Zue6aaW6aG1")+"')"))
+    }
+}
+
 

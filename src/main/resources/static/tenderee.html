@@ -692,6 +692,7 @@
     $(function() {
         // 初始化
         publishInfo = $("#publish").html();
+        manage();
 
         $("body").on('change','#fileUpload', function () {
             if(this.files.length==0){
