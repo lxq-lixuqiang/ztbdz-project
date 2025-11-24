@@ -233,9 +233,9 @@
                         <input id="projectCode" type="text" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
-                        <label style="display:block; margin-bottom:5px;">采购类型<span style="color:red;">*</span></label>
+                        <label style="display:block; margin-bottom:5px;">采购方式<span style="color:red;">*</span></label>
                         <select id="procurementMethod" style="width:100%; padding:8px; border:1px solid #ddd;" required>
-                            <option value="">请选择采购类型</option>
+                            <option value="">请选择采购方式</option>
                             <option value="公开招标">公开招标</option>
                             <option value="磋商">磋商</option>
                             <option value="比选">比选</option>
@@ -246,6 +246,19 @@
                             <option value="竞争性磋商">竞争性磋商</option>
                             <option value="其他">其他</option>
                         </select>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block; margin-bottom:5px;">项目类型<span style="color:red;">*</span></label>
+                        <select id="projectMethod" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                            <option value="">请选择项目类型</option>
+                            <option value="货物">货物</option>
+                            <option value="服务">服务</option>
+                            <option value="工程">工程</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:15px;display:none;">
+                        <label style="display:block; margin-bottom:5px;">前期供应商<span style="color:red;">*</span></label>
+                        <textarea id="oldSuppliers" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;"></textarea>
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">项目资格条件</label>
@@ -280,7 +293,7 @@
                         <input id="money" type="number" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
-                        <label style="display:block; margin-bottom:5px;">报名费/元<span style="color:red;">*</span></label>
+                        <label style="display:block; margin-bottom:5px;">报名系统技术服务费/元<span style="color:red;">*</span></label>
                         <input id="registrationFee" type="number" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
@@ -300,7 +313,7 @@
                         <input id="enrollEndDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
-                        <label style="display:block; margin-bottom:5px;">招标时间<span style="color:red;">*</span></label>
+                        <label style="display:block; margin-bottom:5px;">开标时间<span style="color:red;">*</span></label>
                         <input id="tendereeDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <button type="button" onclick="submitPublishForm()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">确认发布条件</button>
@@ -345,6 +358,7 @@
                         <button onclick="loadPublishedProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
                         <button onclick="exportToExcel(1, '已发布项目')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
                         <button onclick="showAnnouncementModal()" style="padding:5px 10px; background:#9C27B0; color:white; border:none; cursor:pointer;">发布公告</button>
+                        <button onclick="showBlacklist()" style="padding:5px 10px; background:#00000075; color:white; border:none; cursor:pointer;">黑名单</button>
                     </div>
                 </div>
                 <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
@@ -825,6 +839,14 @@
         $("#announcementModal").show();
     }
 
+    // 显示黑名单
+    function showBlacklist() {
+        alert("功能正在建设中...")
+        // localStorage.removeItem('page'); // 分页页码
+        // $("#applicationModal4").show();
+        // TODO 获取黑名单数据
+    }
+
     // 关闭公告弹窗
     function closeAnnouncementModal() {
         $("#announcementModal").hide();
@@ -986,6 +1008,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系人</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
+                <th style="padding:10px; border:1px solid #ddd;">邮箱</th>
                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
             </tr>
             </thead>
@@ -994,7 +1017,8 @@
             </tbody>
         </table>
         <div style="text-align:center; margin-top:20px;">
-            <button onclick="closeModal()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">关闭</button>
+            <button onclick="pdfView()" style="padding:8px 20px; background:#2196F3; color:white; border:none; cursor:pointer;margin-right:10px;">打印</button>
+            <button onclick="wordView()" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">导出word</button>
         </div>
     </div>
 </div>
@@ -1049,6 +1073,39 @@
         </div>
     </div>
 </div>
+
+<!-- 澄清管理弹窗 -->
+<div id="applicationModal4" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:800px; max-height:80vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 id="modalTitle4">黑名单管理</h3>
+            <button onclick="closeModal4()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                业主单位<input type="text" id="projectNameSearch2" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            </div>
+            <div  style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <button onclick="" style="padding:8px 20px; background:#2196F3; color:#fff; border:none;cursor: pointer;">添加</button>
+            </div>
+        </div>
+        <table style="width:100%; border-collapse:collapse;">
+            <thead id="pageThead4">
+            <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                <th style="padding:10px; border:1px solid #ddd;width: 250px;">供应商单位</th>
+                <th style="padding:10px; border:1px solid #ddd;">截止时间</th>
+                <th style="padding:10px; border:1px solid #ddd;width: 70px;">状态</th>
+                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+            </tr>
+            </thead>
+            <tbody id="modalApplicationTable4">
+            <!-- 模拟数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+        <div id="pageInfo4" style="margin-top:10px; text-align: center;"></div>
+    </div>
+</div>
 <script>
     // 显示报名情况弹窗
     function showApplicationModal(projectName,id) {
@@ -1074,6 +1131,7 @@
                             var accountName = "";
                             var contact = "";
                             var phone = "";
+                            var email = "";
                             var account = e.data[i].member.account;
                             if(account!=null){
                                 if(account.accountName!=null){
@@ -1085,8 +1143,11 @@
                                 if(account.phone!=null){
                                     phone =account.phone;
                                 }
+                                if(account.email!=null){
+                                    email =account.email;
+                                }
                             }
-                            companies.push({name: accountName, contact: contact, phone: phone, time: e.data[i].createDate})
+                            companies.push({name: accountName, contact: contact, phone: phone,email:email, time: e.data[i].createDate})
                         }
                     }
                     companies.forEach(company => {
@@ -1098,6 +1159,7 @@
                                 <td style="padding:10px;">${company.name}</td>
                                 <td style="padding:10px;">${company.contact}</td>
                                 <td style="padding:10px;">${company.phone}</td>
+                                <td style="padding:10px;">${company.email}</td>
                                 <td style="padding:10px;">${company.time}</td>
                             `;
                     }
@@ -1312,6 +1374,12 @@
         document.getElementById('tendereeInformField').click();
     }
 
+    function pdfView() {
+        alert("功能正在建设中...")
+    }
+    function wordView() {
+        alert("功能正在建设中...")
+    }
 
     // 关闭弹窗
     function closeModal() {
@@ -1324,6 +1392,11 @@
     // 关闭弹窗
     function closeModal3() {
         document.getElementById('applicationModal3').style.display = 'none';
+    }
+    // 关闭弹窗
+    function closeModal4() {
+        localStorage.removeItem('page'); // 分页页码
+        document.getElementById('applicationModal4').style.display = 'none';
     }
     function leaderBtn(memberId,id,name){
         var data = {"id":id,"expertLeader":memberId};

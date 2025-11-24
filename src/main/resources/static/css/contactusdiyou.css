@@ -6,7 +6,7 @@
 .contactusdiyou .conter .con1{ border-bottom:1px solid #6a6a6a; padding-bottom:22px;}
 .contactusdiyou .conter .con1 dl dt{width:31px; height:31px; float:left;    position: relative;top: 50px;}
 .contactusdiyou  dl .f1{width:142px; height:36px;line-height: 36px; float:right; font-size:14px;_font-size: 14px;*font-size: 15px; color:#fff;vertical-align: top; font-weight: bold;}
-.contactusdiyou  dl .f2{ width:142px; float:right; font-size:12px; color:#fff; height:30px;line-height: 30px; float:right;}
+.contactusdiyou  dl .f2{ width:142px; float:right; font-size:12px; color:#fff; line-height: 30px; float:right;}
 .kefuQQ a{ background:url(../images/button-custom-qq.gif)  no-repeat; width:70px; height:20px; display:inline-block; vertical-align:middle;}
 .kefuQQ a:hover{ background:url(../images/button-custom-qq-h.gif)  no-repeat;}
 .contactusdiyou .conter .con1 dl dd .ph_num{ font:18px 'Microsoft yahei';*font-size: 16px;_font-size: 16px; color:#fff; height:25px;}

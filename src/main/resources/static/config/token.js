@@ -211,7 +211,9 @@ function convertSize(size){
 // 分页按钮展示
 localStorage.removeItem('page'); // 分页页码
 localStorage.removeItem('data'); // 搜索参数
-function pageButton(data){
+function pageButton(data,pageName,pageTheadName){
+    if(!pageName) pageName = "pageInfo";
+    if(!pageTheadName) pageTheadName = "pageThead";
     if(data.navigatepageNums.length>0){
         var pageInfo = "<span style=\"margin:0 10px;\">共&nbsp;"+data.total+"&nbsp;条</span>";
         if(1!= data.navigateFirstPage){
@@ -233,13 +235,13 @@ function pageButton(data){
             pageInfo +="<span style=\"margin:0 10px;\">...</span>";
             pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;cursor: pointer;\" onclick=\"pageShow('"+data.pages+"')\">"+data.pages+"</button>";
         }
-        $("#pageInfo").html(pageInfo);
+        $("#"+pageName).html(pageInfo);
     }else{
         localStorage.setItem('page',1);
-        $("#pageInfo").html("");
+        $("#"+pageName).html("");
     }
 
-    var pageThead = document.getElementById("pageThead"); // 放到 table标签下的thead里的id
+    var pageThead = document.getElementById(pageTheadName); // 放到 table标签下的thead里的id
     if(pageThead && pageThead.getBoundingClientRect().top<0){ // 如果滚动条超过了标签就为负数开启进行跳转
         pageThead.scrollIntoView({ behavior: 'smooth' });
     }

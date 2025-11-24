@@ -23,74 +23,142 @@
 
 
 </div>
+<style>
+    .container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+    .nav-menu {
+        width: 140px;
+        background: #f5f5f5;
+        padding: 10px;
+    }
+    .nav-item {
+        padding: 8px;
+        cursor: pointer;
+        border-bottom: 1px solid #ddd;
+    }
+    .nav-submenu {
+        display: none;
+        padding-left: 9px;
+    }
+    .nav-submenu-item {
+        padding: 5px;
+        cursor: pointer;
+    }
+    .content-area {
+        flex: 1;
+        padding: 20px;
+    }
+    .tab-header {
+        display: flex;
+        border-bottom: 1px solid #ddd;
+    }
+    .tab-item {
+        padding: 10px 20px;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        margin-right: 5px;
+        background: #f5f5f5;
+    }
+    .tab-item.active {
+        background: #fff;
+        border-bottom: 1px solid #fff;
+    }
+    .tab-content {
+        display: none;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-top: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+</style>
 
 <!-- 可编辑的主要内容区域 -->
 <!-- InstanceBeginEditable name="content" -->
-<div style="width:1040px; min-height:calc(100vh - 120px);">
-    <!-- 发票申请列表 -->
-    <div style="margin-bottom:30px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3>开具发票申请列表</h3>
-            <div>
-                <button onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出发票记录</button>
-            </div>
-        </div>
-        <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
-        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">没有发票申请</div>
-        <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
-            <thead>
-            <tr style="background:#f5f5f5;">
-                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
-                <th style="padding:10px; border:1px solid #ddd;">申请单位</th>
-                <th style="padding:10px; border:1px solid #ddd;">统一社会信用代码</th>
-                <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
-                <th style="padding:10px; border:1px solid #ddd;">发票类型</th>
-                <th style="padding:10px; border:1px solid #ddd;">发票金额</th>
-                <th style="padding:10px;width:50px; border:1px solid #ddd;">状态</th>
-                <th style="padding:10px; border:1px solid #ddd;">操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- 发票申请数据将通过JavaScript动态填充 -->
-            </tbody>
-        </table>
-    </div>
 
-    <!-- 项目列表 -->
-    <div style="margin-bottom:30px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3>项目列表</h3>
-            <div>
-                <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                <button onclick="exportToExcel(1, '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+    <div style="width:1040px; min-height:calc(100vh - 120px);">
+        <div class="container">
+            <div class="nav-menu">
+                <div class="nav-item" onclick="showAffairTabs()">我的发票</div>
+                <div class="nav-item" onclick="showProjectTabs()">我的审核</div>
+            </div>
+            <div class="content-area">
+                <div class="tab-header">
+                    <div class="tab-item active" data-tab="overview">开具发票申请列表</div>
+                    <div class="tab-item" data-tab="publish">审核项目列表</div>
+                </div>
+                <div class="tab-content active" id="overview">
+                    <!-- 发票申请列表 -->
+                    <div style="margin-bottom:30px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <h3>开具发票申请列表</h3>
+                            <div>
+                                <button onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出发票记录</button>
+                            </div>
+                        </div>
+                        <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
+                        <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">没有发票申请</div>
+                        <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
+                            <thead>
+                            <tr style="background:#f5f5f5;">
+                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">申请单位</th>
+                                <th style="padding:10px; border:1px solid #ddd;">统一社会信用代码</th>
+                                <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
+                                <th style="padding:10px; border:1px solid #ddd;width:40px;">发票类型</th>
+                                <th style="padding:10px; border:1px solid #ddd;width:70px;">发票金额</th>
+                                <th style="padding:10px;width:50px; border:1px solid #ddd;">状态</th>
+                                <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 发票申请数据将通过JavaScript动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 项目列表 -->
+                <div class="tab-content" id="publish">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3>审核项目列表</h3>
+                        <div>
+                            <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                            <button onclick="exportToExcel(1, '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                        项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                        <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
+                    </div>
+                    <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
+                    <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有项目</div>
+                    <table id="projectsTable" style="width:100%; border-collapse:collapse;">
+                        <thead id="pageThead">
+                        <tr style="background:#f5f5f5;">
+                            <th style="padding:10px; border:1px solid #ddd;"><input id="checkboxAll" type="checkbox"></th>
+                            <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                            <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
+                            <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
+                            <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                            <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
+                            <th style="padding:10px; border:1px solid #ddd;width:50px;">审核状态</th>
+                            <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 项目数据将通过JavaScript动态填充 -->
+                        </tbody>
+                    </table>
+                    <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
+                </div>
             </div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-            项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-            <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
-        </div>
-        <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
-        <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有项目</div>
-        <table id="projectsTable" style="width:100%; border-collapse:collapse;">
-            <thead id="pageThead">
-            <tr style="background:#f5f5f5;">
-                <th style="padding:10px; border:1px solid #ddd;"><input id="checkboxAll" type="checkbox"></th>
-                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
-                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
-                <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
-                <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
-                <th style="padding:10px; border:1px solid #ddd;">项目概况</th>
-                <th style="padding:10px; border:1px solid #ddd;width:50px;">审核状态</th>
-                <th style="padding:10px; border:1px solid #ddd;">操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- 项目数据将通过JavaScript动态填充 -->
-            </tbody>
-        </table>
-        <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
     </div>
     <!-- InstanceEndEditable -->
 </body>
@@ -153,7 +221,7 @@
                         <td style="padding:10px;">
                             <button onclick="showApplicationModal('${project.projectName}','${project.id}')"
                                     style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">
-                                查看报名情况
+                                审核缴费
                             </button>
                         </td>
                     </tr>
@@ -195,7 +263,7 @@
                                     <td style="padding:10px;">
                                         <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}','${register.project.bidOpeningTime}')"
                                                 style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">
-                                            查看凭证
+                                            审核凭证
                                         </button>
                                     </td>
                                 </tr>
@@ -294,10 +362,8 @@
     function closeVoucherModal() {
         $("#voucherModal").hide();
     }
-
     $(function() {
         // 页面加载时自动获取列表
-        loadProjects();
         loadInvoiceRequests();
     });
     // 加载发票申请列表
@@ -450,6 +516,55 @@
         loadProjects(data)
     }
 
+    function showTab(tabId) {
+        // 隐藏所有标签内容
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+    });
+        // 取消所有标签项的active类
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.classList.remove('active');
+    });
+        // 显示选中的标签内容
+        const content = document.getElementById(tabId);
+        content.classList.add('active');
+        // 更新内容区域提示信息
+        if(tabId === 'publish') {
+            // 保留原有表格结构，不覆盖内容
+            loadProjects();
+        }
+        if(tabId === 'overview') {
+            // 保留原有表格结构，不覆盖内容
+            loadInvoiceRequests();
+        }
+        // 激活对应的标签项
+        document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
+    }
+
+    // 为所有标签项添加点击事件
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.addEventListener('click', function() {
+            showTab(this.dataset.tab);
+        });
+    });
+    });
+    function showAffairTabs() {
+        // 显示事务相关标签页
+        document.querySelectorAll('.tab-item').forEach(item => {
+            const tabId = item.dataset.tab;
+            item.style.display = (tabId === 'overview') ? 'block' : 'none';
+        });
+        showTab('overview');
+    }
+    function showProjectTabs() {
+        // 显示项目相关标签页
+        document.querySelectorAll('.tab-item').forEach(item => {
+            const tabId = item.dataset.tab;
+            item.style.display = (tabId === 'publish') ? 'block' : 'none';
+        });
+        showTab('publish');
+    }
 </script>
 
 <!-- 报名情况弹窗 -->
@@ -469,7 +584,7 @@
                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
                 <th style="padding:10px; border:1px solid #ddd;">缴费金额</th>
                 <th style="padding:10px; border:1px solid #ddd;width:50px; ">审核状态</th>
-                <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
             </tr>
             </thead>
             <tbody id="modalApplicationTable">
