@@ -41,7 +41,7 @@
 		<!-- 分文件存日志 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>
-                ${LOG_HOME}/ztyg/%d{yyyy-MM-dd}_%i.log
+                ${LOG_HOME}/%d{yyyy-MM-dd}_%i.log
             </FileNamePattern>
             <MaxHistory>30</MaxHistory> --> <!-- 保存30天 -->
 			<MaxFileSize>10MB</MaxFileSize> <!-- 日志文件过大会使的编辑器打开非常慢，因此设置日志最大10MB -->
