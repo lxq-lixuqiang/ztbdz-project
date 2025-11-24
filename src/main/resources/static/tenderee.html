@@ -249,7 +249,7 @@
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">项目类型<span style="color:red;">*</span></label>
-                        <select id="projectMethod" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        <select id="projectType" onchange="changeSelect(this.value)" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                             <option value="">请选择项目类型</option>
                             <option value="货物">货物</option>
                             <option value="服务">服务</option>
@@ -257,7 +257,7 @@
                         </select>
                     </div>
                     <div style="margin-bottom:15px;display:none;">
-                        <label style="display:block; margin-bottom:5px;">前期供应商<span style="color:red;">*</span></label>
+                        <label style="display:block; margin-bottom:5px;">前期供应商<span style="color:red;">*（多个供应商用英文","隔开）</span></label>
                         <textarea id="oldSuppliers" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;"></textarea>
                     </div>
                     <div style="margin-bottom:15px;">
@@ -583,6 +583,8 @@
         var projectScoringRequirements = $("#projectScoringRequirements").val();
         var projectOverview = $("#projectOverview").val();
         var procurementMethod = $("#procurementMethod").find("option:selected").val();
+        var projectType = $("#projectType").find("option:selected").val();
+        var oldSuppliers = $("#oldSuppliers").val();
         var senrollStartDate = $("#senrollStartDate").val();
         var enrollEndDate = $("#enrollEndDate").val();
         var registrationFee = $("#registrationFee").val();
@@ -596,35 +598,18 @@
 
         var fileId = $("#fileUpload").attr("data-file-id");
         var fileId3 = $("#fileUpload3").attr("data-file-id");
-        var tender={"tenderName":projectName};
-        var tenders=[tender];
-        var project = {
-            "id":projectid,
-            "bidOpeningTime": new Date(tendereeDate).toLocaleString().replaceAll("/","-"),
-            "projectCode": projectCode,
-            "projectName": projectName,
-            "procurementMethod": procurementMethod,
-            "tenders": tenders,
-            "projectOverview": projectOverview,
-            "money": money,
-            "projectQualificationConditions": projectQualificationConditions,
-            "projectComplianceConditions": projectComplianceConditions,
-            "projectScoringRequirements": projectScoringRequirements,
-            "procurementMethod": procurementMethod,
-            "procurementDocuments": fileId,
-            "descriptionFile": fileId3,
-            "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
-            "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
-            "answerEndDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"), // 已经是ISO格式
-            "registrationFee":registrationFee,
-            "state": 1
-        };
         var tendereeName = $("#tendereeName").val();
 
         // 验证必填字段
-        if(!senrollStartDate || !enrollEndDate || !tendereeName || !tendereeDate || !money) {
+        if(!senrollStartDate || !enrollEndDate || !tendereeName || !tendereeDate || !money || !projectType || !procurementMethod) {
             alert("请填写带 * 字段为必填项！");
             return;
+        }
+        if(projectType == "工程"){
+            if(!oldSuppliers) {
+                alert("请填写带 * 字段为必填项！");
+                return;
+            }
         }
         if(!fileId){
             alert("请上传采购文件！");
@@ -654,6 +639,30 @@
             return;
         }
 
+        var tender={"tenderName":projectName};
+        var tenders=[tender];
+        var project = {
+            "id":projectid,
+            "bidOpeningTime": new Date(tendereeDate).toLocaleString().replaceAll("/","-"),
+            "projectCode": projectCode,
+            "projectName": projectName,
+            "procurementMethod": procurementMethod,
+            "projectType":projectType,
+            "oldSuppliers":oldSuppliers,
+            "tenders": tenders,
+            "projectOverview": projectOverview,
+            "money": money,
+            "projectQualificationConditions": projectQualificationConditions,
+            "projectComplianceConditions": projectComplianceConditions,
+            "projectScoringRequirements": projectScoringRequirements,
+            "procurementDocuments": fileId,
+            "descriptionFile": fileId3,
+            "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
+            "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
+            "answerEndDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"), // 已经是ISO格式
+            "registrationFee":registrationFee,
+            "state": 1
+        };
         // 统一所有日期为ISO格式
         var data = {
             "id":id,
@@ -1333,6 +1342,9 @@
         $("#projectOverview").val(data.project.projectOverview);
         $("#registrationFee").val(data.project.registrationFee);
         $("#procurementMethod>[value="+data.project.procurementMethod+"]").attr("selected","selected");
+        $("#projectType>[value="+data.project.projectType+"]").attr("selected","selected");
+        changeSelect(data.project.projectType)
+        $("#oldSuppliers").val(data.project.oldSuppliers);
         $("#senrollStartDate").attr("value",data.project.senrollStartDate);
         $("#enrollEndDate").attr("value",data.project.enrollEndDate);
         $("#fileUpload").attr("data-file-id",data.project.procurementDocuments);
@@ -1415,6 +1427,14 @@
                 }
             }
         });
+    }
+
+    function changeSelect(val){
+        if(val=="工程"){
+            $("#oldSuppliers").parent().show();
+        }else{
+            $("#oldSuppliers").parent().hide();
+        }
     }
 </script>
 </body>

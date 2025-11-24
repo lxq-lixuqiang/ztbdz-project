@@ -44,6 +44,9 @@ public class TendereeExport {
         @ExcelProperty("联系电话")
         private String phone;
 
+        @ExcelProperty("邮箱")
+        private String email;
+
         @ExcelProperty("报名时间")
         private Date createDate;
 
@@ -60,6 +63,7 @@ public class TendereeExport {
                     pageExport.setAccountName(tenderee.getProject().getProjectRegisters().getMember().getAccount().getAccountName());
                     pageExport.setContact(tenderee.getProject().getProjectRegisters().getMember().getAccount().getMember());
                     pageExport.setPhone(tenderee.getProject().getProjectRegisters().getMember().getAccount().getPhone());
+                    pageExport.setEmail(tenderee.getProject().getProjectRegisters().getMember().getAccount().getEmail());
                     pageExport.setCreateDate(tenderee.getProject().getProjectRegisters().getCreateDate());
                 }
                 selectByProjectExportList.add(pageExport);
