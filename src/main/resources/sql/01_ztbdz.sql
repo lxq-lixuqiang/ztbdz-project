@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 25/09/2025 13:07:42
+ Date: 25/11/2025 10:33:57
 */
 
 SET NAMES utf8mb4;
@@ -269,6 +269,8 @@ CREATE TABLE `project`  (
   `enroll_end_date` datetime(0) NULL DEFAULT NULL,
   `answer_end_date` datetime(0) NULL DEFAULT NULL,
   `registration_fee` int(11) NULL DEFAULT NULL,
+  `project_type` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `old_suppliers` varchar(5000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `review_progress` int(11) NULL DEFAULT NULL,
   `review_end_date` datetime(0) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,

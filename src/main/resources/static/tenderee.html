@@ -1388,10 +1388,56 @@
     }
 
     function pdfView() {
-        alert("功能正在建设中...")
+        // 创建打印专用内容
+        const printContent = document.createElement('div');
+        printContent.innerHTML = $('#applicationModal>div').html();
+
+        // 创建打印窗口
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>报名情况</title>
+                        <style>
+                            body { font-family: Arial; margin: 20px; }
+                            table { width: 100%; border-collapse: collapse; }
+                            th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                            button{ display:none !important;}
+                        </style>
+                    </head>
+                    <body>
+                        ${printContent.innerHTML}
+                    </body>
+                    </html>
+                `);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+                printWindow.print();
+            printWindow.close();
+        }, 500);
     }
     function wordView() {
-        alert("功能正在建设中...")
+        const content = $('#applicationModal>div table').html();
+        const title = $('#applicationModal>div h3').html();
+        const blob = new Blob([`
+                        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                              xmlns:w="urn:schemas-microsoft-com:office:word">
+                        <head><meta charset="UTF-8"></head>
+                        <body>
+                            <h3>${title}</h3>
+                            <table style='width:100%; border-collapse:collapse;'>${content}</table>
+                            </body>
+                        </html>
+                    `], {type: 'application/msword'});
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = $('#applicationModal>div h3').text()+'.doc';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // 关闭弹窗
