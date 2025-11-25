@@ -126,4 +126,13 @@ public interface ProjectService {
      * @throws Exception
      */
     List<Project> selectByIds(List<Long> ids) throws Exception;
+
+    /**
+     * 查询多项目
+     * @param ids
+     * @param memberId
+     * @return
+     * @throws Exception
+     */
+    List<Project> selectByIds(List<Long> ids,Long memberId) throws Exception;
 }

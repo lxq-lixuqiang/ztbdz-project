@@ -24,7 +24,7 @@ function removeToken() {
 
 // 配置信息 加密：btoa(unescape(encodeURIComponent("需要加密的内容")))
 var config = {
-    refundReason  : decoded("6K+35Y+R6YCB6YKu566x5YiwIOKAnDI4MTc4OTk3OTRxcS5jb23igJ3vvIzor7TmmI7pgIDotLnljp/lm6DlubbpmYTkuIog4oCc5pSv5LuY5oiQ5Yqf55qE5oiq5Zu+4oCdIOWSjOaIquWbvumhtemdouaciSDigJzmiqXlkI3kuI3pgJrov4figJ0g55qE6aG555uuIOi/m+ihjOmAgOi0ueWuoeaguO+8gQ=="), //....退费流程说明 "请发送邮箱到 “2817899794qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “报名不通过” 的项目 进行退费审核！"
+    refundReason  : decoded("6K+35Y+R6YCB6YKu566x5YiwIOKAnDI4MTc4OTk3OTRxcS5jb23igJ3vvIzor7TmmI7pgIDotLnljp/lm6DlubbpmYTkuIog4oCc5pSv5LuY5oiQ5Yqf55qE5oiq5Zu+4oCdIOWSjOaIquWbvumhtemdouaciSDigJznvLTotLnkuI3pgJrov4figJ0g55qE6aG555uuIOi/m+ihjOmAgOi0ueWuoeaguO+8gQ=="), //....退费流程说明 "请发送邮箱到 “2817899794qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “缴费不通过” 的项目 进行退费审核！"
     consultPhone : decoded("6aG555uu5ZKo6K+i55S16K+d77yaMDI4LTg2NzE2Mjg5"), //....咨询电话 "项目咨询电话：028-86716289"
     skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMTM4LTgxMTItMzIwNA=="), //....技术电话 "平台技术电话：138-8112-3204"
     pay : {
@@ -64,6 +64,10 @@ var regBox = {
     regMoney :{ //....金额："格式不正确"
         regEx : /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
         message : decoded("5qC85byP5LiN5q2j56Gu")
+    },
+    regMoneyInt :{ //....整数金额："只能为整数"
+        regEx : /(^[1-9]([0-9]+)?(\.[0]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0]([0])?$)/,
+        message : decoded("5Y+q6IO95Li65pW05pWw")
     }
 }
 

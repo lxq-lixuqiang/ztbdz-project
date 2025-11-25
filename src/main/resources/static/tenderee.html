@@ -431,11 +431,11 @@
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
             <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
-            {{#ne project.isAudit 0}}
-                {{#gtNowDate project.bidOpeningTime}}
-                         <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
-                {{/gtNowDate}}
-            {{/ne}}
+            {{#ne project.isAudit 0}}{{#ne project.isAudit 2}}
+                    {{#gtNowDate project.bidOpeningTime}}
+                             <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
+                    {{/gtNowDate}}
+            {{/ne}}{{/ne}}
             {{#eq project.isAudit 2}}
                 <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
                 <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">原因</button>
@@ -459,9 +459,9 @@
         <td style="padding:10px;">{{project.tenderee.tendereeName}}</td>
         <td style="padding:10px;">{{member.account.accountName}}</td>
         <td style="padding:10px;{{#eq state 3}}color:red;{{/eq}}">
-            {{#eq state 0}}报名审核中{{/eq}}
-            {{#eq state 1}}报名通过{{/eq}}
-            {{#eq state 2}}报名未通过{{/eq}}
+            {{#eq state 0}}缴费审核中{{/eq}}
+            {{#eq state 1}}报名成功{{/eq}}
+            {{#eq state 2}}缴费未通过{{/eq}}
             {{#eq state 3}}资质未审核{{/eq}}
             {{#eq state 4}}资质通过{{/eq}}
             {{#eq state 5}}资质不通过{{/eq}}
@@ -592,7 +592,11 @@
         var projectid = $("#publishForm").attr("data-projectid");
         var tendereeDate = $("#tendereeDate").val();
         if(!regBox.regMoney.regEx.test(money) || !regBox.regMoney.regEx.test(registrationFee)){
-            alert("项目预算或报名费"+regBox.regMoney.message);
+            alert("项目预算和报名系统技术服务费 "+regBox.regMoney.message);
+            return;
+        }
+        if(!regBox.regMoneyInt.regEx.test(registrationFee)){
+            alert("报名系统技术服务费 "+regBox.regMoneyInt.message);
             return;
         }
 
@@ -660,7 +664,7 @@
             "enrollEndDate": new Date(enrollEndDate).toLocaleString().replaceAll("/","-"),
             "senrollStartDate": new Date(senrollStartDate).toLocaleString().replaceAll("/","-"),
             "answerEndDate": new Date(tendereeDate).toLocaleString().replaceAll("/","-"), // 已经是ISO格式
-            "registrationFee":registrationFee,
+            "registrationFee": parseInt(registrationFee),
             "state": 1
         };
         // 统一所有日期为ISO格式

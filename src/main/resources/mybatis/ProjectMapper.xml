@@ -177,6 +177,9 @@
 			left join project_register pr on pr.project_id = p.id
 		where
 			1=1
+		<if test="memberId != null">
+			and pr.member_id = #{memberId}
+		</if>
 		<if test="ids != null and ids.size() >0">
 		   and p.id in
 			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
@@ -193,6 +196,9 @@
 		left join project_register pr on pr.project_id = p.id
 		where
 		1=1
+		<if test="memberId != null">
+			and pr.member_id = #{memberId}
+		</if>
 		<if test="ids != null and ids.size() >0">
 			and p.id in
 			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
@@ -206,17 +212,56 @@
 		left join project_register pr on pr.project_id = p.id
 		where
 		1=1
+		<if test="memberId != null">
+			and pr.member_id = #{memberId}
+		</if>
 		<if test="ids != null and ids.size() >0">
 			and p.id in
 			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
 				#{item}
 			</foreach>
 		</if>
-		and pr.state = 0
+		and (pr.state=0 or pr.state=1 or pr.state=2)
 		group by p.id)
-		group by p.id
-		order  by update_date desc)
-
+		group by p.id)
+		UNION All
+		(select
+		p.*
+		from
+		project p
+		left join project_register pr on pr.project_id = p.id
+		where
+		1=1
+		<if test="memberId != null">
+			and pr.member_id = #{memberId}
+		</if>
+		<if test="ids != null and ids.size() >0">
+			and p.id in
+			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+		and pr.state = 2
+		group by p.id)
+		UNION All
+		(select
+		p.*
+		from
+		project p
+		left join project_register pr on pr.project_id = p.id
+		where
+		1=1
+		<if test="memberId != null">
+			and pr.member_id = #{memberId}
+		</if>
+		<if test="ids != null and ids.size() >0">
+			and p.id in
+			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+				#{item}
+			</foreach>
+		</if>
+		and pr.state = 1
+		group by p.id)
 	</select>
 
 </mapper>

@@ -91,7 +91,8 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     @Override
     public Result page(Integer page, Integer size, Project project,Integer state) {
         try{
-            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,SystemConfig.getCreateMember().getId(),state);
+            Long memberId = SystemConfig.getCreateMember().getId();
+            List<ProjectRegister> projectRegisterList = this.selectByCountProjectId(project,memberId,state);
             if(state==3){ // 进行去重操作
                 List<ProjectRegister> newProjectRegisterList = new ArrayList();
                 Map<Long,Object> isHavs = new HashMap();
@@ -102,6 +103,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
                     }
                 }
                 projectRegisterList =  newProjectRegisterList;
+                memberId = null;
             }
 
             List<Long> projectIds = new ArrayList();
@@ -111,7 +113,7 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             List<Project> projectList = new ArrayList();
             if(projectIds.size()>0){
                 PageHelper.startPage(page, size);
-                projectList = projectService.selectByIds(projectIds);
+                projectList = projectService.selectByIds(projectIds,memberId);
                 Map<String,ProjectRegister> mapProjectRegister = new HashMap();
                 for (ProjectRegister projectRegister : projectRegisterList) {
                     String projectId = projectRegister.getProject().getId().toString();

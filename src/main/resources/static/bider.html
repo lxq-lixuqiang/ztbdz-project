@@ -440,14 +440,12 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{senrollStartDate}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">
-                {{#eq  projectRegisters.state 0}}缴费审核中{{/eq}}
-                {{#eq  projectRegisters.state 1}}报名成功{{/eq}}
-                {{#eq  projectRegisters.state 2}}缴费不通过{{/eq}}
-                {{#eq  projectRegisters.state 3}}报名文件审核中{{/eq}}
-                {{#eq  projectRegisters.state 4}}报名文件通过{{/eq}}
-                {{#eq  projectRegisters.state 5}}报名文件不通过{{/eq}}
-            </td>
+            {{#eq  projectRegisters.state 0}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">缴费审核中 </td>{{/eq}}
+            {{#eq  projectRegisters.state 1}}<td style="padding:10px; border:1px solid #ddd;">报名成功 </td>{{/eq}}
+            {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;color:red;">缴费不通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 3}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">材料审核中 </td>{{/eq}}
+            {{#eq  projectRegisters.state 4}}<td style="padding:10px; border:1px solid #ddd;color:#4CAF50;">材料通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 5}}<td style="padding:10px; border:1px solid #ddd;color:red;">材料不通过 </td>{{/eq}}
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#eq  projectRegisters.state 4}}<!-- 资质通过 -->
                     <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">报名缴费</button>
@@ -457,11 +455,11 @@
                 {{#eq  projectRegisters.state 2}}<!-- 报名缴费不通过 -->
                     <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">重新缴费</button>
                     <button onclick="showProgress()" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">退费说明</button>
-                    <button onclick="alert('报名不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
+                    <button onclick="alert('缴费不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
                 {{#eq  projectRegisters.state 5}}<!-- 资质不通过 -->
                     <button onclick="signUp3('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新审核</button>
-                    <button onclick="alert('资质不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
+                    <button onclick="alert('材料不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
             </td>
         </tr>

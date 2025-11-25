@@ -131,7 +131,7 @@
 
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");
-            var data = {"id":new URLSearchParams(window.location.search).get("pid"),"state":0,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text()};
+            var data = {"id":new URLSearchParams(window.location.search).get("pid"),"state":0,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text().replaceAll(",","")};
             projectRegister(data);
         }
 

@@ -78,6 +78,10 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     @ApiModelProperty(value = "创建时间",hidden = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date createDate;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty(value = "更新日期",hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private Date updateDate;
 
     @ApiModelProperty("评标标准")
     @TableField(exist = false)

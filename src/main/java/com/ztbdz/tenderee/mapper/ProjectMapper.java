@@ -21,5 +21,5 @@ public interface ProjectMapper extends BaseMapper<Project> {
 
     List<Project> extractProjectList(@Param("state")Integer state,@Param("project")Project project);
 
-    List<Project> selectByIds(@Param("ids")List<Long> ids);
+    List<Project> selectByIds(@Param("ids")List<Long> ids,@Param("memberId")Long memberId);
 }
