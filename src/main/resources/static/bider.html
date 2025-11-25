@@ -238,7 +238,7 @@
                 <div class="tab-header">
                     <div class="tab-item active" data-tab="available">可以报名项目</div>
                     <div class="tab-item" data-tab="applying">正在报名项目</div>
-                    <div class="tab-item" data-tab="profile">我的信息</div>
+                    <div class="tab-item" id="myInfo" data-tab="profile">我的信息</div>
                     <div class="tab-item" data-tab="project1">已报名项目</div>
                     <div class="tab-item" data-tab="project2">正在进行项目</div>
                     <div class="tab-item" data-tab="project3">评审结束项目</div>
@@ -874,7 +874,8 @@
             if(confirm('请仔细核对上传的报名资料与项目是否一致，确认报名此项目吗?')) {
                 var account = getMember().account;
                 if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
-                    alert("请先完善个人信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，报名文件")
+                    alert("请在【我的信息】列表中完善企业信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，报名文件");
+                    $("#myInfo").click();
                     return ;
                 }
                 var data = {"project":{"id":id}};
