@@ -44,6 +44,7 @@ public class ResultReportServiceImpl implements ResultReportService {
         return resultReportMapper.insert(abandonedBid);
     }
 
+    @CacheEvict(cacheNames = "resultReport",allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result createOrUpdate(ResultReport resultReport) {

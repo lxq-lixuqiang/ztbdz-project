@@ -108,6 +108,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         }
     }
 
+    @CacheEvict(cacheNames = "menuAuthorize",allEntries = true)
     @Override
     public Result update(MenuAuthorize menuAuthorize) {
         try{
@@ -131,6 +132,7 @@ public class MenuAuthorizeServiceImpl implements MenuAuthorizeService {
         return menuAuthorizeMapper.selectCount(queryWrapper);
     }
 
+    @CacheEvict(cacheNames = "menuAuthorize",allEntries = true)
     @Override
     public Result create(MenuAuthorize menuAuthorize) {
         try{

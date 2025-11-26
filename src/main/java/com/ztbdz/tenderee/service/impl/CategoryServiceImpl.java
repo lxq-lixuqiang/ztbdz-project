@@ -186,6 +186,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @CacheEvict(cacheNames = "category",allEntries = true)
     @Override
     public Result create(Category category) {
         try{
@@ -201,6 +202,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @CacheEvict(cacheNames = "category",allEntries = true)
     @Override
     public Result update(Category category) {
         try{
@@ -216,6 +218,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @CacheEvict(cacheNames = "category",allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result deleteList(List<Long> ids) {

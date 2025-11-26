@@ -92,6 +92,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @CacheEvict(cacheNames = "account",allEntries = true)
     @Override
     public Result update(Account account) {
         try{

@@ -20,11 +20,13 @@ import java.util.List;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "blacklist")
 public class BlacklistServiceImpl implements BlacklistService {
 
     @Autowired
     private BlacklistMapper blacklistMapper;
 
+    @CacheEvict(cacheNames = "blacklist",allEntries = true)
     @Override
     public Integer insertOrUpdate(Blacklist blacklist) throws Exception {
         blacklist.setMemberId(SystemConfig.getCreateMember().getId());
@@ -34,6 +36,7 @@ public class BlacklistServiceImpl implements BlacklistService {
         return blacklistMapper.updateById(blacklist);
     }
 
+    @CacheEvict(cacheNames = "blacklist",allEntries = true)
     @Override
     public Integer deletes(List<Long> blacklistIds) throws Exception {
         QueryWrapper<Blacklist> queryWrapper = new QueryWrapper();
@@ -41,16 +44,19 @@ public class BlacklistServiceImpl implements BlacklistService {
         return blacklistMapper.delete(queryWrapper);
     }
 
+    @Cacheable
     @Override
     public Blacklist selectById(Long id) throws Exception {
         return blacklistMapper.selectById(id);
     }
 
+    @Cacheable
     @Override
     public Integer verifyBlacklist(String landlordName,String bidderName,String type) throws Exception {
         return blacklistMapper.verifyBlacklist(landlordName,bidderName,type);
     }
 
+    @Cacheable
     @Override
     public PageInfo<Blacklist> selectPage(Integer page, Integer size, Blacklist blacklist) throws Exception {
         PageHelper.startPage(page, size);
@@ -64,6 +70,7 @@ public class BlacklistServiceImpl implements BlacklistService {
         return new PageInfo(blacklistMapper.selectList(queryWrapper));
     }
 
+    @CacheEvict(cacheNames = "blacklist",allEntries = true)
     @Override
     public Result createOrUpdate(Blacklist blacklist) {
         try{
@@ -74,6 +81,7 @@ public class BlacklistServiceImpl implements BlacklistService {
         }
     }
 
+    @CacheEvict(cacheNames = "blacklist",allEntries = true)
     @Override
     public Result deleteList(List<Long> ids) {
         try{

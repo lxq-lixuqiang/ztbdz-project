@@ -33,6 +33,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         return tendereeInformMapper.selectList(queryWrapper);
     }
 
+    @CacheEvict(cacheNames = "tendereeInform",allEntries = true)
     @Override
     public synchronized Result create(TendereeInform tendereeInform) {
         try{
@@ -50,6 +51,7 @@ public class TendereeInformServiceImpl implements TendereeInformService {
         return tendereeInformMapper.insert(tendereeInform);
     }
 
+    @CacheEvict(cacheNames = "tendereeInform",allEntries = true)
     @Override
     public Result update(TendereeInform tendereeInform) {
         try{
