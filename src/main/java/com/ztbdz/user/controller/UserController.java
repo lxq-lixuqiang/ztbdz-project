@@ -73,7 +73,6 @@ public class UserController {
             @ApiImplicitParam(name = "password", value = "原密码", required=true, dataType = "String"),
             @ApiImplicitParam(name = "newPassword", value = "新密码", required=true, dataType = "String")
     })
-    @CheckToken
     @PostMapping("updatePassword")
     public Result updatePassword(Long userId,String password, String newPassword) {
         return userService.updatePassword(userId,password,newPassword);

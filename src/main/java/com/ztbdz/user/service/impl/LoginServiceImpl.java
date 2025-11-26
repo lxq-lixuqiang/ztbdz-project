@@ -51,6 +51,10 @@ public class LoginServiceImpl implements LoginService {
             SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId().toString());
             String token = JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user);
             Map returnToken = new HashMap();
+            if(user.getPassword().equals(MD5.md5String("123456"))){
+                returnToken.put("isPassword","true");
+                returnToken.put("userId",user.getId());
+            }
             returnToken.put("token",token);
             returnToken.put("url",SystemConfig.LOGIN_URL.get(user.getMember().getRole().getType()));
             return Result.ok("登录成功！",returnToken);

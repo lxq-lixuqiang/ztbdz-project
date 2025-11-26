@@ -15,8 +15,26 @@ $(function(){
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
-                    setToken(e.data.token);
-                    location.href = "/"+e.data.url+".html";
+                    if(e.data.isPassword){
+                        var newPassword = prompt("检测到使用的是默认密码，为了安全请设置新密码:");
+                        if(newPassword.trim()){
+                            $.ajax({
+                                url: "/user/updatePassword?userId="+e.data.userId+"&password=123456&newPassword="+newPassword,
+                                type: "POST",
+                                contentType: "application/json",
+                                success:function(e2) {
+                                    if(e2.status == 200) {
+                                        alert("更新密码成功，请使用新密码登录！");
+                                    }else{
+                                        alert("更新失败："+e2.message);
+                                    }
+                                }
+                            });
+                        }
+                    }else{
+                        setToken(e.data.token);
+                        location.href = "/"+e.data.url+".html";
+                    }
                 }else{
                     alert("登录失败："+e.message);
                 }
