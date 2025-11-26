@@ -95,6 +95,9 @@ public class ProjectRegisterExport {
         @ExcelProperty("发票金额")
         private Long paymentMoney;
 
+        @ExcelProperty("申请开票日期")
+        private Date invoiceDate;
+
         @ExcelProperty("状态")
         private String invoice;
 
@@ -109,6 +112,7 @@ public class ProjectRegisterExport {
                 selectInvoiceExport.setBidOpeningTime(projectRegister.getProject().getBidOpeningTime());
                 selectInvoiceExport.setType(projectRegister.getInvoiceType());
                 selectInvoiceExport.setPaymentMoney(projectRegister.getPaymentMoney());
+                selectInvoiceExport.setInvoiceDate(projectRegister.getInvoiceDate());
                 selectInvoiceExport.setInvoice(IS_INVOICE.get(projectRegister.getIsInvoice()));
                 selectInvoiceExportList.add(selectInvoiceExport);
             }

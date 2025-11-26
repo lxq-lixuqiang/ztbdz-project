@@ -32,7 +32,7 @@
                     <div>
                         <p><strong>项目名称：</strong><span></span></p>
                         <p><strong>项目编号：</strong><span></span></p>
-                        <p><strong>项目金额：</strong>￥<span></span></p>
+                        <p><strong>项目金额：</strong><span></span></p>
                     </div>
                     <div>
                         <p><strong>报名截止：</strong><span></span></p>
@@ -181,7 +181,7 @@
                 var infos = $("#projectInfo span");
                 $(infos[0]).text(data.projectName);
                 $(infos[1]).text(data.projectCode);
-                $(infos[2]).text(parseFloat(data.money).toLocaleString('en-US'));
+                $(infos[2]).text(parseInt(data.money)==0?'/':"￥"+parseFloat(data.money).toLocaleString('en-US'));
                 $(infos[3]).text(data.enrollEndDate);
                 $(infos[4]).text(daysBetweenDates(new Date(data.senrollStartDate),new Date(data.enrollEndDate)));
                 $("#registrationFee").text(parseFloat(data.registrationFee).toLocaleString('en-US'));

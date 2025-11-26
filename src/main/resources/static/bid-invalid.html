@@ -92,7 +92,7 @@
                                 .replaceAll("[详细项目名称]",e.data.project.projectName)
                                 .replaceAll("[采购单位全称]",e.data.tendereeName)
                                 .replaceAll("[公开招标/邀请招标/竞争性谈判/竞争性磋商/单一来源采购/询价等]",e.data.project.procurementMethod)
-                                .replaceAll("[具体金额]",parseFloat(e.data.project.money).toLocaleString('en-US'))
+                                .replaceAll("[具体金额]",parseInt(e.data.project.money)==0?'/':parseFloat(e.data.project.money).toLocaleString('en-US'))
                                 .replaceAll("[发布采购公告的日期]",new Date(e.data.createDate).toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'}))
                                 .replaceAll("[原定开标日期]",new Date(e.data.project.bidOpeningTime).toLocaleDateString('zh-CN', {year: 'numeric',month: 'long',day: '2-digit'}))
                                 .replaceAll("[确定废标的日期]",nowDate)

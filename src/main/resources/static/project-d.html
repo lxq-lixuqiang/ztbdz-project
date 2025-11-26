@@ -138,7 +138,7 @@
             <table style="width:100%;">
                 <tr><td style="padding:8px 0; width:120px;">项目名称：</td><td>${project.projectName}</td></tr>
                 <tr><td style="padding:8px 0;">项目编号：</td><td>${project.projectCode}</td></tr>
-                <tr><td style="padding:8px 0;">预算金额：</td><td>${parseFloat(project.money).toLocaleString('en-US')}元</td></tr>
+                <tr><td style="padding:8px 0;">预算金额：</td><td>${parseInt(project.money)==0?'/':parseFloat(project.money).toLocaleString('en-US')+"元"}</td></tr>
                 <tr><td style="padding:8px 0;">报名截止：</td><td>${project.enrollEndDate}</td></tr>
                 <tr><td style="padding:8px 0;">开标时间：</td><td>${project.bidOpeningTime}</td></tr>
                 <tr><td style="padding:8px 0; vertical-align:top;">项目描述：</td><td>${project.projectOverview}</td></tr>
@@ -165,7 +165,7 @@
         }
 
         $.ajax({
-            url: '/projectRegister/update',
+            url: '/projectRegister/updateInvoice',
             type: 'POST',
             contentType: "application/json",
             data: JSON.stringify({"id":rid,"isInvoice":0,"invoiceType":type}),

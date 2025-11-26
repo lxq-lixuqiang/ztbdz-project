@@ -11,7 +11,7 @@
  Target Server Version : 50720
  File Encoding         : 65001
 
- Date: 25/11/2025 10:33:57
+ Date: 26/11/2025 10:20:16
 */
 
 SET NAMES utf8mb4;
@@ -67,6 +67,29 @@ CREATE TABLE `bidder_info`  (
   `qualification_certificate_05` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
   `update_date` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for blacklist
+-- ----------------------------
+DROP TABLE IF EXISTS `blacklist`;
+CREATE TABLE `blacklist`  (
+  `id` bigint(20) NOT NULL,
+  `member_id` bigint(20) NULL DEFAULT NULL,
+  `landlord_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `bidder_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `is_enable` int(2) NULL DEFAULT NULL,
+  `type` int(2) NULL DEFAULT NULL,
+  `end_date` datetime(0) NULL DEFAULT NULL,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
+  `ext1` int(255) NULL DEFAULT NULL,
+  `ext2` int(255) NULL DEFAULT NULL,
+  `ext3` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ext4` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `ext5` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -308,7 +331,9 @@ CREATE TABLE `project_register`  (
   `earnest_money_state` int(11) NULL DEFAULT NULL,
   `earnest_money_account_date` datetime(0) NULL DEFAULT NULL,
   `earnest_money_refund_date` datetime(0) NULL DEFAULT NULL,
+  `invoice_date` datetime(0) NULL DEFAULT NULL,
   `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_projectregister_memberid`(`member_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;

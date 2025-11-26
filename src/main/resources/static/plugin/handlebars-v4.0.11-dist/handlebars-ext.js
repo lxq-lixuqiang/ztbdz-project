@@ -81,7 +81,10 @@ Handlebars.registerHelper("gtNowDate", function(v1, options) {
 //金额千位分隔符
 Handlebars.registerHelper("moneyDelimiter", function(v1, options) {
     if(!v1){
-        return '';
+        return '/';
+    }
+    if(parseInt(v1)==0){
+        return '/';
     }
     return parseFloat(v1).toLocaleString('en-US');
 });

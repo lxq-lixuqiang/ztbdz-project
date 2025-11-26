@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.tenderee.mapper.BlacklistMapper">
+    <select id="verifyBlacklist" resultType="Integer">
+		select
+			count(1)
+		from
+          blacklist
+		WHERE
+          is_enable=0
+          and end_date > Now()
+          and type = #{type}
+          and bidder_name = #{bidderName}
+          and landlord_name = #{landlordName}
+	</select>
+</mapper>
+

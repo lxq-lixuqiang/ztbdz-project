@@ -215,7 +215,7 @@ public class ProjectServiceImpl  implements ProjectService {
 
     @Override
     public List<Project> selectByIds(List<Long> ids) throws Exception {
-        return selectByIds(ids,null);
+        return projectMapper.selectByIds2(ids);
     }
 
     @Override

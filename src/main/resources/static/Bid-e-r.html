@@ -90,7 +90,7 @@
                         }
                         $("input[name='reviewDate']").attr("value",new Date().toLocaleDateString('zh-CN', {year: 'numeric',month: '2-digit',day: '2-digit'}).replaceAll("/","-"));
                         $("input[name='budgetCapital']").attr("value",e.data.project.moneyUppercase.replaceAll("元整",""));
-                        $("input[name='budgetNumber']").attr("value",parseFloat(e.data.project.money).toLocaleString('en-US'));
+                        $("input[name='budgetNumber']").attr("value",parseFloat(e.data.project.money));
                     }else{
                         alert("获取项目信息失败："+e.message);
                         window.history.back();

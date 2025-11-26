@@ -68,6 +68,9 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private Integer isInvoice;
     @ApiModelProperty("发票类型")
     private String invoiceType;
+    @ApiModelProperty("申请开票日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private Date invoiceDate;
     @ApiModelProperty("保证金到账时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date earnestMoneyAccountDate;

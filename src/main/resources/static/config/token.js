@@ -221,7 +221,7 @@ function pageButton(data,pageName,pageTheadName){
     if(data.navigatepageNums.length>0){
         var pageInfo = "<span style=\"margin:0 10px;\">共&nbsp;"+data.total+"&nbsp;条</span>";
         if(1!= data.navigateFirstPage){
-            pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;cursor: pointer;\" onclick=\"pageShow('1')\">1</button>";
+            pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;cursor: pointer;\" onclick=\"pageShow('1','"+pageName+"')\">1</button>";
             pageInfo +="<span style=\"margin:0 10px;\">...</span>";
         }
         for(var i=0;i<data.navigatepageNums.length;i++){
@@ -233,11 +233,11 @@ function pageButton(data,pageName,pageTheadName){
             if(data.navigatepageNums[i] != data.pageNum){
                 noDisabled = "cursor: pointer;";
             }
-            pageInfo +="<button style=\"margin-top:5px;width:40px;height:40px;margin-right:10px;"+noDisabled+"\" "+disabled+"  onclick=\"pageShow('"+data.navigatepageNums[i]+"')\" >"+data.navigatepageNums[i]+"</button>";
+            pageInfo +="<button style=\"margin-top:5px;width:40px;height:40px;margin-right:10px;"+noDisabled+"\" "+disabled+"  onclick=\"pageShow('"+data.navigatepageNums[i]+"','"+pageName+"')\" >"+data.navigatepageNums[i]+"</button>";
         }
         if(data.pages!= data.navigateLastPage){
             pageInfo +="<span style=\"margin:0 10px;\">...</span>";
-            pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;cursor: pointer;\" onclick=\"pageShow('"+data.pages+"')\">"+data.pages+"</button>";
+            pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;cursor: pointer;\" onclick=\"pageShow('"+data.pages+"','"+pageName+"')\">"+data.pages+"</button>";
         }
         $("#"+pageName).html(pageInfo);
     }else{
@@ -250,15 +250,15 @@ function pageButton(data,pageName,pageTheadName){
         pageThead.scrollIntoView({ behavior: 'smooth' });
     }
 }
-function pageShow(page){
+function pageShow(page,pageName){
     localStorage.setItem('page', page);
     var data = localStorage.getItem('data');
     if(!data){
-        initPageShow("");
+        initPageShow("",pageName);
     }else if(data.indexOf(":")>-1){
-        initPageShow(JSON.parse(data));
+        initPageShow(JSON.parse(data),pageName);
     }else{
-        initPageShow(data);
+        initPageShow(data,pageName);
     }
 }
 

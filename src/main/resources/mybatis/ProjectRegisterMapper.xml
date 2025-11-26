@@ -174,11 +174,11 @@
 		<if test="projectRegisters != null">
 			<if test="projectRegisters.isInvoice != null and projectRegisters.isInvoice == -1">
 				and  pr.is_invoice is not null
-				order by pr.is_invoice desc,p.project_name,a.account_name,pr.invoice_type
+				order by pr.is_invoice,p.project_name,pr.invoice_date desc,pr.invoice_type
 			</if>
 			<if test="projectRegisters.isInvoice != null and projectRegisters.isInvoice != -1">
 				and  pr.is_invoice=#{projectRegisters.isInvoice}
-				order by pr.is_invoice desc,p.update_date desc
+				order by pr.is_invoice,pr.invoice_date desc
 			</if>
 		</if>
 	</select>

@@ -702,10 +702,14 @@
     }
 
     var publishInfo;
+    var announcementModal4;
+    var announcementModal;
     $(function() {
         // 初始化
         publishInfo = $("#publish").html();
         manage();
+        announcementModal4 = $("#announcementModal4").html();
+        announcementModal = $("#announcementModal").html();
 
         $("body").on('change','#fileUpload', function () {
             if(this.files.length==0){
@@ -793,7 +797,11 @@
     }
 
 
-    function initPageShow(data){
+    function initPageShow(data,pageName){
+        if(pageName=="pageInfo4"){
+            blacklistInit(data);
+            return;
+        }
         loadPublishedProjects();
     }
     function loadPublishedProjects() {
@@ -855,10 +863,113 @@
 
     // 显示黑名单
     function showBlacklist() {
-        alert("功能正在建设中...")
-        // localStorage.removeItem('page'); // 分页页码
-        // $("#applicationModal4").show();
-        // TODO 获取黑名单数据
+        localStorage.removeItem('page'); // 分页页码
+        localStorage.removeItem('data'); // 查询数据
+        $("#applicationModal4").show();
+        blacklistInit();
+    }
+
+    function blacklistInit(data){
+        var page = "?size=5";
+        var pageInfo = localStorage.getItem('page');
+        if(pageInfo){
+            page+="&page="+pageInfo;
+        }
+        if(data){
+            data["type"]="0";
+        }else{
+            data ={"type":"0"};
+        }
+        $.ajax({
+            url: "/blacklist/page"+page,
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    $("#modalApplicationTable4").html(Handlebars.compile($("#projectTemplate4").html())(e.data));
+                    pageButton(e.data,"pageInfo4","pageThead4");
+                }else{
+                    alert("查询黑名单列表失败："+e.message);
+                }
+            }
+        });
+    }
+    function addBlacklist(){
+        $("#announcementModal4").show();
+    }
+
+    function submitBlacklist(){
+        $("#gonggao4").attr("disabled","true");
+        var landlordName = $("#landlordName").val();
+        var bidderName = $("#bidderName").val();
+        var endDate = $("#endDate").val();
+        var isEnable = $("#isEnable").find("option:selected").val();
+
+        if(!landlordName || !bidderName || !isEnable || !endDate) {
+            alert("请填写带 * 字段为必填项！");
+            $("#gonggao4").removeAttr("disabled");
+            return;
+        }
+        var data = {"id":$("#announcementModal4>div").attr("data-id"),
+            "landlordName":landlordName,
+            "bidderName":bidderName,
+            "isEnable":isEnable,
+            "type":0,
+            "endDate":new Date(endDate).toLocaleString().replaceAll("/","-")};
+        $.ajax({
+            url: "/blacklist/createOrUpdate",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    alert("保存成功！");
+                    closeModal5();
+                    blacklistInit();
+                }else{
+                    alert("保存容失败："+e.message);
+                }
+                $("#gonggao4").removeAttr("disabled");
+            }
+        });
+    }
+    function updateBlacklist(id){
+        $.ajax({
+            url: "/blacklist/get/"+id,
+            type: "GET",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    $("#announcementModal4>div").attr("data-id",id);
+                    $("#landlordName").val(e.data.landlordName);
+                    $("#bidderName").val(e.data.bidderName);
+                    $("#isEnable>[value="+e.data.isEnable+"]").attr("selected","selected");
+                    $("#endDate").attr("value",e.data.endDate);
+                    addBlacklist();
+                }else{
+                    alert("获取数据失败："+e.message);
+                }
+            }
+        });
+    }
+    function deleteBlacklist(id){
+        if(!confirm('确定要删除吗？')) {
+            return;
+        }
+        $.ajax({
+            url: "/blacklist/deleteList?ids="+id,
+            type: "POST",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status == 200){
+                    alert("删除成功！");
+                    blacklistInit();
+                }else{
+                    alert("删除失败："+e.message);
+                }
+            }
+        });
     }
 
     // 关闭公告弹窗
@@ -866,7 +977,6 @@
         $("#announcementModal").hide();
     }
 
-    var announcementModal = $("#announcementModal").html();
     // 提交公告
     function submitAnnouncement() {
         $("#gonggao").attr("disabled","true");
@@ -1097,10 +1207,11 @@
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                业主单位<input type="text" id="projectNameSearch2" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                <!--业主单位<input type="text" id="projectNameSearch2" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">-->
+                <!--供应商单位<input type="text" id="projectNameSearch3" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">-->
             </div>
             <div  style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <button onclick="" style="padding:8px 20px; background:#2196F3; color:#fff; border:none;cursor: pointer;">添加</button>
+                <button onclick="addBlacklist()" style="padding:8px 20px; background:#2196F3; color:#fff; border:none;cursor: pointer;">添加</button>
             </div>
         </div>
         <table style="width:100%; border-collapse:collapse;">
@@ -1120,6 +1231,66 @@
         <div id="pageInfo4" style="margin-top:10px; text-align: center;"></div>
     </div>
 </div>
+<!-- 澄清弹窗 -->
+<div id="announcementModal4" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div data-id="" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3>添加黑名单</h3>
+            <button onclick="closeModal5()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">业主单位<span style="color:red;">*</span></label>
+            <input id="landlordName" type="text" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;" required>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">供应商名称<span style="color:red;">*</span></label>
+            <input id="bidderName" type="text" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;" required>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">截止时间<span style="color:red;">*</span></label>
+            <input id="endDate" type="datetime-local" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">是否启用<span style="color:red;">*</span></label>
+            <select id="isEnable" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;" >
+                <option value="0">启用</option>
+                <option value="1">停用</option>
+            </select>
+        </div>
+        <div style="text-align:center;">
+            <button onclick="submitBlacklist()" id="gonggao4" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">保存</button>
+        </div>
+    </div>
+</div>
+<script id="projectTemplate4" type="text/x-handlebars-template">
+    {{#if list}}
+    {{#each list}}
+    <tr style="border: 1px solid rgb(221, 221, 221);">
+        <td style="padding:10px;">{{landlordName}}</td>
+        <td style="padding:10px;">{{bidderName}}</td>
+        <td style="padding:10px;">{{endDate}}</td>
+        {{#eq isEnable 1}}
+                <td style="padding:10px;color:red;">已停用</td>
+        {{else}}
+            {{#gtNowDate endDate}}
+                <td style="padding:10px;color:#4CAF50;">正常</td>
+            {{else}}
+                <td style="padding:10px;color:red;">已失效</td>
+            {{/gtNowDate}}
+        {{/eq}}
+
+        <td style="padding:10px;">
+            <button onclick="updateBlacklist('{{id}}')" style="padding:3px 8px; background:#4CAF50; color:#fff; border:none;cursor: pointer;margin-bottom:5px;">修改</button>
+            <button onclick="deleteBlacklist('{{id}}')" style="padding:3px 8px; background:#2196F3; color:#fff; border:none;cursor: pointer;">删除</button>
+        </td>
+    </tr>
+    {{/each}}
+    {{else}}
+    <tr>
+        <td colspan="5" style="padding:10px; border:1px solid #ddd;">没有数据</td>
+    </tr>
+    {{/if}}
+</script>
 <script>
     // 显示报名情况弹窗
     function showApplicationModal(projectName,id) {
@@ -1292,18 +1463,18 @@
                     }
                     companies.forEach(company => {
                         const row = document.createElement('tr');
-                    row.style.border = '1px solid #ddd';
-                    row.innerHTML = `<td colspan="5" style="padding:10px;">没有评审结果</td>`;
-                    if(e.data.length>0){
-                        row.innerHTML = `
-                                <td style="padding:10px;">${company.name}</td>
-                                <td style="padding:10px;">${company.contact}</td>
-                                <td style="padding:10px;">${company.phone}</td>
-                                <td style="padding:10px;">${company.winBidState=="1"?'中标':(company.winBidState=="2"?'未中标':'未公布')}</td>
-                            `;
-                    }
-                    tbody.appendChild(row);
-                });
+                            row.style.border = '1px solid #ddd';
+                            row.innerHTML = `<td colspan="5" style="padding:10px;">没有评审结果</td>`;
+                            if(e.data.length>0){
+                                row.innerHTML = `
+                                        <td style="padding:10px;">${company.name}</td>
+                                        <td style="padding:10px;">${company.contact}</td>
+                                        <td style="padding:10px;">${company.phone}</td>
+                                        <td style="padding:10px;">${company.winBidState=="1"?'中标':(company.winBidState=="2"?'未中标':'未公布')}</td>
+                                    `;
+                            }
+                            tbody.appendChild(row);
+                        });
                     // 显示弹窗
                     document.getElementById('applicationModal2').style.display = 'block';
                 }else{
@@ -1459,8 +1630,16 @@
     // 关闭弹窗
     function closeModal4() {
         localStorage.removeItem('page'); // 分页页码
+        localStorage.removeItem('data'); // 搜索数据
         document.getElementById('applicationModal4').style.display = 'none';
     }
+    // 关闭弹窗
+    function closeModal5() {
+        $("#announcementModal4").html(announcementModal4);
+        document.getElementById('announcementModal4').style.display = 'none';
+    }
+
+
     function leaderBtn(memberId,id,name){
         var data = {"id":id,"expertLeader":memberId};
         $.ajax({
