@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
             if(user.getPassword().length()<6) return Result.fail("密码不能少于6位！");
             user.setPassword(MD5.md5String(user.getPassword()));
             if(count(user)>0) return Result.fail("用户名已被注册，请更换其他用户名！");
-            if(accountService.count(user.getMember().getAccount())>0) return Result.fail("企业编码已被注册，请更换其他企业编码！");
+            if(accountService.count(user.getMember().getAccount())>0) return Result.fail("统一社会信用代码已被注册，请更换其他统一社会信用代码！");
             // 根据角色类型赋值角色，注册是默认是赋值一个角色
             List<Role> roleList = roleService.selectList(user.getMember().getRole());
             if(roleList.size()<=0) return Result.fail("没有对应角色编码【"+user.getMember().getRole().getType()+"】！");
@@ -224,6 +224,9 @@ public class UserServiceImpl implements UserService {
                 Account account = new Account();
                 account.setAccountName(dataMap.get(fields[3]));
                 account.setAccountUser(dataMap.get(fields[2]));
+                account.setMember(dataMap.get(fields[2]));
+                account.setPhone(dataMap.get(fields[5]));
+                account.setEmail(dataMap.get(fields[6]));
                 account.setAccountCode(dataMap.get(fields[7]));
                 member.setAccount(account);
                 Role role = new Role();

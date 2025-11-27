@@ -194,8 +194,7 @@
         // 切换回显示模式
         document.getElementById('companyInfoDisplay').style.display = 'block';
         document.getElementById('companyInfoForm').style.display = 'none';
-        
-        alert('企业信息更新成功！');
+
         // 这里可以添加实际提交到服务器的逻辑
     }
 
@@ -769,21 +768,28 @@
 
             var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountCodeFileId":fileId};
             updateAccount(data);
-            return false;
+            return returnInfo;
         };
+        var returnInfo;
         function updateAccount(data){
             $.ajax({
                 url: "/account/update",
                 type: "POST",
+                async: false,
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status != 200){
                         alert("更新企业失败："+e.message);
+                        returnInfo = true;
+                    }else{
+                        alert('企业信息更新成功！');
+                        verifyLogin();
+                        returnInfo = false;
                     }
-                    verifyLogin();
                 },error: function(e) {
                     alert('更新企业失败：'+e.message);
+                    returnInfo = true;
                 }
             });
         }
