@@ -287,11 +287,12 @@
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
                         
                         <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                            <h4>报名文件</h4>
+                            <h4>材料文件</h4>
                             <div id="certificateFiles">
                                 <p>没有上传文件</p>
                             </div>
-                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传报名文件</button>
+                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;margin-right:10px;">上传营业执照</button>
+                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;margin-right:10px;">上传报名文件</button>
                         </div>
                         
                         <button onclick="enableEditMode()" style="padding:8px 16px; background:#2196F3; color:white; border:none; cursor:pointer; margin-top:15px;">更改信息</button>
@@ -768,6 +769,11 @@
 
             var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountCodeFileId":fileId};
             updateAccount(data);
+            if(!returnInfo){
+                alert('企业信息更新成功！');
+            }else{
+                alert("更新企业失败："+e.message);
+            }
             return returnInfo;
         };
         var returnInfo;
@@ -780,10 +786,8 @@
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status != 200){
-                        alert("更新企业失败："+e.message);
                         returnInfo = true;
                     }else{
-                        alert('企业信息更新成功！');
                         verifyLogin();
                         returnInfo = false;
                     }
