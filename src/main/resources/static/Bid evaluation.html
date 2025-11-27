@@ -1261,7 +1261,7 @@
     </div>
     <!-- 澄清弹窗 -->
     <div id="announcementModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;max-height:80vh;overflow-y:auto;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h3>澄清内容</h3>
                 <button onclick="closeModal2()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
@@ -1483,7 +1483,7 @@
                 type:"layer-fadeIn",
                 title:"承诺书",
                 close:"false",
-                content:"<div style='text-align: left;line-height: 1.5;font-family:Arial; font-size:13px;'><div>四川中天阳光招标代理有限公司：</div>" +
+                content:"<div style='text-align: left;line-height: 1.5;font-family:Arial; font-size:13px;max-height:60vh;overflow-y:auto;'><div>四川中天阳光招标代理有限公司：</div>" +
                 "<div>我以（专家、采购人代表）身份参与"+name+"（采购项目编号："+code+"）评审活动。我确认：自己身体健康，无重大疾病，并具备有关政府采购的政策水平和对本项目的业务评审能力。</div>" +
                 "<div>我郑重承诺：评审中严格执行《中华人民共和国政府采购法》及相关法规规定，履行以下职责与义务、遵守以下纪律：</div>" +
                 "<div>一、履行以下职责：</div>" +
@@ -1720,12 +1720,12 @@
             var require = $("#require").val();
             var fileId = $("#field").attr("data-file-id");
             var content = "<table style='white-space: pre-wrap;font-family:Arial; font-size:15px; line-height:2;text-align: left;'>";
-            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>供应商：</td><td style='text-align: left;'><div style='max-height: 60px;overflow: auto;'>"+gongyingshang[accountId]+"</div></td></tr>";
-            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>采购包号（采购包名称）：</td><td style='text-align: left;'><div style='max-height: 60px;overflow: auto;'>"+name+"</div></td></tr>";
-            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>澄清原因：</td><td style='text-align: left;'><div style='max-height: 60px;overflow: auto;'>"+reason+"</div></td></tr>";
-            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>澄清要求：</td><td style='text-align: left;width:76%;'><div style='max-height: 200px;overflow: auto;'>"+require+"<div></div></td></tr>";
-            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>响应截止时间：</td><td style='text-align: left;'><div style='max-height: 60px;overflow: auto;'>"+new Date(replyDate).toLocaleString().replaceAll("/","-")+"</div></td></tr>";
-            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'><p>响应文件原文：</p></td><td style='text-align: left;'><div style='max-height: 150px;overflow: auto;'>"+$("#fileId").html()+"</td></div></tr>";
+            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>供应商：</td><td style='text-align: left;'><div>"+gongyingshang[accountId]+"</div></td></tr>";
+            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>采购包名称：</td><td style='text-align: left;'><div>"+name+"</div></td></tr>";
+            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>澄清原因：</td><td style='text-align: left;'><div>"+reason+"</div></td></tr>";
+            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>澄清要求：</td><td style='text-align: left;width:76%;'><div>"+require+"<div></div></td></tr>";
+            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>响应截止时间：</td><td style='text-align: left;'><div>"+new Date(replyDate).toLocaleString().replaceAll("/","-")+"</div></td></tr>";
+            content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'><p>响应文件原文：</p></td><td style='text-align: left;'><div>"+$("#fileId").html()+"</td></div></tr>";
             content += "</table>";
 
             if(!name || !reason || !require || !accountId || !replyDate) {
@@ -1773,7 +1773,7 @@
                 type:"layer-fadeIn",
                 title:"澄清内容",
                 btn:["关闭"],
-                content:dataInfo[id].content
+                content:"<div style='max-height:60vh;overflow-y:auto;'>"+dataInfo[id].content+"</div>"
             };
             method.msg_layer(obj);
         }
@@ -1784,7 +1784,7 @@
                 type:"layer-fadeIn",
                 title:"回复内容",
                 btn:["关闭"],
-                content:dataInfo[id].replyContent
+                content:"<div style='max-height:60vh;overflow-y:auto;'>"+dataInfo[id].replyContent+"</div>"
             };
             method.msg_layer(obj);
         }

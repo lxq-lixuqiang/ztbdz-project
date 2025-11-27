@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result updatePassword(Long userId, String password, String newPassword) {
         try{
-            if(newPassword.length()<6 || newPassword.length()<6) return Result.fail("原密码或新密码不能少于6位！");
+            if(newPassword.length()<6 || newPassword.length()<6) return Result.fail("新密码不能少于6位！");
             User user = getById(userId);
             if(user==null) return Result.fail("userId找不到对应数据！");
             String passwordMD5 = MD5.md5String(password);
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result forgetPassword(String phone, String newPassword) {
         try{
-            if(newPassword.length()<6) return Result.fail("密码不能少于6位！");
+            if(newPassword.length()<6) return Result.fail("新密码不能少于6位！");
             Member member = new Member();
             member.setPhone(phone);
             List<Member> memberList = memberService.selectList(member);

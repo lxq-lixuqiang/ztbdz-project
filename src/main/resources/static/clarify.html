@@ -154,7 +154,7 @@
 
 <!-- 澄清弹窗 -->
 <div id="announcementModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100000;">
-    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px;max-height:80vh;overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3>回复澄清</h3>
             <button onclick="closeModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
@@ -322,7 +322,6 @@
     var openPrintHTML;
     function getPrintContents(memberId,projectId){
         $("#iframeInfo").contents().find("body").html("");
-        verifyLogin();
         $.ajax({
             url: "/resultReport/getPrintContents/"+memberId+"/"+projectId,
             type: "GET",
@@ -336,6 +335,7 @@
                 $("#iframeInfo").contents().find("body").html(openPrintHTML);
                 $("#iframeInfo").contents().find("body>#contentInfo").attr("style","transform:scale("+scale+");transform-origin: 0% 0%;");
                 $("#iframeInfo").show();
+                verifyLogin();
             }
         });
     }
@@ -490,7 +490,7 @@
             type:"layer-fadeIn",
             title:"回复内容",
             btn: ["关闭"],
-            content:dataInfo[replyId].replyContent
+            content:"<div style='max-height:60vh;overflow-y:auto;'>"+dataInfo[replyId].replyContent+"</div>"
         };
         method.msg_layer(obj);
     });
@@ -512,7 +512,7 @@
             type:"layer-fadeIn",
             title:"澄清说明",
             close:"false",
-            content:dataInfo[id].content,
+            content:"<div style='max-height:60vh;overflow-y:auto;'>"+dataInfo[id].content+"</div>",
             btn:btnInfo
         };
         method.msg_layer(obj);
@@ -535,8 +535,8 @@
         var require = $("#require").val();
         var fileId = $("#field").attr("data-file-id");
         var content = "<table style='white-space: pre-wrap;font-family:Arial; font-size:15px; line-height:2;text-align: left;'>";
-        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>回复内容：</td><td style='text-align: left;width:76%;'><div style='max-height: 300px;overflow: auto;'>"+require+"<div></div></td></tr>";
-        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'><p>回复文件：</p></td><td style='text-align: left;'><div style='max-height: 150px;overflow: auto;'>"+$("#fileId").html()+"</td></div></tr>";
+        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'>回复内容：</td><td style='text-align: left;width:76%;'><div>"+require+"<div></div></td></tr>";
+        content += "<tr><td style='text-align: right;font-weight: bolder;vertical-align: top;width: 180px;'><p>回复文件：</p></td><td style='text-align: left;'><div>"+$("#fileId").html()+"</td></div></tr>";
         content += "</table>";
 
         if(!require) {
@@ -544,7 +544,6 @@
             $("#gonggao").removeAttr("disabled");
             return;
         }
-        verifyLogin();
         var data = {"id":replyId,"replyContent":content,"tendereeInformField":fileId};
         $.ajax({
             url: "/tendereeInfo/update",

@@ -280,8 +280,8 @@
                                 <input type="text" id="expertPhone" style="width:100%; padding:8px;box-sizing: border-box;">
                             </div>
                             <div style="text-align:right;">
-                                <button type="button" id="cancelAddExpert" style="padding:8px 15px; margin-right:10px;">取消</button>
-                                <button type="submit" style="padding:8px 15px; background:#4CAF50; color:#fff; border:none;">保存</button>
+                                <button type="button" id="cancelAddExpert" style="padding:8px 15px; margin-right:10px;cursor: pointer;">取消</button>
+                                <button type="submit" style="padding:8px 15px; background:#4CAF50; color:#fff; border:none;cursor: pointer;">保存</button>
                             </div>
                         </form>
                     </div>
@@ -310,8 +310,8 @@
                     idCard: $('#expertIdCard').val().trim(),
                     phone: $('#expertPhone').val().trim()
                 };
-                if(!regBox.regMobilePhone.test(newExpert.phone)){
-                    alert('手机号格式错误');
+                if(!regBox.regMobilePhone.regEx.test(newExpert.phone)){
+                    alert(regBox.regMobilePhone.message);
                     return;
                 }
                 if(newExpert.idCard && !regBox.regIdCard.regEx.test(newExpert.idCard)){

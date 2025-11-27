@@ -97,7 +97,9 @@ public class AccountServiceImpl implements AccountService {
     public Result update(Account account) {
         try{
             Account account1 = this.getById(account.getId());
-            if(account1.getAccountCode().equals(account.getAccountCode())){
+            if(account1.getAccountCode()!=null &&
+                    account.getAccountCode()!=null &&
+                    account1.getAccountCode().equals(account.getAccountCode())){
                 if(this.count(account)>1) return Result.fail("统一社会信用代码已被注册，请更换其他统一社会信用代码！");
             }else{
                 if(this.count(account)>0) return Result.fail("统一社会信用代码已被注册，请更换其他统一社会信用代码！");

@@ -18,6 +18,10 @@ $(function(){
                     if(e.data.isPassword){
                         var newPassword = prompt("检测到使用的是默认密码，为了安全请设置新密码:");
                         if(newPassword.trim()){
+                            if(!regBox.regPassword.regEx.test(newPassword)){
+                                alert(regBox.regPassword.message);
+                                return;
+                            }
                             $.ajax({
                                 url: "/user/updatePassword?userId="+e.data.userId+"&password=123456&newPassword="+newPassword,
                                 type: "POST",
