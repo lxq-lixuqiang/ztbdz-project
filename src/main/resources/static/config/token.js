@@ -179,6 +179,7 @@ function upload(files,url,errorMagger){
         success: function (e) {
             if(e.status == 200){
                 fileId = e.data;
+                alert("上传成功！");
             }else{
                 alert(e.message)
             }
