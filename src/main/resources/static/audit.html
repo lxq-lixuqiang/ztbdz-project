@@ -24,7 +24,18 @@
     <!-- 可编辑的主要内容区域 -->
     <!-- InstanceBeginEditable name="content" -->
     <div style="width:1040px; min-height:calc(100vh - 120px); padding:20px;">
-        <h2>项目审查清单</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2>项目审查清单</h2>
+            <div>
+                <button onclick="initData()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">刷新列表</button>
+            </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            项目编号<input type="text" id="projectCodeSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            项目名称<input type="text" id="projectNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            采购单位<input type="text" id="tendereeName" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            <button id="searchBtn" onclick="initDataSearch()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
+        </div>
         <table id="projectList" style="width:100%; border-collapse:collapse; margin-bottom:20px;">
             <thead id="pageThead">
                 <tr style="background:#f0f0f0;">
@@ -76,7 +87,26 @@
         initData();
         manage();
 
+        $('#projectNameSearch').on('keypress', function(e) {
+            if(e.which === 13) { // 回车键
+                $('#searchBtn').click();
+            }
+        });
+        $('#projectCodeSearch').on('keypress', function(e) {
+            if(e.which === 13) { // 回车键
+                $('#searchBtn').click();
+            }
+        });
+        $('#tendereeName').on('keypress', function(e) {
+            if(e.which === 13) { // 回车键
+                $('#searchBtn').click();
+            }
+        });
         function initPageShow(data){
+            initData();
+        }
+        function initDataSearch(){
+            localStorage.setItem('page','1');
             initData();
         }
         // 加载数据
@@ -86,10 +116,26 @@
             if(pageInfo){
                 page="?page="+pageInfo;
             }
+
+            var projectName = $("#projectNameSearch").val();
+            var projectCode = $("#projectCodeSearch").val();
+            var tendereeName = $("#tendereeName").val();
+            var project = {"isAudit":12};
+            if(projectName){
+                project["projectName"] = projectName;
+            }
+            if(projectCode){
+                project["projectCode"] = projectCode;
+            }
+
+            var data ={"project":project};
+            if(tendereeName){
+                data["tendereeName"] = tendereeName;
+            }
             $.ajax({
                 url: "/tenderee/page"+page,
                 type: "POST",
-                data: JSON.stringify({"project":{"isAudit":12}}),
+                data: JSON.stringify(data),
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){

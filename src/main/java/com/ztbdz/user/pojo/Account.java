@@ -30,8 +30,8 @@ public class Account extends Model<Account> implements Serializable {
     private Integer accountType;
     @ApiModelProperty("法人代表人姓名")
     private String accountUser;
-    @ApiModelProperty("法人证件信息")
-    private Long accountUserId;
+    @ApiModelProperty("法人证件号")
+    private String accountUserId;
     @ApiModelProperty("注册资金")
     private String accountMoney;
     @ApiModelProperty("企业开户行账号")

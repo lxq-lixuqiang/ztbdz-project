@@ -56,7 +56,13 @@
 			</if>
 			<if test="project !=null">
 				<if test="project.projectName !=null and project.projectName.length()>0">
-					and p.project_name like concat('%',#{projectName},'%')
+					and p.project_name like concat('%',#{project.projectName},'%')
+				</if>
+				<if test="project.projectCode !=null and project.projectCode.length()>0">
+					and p.project_code like concat('%',#{project.projectCode},'%')
+				</if>
+				<if test="project.enrollEndDateSearch != null">
+					and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
 				</if>
 				<if test="project.state != null and project.state != 12">
 					and p.state = #{project.state}

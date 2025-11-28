@@ -361,6 +361,12 @@
                         <button onclick="showBlacklist()" style="padding:5px 10px; background:#00000075; color:white; border:none; cursor:pointer;">黑名单</button>
                     </div>
                 </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    项目名称<input type="text" id="projectNameSearch1" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    编号<input type="text" id="projectCodeSearch1" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    截止时间<input type="date" id="enrollEndDateSearch1" style="flex:1; padding:4px;margin: 0 20px 0 5px;" >
+                    <button id="searchBtn1" onclick="loadPublishedProjectsSearch()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
+                </div>
                 <div id="loadingMessage" style="text-align:center; padding:20px; display:none;">正在加载项目列表...</div>
                 <div id="emptyMessage" style="text-align:center; padding:20px; display:none;">没有已发布项目</div>
                 <table id="publishedProjects" style="width:100%; border-collapse:collapse;">
@@ -524,6 +530,16 @@
     $('#projectNameSearch').on('keypress', function(e) {
         if(e.which === 13) { // 回车键
             $('#searchBtn').click();
+        }
+    });
+    $('#projectNameSearch1').on('keypress', function(e) {
+        if(e.which === 13) { // 回车键
+            $('#searchBtn1').click();
+        }
+    });
+    $('#projectCodeSearch1').on('keypress', function(e) {
+        if(e.which === 13) { // 回车键
+            $('#searchBtn1').click();
         }
     });
 
@@ -804,6 +820,11 @@
         }
         loadPublishedProjects();
     }
+    function loadPublishedProjectsSearch(){
+        localStorage.setItem('page','1');
+        loadPublishedProjects();
+    }
+
     function loadPublishedProjects() {
         // 直接显示静态数据，不发起请求
         $("#loadingMessage").show();
@@ -814,9 +835,25 @@
         if(pageInfo){
             page="?page="+pageInfo;
         }
+        var projectName = $("#projectNameSearch1").val();
+        var projectCode = $("#projectCodeSearch1").val();
+        var enrollEndDate = $("#enrollEndDateSearch1").val();
+        var project = {};
+        if(projectName){
+            project["projectName"] = projectName;
+        }
+        if(projectCode){
+            project["projectCode"] = projectCode;
+        }
+        if(enrollEndDate){
+            project["enrollEndDateSearch"] = enrollEndDate;
+        }
+
+        var data ={"project":project};
         $.ajax({
             url: "/tenderee/page"+page,
             type: "POST",
+            data: JSON.stringify(data),
             contentType: "application/json",
             success:function(e) {
                 if(e.status == 200){
@@ -1207,8 +1244,8 @@
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <!--业主单位<input type="text" id="projectNameSearch2" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">-->
-                <!--供应商单位<input type="text" id="projectNameSearch3" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">-->
+                <!--业主单位<input type="text" id="landlordSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">-->
+                <!--供应商单位<input type="text" id="biderSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">-->
             </div>
             <div  style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <button onclick="addBlacklist()" style="padding:8px 20px; background:#2196F3; color:#fff; border:none;cursor: pointer;">添加</button>
