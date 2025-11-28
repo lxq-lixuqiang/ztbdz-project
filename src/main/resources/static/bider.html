@@ -771,8 +771,6 @@
             updateAccount(data);
             if(!returnInfo){
                 alert('企业信息更新成功！');
-            }else{
-                alert("更新企业失败："+e.message);
             }
             return returnInfo;
         };
@@ -790,9 +788,10 @@
                     }else{
                         verifyLogin();
                         returnInfo = false;
+                        alert("操作失败："+e.message);
                     }
                 },error: function(e) {
-                    alert('更新企业失败：'+e.message);
+                    alert('操作失败：'+e.message);
                     returnInfo = true;
                 }
             });
