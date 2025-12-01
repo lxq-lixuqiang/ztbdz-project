@@ -865,13 +865,6 @@
         }
         // 显示报名结果弹窗
         function signUp(id,downUrl,oldSuppliers) {
-            if(oldSuppliers){
-                //前期供应商
-                if((oldSuppliers+",").indexOf(getMember().account.accountName+",")>-1){
-                    alert("该项目无法报名，贵公司已参与前期项目投入。如有疑问，详细问题请拨打"+config.consultPhone.replaceAll("&#10;","，"))
-                    return ;
-                }
-            }
 
             if(downUrl){
                 if(confirm('是否下载告知书和登记表。请仔细阅读附件的廉洁告知书，补充完整登记表信息盖章和报名资料一起在“我的信息”列表中上传！')) {
@@ -884,6 +877,13 @@
                     alert("请在【我的信息】列表中完善企业信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，报名文件");
                     $("#myInfo").click();
                     return ;
+                }
+                if(oldSuppliers){
+                    //前期供应商
+                    if((oldSuppliers+",").indexOf(account.accountName+",")>-1){
+                        alert("该项目无法报名，贵公司已参与前期项目投入。如有疑问，详细问题请拨打"+config.consultPhone.replaceAll("&#10;","，"))
+                        return ;
+                    }
                 }
                 var data = {"project":{"id":id}};
                 projectRegister(data,1);

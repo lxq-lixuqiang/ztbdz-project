@@ -18,14 +18,14 @@ public class DESTest {
      */
     @Test
     public void desTest() {
-        String temp = "12345";
+        String temp = "123456";
         // DESC加密
         String str = DESUtil.getEncryptString(temp);
         System.out.println("DESC加密：" + str);
         // DESC解密
         System.out.println("DESC解密：" + DESUtil.getDecryptString(str));
         // MD5加密
-        System.out.println("MD5加密：" + MD5.md5String(temp));
+        System.out.println("MD5加密：" + MD5.md5String(temp)); // d5205e8e64fd719774ca0039f5e9d119
     }
 
 }
