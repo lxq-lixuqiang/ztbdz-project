@@ -154,7 +154,7 @@ public class DataInitializer {
                     treasurerMenuList.add(finance);
                     saveDataMap.put("finance",treasurerMenuList);
 
-                    // 抽取专家员
+                    // 抽取专家员_已取消此角色
 //                    List<MenuAuthorize> extractExpertMenuList = new ArrayList();
 //                    extractExpertMenuList.add(expertSelect);
 //                    saveDataMap.put("expertSelect",extractExpertMenuList);

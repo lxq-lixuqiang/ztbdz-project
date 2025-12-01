@@ -219,7 +219,7 @@ public class ExpertInfoServiceImpl implements ExpertInfoService {
     public Result get(Long projectId) {
         try{
             ReviewInfo reviewInfo = reviewInfoService.selectByProjectId(projectId);
-            if(reviewInfo==null) return Result.error("未抽取专家，请联系项目经理！");
+            if(reviewInfo==null) return Result.error("未抽取专家，请联系项目经理或登录【项目经理】账号抽取！");
             List<Long> expertId = new ArrayList();
             if(!StringUtils.isEmpty(reviewInfo.getExpertLeader())){
                 expertId.add(reviewInfo.getExpertLeader());//专家组长
