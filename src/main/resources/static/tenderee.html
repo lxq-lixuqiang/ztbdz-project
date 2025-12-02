@@ -343,6 +343,7 @@
                         <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名单位</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名状态</th>
+                        <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -464,6 +465,7 @@
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
         <td style="padding:10px;">{{project.tenderee.tendereeName}}</td>
         <td style="padding:10px;">{{member.account.accountName}}</td>
+        <td style="padding:10px;">{{createDate}}</td>
         <td style="padding:10px;{{#eq state 3}}color:red;{{/eq}}">
             {{#eq state 0}}缴费审核中{{/eq}}
             {{#eq state 1}}报名成功{{/eq}}

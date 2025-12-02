@@ -880,8 +880,8 @@
                 }
                 if(oldSuppliers){
                     //前期供应商
-                    if((oldSuppliers+",").indexOf(account.accountName+",")>-1){
-                        alert("该项目无法报名，贵公司已参与前期项目投入。如有疑问，详细问题请拨打"+config.consultPhone.replaceAll("&#10;","，"))
+                    if((","+oldSuppliers+",").indexOf(","+account.accountName+",")>-1){
+                        alert("工程项目报名失败：检测到公司已参与前期工程的投入。如有疑问，请拨打"+config.consultPhone.replaceAll("&#10;","，"));
                         return ;
                     }
                 }
