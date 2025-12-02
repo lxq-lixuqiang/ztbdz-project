@@ -24,7 +24,7 @@ function removeToken() {
 
 // 配置信息 加密：btoa(unescape(encodeURIComponent("需要加密的内容")))
 var config = {
-    refundReason  : decoded("6K+35Y+R6YCB6YKu566x5YiwIOKAnDI4MTc4OTk3OTRxcS5jb23igJ3vvIzor7TmmI7pgIDotLnljp/lm6DlubbpmYTkuIog4oCc5pSv5LuY5oiQ5Yqf55qE5oiq5Zu+4oCdIOWSjOaIquWbvumhtemdouaciSDigJznvLTotLnkuI3pgJrov4figJ0g55qE6aG555uuIOi/m+ihjOmAgOi0ueWuoeaguO+8gQ=="), //....退费流程说明 "请发送邮箱到 “2817899794qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “缴费不通过” 的项目 进行退费审核！"
+    refundReason  : decoded("6K+35Y+R6YCB6YKu566x5YiwIOKAnDI4MTc4OTk3OTRAcXEuY29t4oCd77yM6K+05piO6YCA6LS55Y6f5Zug5bm26ZmE5LiKIOKAnOaUr+S7mOaIkOWKn+eahOaIquWbvuKAnSDlkozmiKrlm77pobXpnaLmnIkg4oCc57y06LS55LiN6YCa6L+H4oCdIOeahOmhueebriDov5vooYzpgIDotLnlrqHmoLg="), //....退费流程说明 "请发送邮箱到 “2817899794qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “缴费不通过” 的项目 进行退费审核！"
     consultPhone : decoded("6aG555uu5ZKo6K+i55S16K+d77yaMDI4LTg2NzE2Mjg5"), //....咨询电话 "项目咨询电话：028-86716289"
     skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMTM4LTgxMTItMzIwNA=="), //....技术电话 "平台技术电话：138-8112-3204"
     pay : {
@@ -32,7 +32,35 @@ var config = {
         bankAccountNumber : decoded("NjMxMCAwNTcxNg=="), //....银行账号 "6310 05716"
         bankDeposit : decoded("5Lit5Zu95rCR55Sf6ZO26KGM5oiQ6YO96ZOB5YOP5a+65pSv6KGM"), //....开户银行 "中国民生银行成都铁像寺支行"
         qrCode : decoded("aW1hZ2VzL3BheW1lbnQtcXIuanBn") //....微信付款二维码图片 "images/payment-qr.jpg"
-    }
+    },
+    title : decoded("5Lit5aSp6Ziz5YWJQUnmmbrog73ljJbor4TmoIfns7vnu58="), //....公司标题 "中天阳光AI智能化评标系统"
+    name : decoded("5Zub5bed5Lit5aSp6Ziz5YWJ5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....公司名称 "四川中天阳光招标代理有限公司"
+    logo : decoded("aW1hZ2VzL3RvcGJhcjAyLmpwZw==") //....公司logo "images/topbar02.jpg"
+}
+
+initInit();
+window.onload = function()  {
+    // 退出登录
+    $("body").on("click", "a:contains('"+decoded("6YCA5Ye6")+"')", function() {
+        $.ajax({
+            url: "/user/logout",
+            type: "POST",
+            contentType: "application/json",
+            success:function(e) {
+                if(e.status != 200){
+                    alert(e.message);
+                }
+            }
+        });
+        removeToken();
+    });
+};
+
+function initInit(){
+    var oldInfo = decoded("QUnmmbrog73ljJbor4TmoIfns7vnu58=");// AI智能化评标系统
+    $("div>div:contains('"+oldInfo+"')").text(config.title);
+    var logo = $(".logo");
+    if(logo.length>0) logo.attr("src",config.logo);
 }
 
 // 正则表达式校验
@@ -122,24 +150,6 @@ function verifyLogin(){
         }
     });
 }
-
-window.onload = function()  {
-    // 退出登录
-    $("body").on("click", "a:contains('"+decoded("6YCA5Ye6")+"')", function() {
-        $.ajax({
-            url: "/user/logout",
-            type: "POST",
-            contentType: "application/json",
-            success:function(e) {
-                if(e.status != 200){
-                    alert(e.message);
-                }
-            }
-        });
-        removeToken();
-    });
-};
-
 
 // 上传图片
 function uploadImg(files) {
