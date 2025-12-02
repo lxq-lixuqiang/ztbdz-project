@@ -24,18 +24,18 @@ function removeToken() {
 
 // 配置信息 加密：btoa(unescape(encodeURIComponent("需要加密的内容")))
 var config = {
-    refundReason  : decoded("6K+35Y+R6YCB6YKu566x5YiwIOKAnDI4MTc4OTk3OTRAcXEuY29t4oCd77yM6K+05piO6YCA6LS55Y6f5Zug5bm26ZmE5LiKIOKAnOaUr+S7mOaIkOWKn+eahOaIquWbvuKAnSDlkozmiKrlm77pobXpnaLmnIkg4oCc57y06LS55LiN6YCa6L+H4oCdIOeahOmhueebriDov5vooYzpgIDotLnlrqHmoLg="), //....退费流程说明 "请发送邮箱到 “2817899794qq.com”，说明退费原因并附上 “支付成功的截图” 和截图页面有 “缴费不通过” 的项目 进行退费审核！"
-    consultPhone : decoded("6aG555uu5ZKo6K+i55S16K+d77yaMDI4LTg2NzE2Mjg5"), //....咨询电话 "项目咨询电话：028-86716289"
-    skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMTM4LTgxMTItMzIwNA=="), //....技术电话 "平台技术电话：138-8112-3204"
+    refundReason  : decoded("6K+355S16K+d5ZKo6K+iIOKAnDAyOC02NTczMTg4Me+8jDAyOC04NjY2MTgxMOKAnei/m+ihjOmhueebrumAgOi0ue+8gQ=="), //....退费流程说明 "请电话咨询 “028-65731881，028-86661810”进行项目退费！"
+    consultPhone : decoded("6aG555uu5ZKo6K+i55S16K+d77yaMDI4LTY1NzMxODgxJiMxMDswMjgtODY2NjE4MTA="), //....咨询电话 "项目咨询电话：028-65731881&#10;028-86661810"
+    skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMDI4LTY1NzMxODgx"), //....技术电话 "平台技术电话：028-65731881"
     pay : {
-        receivingAccount : decoded("5Zub5bed5Lit5aSp6Ziz5YWJ5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....收款账户 "四川中天阳光招标代理有限公司"
-        bankAccountNumber : decoded("NjMxMCAwNTcxNg=="), //....银行账号 "6310 05716"
-        bankDeposit : decoded("5Lit5Zu95rCR55Sf6ZO26KGM5oiQ6YO96ZOB5YOP5a+65pSv6KGM"), //....开户银行 "中国民生银行成都铁像寺支行"
-        qrCode : decoded("aW1hZ2VzL3BheW1lbnQtcXIuanBn") //....微信付款二维码图片 "images/payment-qr.jpg"
+        receivingAccount : decoded("6YKT5reR6Iqz"), //....收款账户 "邓淑芳"
+        bankAccountNumber : decoded("NjIxNzAwMzgwMDAyNDc5MTIzMg=="), //....银行账号 "6217003800024791232"
+        bankDeposit : decoded("5Lit5Zu95bu66K6+6ZO26KGM6IKh5Lu95pyJ6ZmQ5YWs5Y+45oiQ6YO955uK5bee5pSv6KGM"), //....开户银行 "中国建设银行股份有限公司成都益州支行"
+        qrCode : decoded("aW1hZ2VzL3BheW1lbnQtcXJfeHkuanBn") //....微信付款二维码图片 "images/payment-qr_xy.jpg"
     },
-    title : decoded("5Lit5aSp6Ziz5YWJQUnmmbrog73ljJbor4TmoIfns7vnu58="), //....公司标题 "中天阳光AI智能化评标系统"
-    name : decoded("5Zub5bed5Lit5aSp6Ziz5YWJ5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....公司名称 "四川中天阳光招标代理有限公司"
-    logo : decoded("aW1hZ2VzL3RvcGJhcjAyLmpwZw==") //....公司logo "images/topbar02.jpg"
+    title : decoded("6L2p6L6VQUnmmbrog73ljJbor4TmoIfns7vnu58="), //....公司标题 "轩辕AI智能化评标系统"
+    name : decoded("5Zub5bed6L2p6L6V5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....公司名称 "四川轩辕招标代理有限公司"
+    logo : decoded("aW1hZ2VzL3RvcGJhci5qcGc=") //....公司logo "images/topbar.jpg"
 }
 
 initInit();
