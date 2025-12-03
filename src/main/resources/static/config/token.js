@@ -28,9 +28,9 @@ var config = {
     consultPhone : decoded("6aG555uu5ZKo6K+i55S16K+d77yaMDI4LTY1NzMxODgxJiMxMDswMjgtODY2NjE4MTA="), //....咨询电话 "项目咨询电话：028-65731881&#10;028-86661810"
     skillPhone : decoded("5bmz5Y+w5oqA5pyv55S16K+d77yaMDI4LTY1NzMxODgx"), //....技术电话 "平台技术电话：028-65731881"
     pay : {
-        receivingAccount : decoded("6YKT5reR6Iqz"), //....收款账户 "邓淑芳"
-        bankAccountNumber : decoded("NjIxNzAwMzgwMDAyNDc5MTIzMg=="), //....银行账号 "6217003800024791232"
-        bankDeposit : decoded("5Lit5Zu95bu66K6+6ZO26KGM6IKh5Lu95pyJ6ZmQ5YWs5Y+45oiQ6YO955uK5bee5pSv6KGM"), //....开户银行 "中国建设银行股份有限公司成都益州支行"
+        receivingAccount : decoded("Lw=="), //....收款账户 "/"
+        bankAccountNumber : decoded("Lw=="), //....银行账号 "/"
+        bankDeposit : decoded("Lw=="), //....开户银行 "/"
         qrCode : decoded("aW1hZ2VzL3BheW1lbnQtcXJfeHkuanBn") //....微信付款二维码图片 "images/payment-qr_xy.jpg"
     },
     title : decoded("6L2p6L6VQUnmmbrog73ljJbor4TmoIfns7vnu58="), //....公司标题 "轩辕AI智能化评标系统"
@@ -149,6 +149,39 @@ function verifyLogin(){
             }
         }
     });
+}
+
+// 上传文件
+function uploadFileInfo(uploadName,showName){
+    $("body").on('change','#'+uploadName, function () {
+        if(this.files.length==0){
+            return;
+        }
+        var fileId = uploadFile(this.files);
+        $("#"+uploadName).attr("data-file-id",fileId);
+        var fileIds = fileId.split(",");
+        var fileName = $("#"+showName).html();
+        for(var i=0;i<this.files.length;i++){
+            fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteUploadFileInfo(\""+fileIds[i]+"\",\""+uploadName+"\",\""+showName+"\")' class='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+        }
+        $("#"+showName).html(fileName);
+    });
+}
+//删除上传文件
+function deleteUploadFileInfo(id,uploadName){
+    $(".delete"+id).parent().removeAttr("href");
+    $(".delete"+id).parent().parent().remove();
+    var ids = $("#"+uploadName).attr("data-file-id");
+    var idArray = ids.split(",");
+    var newIds="";
+    for(var i=0;i<idArray.length;i++){
+        if(idArray[i] != id){
+            if(newIds.length>0) newIds+=",";
+            newIds+=idArray[i];
+        }
+    }
+    $("#"+uploadName).attr("data-file-id",newIds);
+    alert(decoded("5Yig6Zmk5oiQ5Yqf77yB"));
 }
 
 // 上传图片
@@ -273,7 +306,7 @@ function pageShow(page,pageName){
     }
 }
 
-// 打印html页面
+// 打印pdf页面
 function printHtml(html){
     var printWindow = window.open('', '_blank');
     printWindow.document.write(html);
@@ -285,13 +318,33 @@ function printHtml(html){
     }, 500);
 }
 
+// 下载word
+function downWord(blob,fileName){
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName+'.doc';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    alert(decoded("5q2j5Zyo5LiL6L29d29yZOaWh+S7tu+8gQ=="));// 正在下载word文件！
+}
+
 // 项目经理添加返回工作台
 function manage(){
     var a = $("<a></a>").attr("href","manage.html").attr("style","text-decoration:none; color:#333;").text("返回工作台");
     var user = getMember();
     if(user.role.type=="manage"){
-        a.insertBefore($("a:contains('"+decoded("6L+U5Zue6aaW6aG1")+"')"))
+        a.insertBefore($("a:contains('"+decoded("6L+U5Zue6aaW6aG1")+"')"));// 返回工作台
     }
+}
+
+// 输入框识别键盘键
+function keypress13(searchInput,searchBtn){
+    $('#'+searchInput).on('keypress', function(e) {
+        if (e.which === 13) { // 回车键
+            $('#' + searchBtn).click();
+        }
+    });
 }
 
 
