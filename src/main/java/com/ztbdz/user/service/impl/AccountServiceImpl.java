@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.mapper.AccountMapper;
 import com.ztbdz.user.pojo.Account;
 import com.ztbdz.user.service.AccountService;
+import com.ztbdz.user.service.LoginService;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class AccountServiceImpl implements AccountService {
     private AccountMapper accountMapper;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private LoginService loginService;
 
     @CacheEvict(cacheNames = "account",allEntries = true)
     @Override
@@ -44,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
     @CacheEvict(cacheNames = "account",allEntries = true)
     @Override
     public Integer updateById(Account account) throws Exception {
-        redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
+        loginService.deleteLoginInfo(SystemConfig.getCreateMember().getId());
         QueryWrapper<Account> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", account.getId().toString());
         return accountMapper.update(account,queryWrapper);
@@ -100,9 +103,9 @@ public class AccountServiceImpl implements AccountService {
             if(account1.getAccountCode()!=null &&
                     account.getAccountCode()!=null &&
                     account1.getAccountCode().equals(account.getAccountCode())){
-                if(this.count(account)>1) return Result.fail("统一社会信用代码已被注册，请更换其他统一社会信用代码！");
+                if(this.count(account)>1) return Result.fail("统一社会信用代码已被注册使用，请更换其他统一社会信用代码！");
             }else{
-                if(this.count(account)>0) return Result.fail("统一社会信用代码已被注册，请更换其他统一社会信用代码！");
+                if(this.count(account)>0) return Result.fail("统一社会信用代码已被注册使用，请更换其他统一社会信用代码！");
             }
             Integer num = updateById(account);
             if(num>0) return Result.ok("更新成功！");

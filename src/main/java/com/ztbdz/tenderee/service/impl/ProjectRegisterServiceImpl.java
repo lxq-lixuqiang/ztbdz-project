@@ -12,6 +12,7 @@ import com.ztbdz.user.pojo.BidderInfo;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.service.AccountService;
 import com.ztbdz.user.service.BidderInfoService;
+import com.ztbdz.user.service.LoginService;
 import com.ztbdz.user.service.MemberService;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.export.ProjectRegisterExport;
@@ -51,15 +52,22 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     private TendereeService tendereeService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private LoginService loginService;
 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Result create(ProjectRegister projectRegister) {
         try{
+            Result result = bidderInfoService.getMemberInfo(SystemConfig.getCreateMember().getId());
+            if(result.getData()==null || ((BidderInfo)result.getData()).getIsCheck()!=1){
+                return Result.error("在【我的信息】中可查看企业信息审核状态，审核通过后才可进行报名操作！");
+            }
+
             //判断是否供应商在黑名单中
             Tenderee tenderee = tendereeService.selectByProjectId(projectRegister.getProject().getId());
-            Member member = memberService.selectRoleAndAccount(SystemConfig.getCreateMember().getId());
+            Member member = loginService.getLoginInfo();
             Integer blacklistNum = blacklistService.verifyBlacklist(tenderee.getTendereeName(),member.getAccount().getAccountName(),"0");
             if(blacklistNum>0) return Result.fail("项目业主禁止贵公司参与该项目，具体情况请电话咨询！");
 
@@ -72,10 +80,10 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
 
             // 如果报名未通过的话，可重复报名,删除重复报名数据
             this.deletesByProjectIdAndMemberId(project.getId(),projectRegister.getMember().getId());
-
+            projectRegister.setState(4); // 进入缴费页面
             Integer num = this.insert(projectRegister);
             if(num<=0) return Result.fail("报名失败");
-            return Result.ok("报名成功");
+            return Result.ok("报名成功",projectRegister);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);

@@ -1,4 +1,7 @@
 $(function(){
+    keypress13('username','loginBtn');
+    keypress13('password','loginBtn');
+
     // 登录按钮
     $('#login').on('submit', function(e){
         e.preventDefault();
@@ -16,7 +19,7 @@ $(function(){
             success:function(e) {
                 if(e.status == 200){
                     if(e.data.isPassword){
-                        var newPassword = prompt("检测到使用的是默认密码，为了安全请设置新密码:");
+                        var newPassword = prompt("检测到使用的是默认密码，保障账号安全请设置新密码:");
                         if(newPassword.trim()){
                             if(!regBox.regPassword.regEx.test(newPassword)){
                                 alert(regBox.regPassword.message);

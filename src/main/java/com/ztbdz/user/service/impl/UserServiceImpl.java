@@ -61,8 +61,8 @@ public class UserServiceImpl implements UserService {
             if(StringUtils.isEmpty(user.getMember()) ||StringUtils.isEmpty(user.getMember().getRole()) || StringUtils.isEmpty(user.getMember().getRole().getType())) return Result.fail("请选择用户类型！");
             if(user.getPassword().length()<6) return Result.fail("密码不能少于6位！");
             user.setPassword(MD5.md5String(user.getPassword()));
-            if(count(user)>0) return Result.fail("用户名已被注册，请更换其他用户名！");
-            if(accountService.count(user.getMember().getAccount())>0) return Result.fail("统一社会信用代码已被注册，请更换其他统一社会信用代码！");
+            if(count(user)>0) return Result.fail("用户名已被注册使用，请更换其他用户名！");
+            if(accountService.count(user.getMember().getAccount())>0) return Result.fail("统一社会信用代码已被注册使用，请更换其他统一社会信用代码！");
             // 根据角色类型赋值角色，注册是默认是赋值一个角色
             List<Role> roleList = roleService.selectList(user.getMember().getRole());
             if(roleList.size()<=0) return Result.fail("没有对应角色编码【"+user.getMember().getRole().getType()+"】！");

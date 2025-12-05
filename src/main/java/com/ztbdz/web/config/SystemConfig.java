@@ -149,13 +149,19 @@ public class SystemConfig {
     }
 
     /**
-     * 当前登录人默认赋值
+     * 用于获取创建数据时默认创建人赋值
      * @return
      */
     public static Member getCreateMember(){
-        Member member = new Member();
-        member.setId(Long.valueOf(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID).toString()));
-        return member;
+        return getLoginMember();
+    }
+
+    /**
+     * 当前登录人id
+     * @return
+     */
+    public static Member getLoginMember(){
+        return new Member(Long.valueOf(SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID).toString()));
     }
 
     // 校验文件名并获取安全路径

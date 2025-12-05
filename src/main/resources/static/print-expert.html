@@ -119,7 +119,7 @@
                 alert("请选择专业！");
                 return;
             }
-            var account = {"accountName":data.company};
+            var account = {"accountName":data.company,"accountType":"3"};
             var member = {"account":account,"name":data.name,"phone":data.phone};
             var expert = {'isAdmin':0,'isCheck':1,"expertCard":data.cert,"position":data.title,"idCard":data.idCard,"member":member,"expertType":data.majorCategory+"-"+data.major+";"};
             $.ajax({
@@ -148,7 +148,7 @@
                 alert("请选择专业！");
                 return;
             }
-            var account = {"id":data.accountId,"accountName":data.company};
+            var account = {"id":data.accountId,"accountName":data.company,"accountType":"3"};
             var member = {"id":data.memberId,"account":account,"name":data.name,"phone":data.phone};
             var expert = {"id":data.id,"memberId":data.memberId,"expertCard":data.cert,"position":data.title,"idCard":data.idCard,"member":member,"expertType":data.majorCategory+"-"+data.major+";"};
             $.ajax({
@@ -245,7 +245,7 @@
             // 创建模态框
             const modal = `
                 <div id="addExpertModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:1000;">
-                    <div style="background:#fff; padding:20px; width:500px; border-radius:5px;">
+                    <div style="background:#fff; padding:20px; width:500px; border-radius:5px;max-height:80vh;overflow-y:auto;">
                         <h3 style="margin-top:0;">添加专家</h3>
                         <form id="expertForm">
                             <div style="margin-bottom:10px;">

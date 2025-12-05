@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ztbdz.user.mapper.BidderInfoMapper">
+    <select id="selectMember" resultMap="BidderInfoAndMemberAndAccount">
+		select
+			b.*,m.account_id accountId,m.name memberName,a.account_name accountName,a.member accountMember,a.phone accountPhone,a.email accountEmail,a.account_code accountCode,a.account_code_file_id accountCodeFileId,a.remark accountRemark
+		from
+		   bidder_info b
+		left join member m on b.member_id = m.id
+        left join account a on m.account_id = a.id
+		WHERE
+			1=1
+        <if test="bidderInfo != null">
+            <if test="bidderInfo.isCheck != null ">
+                and b.is_check = #{bidderInfo.isCheck}
+            </if>
+            <if test="bidderInfo.isCheck == null">
+                and (b.is_check = 0 or b.is_check = 1 or b.is_check = 2 )
+                and member_type is not null
+            </if>
+            <if test="bidderInfo.member != null">
+                <if test="bidderInfo.member.account != null">
+                    <if test="bidderInfo.member.account.accountName != null and bidderInfo.member.account.accountName.length >0">
+                        and a.account_name like concat('%',#{bidderInfo.member.account.accountName},'%')
+                    </if>
+                    <if test="bidderInfo.member.account.member != null and bidderInfo.member.account.member.length >0">
+                        and a.member like concat('%',#{bidderInfo.member.account.member},'%')
+                    </if>
+                </if>
+            </if>
+        </if>
+        order by
+        CASE
+            WHEN b.is_check = 0 THEN 0
+            ELSE 1
+        END,
+        b.submit_date desc
+	</select>
+    <resultMap id="BidderInfoAndMemberAndAccount" type="BidderInfo">
+        <result property="member.id" column="member_id"/>
+        <result property="member.name" column="memberName"/>
+
+        <result property="member.account.id" column="accountId"/>
+        <result property="member.account.accountName" column="accountName"/>
+        <result property="member.account.member" column="accountMember"/>
+        <result property="member.account.phone" column="accountPhone"/>
+        <result property="member.account.email" column="accountEmail"/>
+        <result property="member.account.accountCode" column="accountCode"/>
+        <result property="member.account.accountCodeFileId" column="accountCodeFileId"/>
+        <result property="member.account.remark" column="accountRemark"/>
+    </resultMap>
+
+    <select id="getOther" resultMap="BidderInfoAndMemberAndAccount">
+        select
+        b.*,m.account_id accountId,m.name memberName,a.account_name accountName,a.member accountMember,a.phone accountPhone,a.email accountEmail,a.account_code accountCode,a.account_code_file_id accountCodeFileId,a.remark accountRemark
+        from
+        bidder_info b
+        left join member m on b.member_id = m.id
+        left join account a on m.account_id = a.id
+        WHERE b.id = #{id}
+    </select>
+
+</mapper>
+

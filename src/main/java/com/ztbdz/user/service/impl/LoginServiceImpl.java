@@ -1,5 +1,6 @@
 package com.ztbdz.user.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.ztbdz.user.pojo.Landlord;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.Role;
@@ -111,7 +112,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Result verifyLogin(String token,String url) {
         try{
-            User user = authenticationInterceptor.verifyLogin(token);
+            authenticationInterceptor.verifyLogin(token);
             Object memberId = SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
             Object redisObject = redisTemplate.opsForValue().get(SystemConfig.REDIS_LOGIN_INFO);
             if(redisObject==null || ((Map<String,Object>)redisObject).get(memberId.toString())==null){
@@ -127,7 +128,7 @@ public class LoginServiceImpl implements LoginService {
             Map<String,Object> dataMap = ((Map<String,Map<String,Object>>) redisObject).get(memberId.toString());
             // 校验 当前人员是否有访问权限
             if(roleService.verifyAuthority(url)){
-                return Result.fail("该账号没有权限，请切换对应账号访问！");
+                return Result.fail("该账号没有权限，请登录对应账号访问！");
             }
 //            dataMap.put("token",JwtUtil.createJWT(SystemConfig.TOKEN_VALIDITY, user));
             return Result.ok("校验成功！",dataMap);
@@ -153,5 +154,35 @@ public class LoginServiceImpl implements LoginService {
         return dataMap;
     }
 
+    @Override
+    public void deleteLoginInfo(Long memberId) throws Exception{
+        if(StringUtils.isEmpty(memberId)){
+            memberId = SystemConfig.getCreateMember().getId();
+        }
+        Object redisObject = redisTemplate.opsForValue().get(SystemConfig.REDIS_LOGIN_INFO);
+        if(redisObject==null || ((Map<String,Object>)redisObject).get(memberId.toString())!=null){
+            Map<String,Map<String,Object>> redisDataMap  = (Map<String,Map<String,Object>>)redisObject;
+            redisDataMap.remove(String.valueOf(memberId));
+            redisTemplate.opsForValue().set(SystemConfig.REDIS_LOGIN_INFO,redisDataMap);
+        }
+    }
+
+    @Override
+    public Member getLoginInfo() throws Exception{
+        Long memberId = SystemConfig.getCreateMember().getId();
+        Object redisObject = redisTemplate.opsForValue().get(SystemConfig.REDIS_LOGIN_INFO);
+        if(redisObject==null || ((Map<String,Object>)redisObject).get(memberId.toString())!=null){
+            Map<String,Map<String,Object>> redisDataMap  = (Map<String,Map<String,Object>>)redisObject;
+            Map<String,Object> memberMap = redisDataMap.get(String.valueOf(memberId));
+            if(memberMap.get("member")!=null){
+                return JSON.parseObject(JSON.toJSONString(memberMap.get("member")),Member.class);
+            }else if(memberMap.get("landlord")!=null){ // 不支持业主登录页面
+                return memberService.selectRoleAndAccount(SystemConfig.getCreateMember().getId());
+            }
+        }else{
+            return memberService.selectRoleAndAccount(SystemConfig.getCreateMember().getId());
+        }
+        return null;
+    }
 
 }

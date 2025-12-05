@@ -12,4 +12,5 @@ public interface BidderInfoMapper extends BaseMapper<BidderInfo> {
 
     List<BidderInfo> selectMember(@Param("bidderInfo") BidderInfo bidderInfo);
 
+    BidderInfo getOther(@Param("id")Long id);
 }

@@ -26,11 +26,11 @@ public class Account extends Model<Account> implements Serializable {
     private Long id;
     @ApiModelProperty("企业名称")
     private String accountName;
-    @ApiModelProperty("企业类型（0=供应商 1=代理机构 2=采购人）")
+    @ApiModelProperty("企业类型（0=供应商 1=代理机构 2=采购人 3=专家）")
     private Integer accountType;
-    @ApiModelProperty("法人代表人姓名")
+    @ApiModelProperty("法人名称")
     private String accountUser;
-    @ApiModelProperty("法人证件号")
+    @ApiModelProperty("法人身份证号")
     private String accountUserId;
     @ApiModelProperty("注册资金")
     private String accountMoney;
@@ -40,11 +40,11 @@ public class Account extends Model<Account> implements Serializable {
     private String accountNumberName;
     @ApiModelProperty("企业所在地")
     private String accountAddress;
-    @ApiModelProperty("联系人")
+    @ApiModelProperty("公司联系人")
     private String member;
-    @ApiModelProperty("手机号")
+    @ApiModelProperty("公司手机号")
     private String phone;
-    @ApiModelProperty("邮箱")
+    @ApiModelProperty("公司邮箱")
     private String email;
     @ApiModelProperty("详细地址")
     private String address;
@@ -57,11 +57,16 @@ public class Account extends Model<Account> implements Serializable {
     private String dealType;
     @ApiModelProperty("经营范围")
     private String natureBusiness;
+    @ApiModelProperty("备注说明")
+    private String remark;
     @ApiModelProperty("统一社会信用代码证书扫描件文件id")
     private String accountCodeFileId;
     @ApiModelProperty("统一社会信用代码证书扫描件文件集合")
     @TableField(exist = false)
     private List<FileInfo> accountCodeFileIds;
+    @ApiModelProperty("投标方信息")
+    @TableField(exist = false)
+    private BidderInfo bidderInfo;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty(value = "创建日期",hidden = true)

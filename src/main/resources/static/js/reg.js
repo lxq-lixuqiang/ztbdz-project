@@ -1,4 +1,17 @@
 $(function() {
+    $("input[value=0]").click(function(){
+        $("#type1").show();
+        $("#type2").hide();
+    })
+    $("input[value=1]").click(function(){
+        $("#type1").hide();
+        $("#type2").show();
+    })
+    uploadFileInfo("fileUpload","accountCodeFileId");
+    uploadFileInfo("fileUpload2","qualificationCertificate01");
+    uploadFileInfo("fileUpload3","qualificationCertificate01_01");
+    uploadFileInfo("fileUpload4","qualificationCertificate02");
+    uploadFileInfo("fileUpload5","qualificationCertificate03");
 
     // 注册按钮
     $('#reg').on('submit', function(e) {
@@ -8,28 +21,82 @@ $(function() {
         var username = $("input[name=username]").val();
         var password = $("input[name=password]").val();
         var userType = $("select[name=user_type]").find("option:selected").val();
-        if(username.trim() == "" || password.trim() == ""){
-            alert("用户名和密码不能为空！");
+        var accountCode = $("input[name=accountCode]").val();
+        var member = $("input[name=member]").val();
+        var phone = $("input[name=phone]").val();
+        var email = $("input[name=email]").val();
+        var memberType = $("input[name=memberType]:checked").val();
+        var accountCodeFileId = $("#fileUpload").attr("data-file-id");
+        if(!username || !password || !userType || !accountCode || !member || !phone || !email || !memberType || !accountCodeFileId) {
+            alert("请填写带 * 字段为必填项！");
             $("button[type=submit]").removeAttr("disabled");
             return;
-        }
-        if(userType == ""){
-            alert("请选择用户类型！");
-            $("button[type=submit]").removeAttr("disabled");
-            return;
-        }
-        if(!regBox.regPassword.regEx.test(password)){
+        }else if(!regBox.regPassword.regEx.test(password)){
             alert(regBox.regPassword.message);
             $("button[type=submit]").removeAttr("disabled");
             return ;
+        }else if(!regBox.regEmail.regEx.test(email)){
+            alert(regBox.regEmail.message);
+            $("button[type=submit]").removeAttr("disabled");
+            return ;
+        }else if(!regBox.regMobilePhone.regEx.test(phone)){
+            alert(regBox.regMobilePhone.message);
+            $("button[type=submit]").removeAttr("disabled");
+            return ;
+        }
+        var idCard="";
+        var qualificationCertificate01="";
+        var qualificationCertificate02 = "";
+        var qualificationCertificate03 = "";
+        var accountUser = "";
+        var accountUser2 = "";
+        if(memberType=='0'){
+            // 法人
+            accountUser = $("input[name=accountUser]").val();
+            accountUser2 = accountUser;
+            idCard = $("input[name=idCard]").val();
+            qualificationCertificate01 = $("#fileUpload2").attr("data-file-id");
+            if(!accountUser || !idCard || !qualificationCertificate01) {
+                alert("请填写带 * 字段为必填项！");
+                $("button[type=submit]").removeAttr("disabled");
+                return;
+            }
+            if(!regBox.regIdCard.regEx.test(idCard)){
+                alert(regBox.regIdCard.message);
+                $("button[type=submit]").removeAttr("disabled");
+                return ;
+            }
+        }else{
+            // 授权代表
+            accountUser = $("input[name=accountUser2]").val();
+            idCard = $("input[name=idCard2]").val();
+            qualificationCertificate01 = $("#fileUpload3").attr("data-file-id");
+            qualificationCertificate02 = $("#fileUpload4").attr("data-file-id");
+            qualificationCertificate03 = $("#fileUpload5").attr("data-file-id");
+            if(!accountUser || !idCard || !qualificationCertificate01 || !qualificationCertificate02 || !qualificationCertificate03) {
+                alert("请填写带 * 字段为必填项！");
+                $("button[type=submit]").removeAttr("disabled");
+                return;
+            }
+            if(!regBox.regIdCard.regEx.test(idCard)){
+                alert(regBox.regIdCard.message);
+                $("button[type=submit]").removeAttr("disabled");
+                return ;
+            }
         }
 
-        var account = {accountName:""};
+        var account = {accountName:username.trim(),accountUser:accountUser2,accountUserId:idCard,accountType:"0",accountCode:accountCode,member:member,phone:phone,email:email,accountCodeFileId:accountCodeFileId};
         var role = {type:userType};
-        var member = {name:username.trim(),account:account,role:role};
-        var data = {member:member,password:password.trim(),username:username.trim()};
+        var member = {name:accountUser,account:account,role:role};
+        var data = {member:member,
+                    notCheckShow:password.trim(),
+                    memberType:memberType,
+                    idCard:idCard,
+                    qualificationCertificate01:qualificationCertificate01,
+                    qualificationCertificate02:qualificationCertificate02,
+                    qualificationCertificate03:qualificationCertificate03};
         $.ajax({
-            url: "/user/register",
+            url: "/bidderInfo/register",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(data),
@@ -39,10 +106,12 @@ $(function() {
                     location.href = "/login.html";
                 }else{
                     $("button[type=submit]").removeAttr("disabled");
-                    alert("注册失败："+e.message);
+                    alert(e.message);
                 }
             }
         });
     });
-
 });
+function showUploadDialog(name) {
+    document.getElementById(name).click();
+}

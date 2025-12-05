@@ -1,55 +1,143 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/001.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
-<meta charset="utf-8">
-<!-- InstanceBeginEditable name="doctitle" -->
-<title>用户注册</title>
-<!-- InstanceEndEditable -->
-<!-- InstanceBeginEditable name="head" -->
-<!-- InstanceEndEditable -->
+    <meta charset="utf-8">
+    <!-- InstanceBeginEditable name="doctitle" -->
+    <title>用户注册</title>
+    <!-- InstanceEndEditable -->
+    <!-- InstanceBeginEditable name="head" -->
+    <!-- InstanceEndEditable -->
 </head>
 
 <body>
-    <!-- 不可编辑的顶部区域 -->
-    <div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
-        <div style="font-size:28px; font-weight:bold;">AI智能化评标系统</div>
-        <div style="display:flex; gap:30px;">
-            <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
-            <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
-            <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
-        </div>
+<!-- 不可编辑的顶部区域 -->
+<div style="width:1040px; height:120px; background:#f0f0f0; position:relative; display:flex; justify-content:space-between; align-items:center; padding:0 50px;">
+    <div style="font-size:28px; font-weight:bold;">中天阳光AI智能化评标系统</div>
+    <div style="display:flex; gap:30px;">
+        <a href="index.html" style="text-decoration:none; color:#333;">返回首页</a>
+        <a href="login.html" style="text-decoration:none; color:#333;">登录</a>
+        <a href="login-out.html" style="text-decoration:none; color:#333;">退出</a>
     </div>
-    
-    <!-- 可编辑的主要内容区域 -->
-    <!-- InstanceBeginEditable name="content" -->
-    <div style="width:1040px; min-height:calc(100vh - 120px); display:flex; justify-content:center; align-items:center;">
-        <div style="width:500px; padding:30px; background:#f5f5f5; border-radius:10px;">
-            <h2 style="text-align:center; margin-bottom:30px;">用户注册</h2>
-            <form id="reg">
+</div>
+
+<!-- 可编辑的主要内容区域 -->
+<!-- InstanceBeginEditable name="content" -->
+<div style="width:1040px; min-height:calc(100vh - 120px); display:flex; justify-content:center; align-items:center;">
+    <div style="width:500px; padding:30px; background:#f5f5f5; border-radius:10px;max-height:55vh;overflow-y:auto;">
+        <h2 style="text-align:center; margin-bottom:30px;">用户注册</h2>
+        <form id="reg">
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">公司名称（用户名）<span style="color:red;">*</span></label>
+                <input type="text" name="username" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">密码<span style="color:red;">*</span></label>
+                <input type="password" name="password" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">统一社会信用代码<span style="color:red;">*</span></label>
+                <input type="text" name="accountCode" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px;">上传营业执照<span style="color:red;">*</span></label>
+                <button onclick="showUploadDialog('fileUpload')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传营业执照</button>
+                <div id="accountCodeFileId" style="display: inline-block;margin-left:10px;">
+
+                </div>
+                <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">联系人<span style="color:red;">*</span></label>
+                <input type="text" name="member" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">联系电话<span style="color:red;">*</span></label>
+                <input type="text" name="phone" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">电子邮箱<span style="color:red;">*</span></label>
+                <input type="text" name="email" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">人员身份</label>
+                <label style="margin-right:15px;margin-left: 50px;">
+                    <input type="radio" name="memberType" value="0" checked="checked"> 法人
+                </label>
+                <label style="margin-right:15px;margin-left: 30px;">
+                    <input type="radio" name="memberType" value="1" > 授权代表人
+                </label>
+            </div>
+
+            <div id="type1">
                 <div style="margin-bottom:20px;">
-                    <label style="display:block; margin-bottom:5px;">用户名（公司名称）</label>
-                    <input type="text" name="username" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+                    <label style="display:block; margin-bottom:5px;">法人姓名<span style="color:red;">*</span></label>
+                    <input type="text" name="accountUser" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                 </div>
                 <div style="margin-bottom:20px;">
-                    <label style="display:block; margin-bottom:5px;">密码</label>
-                    <input type="password" name="password" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
+                    <label style="display:block; margin-bottom:5px;">法人证件号<span style="color:red;">*</span></label>
+                    <input type="text" name="idCard" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                 </div>
-                <div style="margin-bottom:20px;display: none;">
-                    <label style="display:block; margin-bottom:5px;">用户类型</label>
-                    <select name="user_type" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" required>
-                        <option value="">请选择用户类型</option>
-                        <option value="tenderee">代理</option>
-                        <option value="tenderee">业主单位</option>
-                        <option value="bidder" selected>投标人</option>
-                    </select>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">上传法人身份证正反面<span style="color:red;">*</span></label>
+                    <button onclick="showUploadDialog('fileUpload2')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传法人身份证正反面</button>
+                    <div id="qualificationCertificate01" style="display: inline-block;margin-left:10px;">
+
+                    </div>
+                    <input id="fileUpload2" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
                 </div>
-                <button type="submit" style="width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">注册</button>
-            </form>
-        </div>
+            </div>
+
+            <div id="type2" style="display: none;">
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px;">授权代表人姓名<span style="color:red;">*</span></label>
+                    <input type="text" name="accountUser2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px;">授权代表人证件号<span style="color:red;">*</span></label>
+                    <input type="text" name="idCard2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">授权代表人身份证正反面<span style="color:red;">*</span></label>
+                    <button onclick="showUploadDialog('fileUpload3')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传授权代表人身份证正反面</button>
+                    <div id="qualificationCertificate01_01" style="display: inline-block;margin-left:10px;">
+
+                    </div>
+                    <input id="fileUpload3" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">法人授权函<span style="color:red;">*</span></label>
+                    <button onclick="showUploadDialog('fileUpload4')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传法人授权函</button>
+                    <div id="qualificationCertificate02" multiple style="display: inline-block;margin-left:10px;">
+
+                    </div>
+                    <input id="fileUpload4" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px;">授权代表人在公司最近至少一个月社保<span style="color:red;">*</span></label>
+                    <button onclick="showUploadDialog('fileUpload5')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传社保文件</button>
+                    <div id="qualificationCertificate03" multiple style="display: inline-block;margin-left:10px;">
+
+                    </div>
+                    <input id="fileUpload5" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
+                </div>
+            </div>
+
+            <div style="margin-bottom:20px;display: none;">
+                <label style="display:block; margin-bottom:5px;">用户类型<span style="color:red;">*</span></label>
+                <select name="user_type" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;" required>
+                    <option value="">请选择用户类型</option>
+                    <option value="tenderee">代理</option>
+                    <option value="tenderee">业主单位</option>
+                    <option value="bidder" selected>投标人</option>
+                </select>
+            </div>
+            <button type="submit" style="width:100%; padding:12px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">注册</button>
+        </form>
     </div>
-    <!-- InstanceEndEditable -->
-    <script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
-    <script src="config/token.js" type="text/javascript"></script>
-    <script src="js/reg.js" type="text/javascript"></script>
+</div>
+<!-- InstanceEndEditable -->
+<script src="plugin/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="config/token.js" type="text/javascript"></script>
+<script src="js/reg.js" type="text/javascript"></script>
 </body>
 <!-- InstanceEnd --></html>

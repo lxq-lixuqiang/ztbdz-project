@@ -158,7 +158,14 @@ function uploadFileInfo(uploadName,showName){
             return;
         }
         var fileId = uploadFile(this.files);
-        $("#"+uploadName).attr("data-file-id",fileId);
+        var datafileId = $("#"+uploadName).attr("data-file-id");
+        if(datafileId && datafileId.length>0){
+            datafileId+=",";
+        }else{
+            datafileId="";
+        }
+        datafileId+=fileId;
+        $("#"+uploadName).attr("data-file-id",datafileId);
         var fileIds = fileId.split(",");
         var fileName = $("#"+showName).html();
         for(var i=0;i<this.files.length;i++){

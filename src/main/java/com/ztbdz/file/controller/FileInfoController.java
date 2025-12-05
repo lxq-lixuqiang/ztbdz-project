@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,7 +28,6 @@ public class FileInfoController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
-    @CheckToken
     @PostMapping(value = "upload",consumes = "multipart/form-data")
     public Result upload( @RequestParam("files") List<MultipartFile> files) {
         return fileInfoService.upload(files,0);
@@ -71,6 +71,21 @@ public class FileInfoController {
     @PostMapping("list")
     public Result list(@RequestBody List<Long> ids) {
         return fileInfoService.list(ids);
+    }
+
+    @ApiOperation(value = "查询文件列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "ids", value = "文件id", required=true, dataType = "String")
+    })
+    @CheckToken
+    @GetMapping("list2/{ids}")
+    public Result list2(@PathVariable String ids) {
+        List<Long> newIds = new ArrayList();
+        for (String id : ids.split(",")){
+            newIds.add(Long.valueOf(id));
+        }
+        return fileInfoService.list(newIds);
     }
 
     @ApiOperation(value = "查询文件")

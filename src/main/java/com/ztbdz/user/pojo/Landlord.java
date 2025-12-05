@@ -62,7 +62,7 @@ public class Landlord extends Model<Landlord> implements Serializable {
         User user = new User();
         user.setId(this.getId());
         Member member = new Member();
-        member.setId(user.getId());
+        member.setId(this.getId());
         user.setMember(member);
         user.setUsername(this.getName());
         user.setPassword(this.getPassword());

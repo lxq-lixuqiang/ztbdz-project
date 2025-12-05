@@ -9,10 +9,7 @@ import com.ztbdz.user.mapper.MemberMapper;
 import com.ztbdz.user.pojo.Member;
 import com.ztbdz.user.pojo.Role;
 import com.ztbdz.user.pojo.User;
-import com.ztbdz.user.service.AccountService;
-import com.ztbdz.user.service.MemberService;
-import com.ztbdz.user.service.RoleService;
-import com.ztbdz.user.service.UserService;
+import com.ztbdz.user.service.*;
 import com.ztbdz.web.config.SystemConfig;
 import com.ztbdz.web.util.Common;
 import com.ztbdz.web.util.Result;
@@ -25,7 +22,9 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -42,6 +41,8 @@ public class MemberServiceImpl implements MemberService {
     private RedisTemplate redisTemplate;
     @Autowired
     private FileInfoService fileInfoService;
+    @Autowired
+    private LoginService loginService;
 
 
     @Override
@@ -62,7 +63,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Integer updateById(Member member) throws Exception {
-        redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
+        loginService.deleteLoginInfo(member.getId());
         QueryWrapper<Member> queryWrapper = new QueryWrapper();
         queryWrapper.eq("id", member.getId().toString());
         queryWrapper.eq("is_delete", Common.ENABL);
@@ -144,7 +145,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Result update(User user) {
         try{
-            redisTemplate.delete(SystemConfig.REDIS_LOGIN_INFO);
+            loginService.deleteLoginInfo(user.getMember().getId());
             // 更新角色信息
             Integer roleNum = roleService.updateById(user.getMember().getRole());
             // 更新企业信息

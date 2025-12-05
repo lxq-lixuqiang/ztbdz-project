@@ -59,6 +59,14 @@
     .tab-content.active {
         display: block;
     }
+    #companyInfoDisplay>div>p p:first-of-type,
+    #companyInfoDisplay>p p:first-of-type{
+        margin:0 !important;
+    }
+    #companyInfoDisplay>div>p p,
+    #companyInfoDisplay>p p{
+        margin: 10px 0 0 0;
+    }
 </style>
 <script>
     function showTab(tabId) {
@@ -162,40 +170,16 @@
     }
 
     // 显示上传对话框
-    function showUploadDialog() {
-        document.getElementById('certificateUpload').click();
+    function showUploadDialog(name) {
+        document.getElementById(name).click();
     }
 
     // 提交企业信息
     function submitCompanyInfo() {
-        if(saveAccount()){
+        if(!confirm('是否进行保存，更改后的企业信息会进行审核，审核通过后才可进行报名项目！（不会影响正在报名中项目和已报名成功项目）')) {
             return;
         }
-        // 更新显示区域的值
-        document.getElementById('companyName').textContent = document.getElementById('editCompanyName').value;
-        document.getElementById('creditCode').textContent = document.getElementById('editCreditCode').value;
-        document.getElementById('contactPerson').textContent = document.getElementById('editContactPerson').value;
-        document.getElementById('contactPhone').textContent = document.getElementById('editContactPhone').value;
-        document.getElementById('contactEmail').textContent = document.getElementById('editContactEmail').value;
-        
-        // 更新已上传文件显示
-        const files = document.getElementById('certificateUpload').files;
-        const certificateFilesDiv = document.getElementById('certificateFiles');
-        var fileId = $("#certificateUpload").attr("data-file-id");
-        if(files.length > 0) {
-            certificateFilesDiv.innerHTML = '';
-            for(let i = 0; i < files.length; i++) {
-                const fileItem = document.createElement('p');
-                fileItem.textContent = `${i+1}. ${files[i].name}`;
-                certificateFilesDiv.appendChild(fileItem);
-            }
-        }
-        
-        // 切换回显示模式
-        document.getElementById('companyInfoDisplay').style.display = 'block';
-        document.getElementById('companyInfoForm').style.display = 'none';
-
-        // 这里可以添加实际提交到服务器的逻辑
+        saveAccount();
     }
 
     // 初始化显示事务相关标签页
@@ -278,24 +262,29 @@
                     <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
                 </div>
                 <div class="tab-content" id="profile">
-                    <h3>企业注册信息</h3>
+                    <h3>企业信息<span style="color: red;font-size: 15px;font-weight: normal;curson:pointer;" data-info="" id="accountState"></span></h3>
                     <div id="companyInfoDisplay" style="margin-bottom:20px;">
                         <p><strong>企业名称：</strong><span id="companyName"></span></p>
                         <p><strong>统一社会信用代码：</strong><span id="creditCode"></span></p>
+                        <p><strong style="vertical-align: top;">营业执照：</strong><span id="certificateFiles" style="display: inline-block;"></span></p>
                         <p><strong>联系人：</strong><span id="contactPerson"></span></p>
                         <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
-                        
-                        <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                            <h4>材料文件</h4>
-                            <div id="certificateFiles">
-                                <p>没有上传文件</p>
-                            </div>
-                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;margin-right:10px;">上传营业执照</button>
-                            <button onclick="showUploadDialog()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;margin-right:10px;">上传报名文件</button>
+                        <div id="memberType01" style="display: none;">
+                            <p><strong>法人：</strong><span id="accountUser"></span></p>
+                            <p><strong>法人证件号：</strong><span id="idCard"></span></p>
+                            <p><strong style="vertical-align: top;">法人身份证：</strong><span id="qualificationCertificate01Show" style="display: inline-block;"></span></p>
                         </div>
+                        <div id="memberType02" style="display: none;">
+                            <p><strong>授权代表人：</strong><span id="accountUser2"></span></p>
+                            <p><strong>授权代表人证件号：</strong><span id="idCard2"></span></p>
+                            <p><strong style="vertical-align: top;">授权代表人身份证：</strong><span id="qualificationCertificate01_01Show" style="display: inline-block;"></span></p>
+                            <p><strong style="vertical-align: top;">法人授权函：</strong><span id="qualificationCertificate02Show" style="display: inline-block;"></span></p>
+                            <p><strong style="vertical-align: top;">社保记录：</strong><span id="qualificationCertificate03Show" style="display: inline-block;"></span></p>
+                        </div>
+                        <p><strong>备注：</strong><span id="contactRemark"></span></p>
                         
-                        <button onclick="enableEditMode()" style="padding:8px 16px; background:#2196F3; color:white; border:none; cursor:pointer; margin-top:15px;">更改信息</button>
+                        <button onclick="enableEditMode()" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:15px;">更改信息</button>
                     </div>
                     <form id="companyInfoForm" style="max-width:600px; display:none;" enctype="multipart/form-data">
                         <div style="margin-bottom:15px;">
@@ -305,6 +294,14 @@
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">统一社会信用代码<span style="color:red;">*</span></label>
                             <input type="text" id="editCreditCode" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">上传营业执照<span style="color:red;">*</span></label>
+                            <button onclick="showUploadDialog('fileUpload')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传营业执照</button>
+                            <div id="accountCodeFileId" style="display: inline-block;margin-left:10px;">
+
+                            </div>
+                            <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
                         </div>
                         <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">联系人<span style="color:red;">*</span></label>
@@ -318,15 +315,72 @@
                             <label style="display:block; margin-bottom:5px;">电子邮箱<span style="color:red;">*</span></label>
                             <input type="email" id="editContactEmail" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
+                        <div style="margin-bottom:20px;">
+                            <label style="display:block; margin-bottom:5px;">人员身份</label>
+                            <label style="margin-right:15px;margin-left: 50px;">
+                                <input type="radio" name="memberType" value="0"> 法人
+                            </label>
+                            <label style="margin-right:15px;margin-left: 30px;">
+                                <input type="radio" name="memberType" value="1" > 授权代表人
+                            </label>
+                        </div>
+                        <div id="type1" style="display: none;">
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; margin-bottom:5px;">法人姓名<span style="color:red;">*</span></label>
+                                <input type="text" name="accountUser" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
+                            </div>
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; margin-bottom:5px;">法人证件号<span style="color:red;">*</span></label>
+                                <input type="text" name="idCard" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
+                            </div>
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:5px;">上传法人身份证正反面<span style="color:red;">*</span></label>
+                                <button onclick="showUploadDialog('fileUpload2')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传法人身份证正反面</button>
+                                <div id="qualificationCertificate01" style="display: inline-block;margin-left:10px;">
 
-                        <div style="margin:20px 0; border-top:1px solid #eee; padding-top:15px;">
-                            <h4>报名文件</h4>
-                            <input type="file" id="certificateUpload" name="certificateFiles" style="margin-bottom:10px;display: none;" multiple>
-                            <div id="uploadedFilesList" style="margin-top:10px;">
-                                <p>未选择文件</p>
+                                </div>
+                                <input id="fileUpload2" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
                             </div>
                         </div>
 
+                        <div id="type2" style="display: none;">
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; margin-bottom:5px;">授权代表人姓名<span style="color:red;">*</span></label>
+                                <input type="text" name="accountUser2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
+                            </div>
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; margin-bottom:5px;">授权代表人证件号<span style="color:red;">*</span></label>
+                                <input type="text" name="idCard2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
+                            </div>
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:5px;">授权代表人身份证正反面<span style="color:red;">*</span></label>
+                                <button onclick="showUploadDialog('fileUpload3')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传授权代表人身份证正反面</button>
+                                <div id="qualificationCertificate01_01" style="display: inline-block;margin-left:10px;">
+
+                                </div>
+                                <input id="fileUpload3" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
+                            </div>
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:5px;">法人授权函<span style="color:red;">*</span></label>
+                                <button onclick="showUploadDialog('fileUpload4')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传法人授权函</button>
+                                <div id="qualificationCertificate02" multiple style="display: inline-block;margin-left:10px;">
+
+                                </div>
+                                <input id="fileUpload4" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
+                            </div>
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:5px;">授权代表人在公司最近至少一个月社保<span style="color:red;">*</span></label>
+                                <button onclick="showUploadDialog('fileUpload5')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传社保记录</button>
+                                <div id="qualificationCertificate03" multiple style="display: inline-block;margin-left:10px;">
+
+                                </div>
+                                <input id="fileUpload5" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
+                            </div>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">备注</label>
+                            <input type="text" id="remark" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        </div>
                         <div style="display:flex; gap:10px;">
                             <button type="button" onclick="submitCompanyInfo()" style="padding:10px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;">保存</button>
                             <button type="button" onclick="cancelEdit()" style="padding:10px 20px; background:#f44336; color:white; border:none; cursor:pointer;">取消</button>
@@ -443,9 +497,9 @@
             {{#eq  projectRegisters.state 0}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">缴费审核中 </td>{{/eq}}
             {{#eq  projectRegisters.state 1}}<td style="padding:10px; border:1px solid #ddd;">报名成功 </td>{{/eq}}
             {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;color:red;">缴费不通过 </td>{{/eq}}
-            {{#eq  projectRegisters.state 3}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">材料审核中 </td>{{/eq}}
-            {{#eq  projectRegisters.state 4}}<td style="padding:10px; border:1px solid #ddd;color:#4CAF50;">材料通过 </td>{{/eq}}
-            {{#eq  projectRegisters.state 5}}<td style="padding:10px; border:1px solid #ddd;color:red;">材料不通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 3}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">信息审核中 </td>{{/eq}}
+            {{#eq  projectRegisters.state 4}}<td style="padding:10px; border:1px solid #ddd;color:#4CAF50;">信息通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 5}}<td style="padding:10px; border:1px solid #ddd;color:red;">信息不通过 </td>{{/eq}}
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#eq  projectRegisters.state 4}}<!-- 资质通过 -->
                     <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">报名缴费</button>
@@ -568,18 +622,67 @@
             $("body").on("click", "div[data-tab=profile]", function() {
                 var account = getMember().account;
                 var fileName = "";
-                if(account.accountCodeFileId !=null && account.accountCodeFileId !="" ){
-                    var ids = account.accountCodeFileId.split(",");
+                var bidderInfo = {};
+                $.ajax({
+                    url: "/bidderInfo/getMemberInfo/"+getMember().id,
+                    type: "GET",
+                    async: false,
+                    contentType: "application/json",
+                    success:function(e) {
+                        if(e.status == 200){
+                            bidderInfo = e.data;
+                        }else{
+                            alert("获取企业信息失败："+e.message);
+                        }
+                    }
+                });
+
+                var qualificationCertificate01Name = "";
+                var qualificationCertificate02Name = "";
+                var qualificationCertificate03Name = "";
+                var ids = "";
+                if(account.accountCodeFileId !=null && account.accountCodeFileId !=""){
+                    ids = account.accountCodeFileId.split(",");
+                }
+                if(bidderInfo.qualificationCertificate01 !=null && bidderInfo.qualificationCertificate01 !=""){
+                    if(ids.length>0) ids+=",";
+                    ids += bidderInfo.qualificationCertificate01.split(",");
+                }
+                if(bidderInfo.qualificationCertificate02 !=null && bidderInfo.qualificationCertificate02 !=""){
+                    if(ids.length>0) ids+=",";
+                    ids += bidderInfo.qualificationCertificate02.split(",");
+                }
+                if(bidderInfo.qualificationCertificate03 !=null && bidderInfo.qualificationCertificate03 !=""){
+                    if(ids.length>0) ids+=",";
+                    ids += bidderInfo.qualificationCertificate03.split(",");
+                }
+                if(ids){
                     $.ajax({
-                        url: "/file/list",
-                        type: "POST",
+                        url: "/file/list2/"+ids,
+                        type: "GET",
                         async: false,
-                        data: JSON.stringify(ids),
                         contentType: "application/json",
                         success:function(e) {
                             if(e.status == 200){
                                 for(var i=0;i<e.data.length;i++){
-                                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）<span onclick='deleteFile(\""+e.data[i].id+"\")' class='delete"+e.data[i].id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                                    var p = "<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）<span onclick='deleteUploadFileInfo(\""+e.data[i].id+"\",\"uploadName\")' class='delete"+e.data[i].id+"' style='background-color: red;width: 15px;height: 16px;display: none;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                                    if(account.accountCodeFileId !=null &&
+                                        account.accountCodeFileId !="" &&
+                                        (","+account.accountCodeFileId+",").indexOf(","+e.data[i].id+",")>-1){
+                                        fileName+=p
+                                    }else if(bidderInfo.qualificationCertificate01 !=null &&
+                                        bidderInfo.qualificationCertificate01 !="" &&
+                                        (","+bidderInfo.qualificationCertificate01+",").indexOf(","+e.data[i].id+",")>-1){
+                                        qualificationCertificate01Name+=p
+                                    }else if(bidderInfo.qualificationCertificate02 !=null &&
+                                        bidderInfo.qualificationCertificate02 !="" &&
+                                        (","+bidderInfo.qualificationCertificate02+",").indexOf(","+e.data[i].id+",")>-1){
+                                        qualificationCertificate02Name+=p
+                                    }else if(bidderInfo.qualificationCertificate03 !=null &&
+                                        bidderInfo.qualificationCertificate03 !="" &&
+                                        (","+bidderInfo.qualificationCertificate03+",").indexOf(","+e.data[i].id+",")>-1){
+                                        qualificationCertificate03Name+=p
+                                    }
                                 }
                             }else{
                                 alert("获取文件信息失败："+e.message);
@@ -587,42 +690,49 @@
                         }
                     });
                 }
-                showInfo(account.accountName,account.accountCode,account.member,account.phone,account.email,account.accountMoney,fileName,account.accountCodeFileId);
+
+                var data = {
+                        id:bidderInfo.id,
+                        companyName:account.accountName,
+                        creditCode:account.accountCode,
+                        contactPerson:account.member,
+                        contactPhone:account.phone,
+                        contactEmail:account.email,
+                        accountMoney:account.accountMoney,
+                        fileName:fileName,
+                        fileId:account.accountCodeFileId,
+                        memberType:bidderInfo.memberType,
+                        isCheck:bidderInfo.isCheck,
+                        accountUser:bidderInfo.member.name,
+                        idCard:bidderInfo.idCard,
+                        remark:account.remark,
+                        notCheckShow:bidderInfo.notCheckShow,
+                        qualificationCertificate01:bidderInfo.qualificationCertificate01,
+                        qualificationCertificate01Name:qualificationCertificate01Name,
+                        qualificationCertificate02:bidderInfo.qualificationCertificate02,
+                        qualificationCertificate02Name:qualificationCertificate02Name,
+                        qualificationCertificate03:bidderInfo.qualificationCertificate03,
+                        qualificationCertificate03Name:qualificationCertificate03Name
+                    };
+                showInfo(data);
             });
 
-            $("#certificateUpload").on('change', function () {
-                if(this.files.length==0){
-                    return;
-                }
-                var fileId = uploadFile(this.files);
-                var datafileid = $("#certificateUpload").attr("data-file-id");
-                if(datafileid){
-                    datafileid+=","+fileId;
-                }else{
-                    datafileid=fileId;
-                }
-                var data = {"id":getMember().account.id,"accountCodeFileId":datafileid}
-                $("#certificateUpload").attr("data-file-id",datafileid);
-                updateAccount(data);
-                var fileIds = fileId.split(",");
-                var fileName = $("#certificateFiles p").html();
-                for(var i=0;i<this.files.length;i++){
-                    fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileIds[i]+"\")' class='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
-                }
-                $("#certificateFiles p").html(fileName);
-                $("#uploadedFilesList p").html(fileName);
-            });
-            function showInfo(companyName,creditCode,contactPerson,contactPhone,contactEmail,accountMoney,fileName,fileId){
-                $("#companyName").text(companyName);
-                $("#creditCode").text(creditCode);
-                $("#contactPerson").text(contactPerson);
-                $("#contactPhone").text(contactPhone);
-                $("#contactEmail").text(contactEmail);
-                $("#accountMoney").text(accountMoney);
-                $("#certificateFiles p").html(fileName);
-                $("#uploadedFilesList p").html(fileName);
-                $("#certificateUpload").attr("data-file-id",fileId);
-            }
+            $("#accountState").click(function(){
+                alert($(this).attr("data-info"));
+            })
+            $("input[value=0]").click(function(){
+                $("#type1").show();
+                $("#type2").hide();
+            })
+            $("input[value=1]").click(function(){
+                $("#type1").hide();
+                $("#type2").show();
+            })
+            uploadFileInfo("fileUpload","accountCodeFileId");
+            uploadFileInfo("fileUpload2","qualificationCertificate01");
+            uploadFileInfo("fileUpload3","qualificationCertificate01_01");
+            uploadFileInfo("fileUpload4","qualificationCertificate02");
+            uploadFileInfo("fileUpload5","qualificationCertificate03");
 
             function projectInit(state,tbody,template){
                 $.ajax({
@@ -676,28 +786,6 @@
 
         })
 
-        function deleteFile(id){
-            var a = $(".delete"+id).parent();
-            a.removeAttr("href");
-            var datafileid = $("#certificateUpload").attr("data-file-id");
-            if(datafileid){
-                var files = datafileid.split(",");
-                var fileId = "";
-                for(var i=0;i<files.length;i++){
-                    if(files[i] != id){
-                        if(fileId.length>0){
-                            fileId+=",";
-                        }
-                        fileId+=files[i];
-                    }
-                }
-                var data = {"id":getMember().account.id,"accountCodeFileId":fileId}
-                $("#certificateUpload").attr("data-file-id",fileId);
-                updateAccount(data);
-                a.parent().remove();
-                alert("删除成功！")
-            }
-        }
         function availableInit(state,tbody,template){
             var projectName = $("#projectNameSearch").val();
             var enrollEndDate = $("#enrollEndDateSearch").val();
@@ -754,48 +842,206 @@
             var editContactPerson = $("#editContactPerson").val();
             var editContactPhone = $("#editContactPhone").val();
             var editContactEmail = $("#editContactEmail").val();
-            var fileId = $("#certificateUpload").attr("data-file-id");
-
-            if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone) {
+            var memberType = $("input[name=memberType]:checked").val();
+            var accountCodeFileId = $("#fileUpload").attr("data-file-id");
+            if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone || !memberType || !accountCodeFileId) {
                 alert("请填写带 * 字段为必填项！");
-                return true;
+                return ;
             }else if(!regBox.regMobilePhone.regEx.test(editContactPhone)){
                 alert(regBox.regMobilePhone.message);
-                return true;
+                return ;
             }else if(!regBox.regEmail.regEx.test(editContactEmail)){
                 alert(regBox.regEmail.message);
-                return true;
+                return ;
+            }
+            var idCard="";
+            var qualificationCertificate01="";
+            var qualificationCertificate02 = "";
+            var qualificationCertificate03 = "";
+            var accountUser = "";
+            var accountUser2 = "";
+            var qualificationCertificate01Show = "";
+            if(memberType=='0'){
+                // 法人
+                accountUser = $("input[name=accountUser]").val();
+                accountUser2 = accountUser;
+                idCard = $("input[name=idCard]").val();
+                qualificationCertificate01Show = $("#qualificationCertificate01").html();
+                qualificationCertificate01 = $("#fileUpload2").attr("data-file-id");
+                if(!accountUser || !idCard || !qualificationCertificate01) {
+                    alert("请填写带 * 字段为必填项！");
+                    return ;
+                }
+                if(!regBox.regIdCard.regEx.test(idCard)){
+                    alert(regBox.regIdCard.message);
+                    return ;
+                }
+            }else{
+                // 授权代表人
+                accountUser = $("input[name=accountUser2]").val();
+                idCard = $("input[name=idCard2]").val();
+                qualificationCertificate01Show = $("#qualificationCertificate01_01").html();
+                qualificationCertificate01 = $("#fileUpload3").attr("data-file-id");
+                qualificationCertificate02 = $("#fileUpload4").attr("data-file-id");
+                qualificationCertificate03 = $("#fileUpload5").attr("data-file-id");
+                if(!accountUser || !idCard || !qualificationCertificate01 || !qualificationCertificate02 || !qualificationCertificate03) {
+                    alert("请填写带 * 字段为必填项！");
+                    return;
+                }
+                if(!regBox.regIdCard.regEx.test(idCard)){
+                    alert(regBox.regIdCard.message);
+                    return;
+                }
             }
 
-            var data = {"id":getMember().account.id,"accountName":editCompanyName,"accountCode":editCreditCode,"member":editContactPerson,"phone":editContactPhone,"email":editContactEmail,"accountCodeFileId":fileId};
-            updateAccount(data);
-            if(!returnInfo){
-                alert('企业信息更新成功！');
-            }
-            return returnInfo;
-        };
-        var returnInfo;
-        function updateAccount(data){
+            var account = {id:getMember().account.id,accountName:editCompanyName,accountUser:accountUser2,accountUserId:idCard,accountType:"0",accountCode:editCreditCode,member:editContactPerson,phone:editContactPhone,email:editContactEmail,accountCodeFileId:accountCodeFileId,ext5:$("#creditCode").text(),remark:$("#remark").val()};
+            var member = {id:getMember().id,name:accountUser,account:account};
+            var data = {id:$("#companyInfoForm").attr("data-id"),
+                member:member,
+                notCheckShow:$("#idCard").text(),
+                memberType:memberType,
+                idCard:idCard,
+                qualificationCertificate01:qualificationCertificate01,
+                qualificationCertificate02:qualificationCertificate02,
+                qualificationCertificate03:qualificationCertificate03};
             $.ajax({
-                url: "/account/update",
+                url: "/bidderInfo/update",
                 type: "POST",
-                async: false,
-                data: JSON.stringify(data),
                 contentType: "application/json",
+                data: JSON.stringify(data),
                 success:function(e) {
-                    if(e.status != 200){
-                        returnInfo = true;
-                        alert("操作失败："+e.message);
+                    if(e.status == 200){
+                        var data2 = {
+                            id:$("#companyInfoForm").attr("data-id"),
+                            companyName:account.accountName,
+                            creditCode:account.accountCode,
+                            contactPerson:account.member,
+                            contactPhone:account.phone,
+                            contactEmail:account.email,
+                            accountMoney:account.accountMoney,
+                            fileName:$("#accountCodeFileId").html(),
+                            fileId:account.accountCodeFileId,
+                            memberType:data.memberType,
+                            isCheck:'0',
+                            remark:account.remark,
+                            accountUser:data.member.name,
+                            idCard:data.idCard,
+                            notCheckShow:data.notCheckShow,
+                            qualificationCertificate01:data.qualificationCertificate01,
+                            qualificationCertificate01Name: qualificationCertificate01Show,
+                            qualificationCertificate02:data.qualificationCertificate02,
+                            qualificationCertificate02Name:$("#qualificationCertificate02").html(),
+                            qualificationCertificate03:data.qualificationCertificate03,
+                            qualificationCertificate03Name:$("#qualificationCertificate03").html()
+                        };
+                        showInfo(data2);
+                        verifyLogin(); // 更新在线人员信息
+                        alert('企业信息已提交审核人员审核，审核通过后可进行项目报名！');
+                        // 切换回显示模式
+                        document.getElementById('companyInfoDisplay').style.display = 'block';
+                        document.getElementById('companyInfoForm').style.display = 'none';
                     }else{
-                        verifyLogin();
-                        returnInfo = false;
+                        alert("保存失败："+e.message);
                     }
-                },error: function(e) {
-                    alert('操作失败：'+e.message);
-                    returnInfo = true;
                 }
             });
+        };
+
+        function showInfo(data){
+            $("#companyInfoForm").attr("data-id",data.id);
+            $("#companyName").text(data.companyName);
+            $("#creditCode").text(data.creditCode);
+            $("#contactPerson").text(data.contactPerson);
+            $("#contactPhone").text(data.contactPhone);
+            $("#contactEmail").text(data.contactEmail);
+            $("#accountMoney").text(data.accountMoney);
+            $("#contactRemark").text(data.remark);
+            $("#remark").val(data.remark);
+            $("#certificateFiles").html(data.fileName.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+            $("#accountCodeFileId").html(data.fileName.replaceAll("display: none;","display: inline-block;").replaceAll("uploadName","fileUpload"));
+            $("#fileUpload").attr("data-file-id",data.fileId);
+
+            if(data.memberType=="0"){
+                // 法人
+                $("#memberType01").show();
+                $("input[name=memberType][value='0']").attr("checked","checked");
+                $("#type1").show();
+                $("#type2").hide();
+                $("#accountUser").text(data.accountUser);
+                $("input[name=accountUser]").val(data.accountUser);
+                $("#idCard").text(data.idCard);
+                $("input[name=idCard]").val(data.idCard);
+                $("#qualificationCertificate01").html(data.qualificationCertificate01Name.replaceAll("display: none;","display: inline-block;").replaceAll("uploadName","fileUpload2"));
+                $("#fileUpload2").attr("data-file-id",data.qualificationCertificate01);
+                $("#qualificationCertificate01Show").html(data.qualificationCertificate01Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+
+                $("#memberType02").hide();
+                $("#accountUser2").text("");
+                $("input[name=accountUser2]").val("");
+                $("#idCard2").text("");
+                $("input[name=idCard2]").val("");
+                $("#qualificationCertificate01_01").html("");
+                $("#fileUpload3").attr("data-file-id","");
+                $("#qualificationCertificate01_01Show").html("");
+                $("#qualificationCertificate02").html("");
+                $("#fileUpload4").attr("data-file-id","");
+                $("#qualificationCertificate02Show").html("");
+                $("#qualificationCertificate03").html("");
+                $("#fileUpload5").attr("data-file-id","");
+                $("#qualificationCertificate03Show").html("");
+            }else if(data.memberType=="1"){
+                // 授权代表人
+                $("#memberType01").hide();
+                $("input[name=memberType][value='1']").attr("checked","checked");
+                $("#type1").hide();
+                $("#type2").show();
+                $("#accountUser").text("");
+                $("input[name=accountUser]").val("");
+                $("#idCard").text("");
+                $("input[name=idCard]").val("");
+                $("#qualificationCertificate01").html("");
+                $("#fileUpload2").attr("data-file-id","");
+                $("#qualificationCertificate01Show").html("");
+
+                $("#memberType02").show();
+                $("#accountUser2").text(data.accountUser);
+                $("input[name=accountUser2]").val(data.accountUser);
+                $("#idCard2").text(data.idCard);
+                $("input[name=idCard2]").val(data.idCard);
+                $("#qualificationCertificate01_01").html(data.qualificationCertificate01Name.replaceAll("display: none;","display: inline-block;").replaceAll("uploadName","fileUpload3"));
+                $("#fileUpload3").attr("data-file-id",data.qualificationCertificate01);
+                $("#qualificationCertificate01_01Show").html(data.qualificationCertificate01Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+                $("#qualificationCertificate02").html(data.qualificationCertificate02Name.replaceAll("display: none;","display: inline-block;").replaceAll("uploadName","fileUpload4"));
+                $("#fileUpload4").attr("data-file-id",data.qualificationCertificate02);
+                $("#qualificationCertificate02Show").html(data.qualificationCertificate02Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+                $("#qualificationCertificate03").html(data.qualificationCertificate03Name.replaceAll("display: none;","display: inline-block;").replaceAll("uploadName","fileUpload5"));
+                $("#fileUpload5").attr("data-file-id",data.qualificationCertificate03);
+                $("#qualificationCertificate03Show").html(data.qualificationCertificate03Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+            }else{
+                $("#memberType01").show();
+                $("input[name=memberType][value='0']").attr("checked","checked");
+                $("#type1").show();
+                $("#type2").hide();
+            }
+            if(!data.memberType){
+                $("#accountState").css({color:'red',cursor:'pointer'});
+                $("#accountState").attr('data-info','由于系统升级为了保证企业信息的真实性，新增部分企业信息校验请先补全信息并审核通过后可报名项目，谢谢配合。');
+                $("#accountState").html("（信息审核：<span style='background: red;color: #fff;padding: 5px 7px;border-radius: 5px;font-size: 12px;'>未审核</span>）");
+            }else if(data.isCheck=='0'){
+                $("#accountState").css({color:'#2196F3',cursor:'pointer'});
+                $("#accountState").attr('data-info','企业信息已提交审核人员审核中，请耐心等待。');
+                $("#accountState").html("（信息审核：<span style='background: #2196F3;color: #fff;padding: 5px 7px;border-radius: 5px;font-size: 12px;'>审核中</span>）");
+            }else if(data.isCheck=='1'){
+                $("#accountState").css({color:'#4CAF50',cursor:'pointer'});
+                $("#accountState").attr('data-info','企业信息已通过审核，可以报名项目。');
+                $("#accountState").html("（信息审核：<span style='background: #4CAF50;color: #fff;padding: 5px 7px;border-radius: 5px;font-size: 12px;'>审核通过</span>）");
+            }else if(data.isCheck=='2'){
+                $("#accountState").css({color:'red',cursor:'pointer'});
+                $("#accountState").attr('data-info','不通过原因：'+data.notCheckShow);
+                $("#accountState").html("（信息审核：<span style='background: red;color: #fff;padding: 5px 7px;border-radius: 5px;font-size: 12px;'>查看不通过原因</span>）");
+            }
         }
+
         // 显示报名结果弹窗
         function showApplicationModal2(projectName,id) {
 
@@ -865,16 +1111,15 @@
         }
         // 显示报名结果弹窗
         function signUp(id,downUrl,oldSuppliers) {
-
             if(downUrl){
-                if(confirm('是否下载告知书和登记表。请仔细阅读附件的廉洁告知书，补充完整登记表信息盖章和报名资料一起在“我的信息”列表中上传！')) {
+                if(confirm('是否下载告知书和登记表。请仔细阅读附件的廉洁告知书，补充完整登记表信息盖章和报名资料一起在【我的信息】中上传！')) {
                     window.open(downUrl, '_blank');
                 }
             }
-            if(confirm('请仔细核对上传的报名资料与项目是否一致，确认报名此项目吗?')) {
+            if(confirm('请仔细核实联系人是否为在职人员方便后续联系，确认报名此项目吗?')) {
                 var account = getMember().account;
                 if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
-                    alert("请在【我的信息】列表中完善企业信息再进行报名，包括：企业名称，统一社会信用代码，联系人，联系电话，电子邮箱，上传营业执照");
+                    alert("请在【我的信息】中完善企业信息并审核通过后再进行报名！");
                     $("#myInfo").click();
                     return ;
                 }
@@ -918,13 +1163,13 @@
                 contentType: "application/json",
                 success:function(e) {
                     if(e.status == 200){
-                        if(state==1){
-                            availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
-                        }else{
-                            applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
-                        }
-                        alert('正在审核企业报名文件！');
+                        window.location.href = "/Application.html?id="+e.data.project.id+"&pid="+e.data.id;
                     }else{
+                        if(e.message.indexOf("【我的信息】")>-1){
+                            alert(e.message);
+                            $("#myInfo").click();
+                            return;
+                        }
                         alert("报名失败："+e.message);
                     }
                 }
