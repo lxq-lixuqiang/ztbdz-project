@@ -152,7 +152,7 @@ public class ProjectRegisterExport {
         @ExcelProperty("投标单位")
         private String accountName;
 
-        @ExcelProperty("联系人")
+        @ExcelProperty("经办人")
         private String member;
 
         @ExcelProperty("联系电话")
