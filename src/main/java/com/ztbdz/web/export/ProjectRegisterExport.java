@@ -131,14 +131,17 @@ public class ProjectRegisterExport {
         @ExcelProperty("项目编号")
         private String projectCode;
 
+        @ExcelProperty("业主单位")
+        private String tendereeName;
+
         @ExcelProperty("报名开始时间")
         private Date senrollStartDate;
 
         @ExcelProperty("报名截止时间")
         private Date enrollEndDate;
 
-        @ExcelProperty("业主单位")
-        private String tendereeName;
+        @ExcelProperty("开标时间")
+        private Date bidOpeningTime;
 
         @ExcelProperty("项目概况")
         private String projectOverview;
@@ -178,6 +181,7 @@ public class ProjectRegisterExport {
                 pageExport.setProjectCode(project.getProjectCode());
                 pageExport.setSenrollStartDate(project.getSenrollStartDate());
                 pageExport.setEnrollEndDate(project.getEnrollEndDate());
+                pageExport.setBidOpeningTime(project.getBidOpeningTime());
                 pageExport.setTendereeName(project.getTenderee().getTendereeName());
                 pageExport.setProjectOverview(project.getProjectOverview());
                 pageExport.setState(STATE_02.get(project.getState()));

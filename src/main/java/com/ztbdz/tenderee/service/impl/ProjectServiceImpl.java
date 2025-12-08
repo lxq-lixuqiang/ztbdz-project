@@ -218,6 +218,12 @@ public class ProjectServiceImpl  implements ProjectService {
         return projectMapper.selectByIds2(ids);
     }
 
+
+    @Override
+    public List<Project> selectByIds3(List<Long> ids,String sort) throws Exception {
+        return projectMapper.selectByIds3(ids,sort);
+    }
+
     @Override
     public List<Project> selectByIds(List<Long> ids,Long memberId) throws Exception {
         return projectMapper.selectByIds(ids,memberId);

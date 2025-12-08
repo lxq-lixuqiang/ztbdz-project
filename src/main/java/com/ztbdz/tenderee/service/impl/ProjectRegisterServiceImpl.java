@@ -134,7 +134,11 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             if(projectIds.size()>0){
                 PageHelper.startPage(page, size);
                 if(state==3){
-                    projectList = projectService.selectByIds(projectIds);
+                    if(!StringUtils.isEmpty(project.getExt5())){
+                        projectList = projectService.selectByIds3(projectIds,project.getExt5());
+                    }else{
+                        projectList = projectService.selectByIds(projectIds);
+                    }
                 }else{
                     projectList = projectService.selectByIds(projectIds,memberId);
                 }

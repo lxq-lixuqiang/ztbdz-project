@@ -192,8 +192,8 @@
 
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">公告文件</label>
-            <button onclick="showUploadDialog2()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传文件</button>
-            <div id="certificateFiles2">
+            <button onclick="showUploadDialog2()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;vertical-align: top;">上传公告文件</button>
+            <div id="certificateFiles2"style="display: inline-block;margin-left:10px;">
 
             </div>
             <input data-file-id="" id="tendereeInformField" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
@@ -360,7 +360,7 @@
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">告知书或登记表</label>
-                        <button onclick="showUploadDialog3()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;">上传告知书或登记表</button>
+                        <button onclick="showUploadDialog3()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传告知书或登记表</button>
                         <div id="certificateFiles3" style="display: inline-block;margin-left:10px;">
 
                         </div>
@@ -860,21 +860,7 @@
             $("#certificateFiles3").html(fileName);
 
         });
-
-        $("body").on('change','#tendereeInformField', function () {
-            if(this.files.length==0){
-                return;
-            }
-            var fileId = uploadFile(this.files);
-            $("#tendereeInformField").attr("data-file-id",fileId);
-
-            var fileName = "";
-            var fileIds = fileId.split(",");
-            for(var i=0;i<this.files.length;i++){
-                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
-            }
-            $("#certificateFiles2").html(fileName);
-        });
+        uploadFileInfo("tendereeInformField","certificateFiles2");
 
         // 加载已发布项目列表
         loadPublishedProjects();
@@ -1650,15 +1636,15 @@
                 <td style="padding:10px;color:red;">已停用</td>
         {{else}}
             {{#gtNowDate endDate}}
-                <td style="padding:10px;color:#4CAF50;">正常</td>
+                <td style="padding:10px;color:#4CAF50;">生效中</td>
             {{else}}
-                <td style="padding:10px;color:red;">已失效</td>
+                <td style="padding:10px;color:red;">已过期</td>
             {{/gtNowDate}}
         {{/eq}}
 
         <td style="padding:10px;">
             <button onclick="updateBlacklist('{{id}}')" style="padding:3px 8px; background:#4CAF50; color:#fff; border:none;cursor: pointer;margin-bottom:5px;">修改</button>
-            <button onclick="deleteBlacklist('{{id}}')" style="padding:3px 8px; background:#2196F3; color:#fff; border:none;cursor: pointer;">删除</button>
+            <button onclick="deleteBlacklist('{{id}}')" style="padding:3px 8px; background:red; color:#fff; border:none;cursor: pointer;">删除</button>
         </td>
     </tr>
     {{/each}}

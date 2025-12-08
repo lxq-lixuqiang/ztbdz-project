@@ -24,4 +24,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
     List<Project> selectByIds(@Param("ids")List<Long> ids,@Param("memberId")Long memberId);
 
     List<Project> selectByIds2(@Param("ids")List<Long> ids);
+
+    List<Project> selectByIds3(@Param("ids")List<Long> ids,@Param("sort")String sort);
 }

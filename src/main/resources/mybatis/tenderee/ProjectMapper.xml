@@ -266,50 +266,76 @@
 
 	<select id="selectByIds2" resultType="Project">
 		(select
-		p.*
-		from
-		project p
-		left join project_register pr on pr.project_id = p.id
-		where
-		1=1
-		<if test="ids != null and ids.size() >0">
-			and p.id in
-			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
-				#{item}
-			</foreach>
-		</if>
-		and pr.state = 0
+			p.*
+			from
+			project p
+			left join project_register pr on pr.project_id = p.id
+			where
+			1=1
+			<if test="ids != null and ids.size() >0">
+				and p.id in
+				<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+					#{item}
+				</foreach>
+			</if>
+			and pr.state = 0
+			group by p.id)
+			UNION All
+			(select
+			p.*
+			from
+			project p
+			left join project_register pr on pr.project_id = p.id
+			where
+			1=1
+			<if test="ids != null and ids.size() >0">
+				and p.id in
+				<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+					#{item}
+				</foreach>
+			</if>
+			and p.id not in (select
+			p.id
+			from
+			project p
+			left join project_register pr on pr.project_id = p.id
+			where
+			1=1
+			<if test="ids != null and ids.size() >0">
+				and p.id in
+				<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+					#{item}
+				</foreach>
+			</if>
+			and pr.state = 0
+			group by p.id)
 		group by p.id)
-		UNION All
-		(select
-		p.*
-		from
-		project p
-		left join project_register pr on pr.project_id = p.id
-		where
-		1=1
-		<if test="ids != null and ids.size() >0">
-			and p.id in
-			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
-				#{item}
-			</foreach>
+	</select>
+	<select id="selectByIds3" resultType="Project">
+		select
+			u.*
+		from (select
+			p.*
+			from
+			project p
+			left join project_register pr on pr.project_id = p.id
+			where
+			1=1
+			<if test="ids != null and ids.size() >0">
+				and p.id in
+				<foreach collection='ids' item='item' open='(' separator=',' close=')'>
+					#{item}
+				</foreach>
+			</if>
+			group by p.id) u
+		<if test="sort != null and sort.length() >0">
+			<if test="sort=='asc'">
+				order by u.enroll_end_date asc
+			</if>
+			<if test="sort=='desc'">
+				order by u.enroll_end_date desc
+			</if>
 		</if>
-		and p.id not in (select
-		p.id
-		from
-		project p
-		left join project_register pr on pr.project_id = p.id
-		where
-		1=1
-		<if test="ids != null and ids.size() >0">
-			and p.id in
-			<foreach collection='ids' item='item' open='(' separator=',' close=')'>
-				#{item}
-			</foreach>
-		</if>
-		and pr.state = 0
-		group by p.id)
-		group by p.id)
 	</select>
 
 </mapper>

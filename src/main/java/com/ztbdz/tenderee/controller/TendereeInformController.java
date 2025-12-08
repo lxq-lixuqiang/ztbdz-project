@@ -41,7 +41,7 @@ public class TendereeInformController {
         return tendereeInformService.update(tendereeInform);
     }
 
-    @ApiOperation(value = "展示已发布公告")
+    @ApiOperation(value = "获取已发布公告")
     @PostMapping("list")
     public Result list(@RequestBody TendereeInform tendereeInform) {
         return tendereeInformService.list(tendereeInform);
@@ -57,13 +57,12 @@ public class TendereeInformController {
     }
 
 
-    @ApiOperation(value = "获取澄清列表")
+    @ApiOperation(value = "分页获取已发布公告或澄清列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required=false, dataType = "Integer"),
             @ApiImplicitParam(name = "size", value = "页大小", required=false, dataType = "Integer")
     })
-    @CheckToken
     @PostMapping("page")
     public Result page(@RequestParam(required = false, defaultValue = "1") Integer page,
                        @RequestParam(required = false) Integer size,
