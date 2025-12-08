@@ -40,9 +40,9 @@ public class Account extends Model<Account> implements Serializable {
     private String accountNumberName;
     @ApiModelProperty("企业所在地")
     private String accountAddress;
-    @ApiModelProperty("公司联系人")
+    @ApiModelProperty("经办人")
     private String member;
-    @ApiModelProperty("公司手机号")
+    @ApiModelProperty("联系电话")
     private String phone;
     @ApiModelProperty("公司邮箱")
     private String email;

@@ -237,7 +237,7 @@
                 <p><strong>企业名称：</strong><span id="companyName"></span></p>
                 <p><strong>统一社会信用代码：</strong><span id="creditCode"></span></p>
                 <p><strong style="vertical-align: top;">营业执照：</strong><span id="certificateFilesShow" style="display: inline-block;"></span></p>
-                <p><strong>联系人：</strong><span id="contactPerson"></span></p>
+                <p><strong>经办人：</strong><span id="contactPerson"></span></p>
                 <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                 <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
                 <div id="memberType01" style="display: none;">
@@ -423,7 +423,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     供应商名称<input type="text" id="accountNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                    联系人<input type="text" id="accountMemberSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    经办人<input type="text" id="accountMemberSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
                     <button id="biddderSearchBtn" onclick="loadApplicationData2()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
                 </div>
                 <div id="applicationLoading2" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
@@ -431,7 +431,7 @@
                     <thead>
                     <tr style="background:#f5f5f5;">
                         <th style="padding:10px; border:1px solid #ddd;">供应商名称</th>
-                        <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                        <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                         <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                         <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
                         <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
@@ -530,11 +530,11 @@
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
             <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
-            {{#ne project.isAudit 0}}{{#ne project.isAudit 2}}
+            {{#ne project.isAudit 2}}
                     {{#gtNowDate project.bidOpeningTime}}
                              <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
                     {{/gtNowDate}}
-            {{/ne}}{{/ne}}
+            {{/ne}}
             {{#eq project.isAudit 2}}
                 <button onclick="showProject('{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">修改</button>
                 <button onclick="alert('不通过原因：{{project.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;">原因</button>
@@ -747,8 +747,8 @@
         var senrollStartDateTime = new Date(senrollStartDate).getTime();
         var tendereeDateTime = new Date(tendereeDate).getTime();
         if(!id){
-            if(enrollEndDateTime<=now || tendereeDateTime<=now || senrollStartDateTime<=now){
-                alert("开始时间，截至时间，招标时间 不能早于或等于当前时间！");
+            if(enrollEndDateTime<=now || tendereeDateTime<=now){
+                alert("报名截至时间，招标时间 不能早于或等于当前时间！");
                 return;
             }
         }else{
@@ -1211,7 +1211,7 @@
                             <h4 id="accountInfo" data-id=`+id+`>企业基本信息</h4>
                             <p>企业名称: <span>`+(account.accountName!=null?account.accountName:"")+`</span></p>
                             <p>统一社会信用代码: <span>`+(account.accountCode!=null?account.accountCode:"")+`</span></p>
-                            <p>联系人: <span>`+(account.member!=null?account.member:"")+`</span></p>
+                            <p>经办人: <span>`+(account.member!=null?account.member:"")+`</span></p>
                             <p>联系电话: <span>`+(account.phone!=null?account.phone:"")+`</span></p>
                             <p>电子邮箱: <span>`+(account.email!=null?account.email:"")+`</span></p>
 
@@ -1493,7 +1493,7 @@
             <thead>
             <tr style="background:#f5f5f5;">
                 <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
-                <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                 <th style="padding:10px; border:1px solid #ddd;">邮箱</th>
                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
@@ -1520,7 +1520,7 @@
             <thead>
             <tr style="background:#f5f5f5;">
                 <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
-                <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                 <th style="padding:10px; border:1px solid #ddd;">评审结果</th>
             </tr>

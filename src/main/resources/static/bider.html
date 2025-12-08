@@ -230,20 +230,23 @@
                     <h3>可以报名项目</h3>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         项目名称<input type="text" id="projectNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                        项目编号<input type="text" id="projectCodeSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
                         截止时间<input type="date" id="enrollEndDateSearch" style="flex:1; padding:4px;margin: 0 20px 0 5px;" >
                         <button id="searchBtn" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
                     </div>
                     <table style="width:100%; border-collapse:collapse;">
-                        <thead>
+                        <thead id="pageThead2">
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                                 <th style="padding:10px; border:1px solid #ddd;">截止时间</th>
-                                <th style="padding:10px; border:1px solid #ddd;">预算</th>
+                                <th style="padding:10px; border:1px solid #ddd;">项目预算</th>
                                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
+                    <div id="pageInfo2" style="margin-top:10px; text-align: center;"></div>
                 </div>
                 <div class="tab-content" id="applying">
                     <h3>正在报名项目</h3>
@@ -267,7 +270,7 @@
                         <p><strong>企业名称：</strong><span id="companyName"></span></p>
                         <p><strong>统一社会信用代码：</strong><span id="creditCode"></span></p>
                         <p><strong style="vertical-align: top;">营业执照：</strong><span id="certificateFiles" style="display: inline-block;"></span></p>
-                        <p><strong>联系人：</strong><span id="contactPerson"></span></p>
+                        <p><strong>经办人：</strong><span id="contactPerson"></span></p>
                         <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
                         <div id="memberType01" style="display: none;">
@@ -304,7 +307,7 @@
                             <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
                         </div>
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">联系人<span style="color:red;">*</span></label>
+                            <label style="display:block; margin-bottom:5px;">经办人<span style="color:red;">*</span></label>
                             <input type="text" id="editContactPerson" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                         </div>
                         <div style="margin-bottom:15px;">
@@ -394,6 +397,7 @@
                         <thead>
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                                 <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
                                 <th style="padding:10px; border:1px solid #ddd;">状态</th>
                                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
@@ -410,6 +414,7 @@
                         <thead>
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                                 <th style="padding:10px; border:1px solid #ddd;">开始时间</th>
                                 <th style="padding:10px; border:1px solid #ddd;">状态</th>
                                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
@@ -426,6 +431,7 @@
                         <thead>
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                                 <th style="padding:10px; border:1px solid #ddd;">结束时间</th>
                                 <th style="padding:10px; border:1px solid #ddd;">结果</th>
                                 <th style="padding:10px; border:1px solid #ddd;">操作</th>
@@ -450,7 +456,7 @@
                 <thead>
                 <tr style="background:#f5f5f5;">
                     <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
-                    <th style="padding:10px; border:1px solid #ddd;">联系人</th>
+                    <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                     <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                     <th style="padding:10px; border:1px solid #ddd;">评审结果</th>
                 </tr>
@@ -469,6 +475,7 @@
         {{#each list}}
             <tr>
                 <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+                <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">{{enrollEndDate}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">{{#moneyDelimiter money}}{{/moneyDelimiter}}</td>
                 <td style="padding:10px; border:1px solid #ddd;">
@@ -493,7 +500,7 @@
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">{{senrollStartDate}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             {{#eq  projectRegisters.state 0}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">缴费审核中 </td>{{/eq}}
             {{#eq  projectRegisters.state 1}}<td style="padding:10px; border:1px solid #ddd;">报名成功 </td>{{/eq}}
             {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;color:red;">缴费不通过 </td>{{/eq}}
@@ -529,10 +536,13 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{senrollStartDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">已报名</td>
-            <td style="padding:10px; border:1px solid #ddd;">
-                <a href="/project-d.html?id={{projectRegisters.id}}" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;">查看详情</a>
+            <td style="padding:10px; border:1px solid #ddd;width: 50px;">
+                <a href="/project-d.html?id={{projectRegisters.id}}" style="text-decoration: none;cursor: pointer;">
+                    <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">查看详情</button>
+                </a>
             </td>
         </tr>
         {{/each}}
@@ -547,9 +557,10 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{bidOpeningTime}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#gtNowDate bidOpeningTime}}等待评审{{else}}评审中{{/gtNowDate}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">
+            <td style="padding:10px; border:1px solid #ddd;width: 50px;">
                 {{#gtNowDate bidOpeningTime}}{{else}}
                     <a href="clarify.html?id={{../this.accountId}}&projectId={{id}}" style="text-decoration: none;cursor: pointer">
                         <button style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">进入澄清</button>
@@ -569,9 +580,10 @@
         {{#each list}}
         <tr>
             <td style="padding:10px; border:1px solid #ddd;">{{projectName}}</td>
+            <td style="padding:10px; border:1px solid #ddd;">{{projectCode}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{reviewEndDate}}</td>
             <td style="padding:10px; border:1px solid #ddd;">{{#eq isPass 1}}废标{{else}}{{#eq projectRegisters.winBidState 0}}未公布{{/eq}}{{#eq projectRegisters.winBidState 1}}中标{{/eq}}{{#eq projectRegisters.winBidState 2}}未中标{{/eq}}{{/eq}}</td>
-            <td style="padding:10px; border:1px solid #ddd;">
+            <td style="padding:10px; border:1px solid #ddd;width: 50px;">
                 <button onclick="showApplicationModal2('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看结果</button>
             </td>
         </tr>
@@ -595,19 +607,20 @@
             // 初始化
             availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
             // 添加回车键搜索功能
-            $('#projectNameSearch').on('keypress', function(e) {
-                if(e.which === 13) { // 回车键
-                    $('#searchBtn').click();
-                }
-            });
+            keypress13("projectNameSearch","searchBtn");
+            keypress13("projectCodeSearch","searchBtn");
 
             $("body").on("click", "div[data-tab=available]", function() {
+                localStorage.removeItem('page'); // 分页页码
+                localStorage.removeItem('data'); // 搜索参数
                 availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
             });
             $("body").on("click", "#searchBtn", function() {
                 availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
             });
             $("body").on("click", "div[data-tab=applying]", function() {
+                localStorage.removeItem('page'); // 分页页码
+                localStorage.removeItem('data'); // 搜索参数
                 applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
             });
             $("body").on("click", "div[data-tab=project1]", function() {
@@ -788,16 +801,25 @@
 
         function availableInit(state,tbody,template){
             var projectName = $("#projectNameSearch").val();
+            var projectCode = $("#projectCodeSearch").val();
             var enrollEndDate = $("#enrollEndDateSearch").val();
             var data = {"state":state};
             if(projectName){
                 data["projectName"] = projectName;
             }
+            if(projectCode){
+                data["projectCode"] = projectCode;
+            }
             if(enrollEndDate){
                 data["enrollEndDateSearch"] = enrollEndDate;
             }
+            var page = "";
+            var pageInfo = localStorage.getItem('page');
+            if(pageInfo){
+                page="?page="+pageInfo;
+            }
             $.ajax({
-                url: "/project/listAvailable",
+                url: "/project/listAvailable"+page,
                 type: "POST",
                 data: JSON.stringify(data),
                 contentType: "application/json",
@@ -805,14 +827,19 @@
                     if(e.status == 200){
                         var newTemplate = template(e.data);
                         tbody.html(newTemplate);
+                        pageButton(e.data,"pageInfo2","pageThead2");
                     }else{
                         alert("获取可以报名项目列表失败："+e.message);
                     }
                 }
             });
         }
-        function initPageShow(data){
-            applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
+        function initPageShow(data,pageName){
+            if(pageName=="pageInfo2"){
+                availableInit(1,$("#available tbody"),Handlebars.compile($("#availableTemplate").html()));
+            }else{
+                applyingInit(1,$("#applying tbody"),Handlebars.compile($("#applyingTemplate").html()));
+            }
         }
         function applyingInit(state,tbody,template){
             var page = "";
@@ -1116,7 +1143,7 @@
                     window.open(downUrl, '_blank');
                 }
             }
-            if(confirm('请仔细核实联系人是否为在职人员方便后续联系，确认报名此项目吗?')) {
+            if(confirm('请确认经办人是否在职，如不在职，应更改经办人并提交新的法定代表人授权函、授权代表身份证及社保，审核通过后才能报名！')) {
                 var account = getMember().account;
                 if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
                     alert("请在【我的信息】中完善企业信息并审核通过后再进行报名！");
