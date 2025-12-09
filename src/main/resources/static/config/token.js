@@ -199,19 +199,33 @@ function uploadImg(files) {
 
 // 上传文件
 function uploadFile(files) {
-    var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); //上传文件大小不能超过50M！
+    var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTAwTe+8gQ=="); //上传文件大小不能超过500M！
     return upload(files,"file",error);
 }
 
 // 上传
 function upload(files,url,errorMagger){
     var formData = new FormData();
+    var showLoading = false;
     for(var i=0;i<files.length;i++){
-        if(files[i].size>(50*1024*1024)){
-            alert(errorMagger)
-            throw errorMagger;
+        if(url=="file"){
+            if(files[i].size>(500*1024*1024)){
+                alert(errorMagger);
+                throw errorMagger;
+            }
+            if(files[i].size>(100*1024*1024)){//上传的文件超过100M显示上传loading进行提示
+                showLoading = true;
+            }
+        }else{
+            if(files[i].size>(50*1024*1024)){
+                alert(errorMagger);
+                throw errorMagger;
+            }
         }
         formData.append('files', files[i]); // 'file'是后端接收的文件参数名
+    }
+    if(showLoading){
+        uploadLoading();//显示上传loading
     }
     if(url == "img"){
         url = "/file/uploadImg";
@@ -229,6 +243,9 @@ function upload(files,url,errorMagger){
         success: function (e) {
             if(e.status == 200){
                 fileId = e.data;
+                if(showLoading){
+                    closeLoading(); // 关闭loading
+                }
                 alert("上传成功！");
             }else{
                 alert(e.message)
@@ -354,4 +371,42 @@ function keypress13(searchInput,searchBtn){
     });
 }
 
+// loading显示
+function showLoading(content){
+    if($("#loading").length>0){
+        $("#loading p").text(content+"...");
+    }else{
+        $("body").append("<div id='loading' class=\"loader\">\n" +
+            "  <h1></h1>\n" +
+            "  <div class=\"loading_box\">\n" +
+            "    <div class=\"symbol\">\n" +
+            "      <p>"+content+"...</p>\n" +
+            "      <div></div>\n" +
+            "    </div>\n" +
+            "  </div>\n" +
+            "</div>");
+    }
+}
+function loading(){
+    showLoading("加载中");
+}
+function importLoading(){
+    showLoading("导入数据中");
+}
+function uploadLoading(){
+    showLoading("上传文件中");
+}
+function closeLoading(){
+    $("#loading").remove();
+}
+
+// 动态引用CSS
+loadCSS("plugin/loading/loading.css");//加载loading的css
+function loadCSS(url) {
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = url;
+    link.type = 'text/css';
+    document.head.appendChild(link);
+}
 

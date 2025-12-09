@@ -391,7 +391,8 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     项目名称<input type="text" id="projectNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                    报名截止时间<input type="date" id="enrollEndDateSearch" style="flex:1; padding:4px;margin: 0 20px 0 5px;" >
+                    供应商<input type="text" id="bidderSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    截止时间<input type="date" id="enrollEndDateSearch" style="flex:1; padding:4px;margin: 0 20px 0 5px;" >
                     <button id="searchBtn" onclick="loadApplicationData()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
                 </div>
 
@@ -403,9 +404,9 @@
                         <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
-                        <th style="padding:10px; border:1px solid #ddd;">报名单位</th>
-                        <th style="padding:10px; border:1px solid #ddd;">报名状态</th>
+                        <th style="padding:10px; border:1px solid #ddd;">供应商</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名时间</th>
+                        <th style="padding:10px; border:1px solid #ddd;">状态</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -436,7 +437,7 @@
                         <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
                         <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
-                        <th style="padding:10px; border:1px solid #ddd;">操作</th>
+                        <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -469,7 +470,6 @@
                         <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">预算金额</th>
-                        <th style="padding:10px; border:1px solid #ddd;">状态</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -526,7 +526,7 @@
         <td style="padding:10px;">{{project.projectCode}}</td>
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
         <td style="padding:10px;">{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
-        <td style="padding:10px;{{#eq project.isAudit 0}}color:red;{{/eq}}">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
+        <!--<td style="padding:10px;{{#eq project.isAudit 0}}color:red;{{/eq}}">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>-->
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
             <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
@@ -647,6 +647,7 @@
     verifyLogin();
     // 添加回车键搜索功能
     keypress13('projectNameSearch','searchBtn');
+    keypress13('bidderSearch','searchBtn');
     keypress13('projectNameSearch1','searchBtn1');
     keypress13('projectCodeSearch1','searchBtn1');
 
@@ -812,7 +813,7 @@
                 if(response.status == 200) {
                     $("#publishForm").attr("data-id","");
                     $("#publishForm").attr("data-projectid","");
-                    alert("发布项目正在审核中！");
+                    alert("发布项目成功！");
                     loadPublishedProjects(); // 刷新项目列表
                     showProjectTabs();
                     isClear = true;
@@ -878,10 +879,14 @@
         $("#applicationTable").hide();
 
         var projectName = $("#projectNameSearch").val();
+        var bidderSearch = $("#bidderSearch").val();
         var enrollEndDate = $("#enrollEndDateSearch").val();
         var data = {};
         if(projectName){
             data["projectName"] = projectName;
+        }
+        if(bidderSearch){
+            data["projectRegisters"] = {member:{account:{accountName:bidderSearch}}};
         }
         if(enrollEndDate){
             data["enrollEndDateSearch"] = enrollEndDate;

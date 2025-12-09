@@ -28,6 +28,15 @@
 				and p.enroll_end_date like concat( #{project.enrollEndDateSearch},'%')
 			</if>
 		</if>
+		<if test="project.projectRegisters != null">
+			<if test="project.projectRegisters.member != null">
+				<if test="project.projectRegisters.member.account != null">
+					<if test="project.projectRegisters.member.account.accountName != null">
+						and a.account_name like concat('%',#{project.projectRegisters.member.account.accountName},'%')
+					</if>
+				</if>
+			</if>
+		</if>
 		<if test="memberId != null">
 			<if test="state==0">
 				and pr.member_id = #{memberId}

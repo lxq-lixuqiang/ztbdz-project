@@ -135,7 +135,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
                         项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                        报名截止时间排序<select id="enrollEndDate" style="flex:3;padding:8px; border:1px solid #ddd;box-sizing: border-box;margin: 0 20px 0 5px;" >
+                        报名截止时间排序<select id="enrollEndDate" style="padding:6px; border:1px solid #9f9696;box-sizing: border-box;margin: 0 20px 0 5px;border-radius: 4px;" >
                                             <option value=""></option>
                                             <option value="asc">升序</option>
                                             <option value="desc">降序</option>
@@ -258,7 +258,11 @@
                 if (e.data.length > 0) {
                     $("#modalTitle").text(e.data[0].project.projectName==null?'':"项目名称："+e.data[0].project.projectName);
                     $("#projectCodeTitle").text(e.data[0].project.projectCode==null?'':"项目编号："+e.data[0].project.projectCode);
-                    $("#projectOverview").text(e.data[0].project.projectOverview==null || e.data[0].project.projectOverview==''?'':"项目概况："+e.data[0].project.projectOverview);
+                    if(e.data[0].project.projectOverview && e.data[0].project.projectOverview.length>40){
+                        $("#projectOverview").html(e.data[0].project.projectOverview==null || e.data[0].project.projectOverview==''?'':"<p style=\"-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;overflow: hidden;position: relative;\">项目概况："+e.data[0].project.projectOverview+"<span id=\"showContent\" style='font-weight: normal;cursor: pointer;color:#2196F3;padding:0 10px;position: absolute;top:0;right: 0;background-color: #fff;'>展开</span></p>");
+                    }else{
+                        $("#projectOverview").html(e.data[0].project.projectOverview==null || e.data[0].project.projectOverview==''?'':"项目概况："+e.data[0].project.projectOverview);
+                    }
                     $("#endDateTitle").text(e.data[0].project.enrollEndDate==null?'':"截止时间："+e.data[0].project.enrollEndDate);
                     $("#bidOpeningTime").text(e.data[0].project.bidOpeningTime==null?'':"开标时间："+e.data[0].project.bidOpeningTime);
                     e.data.forEach(register => {
@@ -288,6 +292,18 @@
         });
 
     }
+    $("body").on("click","#showContent",function(){
+        var showInfo = $(this).text();
+        if(showInfo=="收起"){
+            $(this).parent().attr("style","-webkit-line-clamp: 1;-webkit-box-orient: vertical;text-overflow: ellipsis;display: -webkit-box;overflow: hidden;position: relative;");
+            $(this).text("展开");
+            $(this).css({position:"absolute"});
+        }else{
+            $(this).parent().removeAttr("style");
+            $(this).text("收起");
+            $(this).css({position:"relative"});
+        }
+    })
 
     // 关闭弹窗
     function closeModal() {
