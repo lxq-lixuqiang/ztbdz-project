@@ -200,21 +200,30 @@ function uploadImg(files) {
 // 上传文件
 function uploadFile(files) {
     var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTAwTe+8gQ=="); //上传文件大小不能超过500M！
-    return upload(files,"file",error);
+    var showLoading = false;
+    for(var i=0;i<files.length;i++){
+        if(files[i].size>(100*1024*1024)){//上传的文件超过100M显示上传loading进行提示
+            showLoading = true;
+        }
+    }
+    if(showLoading){
+        uploadLoading();//显示上传loading
+        setTimeout(function(){
+            return upload(files,"file",error);
+        },100);
+    }else{
+        return upload(files,"file",error);
+    }
 }
 
 // 上传
 function upload(files,url,errorMagger){
     var formData = new FormData();
-    var showLoading = false;
     for(var i=0;i<files.length;i++){
         if(url=="file"){
             if(files[i].size>(500*1024*1024)){
                 alert(errorMagger);
                 throw errorMagger;
-            }
-            if(files[i].size>(100*1024*1024)){//上传的文件超过100M显示上传loading进行提示
-                showLoading = true;
             }
         }else{
             if(files[i].size>(50*1024*1024)){
@@ -223,9 +232,6 @@ function upload(files,url,errorMagger){
             }
         }
         formData.append('files', files[i]); // 'file'是后端接收的文件参数名
-    }
-    if(showLoading){
-        uploadLoading();//显示上传loading
     }
     if(url == "img"){
         url = "/file/uploadImg";
@@ -237,7 +243,6 @@ function upload(files,url,errorMagger){
         url: url,
         type: 'POST',
         data: formData,
-        async: false,
         contentType: false,
         processData: false,
         success: function (e) {
@@ -250,6 +255,9 @@ function upload(files,url,errorMagger){
             }else{
                 alert(e.message)
             }
+        },error: function(e){
+            closeLoading(); // 关闭loading
+            alert(e.message)
         }
     });
     return fileId;
