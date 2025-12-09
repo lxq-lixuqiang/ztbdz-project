@@ -193,18 +193,18 @@ function deleteUploadFileInfo(id,uploadName){
 
 // 同步上传图片
 function uploadImg(files) {
-    var error = decoded("5LiK5Lyg5Zu+54mH5aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); // 上传图片大小不能超过50M！
+    var error = decoded("5LiK5Lyg5Zu+54mH5aSn5bCP5LiN6IO96LaF6L+HMTAwTe+8gQ=="); // 上传图片大小不能超过100M！
     return upload(files,"img",error);
 }
 // 同步上传文件
 function uploadFile(files) {
-    var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); //上传文件大小不能超过50M！
+    var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HMTAwTe+8gQ=="); //上传文件大小不能超过100M！
     return upload(files,"file",error);
 }
 function upload(files,url,errorMagger){
     var formData = new FormData();
     for(var i=0;i<files.length;i++){
-        if(files[i].size>(50*1024*1024)){
+        if(files[i].size>(100*1024*1024)){
             alert(errorMagger)
             throw errorMagger;
         }
