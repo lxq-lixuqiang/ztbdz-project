@@ -191,45 +191,22 @@ function deleteUploadFileInfo(id,uploadName){
     alert(decoded("5Yig6Zmk5oiQ5Yqf77yB"));
 }
 
-// 上传图片
+// 同步上传图片
 function uploadImg(files) {
     var error = decoded("5LiK5Lyg5Zu+54mH5aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); // 上传图片大小不能超过50M！
     return upload(files,"img",error);
 }
-
-// 上传文件
+// 同步上传文件
 function uploadFile(files) {
-    var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTAwTe+8gQ=="); //上传文件大小不能超过500M！
-    var showLoading = false;
-    for(var i=0;i<files.length;i++){
-        if(files[i].size>(100*1024*1024)){//上传的文件超过100M显示上传loading进行提示
-            showLoading = true;
-        }
-    }
-    if(showLoading){
-        uploadLoading();//显示上传loading
-        setTimeout(function(){
-            return upload(files,"file",error);
-        },100);
-    }else{
-        return upload(files,"file",error);
-    }
+    var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTBN77yB"); //上传文件大小不能超过50M！
+    return upload(files,"file",error);
 }
-
-// 上传
 function upload(files,url,errorMagger){
     var formData = new FormData();
     for(var i=0;i<files.length;i++){
-        if(url=="file"){
-            if(files[i].size>(500*1024*1024)){
-                alert(errorMagger);
-                throw errorMagger;
-            }
-        }else{
-            if(files[i].size>(50*1024*1024)){
-                alert(errorMagger);
-                throw errorMagger;
-            }
+        if(files[i].size>(50*1024*1024)){
+            alert(errorMagger)
+            throw errorMagger;
         }
         formData.append('files', files[i]); // 'file'是后端接收的文件参数名
     }
@@ -243,14 +220,44 @@ function upload(files,url,errorMagger){
         url: url,
         type: 'POST',
         data: formData,
+        async: false,
         contentType: false,
         processData: false,
         success: function (e) {
             if(e.status == 200){
                 fileId = e.data;
-                if(showLoading){
-                    closeLoading(); // 关闭loading
-                }
+                alert("上传成功！");
+            }else{
+                alert(e.message)
+            }
+        }
+    });
+    return fileId;
+}
+// 异步上传文件
+function asyncUpload(files){
+    uploadLoading();//显示上传loading
+    var errorMagger = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTAwTe+8gQ=="); //上传文件大小不能超过500M！
+    var formData = new FormData();
+    for(var i=0;i<files.length;i++){
+        if(files[i].size>(500*1024*1024)){
+            alert(errorMagger);
+            throw errorMagger;
+        }
+        formData.append('files', files[i]); // 'file'是后端接收的文件参数名
+    }
+    var fileId = "";
+    $.ajax({
+        url: "/file/upload",
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (e) {
+            if(e.status == 200){
+                fileId = e.data;
+                closeLoading(); // 关闭loading
+                asyncUploadExecute(fileId);
                 alert("上传成功！");
             }else{
                 alert(e.message)
@@ -262,6 +269,8 @@ function upload(files,url,errorMagger){
     });
     return fileId;
 }
+
+
 
 // 计算天数
 function daysBetweenDates(startDate, endDate) {

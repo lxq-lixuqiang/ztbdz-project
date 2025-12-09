@@ -824,6 +824,12 @@
             }
         });
     }
+    function asyncUploadExecute(fileId){
+        var fileName = localStorage.getItem('fileName').replaceAll("【fileId】",fileId);
+        $("#certificateFiles").html(fileName);
+        $("#fileUpload").attr("data-file-id",fileId);
+        localStorage.removeItem('fileName');
+    }
 
     var publishInfo;
     var announcementModal4;
@@ -839,15 +845,15 @@
             if(this.files.length==0){
                 return;
             }
-            var fileId = uploadFile(this.files);
-            $("#fileUpload").attr("data-file-id",fileId);
+            asyncUpload(this.files);
             var fileName = "";
             for(var i=0;i<this.files.length;i++){
-                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileId+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/【fileId】'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
             }
-            $("#certificateFiles").html(fileName);
-
+            localStorage.setItem('fileName', fileName);
         });
+
+
         $("body").on('change','#fileUpload3', function () {
             if(this.files.length==0){
                 return;
