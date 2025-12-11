@@ -75,7 +75,11 @@
 				</if>
 			</if>
 	  	order by
-			t.update_date desc
+		CASE
+			WHEN p.is_audit = 0 THEN 2
+			ELSE 0
+		END desc,
+		t.update_date desc
 	</select>
 	
 </mapper>

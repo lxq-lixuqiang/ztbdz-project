@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Api(tags = "投标报名")
 @RequestMapping("/projectRegister")
@@ -47,6 +46,17 @@ public class ProjectRegisterController {
     @PostMapping("update")
     public Result update(@RequestBody ProjectRegister projectRegister) {
         return projectRegisterService.update(projectRegister);
+    }
+
+    @ApiOperation(value = "批量开具发票")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
+            @ApiImplicitParam(name = "ids", value = "投标id", required=true, dataType = "String")
+    })
+    @CheckToken
+    @GetMapping("batchUpdateInvoice/{ids}")
+    public Result batchUpdate(@PathVariable String ids) {
+        return projectRegisterService.batchUpdateInvoice(ids.split(","));
     }
 
     @ApiOperation(value = "开具发票")

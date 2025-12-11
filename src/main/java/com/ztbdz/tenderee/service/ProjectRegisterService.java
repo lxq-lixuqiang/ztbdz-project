@@ -120,6 +120,13 @@ public interface ProjectRegisterService {
 
 
     /**
+     * 批量开具发票
+     * @param ids
+     * @return
+     */
+    Result batchUpdateInvoice(String[] ids);
+
+    /**
      * 更新投标
      * @param projectRegister
      * @return
@@ -140,6 +147,14 @@ public interface ProjectRegisterService {
      * @return
      */
     Integer updateWinBidState(List<Long> ids,ProjectRegister projectRegister) throws Exception;
+
+    /**
+     * 批量更新投标
+     * @param ids
+     * @param projectRegister
+     * @return
+     */
+    Integer batchUpdate(List<Long> ids,ProjectRegister projectRegister) throws Exception;
 
     /**
      * 根据项目id查询投标

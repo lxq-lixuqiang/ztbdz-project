@@ -324,6 +324,25 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
+    public Result batchUpdateInvoice(String[] ids) {
+        try{
+            ProjectRegister projectRegister = new ProjectRegister();
+            projectRegister.setIsInvoice(1);
+            projectRegister.setInvoiceDate(new Date());
+            List<Long> idList = new ArrayList<Long>();
+            for(int i=0;i<ids.length;i++){
+                idList.add(Long.valueOf(ids[i]));
+            }
+            int num = this.batchUpdate(idList,projectRegister);
+            if(num<=0) return Result.fail("批量开具发票失败");
+            return Result.ok("批量更新开具发票成功");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("批量开具发票异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
     public Result update(ProjectRegister projectRegister) {
         try{
             int num = this.updateById(projectRegister);
@@ -342,6 +361,11 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
 
     @Override
     public Integer updateWinBidState(List<Long> ids,ProjectRegister projectRegister) throws Exception {
+        return this.batchUpdate(ids,projectRegister);
+    }
+
+    @Override
+    public Integer batchUpdate(List<Long> ids,ProjectRegister projectRegister) throws Exception {
         QueryWrapper<ProjectRegister> queryWrapper = new QueryWrapper();
         queryWrapper.in("id",ids);
         return projectRegisterMapper.update(projectRegister,queryWrapper);
@@ -422,11 +446,11 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             // 更新已中标状态
             projectRegister.setWinBidState(1);
             projectRegister.setBidMoney(String.valueOf(winBidProjectRegisterList.get(0).getProject().getMoney()));
-            this.updateWinBidState(ids,projectRegister);
+            this.batchUpdate(ids,projectRegister);
             // 更新未中标状态
             if(notBidIds.size()>0){
                 projectRegister.setWinBidState(2);
-                this.updateWinBidState(notBidIds,projectRegister);
+                this.batchUpdate(notBidIds,projectRegister);
             }
             return Result.ok("中标成功");
         }catch (Exception e){

@@ -98,7 +98,8 @@
                             <h3>开具发票申请列表</h3>
                             <div>
                                 <button onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
-                                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出发票记录</button>
+                                <button onclick="exportToExcel(0, '发票申请列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; margin-right:10px;">导出发票记录</button>
+                                <button onclick="batchProcessInvoiceRequest()" style="padding:5px 10px; background:#607D8B; color:white; border:none; cursor:pointer;">批量处理</button>
                             </div>
                         </div>
                         <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
@@ -106,15 +107,16 @@
                         <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
                             <thead>
                             <tr style="background:#f5f5f5;">
-                                <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
-                                <th style="padding:10px; border:1px solid #ddd;">申请单位</th>
-                                <th style="padding:10px; border:1px solid #ddd;">统一社会信用代码</th>
-                                <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
-                                <th style="padding:10px; border:1px solid #ddd;width:40px;">发票类型</th>
-                                <th style="padding:10px; border:1px solid #ddd;width:70px;">发票金额</th>
-                                <th style="padding:10px; border:1px solid #ddd;width:70px;">申请开票日期</th>
-                                <th style="padding:10px;width:50px; border:1px solid #ddd;">状态</th>
-                                <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
+                                <th style="padding:5px;border:1px solid #ddd;"><input id="checkboxAll2" type="checkbox"></th>
+                                <th style="border:1px solid #ddd;">项目名称</th>
+                                <th style="padding:5px;border:1px solid #ddd;">供应商</th>
+                                <th style="padding:5px;border:1px solid #ddd;">统一社会信用代码</th>
+                                <th style="padding:5px;border:1px solid #ddd;">电子邮箱</th>
+                                <th style="border:1px solid #ddd;width:40px;">发票类型</th>
+                                <th style="padding:5px;border:1px solid #ddd;width:70px;">发票金额</th>
+                                <th style="border:1px solid #ddd;width:70px;">申请开票日期</th>
+                                <!--<th style="width:50px; border:1px solid #ddd;">状态</th>-->
+                                <th style="padding:5px;border:1px solid #ddd;width:50px;">操作</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -150,9 +152,9 @@
                             <th style="padding:10px; border:1px solid #ddd;"><input id="checkboxAll" type="checkbox"></th>
                             <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                             <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
-                            <th style="padding:10px; border:1px solid #ddd;">业主单位</th>
+                            <th style="border:1px solid #ddd;">业主单位</th>
                             <th style="padding:10px; border:1px solid #ddd;">开标时间</th>
-                            <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
+                            <th style="border:1px solid #ddd;">报名截止时间</th>
                             <th style="padding:10px; border:1px solid #ddd;width:50px;">审核状态</th>
                             <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
                         </tr>
@@ -221,9 +223,9 @@
                         <td style="padding:10px;"><input class="item" data-id="${project.id}" type="checkbox"></td>
                         <td style="padding:10px;">${project.projectName==null?'':project.projectName}</td>
                         <td style="padding:10px;">${project.projectCode==null?'':project.projectCode}</td>
-                        <td style="padding:10px;">${project.projectRegisters.project.tenderee.tendereeName==null?'':project.projectRegisters.project.tenderee.tendereeName}</td>
+                        <td>${project.projectRegisters.project.tenderee.tendereeName==null?'':project.projectRegisters.project.tenderee.tendereeName}</td>
                         <td style="padding:10px;">${project.bidOpeningTime==null?'':project.bidOpeningTime}</td>
-                        <td style="padding:10px;">${project.enrollEndDate==null?'':project.enrollEndDate}</td>
+                        <td>${project.enrollEndDate==null?'':project.enrollEndDate}</td>
                         <td style="padding:10px;${project.projectRegisters.state==0?'color:red;':''}">${project.projectRegisters.state==0?'未审核':'已审核'}</td>
                         <td style="padding:10px;">
                             <button onclick="showApplicationModal('${project.projectName}','${project.id}')"
@@ -426,15 +428,16 @@
             data.list.forEach(list => {
                 const row = $(`
                     <tr style="border:1px solid #ddd;">
-                        <td style="padding:10px;">${list.project.projectName}</td>
-                        <td style="padding:10px;">${list.member.account.accountName}</td>
-                        <td style="padding:10px;">${list.member.account.accountCode}</td>
-                        <td style="padding:10px;">${list.member.account.email}</td>
-                        <td style="padding:10px;">${list.invoiceType==null?'':list.invoiceType}</td>
-                        <td style="padding:10px;">${parseInt(list.paymentMoney)==0?'/':parseFloat(list.paymentMoney).toLocaleString('en-US')+'元'}</td>
-                        <td style="padding:10px;">${list.invoiceDate==null?'':list.invoiceDate}</td>
-                        <td style="padding:10px;${list.isInvoice==0?'color:red;':''}">${list.isInvoice==0?'待处理':'已开票'}</td>
-                        <td style="padding:10px;">
+                        <td style="padding:5px;"><input class="item2" data-id="${list.id}" type="checkbox"></td>
+                        <td>${list.project.projectName}</td>
+                        <td style="padding:5px;">${list.member.account.accountName}</td>
+                        <td style="padding:5px;">${list.member.account.accountCode}</td>
+                        <td style="padding:5px;">${list.member.account.email}</td>
+                        <td>${list.invoiceType==null?'':list.invoiceType}</td>
+                        <td style="padding:5px;">${parseInt(list.paymentMoney)==0?'/':parseFloat(list.paymentMoney).toLocaleString('en-US')+'元'}</td>
+                        <td>${list.invoiceDate==null?'':list.invoiceDate}</td>
+                        <!--<td style="${list.isInvoice==0?'color:red;':''}">${list.isInvoice==0?'待处理':'已开票'}</td>-->
+                        <td style="padding:5px;">
                             <button onclick="processInvoiceRequest('${list.id}','${list.project.projectName}')"
                                     style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;${list.isInvoice==0?'':'display:none;'}">
                                 处理
@@ -463,6 +466,38 @@
                         alert(`发票处理成功！`);
                     } else {
                         alert('发票处理失败: ' + response.message);
+                    }
+                }
+            });
+        }
+    }
+
+    function batchProcessInvoiceRequest() {
+        if(confirm('确定要处理已选择的项目开票完成吗？')) {
+            var ids = "";
+            var checkboxes = document.querySelectorAll('.item2');
+            checkboxes.forEach(function(checkbox) {
+                if(checkbox.checked){
+                    if(ids.length!=0){
+                        ids+=",";
+                    }
+                    ids+=$(checkbox).attr('data-id');
+                }
+            });
+            if(!ids){
+                alert("请勾选要处理的发票信息！");
+                return;
+            }
+            $.ajax({
+                url: '/projectRegister/batchUpdateInvoice/'+ids,
+                type: 'GET',
+                contentType: "application/json",
+                success: function(response) {
+                    if(response.status == 200) {
+                        loadInvoiceRequests();
+                        alert(`发票批量处理成功！`);
+                    } else {
+                        alert('发票批量处理失败: ' + response.message);
                     }
                 }
             });
@@ -519,7 +554,17 @@
                 checkbox.checked = selectAllCheckbox.checked; // 根据全选checkbox的状态设置每个项的选中状态
             });
         });
+    })
+    $("#checkboxAll2").click(function(){
+        var checkboxes = document.querySelectorAll('.item2'); // 获取所有带有class 'item'的checkbox
+        var selectAllCheckbox = document.getElementById('checkboxAll2'); // 获取全选checkbox
 
+        // 当全选checkbox状态改变时触发
+        selectAllCheckbox.addEventListener('change', function() {
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAllCheckbox.checked; // 根据全选checkbox的状态设置每个项的选中状态
+            });
+        });
     })
     // 确保DOM完全加载后执行
     $(document).ready(function() {

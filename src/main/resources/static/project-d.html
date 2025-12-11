@@ -191,26 +191,28 @@
             if(this.files.length==0){
                 return;
             }
-            var fileId = uploadFile(this.files);
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-
-            $.ajax({
-                url: '/projectRegister/update',
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify({"id":id,"bidDocumentId":fileId}),
-                success: function(response) {
-                    if(response.status == 200) {
-                        alert('投标文件上传成功');
-                        $("#upload-btn").text("已上传投标文件");
-                    } else {
-                        alert('上传失败: ' + response.message);
-                    }
-                }
-            });
+            asyncUpload(this.files);
         });
         fileInput.click();
+    }
+    // 回写信息
+    function asyncUploadExecute(fileId){
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        $.ajax({
+            url: '/projectRegister/update',
+            type: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({"id":id,"bidDocumentId":fileId}),
+            success: function(response) {
+                if(response.status == 200) {
+                    $("#upload-btn").text("已上传投标文件");
+                } else {
+                    alert('上传失败: ' + response.message);
+                }
+            }
+        });
     }
     </script>
     <!-- InstanceEndEditable -->

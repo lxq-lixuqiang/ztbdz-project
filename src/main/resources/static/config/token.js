@@ -201,6 +201,7 @@ function uploadFile(files) {
     var error = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HMTAwTe+8gQ=="); //上传文件大小不能超过100M！
     return upload(files,"file",error);
 }
+// 同步上传
 function upload(files,url,errorMagger){
     var formData = new FormData();
     for(var i=0;i<files.length;i++){
@@ -226,16 +227,18 @@ function upload(files,url,errorMagger){
         success: function (e) {
             if(e.status == 200){
                 fileId = e.data;
-                alert("上传成功！");
+                alert(decoded("5LiK5Lyg5oiQ5Yqf77yB")); // 上传成功！
             }else{
                 alert(e.message)
             }
+        },error: function(e){
+            alert(e.message)
         }
     });
     return fileId;
 }
 // 异步上传文件
-function asyncUpload(files){
+function asyncUpload(files,name){
     uploadLoading();//显示上传loading
     var errorMagger = decoded("5LiK5Lyg5paH5Lu25aSn5bCP5LiN6IO96LaF6L+HNTAwTe+8gQ=="); //上传文件大小不能超过500M！
     var formData = new FormData();
@@ -257,8 +260,8 @@ function asyncUpload(files){
             if(e.status == 200){
                 fileId = e.data;
                 closeLoading(); // 关闭loading
-                asyncUploadExecute(fileId);
-                alert("上传成功！");
+                asyncUploadExecute(fileId,name); // 回调函数
+                alert(decoded("5LiK5Lyg5oiQ5Yqf77yB")); // 上传成功！
             }else{
                 alert(e.message)
             }
@@ -389,7 +392,7 @@ function keypress13(searchInput,searchBtn){
 }
 
 // loading显示
-function showLoading(content){
+function showLoading(content,isHide){
     if($("#loading").length>0){
         $("#loading p").text(content+"...");
     }else{
@@ -405,13 +408,13 @@ function showLoading(content){
     }
 }
 function loading(){
-    showLoading("加载中");
+    showLoading(decoded("5Yqg6L295Lit")); // 加载中
 }
 function importLoading(){
-    showLoading("导入数据中");
+    showLoading(decoded("5a+85YWl5pWw5o2u5Lit")); // 导入数据中
 }
 function uploadLoading(){
-    showLoading("上传文件中");
+    showLoading(decoded("5LiK5Lyg5paH5Lu25Lit")); // 上传文件中
 }
 function closeLoading(){
     $("#loading").remove();
