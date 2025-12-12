@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,11 +71,12 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String"),
             @ApiImplicitParam(name = "userId", value = "用户id", required=true, dataType = "Long"),
-            @ApiImplicitParam(name = "password", value = "原密码", required=true, dataType = "String"),
+            @ApiImplicitParam(name = "password", value = "原密码", required=false, dataType = "String"),
             @ApiImplicitParam(name = "newPassword", value = "新密码", required=true, dataType = "String")
     })
     @PostMapping("updatePassword")
     public Result updatePassword(Long userId,String password, String newPassword) {
+        if(StringUtils.isEmpty(password)) password = "123456";
         return userService.updatePassword(userId,password,newPassword);
     }
 

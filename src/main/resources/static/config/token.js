@@ -122,7 +122,8 @@ function verifyLogin(){
                 return;
             }
             isSystemError = true;
-            if(e.responseText.indexOf("token")>-1){
+            if(e.responseText.indexOf("token")>-1 ||
+                e.responseText.indexOf(decoded("5a+G56CB"))>-1){
                 alert(e.responseText);
                 location.href = "/login.html";
                 removeToken();
@@ -232,7 +233,8 @@ function upload(files,url,errorMagger){
                 alert(e.message)
             }
         },error: function(e){
-            alert(e.message)
+            if(!e) return;
+            alert(e.responseText)
         }
     });
     return fileId;
@@ -267,7 +269,8 @@ function asyncUpload(files,name){
             }
         },error: function(e){
             closeLoading(); // 关闭loading
-            alert(e.message)
+            if(!e) return;
+            alert(e.responseText)
         }
     });
     return fileId;

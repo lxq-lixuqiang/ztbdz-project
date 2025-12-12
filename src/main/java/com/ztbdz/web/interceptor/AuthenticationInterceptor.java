@@ -105,6 +105,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         try{
             verify = JwtUtil.isVerify(token, user);
         }catch (Exception e){
+            if(e.getMessage().equals("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.")){
+                throw new RuntimeException("密码已被修改，请重新登录！");
+            }
             throw new RuntimeException("token已过期，请重新登录！");
         }
         if (!verify) {

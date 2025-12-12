@@ -26,7 +26,7 @@ $(function(){
                                 return;
                             }
                             $.ajax({
-                                url: "/user/updatePassword?userId="+e.data.userId+"&password=123456&newPassword="+newPassword,
+                                url: "/user/updatePassword?userId="+e.data.userId+"&newPassword="+newPassword,
                                 type: "POST",
                                 contentType: "application/json",
                                 success:function(e2) {
