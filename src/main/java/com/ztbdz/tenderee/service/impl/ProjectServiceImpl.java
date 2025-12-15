@@ -161,14 +161,14 @@ public class ProjectServiceImpl  implements ProjectService {
             }
             // 公告附件
             Tenderee tenderee = tendereeService.selectByProjectId(id);
-            List<TendereeInform> tendereeInformList =  tendereeInformService.selectListByTendereeId(tenderee.getId());
+//            List<TendereeInform> tendereeInformList =  tendereeInformService.selectListByTendereeId(tenderee.getId()); // 目前项目和公告不需要关联
             // 标段
             List<Tender> tenderList = tenderService.selectListByProjectId(id);
 
             project.setTenders(tenderList);
             project.setMoneyUppercase(SystemConfig.digitUppercase(project.getMoney()));
             tenderee.setProject(project);
-            tenderee.setTendereeInforms(tendereeInformList);
+//            tenderee.setTendereeInforms(tendereeInformList); // 目前项目和公告不需要关联
             return Result.ok("查询成功",tenderee);
         }catch (Exception e){
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
@@ -216,6 +216,17 @@ public class ProjectServiceImpl  implements ProjectService {
     @Override
     public List<Project> selectByIds(List<Long> ids) throws Exception {
         return projectMapper.selectByIds2(ids);
+    }
+
+    @Override
+    public List<Project> select(Project project) throws Exception {
+        QueryWrapper<Project> queryWrapper = new QueryWrapper();
+        queryWrapper.orderByDesc("update_date");
+        if(!StringUtils.isEmpty(project)){
+            if(!StringUtils.isEmpty(project.getProjectName())) queryWrapper.like("project_name", project.getProjectName());
+            if(!StringUtils.isEmpty(project.getProjectCode())) queryWrapper.eq("project_code", project.getProjectCode());
+        }
+        return projectMapper.selectList(queryWrapper);
     }
 
 

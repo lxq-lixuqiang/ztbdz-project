@@ -50,7 +50,6 @@ public class BlacklistServiceImpl implements BlacklistService {
         return blacklistMapper.selectById(id);
     }
 
-    @Cacheable
     @Override
     public Integer verifyBlacklist(String landlordName,String bidderName,String type) throws Exception {
         return blacklistMapper.verifyBlacklist(landlordName,bidderName,type);

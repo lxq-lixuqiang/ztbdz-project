@@ -207,7 +207,7 @@ function upload(files,url,errorMagger){
     var formData = new FormData();
     for(var i=0;i<files.length;i++){
         if(files[i].size>(100*1024*1024)){
-            alert(errorMagger)
+            alert(errorMagger);
             throw errorMagger;
         }
         formData.append('files', files[i]); // 'file'是后端接收的文件参数名
@@ -310,7 +310,7 @@ function pageButton(data,pageName,pageTheadName){
     if(!pageName) pageName = "pageInfo";
     if(!pageTheadName) pageTheadName = "pageThead";
     if(data.navigatepageNums.length>0){
-        var pageInfo = "<span style=\"margin:0 10px;\">共&nbsp;"+data.total+"&nbsp;条</span>";
+        var pageInfo = "<span style=\"margin:0 10px;\">共&nbsp;"+data.total+"&nbsp;"+decoded("5p2h")+"</span>"; // 条
         if(1!= data.navigateFirstPage){
             pageInfo +="<button style=\"width:40px;height:40px;margin-right:10px;cursor: pointer;\" onclick=\"pageShow('1','"+pageName+"')\">1</button>";
             pageInfo +="<span style=\"margin:0 10px;\">...</span>";
@@ -378,10 +378,10 @@ function downWord(blob,fileName){
 
 // 项目经理添加返回工作台
 function manage(){
-    var a = $("<a></a>").attr("href","manage.html").attr("style","text-decoration:none; color:#333;").text("返回工作台");
+    var a = $("<a></a>").attr("href","manage.html").attr("style","text-decoration:none; color:#333;").text(decoded("6L+U5Zue5bel5L2c5Y+w")); // 返回工作台
     var user = getMember();
     if(user.role.type=="manage"){
-        a.insertBefore($("a:contains('"+decoded("6L+U5Zue6aaW6aG1")+"')"));// 返回工作台
+        a.insertBefore($("a:contains('"+decoded("6L+U5Zue6aaW6aG1")+"')"));// 返回首页
     }
 }
 

@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ztbdz.tenderee.mapper.TendereeInformMapper;
+import com.ztbdz.tenderee.pojo.Project;
 import com.ztbdz.tenderee.pojo.TendereeInform;
+import com.ztbdz.tenderee.service.ProjectService;
 import com.ztbdz.tenderee.service.TendereeInformService;
 import com.ztbdz.web.util.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,8 @@ import java.util.List;
 public class TendereeInformServiceImpl implements TendereeInformService {
     @Autowired
     private TendereeInformMapper tendereeInformMapper;
+    @Autowired
+    private ProjectService projectService;
 
     @Cacheable
     @Override
@@ -37,6 +41,16 @@ public class TendereeInformServiceImpl implements TendereeInformService {
     @Override
     public synchronized Result create(TendereeInform tendereeInform) {
         try{
+            if(!StringUtils.isEmpty(tendereeInform.getCorrelationProjectCode())){
+                Project project = new Project();
+                project.setProjectCode(tendereeInform.getCorrelationProjectCode());
+                List<Project> list = projectService.select(project);
+                if(list.size()>0){
+                    tendereeInform.setProjectId(list.get(0).getId());
+                }else{
+                    return Result.error("发布招标公告失败，根据“"+tendereeInform.getCorrelationProjectCode()+"”未查询到项目信息！");
+                }
+            }
             if(this.insert(tendereeInform)<=0) return Result.fail("发布失败！");
             return Result.ok("发布成功！",tendereeInform.getId());
         }catch (Exception e){

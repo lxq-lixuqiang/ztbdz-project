@@ -305,7 +305,7 @@
             $(this).text("收起");
             $(this).css({position:"relative"});
         }
-    })
+    });
 
     // 关闭弹窗
     function closeModal() {
@@ -346,7 +346,7 @@
             data: JSON.stringify({'id':registerId,'state':state,'notPassInfo':notPassInfo}),
             success:function(e) {
                 if(e.status == 200){
-                    loadProjects()
+                    loadProjects();
                     showApplicationModal(localStorage.getItem('projectName'),localStorage.getItem('projectId'));
                     if(isBack){
                         alert("撤销审核成功!");
@@ -658,7 +658,7 @@
         <table style="width:100%; border-collapse:collapse;">
             <thead>
             <tr style="background:#f5f5f5;">
-                <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
+                <th style="padding:10px; border:1px solid #ddd;">供应商</th>
                 <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                 <th style="padding:10px; border:1px solid #ddd;">邮箱</th>

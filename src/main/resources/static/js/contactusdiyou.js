@@ -33,6 +33,12 @@ $(function() {
         '\t\t\t\t<dd class="f2"><span class="ph_num">'+config.skillPhone.split("：")[1]+'</span></dd>\n' +
         '\t\t\t</dl>\n' +
         '\t\t</div>\n' +
+        '\t\t<div>' +
+        '\t\t\t<dl class="fn_cle">\n' +
+        '\t\t\t\t<dd class="f1">工作日：</dd>\n' +
+        '\t\t\t\t<dd class="f2"><span class="ph_num" style="font-size: 18px !important;">9：00-17：30</span></dd>\n' +
+        '\t\t\t</dl>\n' +
+        '\t\t</div>\n' +
         '\t\t</div>\n' +
         '\t</div>';
     $(".contactusdiyou").html(contactusdiyou);
