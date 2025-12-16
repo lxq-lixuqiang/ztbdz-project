@@ -33,7 +33,7 @@ var config = {
         bankDeposit : decoded("Lw=="), //....开户银行 "/"
         qrCode : decoded("aW1hZ2VzL3BheW1lbnQtcXJfeHkuanBn") //....微信付款二维码图片 "images/payment-qr_xy.jpg"
     },
-    title : decoded("6L2p6L6VQUnmmbrog73ljJbor4TmoIfns7vnu58="), //....公司标题 "轩辕AI智能化评标系统"
+    title : decoded("5Zub5bed6L2p6L6V55S15a2Q5oub5qCH5bmz5Y+w"), //....公司标题 "四川轩辕电子招标平台"
     name : decoded("5Zub5bed6L2p6L6V5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....公司名称 "四川轩辕招标代理有限公司"
     logo : decoded("aW1hZ2VzL3RvcGJhci5qcGc=") //....公司logo "images/topbar.jpg"
 }

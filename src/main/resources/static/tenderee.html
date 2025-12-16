@@ -100,6 +100,10 @@
                 // 保留原有表格结构，不覆盖内容
                 loadApplicationData2();
             }
+            if(tabId === 'application3') {
+                // 保留原有表格结构，不覆盖内容
+                loadApplicationData3();
+            }
             // 激活对应的标签项
             document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
         }
@@ -117,7 +121,7 @@
             // 显示事务相关标签页
             document.querySelectorAll('.tab-item').forEach(item => {
                 const tabId = item.dataset.tab;
-            item.style.display = (tabId === 'overview' || tabId === 'publish' || tabId === 'application'|| tabId === 'application2') ? 'block' : 'none';
+            item.style.display = (tabId === 'overview' || tabId === 'publish' || tabId === 'application'|| tabId === 'application2'|| tabId === 'application3') ? 'block' : 'none';
         });
             showTab('overview');
         }
@@ -168,6 +172,10 @@
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">标题<span style="color:red;">*</span></label>
             <input id="title" type="text" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;" required>
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:5px;">关联项目编号</label>
+            <input id="correlationProjectCode" type="text" style="width:100%; padding:8px; border:1px solid #ddd;box-sizing: border-box;" required>
         </div>
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">公告类型<span style="color:red;">*</span></label>
@@ -253,6 +261,13 @@
                     <p><strong style="vertical-align: top;">社保记录：</strong><span id="qualificationCertificate03Show" style="display: inline-block;"></span></p>
                 </div>
                 <p><strong>备注：</strong><span id="contactRemark"></span></p>
+
+                <div id="memberType03" style="display: none;">
+                    <h3>供应商提交审核信息：</h3>
+                    <p><strong>用户名：</strong><span id="username"></span></p>
+                    <p><strong style="vertical-align: top;">营业执照：</strong><span id="businessLicenseId" style="display: inline-block;"></span></p>
+                    <p><strong style="vertical-align: top;">社保记录：</strong><span id="socialSecurityCertificateId" style="display: inline-block;"></span></p>
+                </div>
             </div>
         </div>
         <div id="examine2" style="text-align:center;">
@@ -266,7 +281,7 @@
 
 <!-- 可编辑的主要内容区域 -->
 <!-- InstanceBeginEditable name="content" -->
-<div style="width:1040px; min-height:calc(100vh - 120px);">
+<div style="width:1140px; min-height:calc(100vh - 120px);">
     <div class="container">
         <div class="nav-menu">
             <div class="nav-item" onclick="showAffairTabs()">我的事务</div>
@@ -278,6 +293,7 @@
                 <div class="tab-item" onclick="clearPublishInfo()" data-tab="publish">发布项目</div>
                 <div class="tab-item" data-tab="application">项目已报名</div>
                 <div class="tab-item" data-tab="application2">供应商</div>
+                <div class="tab-item" data-tab="application3">审核密码</div>
                 <div class="tab-item" data-tab="project1">已发布项目</div>
                 <div class="tab-item" data-tab="project2">正在进行项目</div>
                 <div class="tab-item" data-tab="project3">评审结束项目</div>
@@ -417,7 +433,7 @@
             </div>
             <div class="tab-content" id="application2">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h3>审核供应商企业信息</h3>
+                    <h3>审核企业信息</h3>
                     <div>
                         <button onclick="loadApplicationData2()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; ">刷新数据</button>
                     </div>
@@ -427,7 +443,7 @@
                     经办人<input type="text" id="accountMemberSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
                     <button id="biddderSearchBtn" onclick="loadApplicationData2()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
                 </div>
-                <div id="applicationLoading2" style="text-align:center; padding:20px; display:none;">正在加载报名数据...</div>
+                <div id="applicationLoading2" style="text-align:center; padding:20px; display:none;">正在加载数据...</div>
                 <table id="applicationTable2" style="width:100%; border-collapse:collapse;">
                     <thead>
                     <tr style="background:#f5f5f5;">
@@ -435,6 +451,32 @@
                         <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                         <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                         <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
+                        <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
+                        <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                        <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-content" id="application3">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>审核找回密码</h3>
+                    <div>
+                        <button onclick="loadApplicationData3()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; ">刷新数据</button>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    用户名<input type="text" id="accountNameSearch3" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    <button id="biddderSearchBtn3" onclick="loadApplicationData3()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
+                </div>
+                <div id="applicationLoading3" style="text-align:center; padding:20px; display:none;">正在加载数据...</div>
+                <table id="applicationTable3" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                    <tr style="background:#f5f5f5;">
+                        <th style="padding:10px; border:1px solid #ddd;">用户名</th>
                         <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
                         <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
@@ -599,6 +641,28 @@
     {{else}}
     <tr>
         <td colspan="7" style="padding:10px; border:1px solid #ddd;">没有供应商</td>
+    </tr>
+    {{/if}}
+</script>
+<script id="applicationTable3Template" type="text/x-handlebars-template">
+    {{#if list}}
+    {{#each list}}
+    <tr style="border:1px solid #ddd;">
+        <td style="padding:10px;">{{username}}</td>
+        <td style="padding:10px;">{{createDate}}</td>
+        <td style="padding:10px;{{#eq isPass 0}}color:red;{{/eq}}">
+            {{#eq isPass 0}}未审核{{/eq}}
+            {{#eq isPass 1}}通过{{/eq}}
+            {{#eq isPass 2}}不通过{{/eq}}
+        </td>
+        <td style="padding:10px;">
+            <button onclick="viewSupplierQualification2('{{id}}','{{isPass}}','isRetrievePassword')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq isPass 0}}审核{{else}}查看{{/eq}}</button>
+        </td>
+    </tr>
+    {{/each}}
+    {{else}}
+    <tr>
+        <td colspan="4" style="padding:10px; border:1px solid #ddd;">没有供应商</td>
     </tr>
     {{/if}}
 </script>
@@ -950,6 +1014,33 @@
 
     }
 
+    keypress13('accountNameSearch3','biddderSearchBtn3');
+    function loadApplicationData3() {
+        $("#applicationLoading3").show();
+        $("#applicationTable3").hide();
+        var accountNameSearch = $("#accountNameSearch3").val();
+        var data = {};
+        if(accountNameSearch){
+            data["username"] = accountNameSearch;
+        }
+        $.ajax({
+            url: "/retrievePassword/page",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success:function(e) {
+                if(e.status == 200){
+                    $("#applicationTable3 tbody").html(Handlebars.compile($("#applicationTable3Template").html())(e.data));
+                    $("#applicationLoading3").hide();
+                    $("#applicationTable3").show();
+                }else{
+                    alert("获取审核找回密码列表失败："+e.message);
+                }
+            }
+        });
+
+    }
+
 
     function initPageShow(data,pageName){
         if(pageName=="pageInfo4"){
@@ -1160,13 +1251,15 @@
         const content = $("#announcementContent").val();
         const supplementaryContent = $("#supplementaryContent").val();
         const tendereeInformField = $("#tendereeInformField").attr("data-file-id");
+        const correlationProjectCode = $("#correlationProjectCode").val();
+
 
         if(!title || !type || !content) {
             alert("请填写带 * 字段为必填项！");
             $("#gonggao").removeAttr("disabled");
             return;
         }
-        var data = {"title":title,"content":content,"tendereeInformType":type,"supplementaryContent":supplementaryContent,"isPublic":1,"type":0,"tendereeInformField":tendereeInformField};
+        var data = {"title":title,"content":content,"tendereeInformType":type,"correlationProjectCode":correlationProjectCode,"supplementaryContent":supplementaryContent,"isPublic":1,"type":0,"tendereeInformField":tendereeInformField};
         $.ajax({
             url: "/tendereeInfo/create",
             type: "POST",
@@ -1264,9 +1357,15 @@
                 return;
             }
         }
+        var url="/bidderInfo/review";
         data["id"] =$("#qualificationModal2").attr("data-id");
+        if($("#qualificationModal2").attr("data-name")=="isRetrievePassword"){
+            data = JSON.parse(JSON.stringify(data).replaceAll("isCheck","isPass").replaceAll("notCheckShow","notPassContent"));
+            data["user"]={id:$("#qualificationModal2").attr("data-userId")};
+            url = "/retrievePassword/review";
+        }
         $.ajax({
-            url: "/bidderInfo/review",
+            url: url,
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
@@ -1277,16 +1376,22 @@
                     }else{
                         alert("审核成功！");
                     }
-                    loadApplicationData2(); // 刷新列表
+                    if($("#qualificationModal2").attr("data-name")=="isRetrievePassword"){
+                        loadApplicationData3(); // 刷新列表
+                    }else{
+                        loadApplicationData2(); // 刷新列表
+                    }
                     $('#qualificationModal2').hide(); //关闭弹出
                 }else{
-                    alert("获取审核供应商信息失败："+e.message);
+                    alert("获取审核信息失败："+e.message);
                 }
             }
         });
     }
 
-    function viewSupplierQualification2(id,isCheck) {
+    function viewSupplierQualification2(id,isCheck,isOther) {
+        $("#memberType03").hide();
+        $("#qualificationModal2").removeAttr("data-name");
         if(isCheck==0){
             $("#bidderIsCheck01").show();
             $("#bidderIsCheck02").show();
@@ -1307,23 +1412,41 @@
         var account ={};
         var fileName = "";
         var bidderInfo = {};
-        $.ajax({
-            url: "/bidderInfo/get/"+id,
-            type: "GET",
-            async: false,
-            contentType: "application/json",
-            success:function(e) {
-                if(e.status == 200){
-                    bidderInfo = e.data;
-                    account = bidderInfo.member.account;
-                }else{
-                    alert("获取企业信息失败："+e.message);
+        var otherInfo = {};
+        if(isOther == "isRetrievePassword"){
+            $("#qualificationModal2").attr("data-name",isOther);
+            $.ajax({
+                url: "/retrievePassword/selectBidderInfo/"+id,
+                type: "GET",
+                async: false,
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        otherInfo = e.data;
+                        bidderInfo = e.data.bidderInfo;
+                        account = bidderInfo.member.account;
+                    }else{
+                        alert("获取信息失败："+e.message);
+                    }
                 }
-            }
-        });
-        if(isCheck==1){
-            $("#bidderIsCheck04").attr("data-info",bidderInfo.notCheckShow);
+            });
+        }else{
+            $.ajax({
+                url: "/bidderInfo/get/"+id,
+                type: "GET",
+                async: false,
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status == 200){
+                        bidderInfo = e.data;
+                        account = bidderInfo.member.account;
+                    }else{
+                        alert("获取企业信息失败："+e.message);
+                    }
+                }
+            });
         }
+
 
         var qualificationCertificate01Name = "";
         var qualificationCertificate02Name = "";
@@ -1344,6 +1467,19 @@
             if(ids.length>0) ids+=",";
             ids += bidderInfo.qualificationCertificate03.split(",");
         }
+        var businessLicenseIdShow = "";
+        var socialSecurityCertificateIdShow = "";
+        if(isOther == "isRetrievePassword"){
+            if(otherInfo.businessLicenseId !=null && otherInfo.businessLicenseId !=""){
+                if(ids.length>0) ids+=",";
+                ids += otherInfo.businessLicenseId.split(",");
+            }
+            if(otherInfo.socialSecurityCertificateId !=null && otherInfo.socialSecurityCertificateId !=""){
+                if(ids.length>0) ids+=",";
+                ids += otherInfo.socialSecurityCertificateId.split(",");
+            }
+        }
+
         if(ids){
             $.ajax({
                 url: "/file/list2/"+ids,
@@ -1370,6 +1506,16 @@
                                 bidderInfo.qualificationCertificate03 !="" &&
                                 (","+bidderInfo.qualificationCertificate03+",").indexOf(","+e.data[i].id+",")>-1){
                                 qualificationCertificate03Name+=p
+                            }else if(isOther == "isRetrievePassword"){
+                                if(otherInfo.businessLicenseId !=null &&
+                                    otherInfo.businessLicenseId !="" &&
+                                        (","+otherInfo.businessLicenseId+",").indexOf(","+e.data[i].id+",")>-1){
+                                    businessLicenseIdShow+=p
+                                }else if(otherInfo.socialSecurityCertificateId !=null &&
+                                    otherInfo.socialSecurityCertificateId !="" &&
+                                    (","+otherInfo.socialSecurityCertificateId+",").indexOf(","+e.data[i].id+",")>-1){
+                                    socialSecurityCertificateIdShow+=p
+                                }
                             }
                         }
                     }else{
@@ -1380,7 +1526,7 @@
         }
 
         var data = {
-            id:bidderInfo.id,
+            id:id,
             companyName:account.accountName,
             creditCode:account.accountCode,
             contactPerson:account.member,
@@ -1402,6 +1548,10 @@
             qualificationCertificate03:bidderInfo.qualificationCertificate03,
             qualificationCertificate03Name:qualificationCertificate03Name
         };
+        if(isOther == "isRetrievePassword"){
+            data["notCheckShow"]=otherInfo.notPassContent;
+            showInfoOther({username:otherInfo.username,socialSecurityCertificateId:socialSecurityCertificateIdShow,businessLicenseId:businessLicenseIdShow,userId:otherInfo.user.id})
+        }
         showInfo(data);
     }
     function showInfo(data){
@@ -1433,6 +1583,13 @@
         }
         $("#qualificationModal2").show();
     }
+    function showInfoOther(data){
+        $("#memberType03").show();
+        $("#username").text(data.username);
+        $("#socialSecurityCertificateId").html(data.socialSecurityCertificateId.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+        $("#businessLicenseId").html(data.businessLicenseId.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
+        $("#qualificationModal2").attr("data-userId",data.userId);
+    }
 
     // 审核供应商
     function approveSupplier(isApproved) {
@@ -1444,7 +1601,7 @@
             notPassInfo = prompt("请输入不通过的原因:");
             if(!notPassInfo.trim()){
                 alert("必须填写不通过原因");
-                approveSupplier(isApproved)
+                approveSupplier(isApproved);
                 return ;
             }
             isUpdate = true;
@@ -1503,6 +1660,7 @@
         <table style="width:100%; border-collapse:collapse;">
             <thead>
             <tr style="background:#f5f5f5;">
+                <th style="padding:10px; border:1px solid #ddd;">序号</th>
                 <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
                 <th style="padding:10px; border:1px solid #ddd;">经办人</th>
                 <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
@@ -1709,12 +1867,14 @@
                             companies.push({name: accountName, contact: contact, phone: phone,email:email, time: e.data[i].createDate})
                         }
                     }
+                    var i=0;
                     companies.forEach(company => {
                         const row = document.createElement('tr');
                     row.style.border = '1px solid #ddd';
                     row.innerHTML = `<td colspan="5" style="padding:10px;">没有报名</td>`;
                     if(e.data.length>0){
                         row.innerHTML = `
+                                <td style="padding:10px;">${++i}</td>
                                 <td style="padding:10px;">${company.name}</td>
                                 <td style="padding:10px;">${company.contact}</td>
                                 <td style="padding:10px;">${company.phone}</td>

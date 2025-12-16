@@ -33,8 +33,6 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
-    private AuthenticationInterceptor authenticationInterceptor;
-    @Autowired
     private MemberService memberService;
     @Autowired
     private RoleService roleService;
@@ -112,6 +110,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Result verifyLogin(String token,String url) {
         try{
+            AuthenticationInterceptor authenticationInterceptor = new AuthenticationInterceptor(userService,blacklistService,landlordService,memberService);
             authenticationInterceptor.verifyLogin(token);
             Object memberId = SystemConfig.getSession(Common.SESSION_LOGIN_MEMBER_ID);
             Object redisObject = redisTemplate.opsForValue().get(SystemConfig.REDIS_LOGIN_INFO);

@@ -48,5 +48,79 @@ $(function(){
             }
         });
     });
-
 })
+
+var announcementModalHTML = $("#announcementModal").html();
+uploadFileInfo("field1","fileId1");
+uploadFileInfo("field2","fileId2");
+function forgetPassword(){
+    $("#announcementModal").show();
+}
+
+function closeModal(){
+    $("#announcementModal").hide();
+}
+
+function showUploadDialog(name) {
+    document.getElementById(name).click();
+}
+
+function submit(){
+    $("#gonggao").attr("disabled","true");
+    var username = $("#username").val();
+    var newPassword = $("#newPassword").val();
+    var field1 = $("#field1").attr("data-file-id");
+    var field2 = $("#field2").attr("data-file-id");
+
+    if(!username || !newPassword || !field1 || !field2) {
+        alert("请填写带 * 字段为必填项！");
+        $("#gonggao").removeAttr("disabled");
+        return;
+    }
+
+    if(!regBox.regPassword.regEx.test(newPassword)){
+        alert(regBox.regPassword.message);
+        $("#gonggao").removeAttr("disabled");
+        return ;
+    }
+
+    $.ajax({
+        url: "/retrievePassword/addORupdate",
+        type: "POST",
+        data: JSON.stringify({"username":username.trim(),"newPassword":newPassword.trim(),"businessLicenseId":field1,"socialSecurityCertificateId":field2}),
+        contentType: "application/json",
+        success:function(e) {
+            $("#gonggao").removeAttr("disabled");
+            if(e.status == 200){
+                closeModal();
+                $("#announcementModal").html(announcementModalHTML);
+                alert("已提交审核中，可通过“查询审核状态”按钮可查看审核状态！");
+            }else{
+                alert("提交失败："+e.message);
+            }
+        }
+    });
+}
+
+function selectState(){
+    var username  = prompt("请输入公司名称（用户名）:");
+    if(!username.trim()){
+        alert("必须填写公司名称（用户名）");
+        selectState();
+        return ;
+    }
+    $.ajax({
+        url: "/retrievePassword/selectReview/"+username.trim(),
+        type: "GET",
+        contentType: "application/json",
+        success:function(e) {
+            if(e.status == 200){
+                alert(e.message);
+            }else{
+                alert("查询失败："+e.message);
+            }
+        }
+    });
+
+
+}

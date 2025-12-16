@@ -124,6 +124,7 @@
                     $("#download-btn").attr("data-file-id",response.data.project.procurementDocuments);
 
                     renderProjectDetails(response.data.project);
+                    loadingTendereeInfo(response.data.project.id)
                 } else {
                     // API失败时尝试从bider.html获取模拟数据
                     alert("获取数据失败，原因："+response.message);
@@ -131,6 +132,52 @@
                 }
             }
         });
+    }
+
+    function loadingTendereeInfo(id){
+        $.ajax({
+            url: '/tendereeInfo/page?size=0',
+            type: 'POST',
+            data: JSON.stringify({projectId:id,type:0}),
+            contentType: "application/json",
+            success: function(response) {
+                if(response.status == 200) {
+                    if(response.data.list.length>0){
+                        var p = "";
+                        for(var i=0;i<response.data.list.length;i++){
+                            var tendereeInfo = response.data.list[i];
+                            var createDate = new Date(tendereeInfo.createDate).toLocaleDateString('zh-CN');
+                            var isShow = "";
+                            if(!tendereeInfo.tendereeInformField){
+                                isShow = "display:none";
+                            }
+                            p += "<p style=\"margin: 0 0 10px 0;\">\n" +
+                                "        "+tendereeInfo.title+"\n" +
+                                "       <span style=\"background: #e74c3c; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px;margin-left:8px;\">"+tendereeInfo.tendereeInformType+"</span>\n" +
+                                "       <span style=\"margin-left: 8px;color: #7f8c8d; font-size: 12px;\">"+createDate+"</span>\n";
+                                var ids = tendereeInfo.tendereeInformField.split(",");
+                                for(var k=0;k<ids.length;k++){
+                                    var showInfo = "";
+                                    if(ids.length>1){
+                                        showInfo=k+1;
+                                    }
+                                    if(ids[k]){
+                                        p+="       <a href=\"/file/download/"+ids[k]+"\" style=\"text-decoration: none;margin-left:8px;padding:4px 6px;font-size:13px;border-radius: 3px;color:#fff;background-color:#2196F3;"+isShow+"\">下载附件"+showInfo+"</a>\n";
+                                    }
+                                }
+                                p+=" </p>";
+                        }
+                        $("#projectTendereeInfo>td:last-of-type").html(p);
+                        $("#projectTendereeInfo").show();
+                    }
+                } else {
+                    alert("获取公告失败，原因："+response.message);
+                    window.history.back();
+                }
+            }
+        });
+
+
     }
 
     function renderProjectDetails(project) {
@@ -141,7 +188,8 @@
                 <tr><td style="padding:8px 0;">预算金额：</td><td>${parseInt(project.money)==0?'/':parseFloat(project.money).toLocaleString('en-US')+"元"}</td></tr>
                 <tr><td style="padding:8px 0;">报名截止：</td><td>${project.enrollEndDate}</td></tr>
                 <tr><td style="padding:8px 0;">开标时间：</td><td>${project.bidOpeningTime}</td></tr>
-                <tr><td style="padding:8px 0; vertical-align:top;">项目描述：</td><td>${project.projectOverview}</td></tr>
+                <tr><td style="padding:8px 0; vertical-align:top;">项目描述：</td><td style="padding:8px 0; vertical-align:top;">${project.projectOverview}</td></tr>
+                <tr id="projectTendereeInfo" style="display: none;"><td style="padding:8px 0; vertical-align:top;">项目公告：</td><td style="padding:8px 0; vertical-align:top;"></td></tr>
             </table>
         `;
         $('#details-content').html(detailsHtml);
