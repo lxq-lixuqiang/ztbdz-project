@@ -129,6 +129,14 @@ public class RetrievePasswordServiceImpl implements RetrievePasswordService {
                 //审核中 ，撤回审核
                 RetrievePassword newRetrievePassword = this.getById(retrievePassword.getId());
                 if(newRetrievePassword.getIsPass()==1){ // 上一次是审核不通过，撤回审核
+                    RetrievePassword selectRetrievePassword = new RetrievePassword();
+                    selectRetrievePassword.setUsername(newRetrievePassword.getUsername());
+                    List<RetrievePassword> retrievePasswordList = this.selectList(selectRetrievePassword);
+                    if(retrievePasswordList.size()>1){ // 最好只能撤回 最后提交审核时间 以防混乱
+                        if(!String.valueOf(retrievePassword.getId()).equals(String.valueOf(retrievePasswordList.get(0).getId()))){
+                            return Result.error("只能在“最后提交审核时间”并“审核通过”状态上进行 撤回审核 操作，最后一次提交审核时间：“"+new SimpleDateFormat("yyyy年MM月dd日 HH:mm分").format(retrievePasswordList.get(0).getCreateDate())+"”");
+                        }
+                    }
                     User user = userService.getById(retrievePassword.getUser().getId());
                     user.setPassword(newRetrievePassword.getOldPassword());
                     Integer num = userService.updateById(user);

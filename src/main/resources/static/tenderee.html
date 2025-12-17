@@ -477,7 +477,7 @@
                     <thead>
                     <tr style="background:#f5f5f5;">
                         <th style="padding:10px; border:1px solid #ddd;">用户名</th>
-                        <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
+                        <th style="padding:10px; border:1px solid #ddd;">提交审核时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
                         <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
                     </tr>
@@ -1383,7 +1383,7 @@
                     }
                     $('#qualificationModal2').hide(); //关闭弹出
                 }else{
-                    alert("获取审核信息失败："+e.message);
+                    alert("操作失败："+e.message);
                 }
             }
         });
@@ -1414,6 +1414,7 @@
         var bidderInfo = {};
         var otherInfo = {};
         if(isOther == "isRetrievePassword"){
+            $("#qualificationModal2>div>div>h3").html("找回密码审核 - 企业信息");
             $("#qualificationModal2").attr("data-name",isOther);
             $.ajax({
                 url: "/retrievePassword/selectBidderInfo/"+id,
@@ -1431,6 +1432,7 @@
                 }
             });
         }else{
+            $("#qualificationModal2>div>div>h3").html("供应商审核信息 - 企业信息");
             $.ajax({
                 url: "/bidderInfo/get/"+id,
                 type: "GET",

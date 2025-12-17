@@ -35,8 +35,11 @@ var config = {
     },
     title : decoded("5Zub5bed6L2p6L6V55S15a2Q5oub5qCH5bmz5Y+w"), //....公司标题 "四川轩辕电子招标平台"
     name : decoded("5Zub5bed6L2p6L6V5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....公司名称 "四川轩辕招标代理有限公司"
-    logo : decoded("aW1hZ2VzL3RvcGJhci5qcGc=") //....公司logo "images/topbar.jpg"
-}
+    logo :{
+        img : decoded("aW1hZ2VzL3RvcGJhci5qcGc="), //....公司首页logo "images/topbar.jpg"
+        style : decoded("d2lkdGg6MjU5cHg7bWFyZ2luLWxlZnQ6IDIwcHg7")  // ....公司首页logo样式 "width:259px;margin-left: 20px;"
+    }
+};
 
 initInit();
 window.onload = function()  {
@@ -59,8 +62,9 @@ window.onload = function()  {
 function initInit(){
     var oldInfo = decoded("QUnmmbrog73ljJbor4TmoIfns7vnu58=");// AI智能化评标系统
     $("div>div:contains('"+oldInfo+"')").text(config.title);
+    $("title:contains('"+oldInfo+"')").text(config.title);
     var logo = $(".logo");
-    if(logo.length>0) logo.attr("src",config.logo);
+    if(logo.length>0) logo.attr("src",config.logo.img).attr("style",config.logo.style);
 }
 
 // 正则表达式校验
