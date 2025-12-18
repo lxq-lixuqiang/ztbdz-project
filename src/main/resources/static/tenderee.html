@@ -263,7 +263,7 @@
                 <p><strong>备注：</strong><span id="contactRemark"></span></p>
 
                 <div id="memberType03" style="display: none;">
-                    <h3>供应商提交审核信息：</h3>
+                    <h3>提交审核信息：</h3>
                     <p><strong>用户名：</strong><span id="username"></span></p>
                     <p><strong style="vertical-align: top;">营业执照：</strong><span id="businessLicenseId" style="display: inline-block;"></span></p>
                     <p><strong style="vertical-align: top;">社保记录：</strong><span id="socialSecurityCertificateId" style="display: inline-block;"></span></p>
@@ -355,9 +355,9 @@
                         <textarea id="projectOverview" style="width:100%; height:100px; padding:8px; border:1px solid #ddd;" required></textarea>
                     </div>
                     <div style="margin-bottom:15px;">
-                        <label style="display:block; margin-bottom:5px;">上传采购文件<span style="color:red;">*</span></label>
-                        <button onclick="showUploadDialog()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;">上传采购文件</button>
-                        <div id="certificateFiles" style="display: inline-block;margin-left:10px;">
+                        <label style="display:block; margin-bottom:5px;">采购文件<span style="color:red;">*</span></label>
+                        <button onclick="showUploadDialog()" type="button" style="vertical-align: top;padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;">上传采购文件</button>
+                        <div id="certificateFiles" style="display: inline-block;margin-left:10px;margin-top: 10px;width:650px;">
 
                         </div>
                         <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" required>
@@ -368,16 +368,16 @@
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">项目预算/元<span style="color:red;">*</span></label>
-                        <input id="money" type="number" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        <input id="money" type="text" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">报名系统技术服务费/元<span style="color:red;">*</span></label>
-                        <input id="registrationFee" type="number" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
+                        <input id="registrationFee" type="text" min="0" style="width:100%; padding:8px; border:1px solid #ddd;" required>
                     </div>
                     <div style="margin-bottom:15px;">
                         <label style="display:block; margin-bottom:5px;">告知书或登记表</label>
-                        <button onclick="showUploadDialog3()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传告知书或登记表</button>
-                        <div id="certificateFiles3" style="display: inline-block;margin-left:10px;">
+                        <button onclick="showUploadDialog3()" type="button" style="vertical-align: top;padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传告知书或登记表</button>
+                        <div id="certificateFiles3" style="display: inline-block;margin-left:10px;margin-top: 10px;width:600px;">
 
                         </div>
                         <input id="fileUpload3" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" required>
@@ -448,11 +448,11 @@
                     <thead>
                     <tr style="background:#f5f5f5;">
                         <th style="padding:10px; border:1px solid #ddd;">供应商名称</th>
-                        <th style="padding:10px; border:1px solid #ddd;">经办人</th>
+                        <th style="border:1px solid #ddd;">经办人</th>
                         <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
-                        <th style="padding:10px; border:1px solid #ddd;">电子邮箱</th>
+                        <th style="border:1px solid #ddd;">电子邮箱</th>
                         <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
-                        <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
+                        <th style="border:1px solid #ddd;">审核状态</th>
                         <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
                     </tr>
                     </thead>
@@ -512,6 +512,7 @@
                         <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                         <th style="padding:10px; border:1px solid #ddd;">报名截止时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">预算金额</th>
+                        <th style="padding:10px; border:1px solid #ddd;">状态</th>
                         <th style="padding:10px; border:1px solid #ddd;">操作</th>
                     </tr>
                     </thead>
@@ -568,7 +569,7 @@
         <td style="padding:10px;">{{project.projectCode}}</td>
         <td style="padding:10px;">{{project.enrollEndDate}}</td>
         <td style="padding:10px;">{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
-        <!--<td style="padding:10px;{{#eq project.isAudit 0}}color:red;{{/eq}}">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>-->
+        <td style="padding:10px;{{#eq project.isAudit 0}}color:red;{{/eq}}">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
         <td style="padding:10px;">
             <button onclick="showApplicationModal('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">报名情况</button>
             <button onclick="showTeamLeaderList('{{project.projectName}}','{{project.id}}')" style="margin-top:5px;padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">查看专家</button>
@@ -603,7 +604,7 @@
         <td style="padding:10px;{{#eq state 3}}color:red;{{/eq}}">
             {{#eq state 0}}缴费审核中{{/eq}}
             {{#eq state 1}}报名成功{{/eq}}
-            {{#eq state 2}}缴费未通过{{/eq}}
+            {{#eq state 2}}缴费不通过{{/eq}}
             {{#eq state 3}}资质未审核{{/eq}}
             {{#eq state 4}}资质通过{{/eq}}
             {{#eq state 5}}资质不通过{{/eq}}
@@ -624,11 +625,11 @@
     {{#each list}}
     <tr style="border:1px solid #ddd;">
         <td style="padding:10px;">{{member.account.accountName}}</td>
-        <td style="padding:10px;">{{member.account.member}}</td>
+        <td>{{member.account.member}}</td>
         <td style="padding:10px;">{{member.account.phone}}</td>
-        <td style="padding:10px;">{{member.account.email}}</td>
+        <td>{{member.account.email}}</td>
         <td style="padding:10px;">{{submitDate}}</td>
-        <td style="padding:10px;{{#eq isCheck 0}}color:red;{{/eq}}">
+        <td style="{{#eq isCheck 0}}color:red;{{/eq}}">
             {{#eq isCheck 0}}未审核{{/eq}}
             {{#eq isCheck 1}}通过{{/eq}}
             {{#eq isCheck 2}}不通过{{/eq}}
@@ -877,7 +878,7 @@
                 if(response.status == 200) {
                     $("#publishForm").attr("data-id","");
                     $("#publishForm").attr("data-projectid","");
-                    alert("发布项目成功！");
+                    alert("发布项目成功，项目进入审核中！");
                     loadPublishedProjects(); // 刷新项目列表
                     showProjectTabs();
                     isClear = true;
@@ -912,7 +913,7 @@
             asyncUpload(this.files);
             var fileName = "";
             for(var i=0;i<this.files.length;i++){
-                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/【fileId】'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+                fileName+="<p style='margin:0'><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display:inline-block;\" target=\"_blank\" href='/file/preview/【fileId】'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
             }
             localStorage.setItem('fileName', fileName);
         });
@@ -926,7 +927,7 @@
             $("#fileUpload3").attr("data-file-id",fileId);
             var fileName = "";
             for(var i=0;i<this.files.length;i++){
-                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileId+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileId+"\")' class='delete"+fileId+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                fileName+="<p style='margin:0'><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display:inline-block;\" target=\"_blank\" href='/file/preview/"+fileId+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteFile(\""+fileId+"\")' class='delete"+fileId+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
             }
             $("#certificateFiles3").html(fileName);
 
@@ -1568,14 +1569,14 @@
         $("#certificateFilesShow").html(data.fileName.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
         $("#bidderIsCheck03").attr("data-info",data.notCheckShow);
 
+        $("#memberType01").hide();
+        $("#memberType02").hide();
         if(data.memberType=="0"){
             $("#memberType01").show();
-            $("#memberType02").hide();
             $("#accountUser").text(data.accountUser);
             $("#idCard").text(data.idCard);
             $("#qualificationCertificate01Show").html(data.qualificationCertificate01Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
         }else if(data.memberType=="1"){
-            $("#memberType01").hide();
             $("#memberType02").show();
             $("#accountUser2").text(data.accountUser);
             $("#idCard2").text(data.idCard);
@@ -2068,6 +2069,7 @@
     }
 
     function getFile(id,idName){
+        $("#"+idName).html("");
         if(!id) return;
         $.ajax({
             url: "/file/get/" + id,
@@ -2075,9 +2077,9 @@
             contentType: "application/json",
             success: function (e) {
                 if(e.status == 200){
-                    var fileName = "<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）</a></p>";
+                    var fileName = "<p style='margin:0'><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display:inline-block;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）</a></p>";
                     if(idName=="certificateFiles3"){
-                        fileName="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）<span onclick='deleteFile(\""+e.data.id+"\")' class='delete"+e.data.id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+                        fileName="<p style='margin:0'><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display:inline-block;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）<span onclick='deleteFile(\""+e.data.id+"\")' class='delete"+e.data.id+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
                     }
                     $("#"+idName).html(fileName);
                 }else{

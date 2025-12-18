@@ -3,12 +3,34 @@
 <head>
 <meta charset="utf-8">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>管理员</title>
+<title>项目审核员</title>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="head" -->
 <script src="/js/db-connection.js"></script>
 <!-- InstanceEndEditable -->
 </head>
+<style>
+    #qualificationModal p>strong{
+        width: 170px;
+        text-align: right;
+        display: inline-block;
+    }
+    #companyInfoDisplay>div>p p:first-of-type,
+    #companyInfoDisplay>p p:first-of-type{
+        margin:0 !important;
+    }
+    #companyInfoDisplay>div>p p,
+    #companyInfoDisplay>p p{
+        margin: 10px 0 0 0;
+    }
+    #companyInfoDisplay>p>strong{
+        vertical-align: top;
+    }
+    #companyInfoDisplay>p>span{
+        display: inline-block;
+        width: 400px;
+    }
+</style>
 
 <body>
     <!-- 不可编辑的顶部区域 -->
@@ -33,7 +55,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             项目编号<input type="text" id="projectCodeSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
             项目名称<input type="text" id="projectNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-            采购单位<input type="text" id="tendereeName" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+            采购单位<input type="text" id="tendereeNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
             <button id="searchBtn" onclick="initDataSearch()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
         </div>
         <table id="projectList" style="width:100%; border-collapse:collapse; margin-bottom:20px;">
@@ -42,6 +64,7 @@
                     <th style="padding:10px; border:1px solid #ddd;">项目编号</th>
                     <th style="padding:10px; border:1px solid #ddd;">项目名称</th>
                     <th style="padding:10px; border:1px solid #ddd;">采购单位</th>
+                    <th style="padding:10px; border:1px solid #ddd;">报名开始时间</th>
                     <th style="padding:10px; border:1px solid #ddd;">预算金额</th>
                     <th style="padding:10px; border:1px solid #ddd;">审查情况</th>
                     <th style="padding:10px; border:1px solid #ddd;">操作</th>
@@ -55,6 +78,42 @@
         </table>
         <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
     </div>
+
+    <div id="qualificationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3>项目审查信息 - 项目信息</h3>
+                <button onclick="$('#qualificationModal').hide()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
+            </div>
+            <div id="qualificationContent" style="margin-bottom:20px;">
+                <div id="companyInfoDisplay" style="margin-bottom:20px;">
+                    <p><strong>项目名称：</strong><span id="projectName"></span></p>
+                    <p><strong>项目编号：</strong><span id="projectCode"></span></p>
+                    <p><strong>采购方式：</strong><span id="procurementMethod"></span></p>
+                    <p><strong>项目类型：</strong><span id="projectType"></span></p>
+                    <p style="display: none;"><strong>前期供应商：</strong><span id="oldSuppliers"></span></p>
+                    <p><strong>项目资格条件：</strong><span id="projectQualificationConditions"></span></p>
+                    <p><strong>项目符合性条件：</strong><span id="projectComplianceConditions"></span></p>
+                    <p><strong>项目打分要求：</strong><span id="projectScoringRequirements"></span></p>
+                    <p><strong>项目概况：</strong><span id="projectOverview"></span></p>
+                    <p><strong style="vertical-align: top;">采购文件：</strong><span id="certificateFiles" style="display: inline-block;"></span></p>
+                    <p><strong>招标方名称：</strong><span id="tendereeName"></span></p>
+                    <p><strong>项目预算：</strong><span id="money"></span></p>
+                    <p><strong>报名系统技术服务费：</strong><span id="registrationFee"></span></p>
+                    <p><strong style="vertical-align: top;">告知书或登记表：</strong><span id="certificateFiles3" style="display: inline-block;"></span></p>
+                    <p><strong>投标报名开始时间：</strong><span id="senrollStartDate"></span></p>
+                    <p><strong>投标报名截止时间：</strong><span id="enrollEndDate"></span></p>
+                    <p><strong>开标时间：</strong><span id="tendereeDate"></span></p>
+                </div>
+            </div>
+            <div id="examine2" style="text-align:center;">
+                <button onclick="approveProject(true)" id="bidderIsCheck01" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:15px;display:none;">审查通过</button>
+                <button onclick="approveProject(false)" id="bidderIsCheck02" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;display:none;">审查不通过</button>
+                <button onclick="notPass()" id="bidderIsCheck03" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;display:none;">不通过原因</button>
+            </div>
+        </div>
+    </div>
+
     <script id="projectTemplate" type="text/x-handlebars-template">
         {{#if list}}
             {{#each list}}
@@ -62,13 +121,12 @@
                     <td style="padding:10px; border:1px solid #ddd;">{{project.projectCode}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">{{project.projectName}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">{{tendereeName}}</td>
+                    <td style="padding:10px; border:1px solid #ddd;">{{project.senrollStartDate}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">{{#moneyDelimiter project.money}}{{/moneyDelimiter}}</td>
                     <td style="padding:10px; border:1px solid #ddd;{{#eq project.isAudit 0}}color:red;{{/eq}}">{{#eq project.isAudit 0}}未审核{{/eq}}{{#eq project.isAudit 1}}通过{{/eq}}{{#eq project.isAudit 2}}不通过{{/eq}}</td>
                     <td style="padding:10px; border:1px solid #ddd;">
-                        <button onclick="downloadFile('{{project.procurementDocuments}}','{{project.projectName}}')" style="padding:5px 10px; margin-right:5px;">下载采购文件</button>
-                        <button onclick="approveProject('{{project.id}}',true)" style="padding:5px 10px; margin: 5px 0;margin-right:5px; background:#4CAF50; color:white;{{#eq project.isAudit 0}}{{else}}display:none;{{/eq}}">审查通过</button>
-                        <button onclick="approveProject('{{project.id}}',false)" style="padding:5px 10px; background:#f44336; color:white;{{#eq project.isAudit 0}}{{else}}display:none;{{/eq}}">审查不通过</button>
-                    </td>
+                        <button onclick="viewSupplierQualification('{{project.id}}','{{project.isAudit}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq project.isAudit 0}}审核{{else}}查看{{/eq}}</button>
+                     </td>
                 </tr>
             {{/each}}
         {{else}}
@@ -87,21 +145,10 @@
         initData();
         manage();
 
-        $('#projectNameSearch').on('keypress', function(e) {
-            if(e.which === 13) { // 回车键
-                $('#searchBtn').click();
-            }
-        });
-        $('#projectCodeSearch').on('keypress', function(e) {
-            if(e.which === 13) { // 回车键
-                $('#searchBtn').click();
-            }
-        });
-        $('#tendereeName').on('keypress', function(e) {
-            if(e.which === 13) { // 回车键
-                $('#searchBtn').click();
-            }
-        });
+        keypress13("projectNameSearch","searchBtn");
+        keypress13("projectCodeSearch","searchBtn");
+        keypress13("tendereeNameSearch","searchBtn");
+
         function initPageShow(data){
             initData();
         }
@@ -119,7 +166,7 @@
 
             var projectName = $("#projectNameSearch").val();
             var projectCode = $("#projectCodeSearch").val();
-            var tendereeName = $("#tendereeName").val();
+            var tendereeName = $("#tendereeNameSearch").val();
             var project = {"isAudit":12};
             if(projectName){
                 project["projectName"] = projectName;
@@ -148,17 +195,15 @@
                 }
             });
         }
-        // 下载采购文件
-        function downloadFile(fileId,projectName) {
-            window.open( '/file/download/' + fileId, '_blank');
-            // 实际应用中这里应该调用后端API下载文件
-            alert('开始下载项目' + projectName + '的采购文件');
+
+        function notPass(){
+            alert("不通过原因："+$("#bidderIsCheck03").attr("data-info"));
         }
 
         // 审查通过
-        function approveProject(projectId,isPass) {
+        function approveProject(isPass) {
             var isAudit = isPass?1:2;
-
+            var projectId = $("#qualificationModal").attr("data-id");
             var notPassInfo="";
             var isUpdate = false;
             if(isPass){
@@ -184,12 +229,93 @@
                         if(response.status == 200) {
                             initData();
                             alert('审查成功！');
+                            $('#qualificationModal').hide()
                         } else {
                             alert('上传失败: ' + response.message);
                         }
                     }
                 });
             }
+        }
+
+        function viewSupplierQualification(id,isCheck) {
+            if(isCheck==0){
+                $("#bidderIsCheck01").show();
+                $("#bidderIsCheck02").show();
+            }else{
+                $("#bidderIsCheck01").hide();
+                $("#bidderIsCheck02").hide();
+            }
+            if(isCheck==2){
+                $("#bidderIsCheck03").show();
+            }else{
+                $("#bidderIsCheck03").hide();
+            }
+
+            $.ajax({
+                url: "/project/get/" + id,
+                type: "GET",
+                contentType: "application/json",
+                success: function (e) {
+                    if(e.status == 200){
+                        loadData(e.data);
+                    }else{
+                        alert("获取招标信息失败："+e.message);
+                    }
+                }
+            });
+
+        }
+
+        function loadData(data){
+            $("#qualificationModal").attr("data-id",data.project.id);
+
+            $("#projectName").text(data.project.projectName);
+            $("#projectCode").text(data.project.projectCode);
+            $("#money").text(parseInt(data.project.money)==0?"/":parseFloat(data.project.money).toLocaleString('en-US')+"元");
+            $("#projectQualificationConditions").text(data.project.projectQualificationConditions);
+            $("#projectComplianceConditions").text(data.project.projectComplianceConditions);
+            $("#projectScoringRequirements").text(data.project.projectScoringRequirements);
+            $("#projectOverview").text(data.project.projectOverview);
+            $("#registrationFee").text(parseInt(data.project.registrationFee)==0?"/":parseFloat(data.project.registrationFee).toLocaleString('en-US')+"元");
+            $("#procurementMethod").text(data.project.procurementMethod);
+            $("#projectType").text(data.project.projectType);
+            changeSelect(data.project.projectType);
+            $("#oldSuppliers").text(data.project.oldSuppliers);
+            $("#senrollStartDate").text(data.project.senrollStartDate);
+            $("#enrollEndDate").text(data.project.enrollEndDate);
+            getFile(data.project.procurementDocuments,"certificateFiles");
+            getFile(data.project.descriptionFile,"certificateFiles3");
+            $("#tendereeName").text(data.tendereeName);
+            $("#tendereeDate").text(data.project.bidOpeningTime);
+            $("#bidderIsCheck03").attr("data-info",data.project.notPassInfo);
+            $("#qualificationModal").show();
+        }
+        function changeSelect(val){
+            if(val=="工程"){
+                $("#oldSuppliers").parent().show();
+            }else{
+                $("#oldSuppliers").parent().hide();
+            }
+        }
+        function getFile(id,idName){
+            if(!id){
+                $("#"+idName).html("<p>无</p>");
+                return;
+            };
+            $.ajax({
+                url: "/file/get/" + id,
+                type: "GET",
+                contentType: "application/json",
+                success: function (e) {
+                    if(e.status == 200){
+                        var fileName = "<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display: inline-block;\" target=\"_blank\" href='/file/preview/"+e.data.id+"'>"+e.data.name+"（"+e.data.fileSize+"）</a></p>";
+                        $("#"+idName).html(fileName);
+                    }else{
+                        alert("获取文件失败："+e.message);
+                    }
+                }
+            });
         }
 
     </script>

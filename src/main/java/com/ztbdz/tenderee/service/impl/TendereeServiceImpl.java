@@ -49,12 +49,12 @@ public class TendereeServiceImpl implements TendereeService {
             if( StringUtils.isEmpty(tenderee.getProject().getMoney()) || tenderee.getProject().getMoney()<0) return Result.fail("项目预算必须大于或等于0！");
 
             if(!StringUtils.isEmpty(tenderee.getId())){ //id不为空时进行更新
-                tenderee.getProject().setIsAudit(1);
+                tenderee.getProject().setIsAudit(0);
                 return update(tenderee);
             }
             // 项目信息
             Project project = tenderee.getProject();
-            project.setIsAudit(1); // 默认 未审核
+            project.setIsAudit(0); // 默认 未审核
             projectService.insert(project);
             // 标段
             List<Tender> tenders =  project.getTenders();

@@ -37,34 +37,42 @@ var config = {
     name : decoded("5Zub5bed6L2p6L6V5oub5qCH5Luj55CG5pyJ6ZmQ5YWs5Y+4"), //....公司名称 "四川轩辕招标代理有限公司"
     logo :{
         img : decoded("aW1hZ2VzL3RvcGJhci5qcGc="), //....公司首页logo "images/topbar.jpg"
-        style : decoded("d2lkdGg6MjU5cHg7bWFyZ2luLWxlZnQ6IDIwcHg7")  // ....公司首页logo样式 "width:259px;margin-left: 20px;"
+        style : decoded("d2lkdGg6MjU5cHg7bWFyZ2luLWxlZnQ6IDIwcHg7") , // ....公司首页logo样式 "width:259px;margin-left: 20px;"
+        icon : decoded("aW1hZ2VzL2ljb24ucG5n") // ....公司首页icon "images/icon.png"
     }
 };
 
 initInit();
 window.onload = function()  {
     // 退出登录
-    $("body").on("click", "a:contains('"+decoded("6YCA5Ye6")+"')", function() {
-        $.ajax({
-            url: "/user/logout",
-            type: "POST",
-            contentType: "application/json",
-            success:function(e) {
-                if(e.status != 200){
-                    alert(e.message);
+    var logoutName = decoded("6YCA5Ye6");// 退出
+    $("body").on("click", "a:contains('"+logoutName+"')", function() {
+        if($(this).text() == logoutName){
+            $.ajax({
+                url: "/user/logout",
+                type: "POST",
+                contentType: "application/json",
+                success:function(e) {
+                    if(e.status != 200){
+                        alert(e.message);
+                    }
                 }
-            }
-        });
-        removeToken();
+            });
+            removeToken();
+        }
     });
 };
 
 function initInit(){
+    loadCSS("plugin/loading/loading.css");//加载loading的css
     var oldInfo = decoded("QUnmmbrog73ljJbor4TmoIfns7vnu58=");// AI智能化评标系统
-    $("div>div:contains('"+oldInfo+"')").text(config.title);
-    $("title:contains('"+oldInfo+"')").text(config.title);
+    $("div>div:contains('"+oldInfo+"')").filter(function() { return $(this).text() === oldInfo; }).text(config.title);
+    $("title:contains('"+oldInfo+"')").filter(function() { return $(this).text() === oldInfo; }).text(config.title);
     var logo = $(".logo");
     if(logo.length>0) logo.attr("src",config.logo.img).attr("style",config.logo.style);
+    if(config.logo.icon){
+        loadLink(config.logo.icon,'shortcut icon','image/x-icon');
+    }
 }
 
 // 正则表达式校验
@@ -93,9 +101,9 @@ var regBox = {
         regEx : /^0[\d]{2,3}-[\d]{7,8}$/,
         message : decoded("55S16K+d5Y+356CB5qC85byP6ZSZ6K+v")
     },
-    regMoney :{ //....金额："格式不正确"
+    regMoney :{ //....金额："金额格式错误"
         regEx : /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/,
-        message : decoded("5qC85byP5LiN5q2j56Gu")
+        message : decoded("6YeR6aKd5qC85byP6ZSZ6K+v")
     },
     regMoneyInt :{ //....整数金额："只能为整数"
         regEx : /(^[1-9]([0-9]+)?(\.[0]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0]([0])?$)/,
@@ -385,7 +393,14 @@ function manage(){
     var a = $("<a></a>").attr("href","manage.html").attr("style","text-decoration:none; color:#333;").text(decoded("6L+U5Zue5bel5L2c5Y+w")); // 返回工作台
     var user = getMember();
     if(user.role.type=="manage"){
-        a.insertBefore($("a:contains('"+decoded("6L+U5Zue6aaW6aG1")+"')"));// 返回首页
+        var returnHome = decoded("6L+U5Zue6aaW6aG1");// 返回首页
+        $("a:contains('"+returnHome+"')").filter(function() {
+            var bol = $(this).text() === returnHome;
+            if(bol){
+                a.insertBefore($("a:contains('"+returnHome+"')"));
+            }
+            return bol;
+        })
     }
 }
 
@@ -428,12 +443,24 @@ function closeLoading(){
 }
 
 // 动态引用CSS
-loadCSS("plugin/loading/loading.css");//加载loading的css
 function loadCSS(url) {
+    loadLink(url,'stylesheet','text/css');
+}
+function loadLink(url,rel,type) {
     var link = document.createElement('link');
-    link.rel = 'stylesheet';
+    link.rel = rel;
     link.href = url;
-    link.type = 'text/css';
+    link.type = type;
     document.head.appendChild(link);
+}
+
+// 校验人员访问权限
+function verifyMember(memberId) {
+    if(getMember().id != memberId){
+        alert(decoded("6K6/6Zeu5p2D6ZmQ5LiN6Laz77yB")); // 访问权限不足！
+        window.history.back();
+        return false;
+    }
+    return true;
 }
 

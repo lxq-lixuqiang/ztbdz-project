@@ -1,8 +1,6 @@
 package com.ztbdz.web.interceptor;
 
-import com.github.pagehelper.PageInfo;
 import com.ztbdz.user.pojo.*;
-import com.ztbdz.user.service.ExpertInfoService;
 import com.ztbdz.user.service.MenuAuthorizeService;
 import com.ztbdz.user.service.RoleService;
 import com.ztbdz.user.service.UserService;
@@ -31,8 +29,6 @@ public class DataInitializer {
     private MenuAuthorizeService menuAuthorizeService;
     @Autowired
     private RedisTemplate redisTemplate;
-    @Autowired
-    private ExpertInfoService expertInfoService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initData() {
@@ -55,32 +51,57 @@ public class DataInitializer {
 
             //初始化 管理员
             if(redisTemplate.opsForValue().get("initAdmin") == null){
-                if(userService.selectMember(null,"admin")==null){ // 管理员
+                if(userService.selectMember(null,"audit")==null){ // 审核员
                     User user = new User();
-                    user.setUsername("admin");
-                    user.setPassword("123456");
+                    user.setUsername("audit");
+                    user.setPassword(SystemConfig.DEFAULT_PASSWORD);
                     Member member = new Member();
-                    member.setName("admin");
-                    member.setRole(new Role("admin","审核管理员","审核管理员",0));
+                    member.setName("审核员");
+                    member.setRole(new Role("admin","审核员","审核员",0));
                     Account account = new Account();
-                    account.setAccountName("审核管理员单位");
+                    account.setAccountName("内部管理单位（审核员）");
                     member.setAccount(account);
                     user.setMember(member);
                     userService.create(user,Common.DEFAULT_VALUE);
                 }
-                if(userService.selectMember(null,"zj")==null){ // 专家组长
+                if(userService.selectMember(null,"cw")==null){ // 财务
+                    User user = new User();
+                    user.setUsername("cw");
+                    user.setPassword(SystemConfig.DEFAULT_PASSWORD);
                     Member member = new Member();
-                    member.setPhone("zj");
-                    member.setName("zj");
-                    member.setRole(new Role("expert","专家","专家",0));
+                    member.setName("财务");
+                    member.setRole(new Role("finance","财务","财务",0));
                     Account account = new Account();
-                    account.setAccountName("专家组长单位");
+                    account.setAccountName("内部管理单位（财务）");
                     member.setAccount(account);
-                    ExpertInfo expertInfo = new ExpertInfo();
-                    expertInfo.setIsAdmin(1);
-                    expertInfo.setIsCheck(1);
-                    expertInfo.setMember(member);
-                    expertInfoService.create(expertInfo);
+                    user.setMember(member);
+                    userService.create(user,Common.DEFAULT_VALUE);
+                }
+                if(userService.selectMember(null,"zb")==null){ // 代理
+                    User user = new User();
+                    user.setUsername("zb");
+                    user.setPassword(SystemConfig.DEFAULT_PASSWORD);
+                    Member member = new Member();
+                    member.setName("代理");
+                    member.setRole(new Role("tenderee","代理","代理",0));
+                    Account account = new Account();
+                    account.setAccountName("内部管理单位（代理）");
+                    member.setAccount(account);
+                    user.setMember(member);
+                    userService.create(user,Common.DEFAULT_VALUE);
+                }
+                if(userService.selectMember(null,"xmjl")==null){ // 项目经理
+                    User user = new User();
+                    user.setUsername("xmjl");
+                    user.setPassword(SystemConfig.DEFAULT_PASSWORD);
+                    Member member = new Member();
+                    member.setName("项目经理");
+                    member.setRole(new Role("manage","项目经理","项目经理",0));
+                    Account account = new Account();
+                    account.setAccountName("内部管理单位（项目经理）");
+                    member.setAccount(account);
+                    user.setMember(member);
+                    userService.create(user,Common.DEFAULT_VALUE);
                 }
                 redisTemplate.opsForValue().set("initAdmin",true);
             }
@@ -88,105 +109,102 @@ public class DataInitializer {
             // 初始化菜单权限 并 关联角色
             // 清空 menu_authorize和role_related_authorize 表数据才能进行初始化数据
             if(redisTemplate.opsForValue().get("initMenu") == null){
-                PageInfo<MenuAuthorize> menuPage =  menuAuthorizeService.selectList(1,1,new MenuAuthorize());
-                if(menuPage.getTotal()<=0){
-                    List<Role> roleList = roleService.selectList(new Role());
-                    Map<String,Long> roleMap = new HashMap();
-                    for(Role role :roleList){
-                        roleMap.put(role.getType(),role.getId());
-                    }
-                    Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
+                List<Role> roleList = roleService.selectList(new Role());
+                Map<String,Long> roleMap = new HashMap();
+                for(Role role :roleList){
+                    roleMap.put(role.getType(),role.getId());
+                }
+                Map<String,List<MenuAuthorize>> saveDataMap = new HashMap();
 
-                    // 菜单 游客访问
-                    MenuAuthorize index = new MenuAuthorize("首页","index","/index.html");
-                    MenuAuthorize login = new MenuAuthorize("登录","login","/login.html");
-                    MenuAuthorize login_out = new MenuAuthorize("退出","login-out","/login-out.html");
-                    MenuAuthorize reg = new MenuAuthorize("注册","reg","/reg.html");
+                // 菜单 游客访问
+                MenuAuthorize index = new MenuAuthorize("首页","index","/index.html");
+                MenuAuthorize login = new MenuAuthorize("登录","login","/login.html");
+                MenuAuthorize login_out = new MenuAuthorize("退出","login-out","/login-out.html");
+                MenuAuthorize reg = new MenuAuthorize("注册","reg","/reg.html");
 
-                    // 菜单 登录访问
-                    MenuAuthorize audit = new MenuAuthorize("项目审查页面","audit","/audit.html");
-                    MenuAuthorize tenderee = new MenuAuthorize("招标方管理页面","tenderee","/tenderee.html");
-                    MenuAuthorize bider = new MenuAuthorize("投标方管理页面","bider","/bider.html");
-                    MenuAuthorize application = new MenuAuthorize("投标方报名详情页","application","/Application.html");
-                    MenuAuthorize project_d = new MenuAuthorize("项目详情","project-d","/project-d.html");
-                    MenuAuthorize expert = new MenuAuthorize("专家管理页面","expert","/expert.html");
-                    MenuAuthorize bid_evaluation = new MenuAuthorize("专家评审页面","Bid evaluation","/Bid evaluation.html");
-                    MenuAuthorize finance = new MenuAuthorize("财务管理页面","finance","/finance.html");
-                    MenuAuthorize expertSelect = new MenuAuthorize("抽取专家页面","expertSelect","/expert-select.html");
-                    MenuAuthorize manage = new MenuAuthorize("项目经理工作台","manage","/manage.html");
-                    MenuAuthorize printExpert = new MenuAuthorize("专家库管理","print-expert","/print-expert.html");
-                    MenuAuthorize result = new MenuAuthorize("专家评分汇总","result","/result.html");
-                    MenuAuthorize Bid_e_r = new MenuAuthorize("评标报告","Bid-e-r","/Bid-e-r.html");
-                    MenuAuthorize bid_invalid = new MenuAuthorize("政府采购废标报告","bid-invalid","/bid-invalid.html");
-                    MenuAuthorize clarify = new MenuAuthorize("澄清页面","clarify","/clarify.html");
+                // 菜单 登录访问
+                MenuAuthorize audit = new MenuAuthorize("项目审查页面","audit","/audit.html");
+                MenuAuthorize tenderee = new MenuAuthorize("招标方管理页面","tenderee","/tenderee.html");
+                MenuAuthorize bider = new MenuAuthorize("投标方管理页面","bider","/bider.html");
+                MenuAuthorize application = new MenuAuthorize("投标方报名详情页","application","/Application.html");
+                MenuAuthorize project_d = new MenuAuthorize("项目详情","project-d","/project-d.html");
+                MenuAuthorize expert = new MenuAuthorize("专家管理页面","expert","/expert.html");
+                MenuAuthorize bid_evaluation = new MenuAuthorize("专家评审页面","Bid evaluation","/Bid evaluation.html");
+                MenuAuthorize finance = new MenuAuthorize("财务管理页面","finance","/finance.html");
+                MenuAuthorize expertSelect = new MenuAuthorize("抽取专家页面","expertSelect","/expert-select.html");
+                MenuAuthorize manage = new MenuAuthorize("项目经理工作台","manage","/manage.html");
+                MenuAuthorize printExpert = new MenuAuthorize("专家库管理","print-expert","/print-expert.html");
+                MenuAuthorize result = new MenuAuthorize("专家评分汇总","result","/result.html");
+                MenuAuthorize Bid_e_r = new MenuAuthorize("评标报告","Bid-e-r","/Bid-e-r.html");
+                MenuAuthorize bid_invalid = new MenuAuthorize("政府采购废标报告","bid-invalid","/bid-invalid.html");
+                MenuAuthorize clarify = new MenuAuthorize("澄清页面","clarify","/clarify.html");
 
-                    // 角色与菜单关联
-                    // 管理员
-                    List<MenuAuthorize> adminMenuList = new ArrayList();
-                    adminMenuList.add(audit);
-                    saveDataMap.put("admin",adminMenuList);
+                // 角色与菜单关联
+                // 管理员
+                List<MenuAuthorize> adminMenuList = new ArrayList();
+                adminMenuList.add(audit);
+                saveDataMap.put("admin",adminMenuList);
 
-                    // 招标方/代理
-                    List<MenuAuthorize> tendereeMenuList = new ArrayList();
-                    tendereeMenuList.add(tenderee);
-                    saveDataMap.put("tenderee",tendereeMenuList);
+                // 招标方/代理
+                List<MenuAuthorize> tendereeMenuList = new ArrayList();
+                tendereeMenuList.add(tenderee);
+                saveDataMap.put("tenderee",tendereeMenuList);
 
-                    // 投标方/供应商
-                    List<MenuAuthorize> bidderMenuList = new ArrayList();
-                    bidderMenuList.add(bider);
-                    bidderMenuList.add(application);
-                    bidderMenuList.add(project_d);
-                    bidderMenuList.add(clarify);
-                    saveDataMap.put("bidder",bidderMenuList);
+                // 投标方/供应商
+                List<MenuAuthorize> bidderMenuList = new ArrayList();
+                bidderMenuList.add(bider);
+                bidderMenuList.add(application);
+                bidderMenuList.add(project_d);
+                bidderMenuList.add(clarify);
+                saveDataMap.put("bidder",bidderMenuList);
 
-                    // 专家
-                    List<MenuAuthorize> expertMenuList = new ArrayList();
-                    expertMenuList.add(expert);
-                    expertMenuList.add(bid_evaluation);
-                    expertMenuList.add(result);
-                    expertMenuList.add(Bid_e_r);
-                    expertMenuList.add(bid_invalid);
-                    expertMenuList.add(clarify);
-                    saveDataMap.put("expert",expertMenuList);
+                // 专家
+                List<MenuAuthorize> expertMenuList = new ArrayList();
+                expertMenuList.add(expert);
+                expertMenuList.add(bid_evaluation);
+                expertMenuList.add(result);
+                expertMenuList.add(Bid_e_r);
+                expertMenuList.add(bid_invalid);
+                expertMenuList.add(clarify);
+                saveDataMap.put("expert",expertMenuList);
 
-                    // 财务
-                    List<MenuAuthorize> treasurerMenuList = new ArrayList();
-                    treasurerMenuList.add(finance);
-                    saveDataMap.put("finance",treasurerMenuList);
+                // 财务
+                List<MenuAuthorize> treasurerMenuList = new ArrayList();
+                treasurerMenuList.add(finance);
+                saveDataMap.put("finance",treasurerMenuList);
 
-                    // 抽取专家员_已取消此角色
+                // 抽取专家员_已取消此角色
 //                    List<MenuAuthorize> extractExpertMenuList = new ArrayList();
 //                    extractExpertMenuList.add(expertSelect);
 //                    saveDataMap.put("expertSelect",extractExpertMenuList);
 
-                    // 项目经理
-                    List<MenuAuthorize> projectManagerMenuList = new ArrayList();
-                    projectManagerMenuList.add(manage);
-                    projectManagerMenuList.add(expertSelect);
-                    projectManagerMenuList.add(finance);
-                    projectManagerMenuList.add(tenderee);
-                    projectManagerMenuList.add(project_d);
-                    projectManagerMenuList.add(expert);
-                    projectManagerMenuList.add(audit);
-                    projectManagerMenuList.add(printExpert);
-                    projectManagerMenuList.add(result);
-                    saveDataMap.put("manage",projectManagerMenuList);
+                // 项目经理
+                List<MenuAuthorize> projectManagerMenuList = new ArrayList();
+                projectManagerMenuList.add(manage);
+                projectManagerMenuList.add(expertSelect);
+                projectManagerMenuList.add(finance);
+                projectManagerMenuList.add(tenderee);
+                projectManagerMenuList.add(project_d);
+                projectManagerMenuList.add(expert);
+                projectManagerMenuList.add(audit);
+                projectManagerMenuList.add(printExpert);
+                projectManagerMenuList.add(result);
+                saveDataMap.put("manage",projectManagerMenuList);
 
 
-                    for(String key :saveDataMap.keySet()){
-                        List<MenuAuthorize> menuList = saveDataMap.get(key);
-                        List<RoleRelatedAuthorize> roleRelatedAuthorizeList = new ArrayList();
-                        for(MenuAuthorize menuAuthorize :menuList){
-                            MenuAuthorize menuAuthorize1 = menuAuthorizeService.select(menuAuthorize);
-                            if(menuAuthorize1==null){
-                                menuAuthorizeService.insert(menuAuthorize);
-                                menuAuthorize1 = menuAuthorize;
-                            }
-                            RoleRelatedAuthorize roleRelatedAuthorize = new RoleRelatedAuthorize(roleMap.get(key),menuAuthorize1.getId());
-                            roleRelatedAuthorizeList.add(roleRelatedAuthorize);
+                for(String key :saveDataMap.keySet()){
+                    List<MenuAuthorize> menuList = saveDataMap.get(key);
+                    List<RoleRelatedAuthorize> roleRelatedAuthorizeList = new ArrayList();
+                    for(MenuAuthorize menuAuthorize :menuList){
+                        MenuAuthorize menuAuthorize1 = menuAuthorizeService.select(menuAuthorize);
+                        if(menuAuthorize1==null){
+                            menuAuthorizeService.insert(menuAuthorize);
+                            menuAuthorize1 = menuAuthorize;
                         }
-                        roleService.allocation(roleRelatedAuthorizeList);
+                        RoleRelatedAuthorize roleRelatedAuthorize = new RoleRelatedAuthorize(roleMap.get(key),menuAuthorize1.getId());
+                        roleRelatedAuthorizeList.add(roleRelatedAuthorize);
                     }
+                    roleService.allocation(roleRelatedAuthorizeList);
                 }
                 redisTemplate.opsForValue().set("initMenu",true);
             }

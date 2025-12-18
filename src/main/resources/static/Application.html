@@ -37,7 +37,7 @@
                     <div>
                         <p><strong>报名截止：</strong><span></span></p>
                         <p><strong>项目周期：</strong><span></span></p>
-                        <p><strong>项目状态：</strong><span>报名中</span></p>
+                        <p><strong>项目状态：</strong><span></span></p>
                     </div>
                 </div>
             </div>
@@ -172,13 +172,6 @@
                     contentType: "application/json",
                     success:function(e) {
                         if(e.status == 200){
-                            // var begin = new Date(e.data.project.enrollEndDate).getTime();
-                            // var now = new Date().getTime();
-                            // if(now>begin){
-                            //     alert("已超过报名截止日期，报名已截止！");
-                            //     window.history.back();
-                            //     return;
-                            // }
                             projectData(e.data.project);
                         }else{
                             alert("获取项目信息失败："+e.message);
@@ -188,6 +181,20 @@
             }
             function projectData(data){
                 var infos = $("#projectInfo span");
+                var begin = new Date(data.enrollEndDate).getTime();
+                var now = new Date().getTime();
+                var bidOpeningDate = new Date(data.bidOpeningTime).getTime();
+                $(infos[5]).text("报名中");
+                if(now>bidOpeningDate){
+                    $(infos[5]).text("已截止");
+                    alert("已超过开标时间（"+data.bidOpeningTime+"），缴费已截止。请【正在报名项目】列表下查看【退费说明】进行退费操作！");
+                    window.history.back();
+                    return;
+                }else if(now>begin){
+                    $(infos[5]).text("已截止");
+                    alert("项目提醒：已超过报名截止时间（"+data.enrollEndDate+"）请尽快缴费报名项目。如果过了开标时间（"+data.bidOpeningTime+"）未缴费会暂停缴费并且项目会报名失败！");
+                }
+
                 $(infos[0]).text(data.projectName);
                 $(infos[1]).text(data.projectCode);
                 $(infos[2]).text(parseInt(data.money)==0?'/':"￥"+parseFloat(data.money).toLocaleString('en-US'));

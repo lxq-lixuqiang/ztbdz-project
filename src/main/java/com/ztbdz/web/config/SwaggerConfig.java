@@ -22,7 +22,7 @@ public class SwaggerConfig {
                 .groupName("人员管理")
                 .apiInfo(apiInfo())
                 .select()
-                .apis(Predicates.or(RequestHandlerSelectors.basePackage("com.ztbdz.user")))
+                .apis(Predicates.or(RequestHandlerSelectors.basePackage("com.ztbdz.user.controller"),RequestHandlerSelectors.basePackage("com.ztbdz.web.controller")))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -32,7 +32,7 @@ public class SwaggerConfig {
                 .groupName("招标投标")
                 .apiInfo(apiInfo())
                 .select()
-                .apis(Predicates.or(RequestHandlerSelectors.basePackage("com.ztbdz.tenderee"),RequestHandlerSelectors.basePackage("com.ztbdz.file")))
+                .apis(Predicates.or(RequestHandlerSelectors.basePackage("com.ztbdz.tenderee.controller"),RequestHandlerSelectors.basePackage("com.ztbdz.file.controller")))
                 .paths(PathSelectors.any())
                 .build();
     }
