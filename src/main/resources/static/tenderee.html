@@ -267,6 +267,7 @@
                     <p><strong>用户名：</strong><span id="username"></span></p>
                     <p><strong style="vertical-align: top;">营业执照：</strong><span id="businessLicenseId" style="display: inline-block;"></span></p>
                     <p><strong style="vertical-align: top;">社保记录：</strong><span id="socialSecurityCertificateId" style="display: inline-block;"></span></p>
+                    <p><strong>备注：</strong><span id="remark"></span></p>
                 </div>
             </div>
         </div>
@@ -469,14 +470,14 @@
                     </div>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    用户名<input type="text" id="accountNameSearch3" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                    公司名称（用户名）<input type="text" id="accountNameSearch3" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
                     <button id="biddderSearchBtn3" onclick="loadApplicationData3()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
                 </div>
                 <div id="applicationLoading3" style="text-align:center; padding:20px; display:none;">正在加载数据...</div>
                 <table id="applicationTable3" style="width:100%; border-collapse:collapse;">
                     <thead>
                     <tr style="background:#f5f5f5;">
-                        <th style="padding:10px; border:1px solid #ddd;">用户名</th>
+                        <th style="padding:10px; border:1px solid #ddd;">公司名称（用户名）</th>
                         <th style="padding:10px; border:1px solid #ddd;">提交审核时间</th>
                         <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
                         <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
@@ -1553,7 +1554,7 @@
         };
         if(isOther == "isRetrievePassword"){
             data["notCheckShow"]=otherInfo.notPassContent;
-            showInfoOther({username:otherInfo.username,socialSecurityCertificateId:socialSecurityCertificateIdShow,businessLicenseId:businessLicenseIdShow,userId:otherInfo.user.id})
+            showInfoOther({username:otherInfo.username,remark:otherInfo.remark,socialSecurityCertificateId:socialSecurityCertificateIdShow,businessLicenseId:businessLicenseIdShow,userId:otherInfo.user.id})
         }
         showInfo(data);
     }
@@ -1589,6 +1590,7 @@
     function showInfoOther(data){
         $("#memberType03").show();
         $("#username").text(data.username);
+        $("#remark").text(data.remark);
         $("#socialSecurityCertificateId").html(data.socialSecurityCertificateId.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
         $("#businessLicenseId").html(data.businessLicenseId.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
         $("#qualificationModal2").attr("data-userId",data.userId);
@@ -2055,14 +2057,14 @@
         $("#registrationFee").val(data.project.registrationFee);
         $("#procurementMethod>[value="+data.project.procurementMethod+"]").attr("selected","selected");
         $("#projectType>[value="+data.project.projectType+"]").attr("selected","selected");
-        changeSelect(data.project.projectType)
+        changeSelect(data.project.projectType);
         $("#oldSuppliers").val(data.project.oldSuppliers);
         $("#senrollStartDate").attr("value",data.project.senrollStartDate);
         $("#enrollEndDate").attr("value",data.project.enrollEndDate);
         $("#fileUpload").attr("data-file-id",data.project.procurementDocuments);
         getFile(data.project.procurementDocuments,"certificateFiles");
         $("#fileUpload3").attr("data-file-id",data.project.descriptionFile);
-        getFile(data.project.descriptionFile,"certificateFiles3")
+        getFile(data.project.descriptionFile,"certificateFiles3");
         $("#tendereeName").val(data.tendereeName);
         $("#tendereeDate").attr("value",data.project.bidOpeningTime);
 

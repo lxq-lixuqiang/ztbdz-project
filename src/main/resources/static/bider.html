@@ -504,7 +504,7 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             {{#eq  projectRegisters.state 0}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">缴费审核中 </td>{{/eq}}
             {{#eq  projectRegisters.state 1}}<td style="padding:10px; border:1px solid #ddd;">报名成功 </td>{{/eq}}
-            {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;color:red;">缴费不通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;{{#gtNowDate  bidOpeningTime}}color:red;{{/gtNowDate}}">缴费不通过 </td>{{/eq}}
             {{#eq  projectRegisters.state 3}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">信息审核中 </td>{{/eq}}
             {{#eq  projectRegisters.state 4}}<td style="padding:10px; border:1px solid #ddd;color:#4CAF50;">信息通过 </td>{{/eq}}
             {{#eq  projectRegisters.state 5}}<td style="padding:10px; border:1px solid #ddd;color:red;">信息不通过 </td>{{/eq}}
@@ -515,7 +515,9 @@
                     <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
                 {{/eq}}
                 {{#eq  projectRegisters.state 2}}<!-- 报名缴费不通过 -->
-                    <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">重新缴费</button>
+                    {{#gtNowDate  bidOpeningTime}}
+                        <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">重新缴费</button>
+                    {{/gtNowDate}}
                     <button onclick="showProgress()" style="margin-top:5px;padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">退费说明</button>
                     <button onclick="alert('缴费不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}

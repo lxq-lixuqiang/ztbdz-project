@@ -67,7 +67,7 @@ function initInit(){
     loadCSS("plugin/loading/loading.css");//加载loading的css
     var oldInfo = decoded("QUnmmbrog73ljJbor4TmoIfns7vnu58=");// AI智能化评标系统
     $("div>div:contains('"+oldInfo+"')").filter(function() { return $(this).text() === oldInfo; }).text(config.title);
-    $("title:contains('"+oldInfo+"')").filter(function() { return $(this).text() === oldInfo; }).text(config.title);
+    $("title:contains('"+oldInfo+"')").filter(function() { return $(this).text() === oldInfo; }).text(config.name);
     var logo = $(".logo");
     if(logo.length>0) logo.attr("src",config.logo.img).attr("style",config.logo.style);
     if(config.logo.icon){

@@ -69,6 +69,7 @@ function submit(){
     $("#gonggao").attr("disabled","true");
     var username = $("#username").val();
     var newPassword = $("#newPassword").val();
+    var remark = $("#remark").val();
     var field1 = $("#field1").attr("data-file-id");
     var field2 = $("#field2").attr("data-file-id");
 
@@ -87,7 +88,7 @@ function submit(){
     $.ajax({
         url: "/retrievePassword/addORupdate",
         type: "POST",
-        data: JSON.stringify({"username":username.trim(),"newPassword":newPassword.trim(),"businessLicenseId":field1,"socialSecurityCertificateId":field2}),
+        data: JSON.stringify({"username":username.trim(),"newPassword":newPassword.trim(),"businessLicenseId":field1,"socialSecurityCertificateId":field2,"remark":remark}),
         contentType: "application/json",
         success:function(e) {
             $("#gonggao").removeAttr("disabled");

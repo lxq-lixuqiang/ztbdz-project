@@ -36,6 +36,8 @@ public class RetrievePassword extends Model<RetrievePassword> implements Seriali
     private Integer isPass;
     @ApiModelProperty("不通过原因")
     private String notPassContent;
+    @ApiModelProperty("备注")
+    private String remark;
     @ApiModelProperty("用户信息")
     @TableField(exist = false)
     private User user;

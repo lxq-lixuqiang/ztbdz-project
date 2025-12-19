@@ -130,7 +130,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         <h3>审核项目列表</h3>
                         <div>
-                            <button onclick="loadProjects()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
+                            <button onclick="referList()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:10px;">刷新列表</button>
                             <button onclick="exportToExcel(1, '项目列表')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;">导出Excel</button>
                         </div>
                     </div>
@@ -203,6 +203,7 @@
                     $("#loadingMessage").hide();
                     $("#projectsTable").show();
                     pageButton(e.data);
+                    chechInfo();
                 }else{
                     $("#emptyMessage").show().text("加载失败："+e.message);
                     $("#loadingMessage").hide();
@@ -505,21 +506,19 @@
     }
 
     // 导出Excel功能
+    var itemChechboxId = {};
     function exportToExcel(state, fileName) {
         // 模拟导出功能
         if(state==0){
             window.open('/projectRegister/invoiceOrAuditExport/'+state, '_blank');
         }else{
             var ids = "";
-            var checkboxes = document.querySelectorAll('.item');
-            checkboxes.forEach(function(checkbox) {
-                if(checkbox.checked){
-                    if(ids.length!=0){
-                        ids+=",";
-                    }
-                    ids+=$(checkbox).attr('data-id');
+            for (var dataId in itemChechboxId) {
+                if(ids.length!=0){
+                    ids+=",";
                 }
-            });
+                ids+=dataId;
+            }
             if(ids){
                 window.open('/projectRegister/auditExport/'+state+'/'+ids, '_blank');//多选框
             }else{
@@ -544,28 +543,51 @@
     }
 
     // 全选或取消全选
-    $("#checkboxAll").click(function(){
+    document.getElementById('checkboxAll').addEventListener('change', function() {
+        document.querySelectorAll('.item').forEach(function(checkbox) {
+            checkbox.checked = document.getElementById('checkboxAll').checked; // 根据全选checkbox的状态设置每个项的选中状态
+            var dataId = $(checkbox).attr('data-id');
+            if(document.getElementById('checkboxAll').checked){
+                //选中
+                itemChechboxId[dataId]=dataId;
+            }else{
+                //取消选中
+                delete itemChechboxId[dataId];
+            }
+        });
+    });
+
+    function referList(){
+        itemChechboxId={};
+        document.getElementById('checkboxAll').checked = false;
+        loadProjects();
+    }
+
+    $("body").on("change","input.item",function(){
+        var dataId = $(this).attr('data-id');
+        if(this.checked){
+            itemChechboxId[dataId]=dataId;
+        }else{
+            delete itemChechboxId[dataId];
+        }
+    });
+
+    function chechInfo(){
         var checkboxes = document.querySelectorAll('.item'); // 获取所有带有class 'item'的checkbox
-        var selectAllCheckbox = document.getElementById('checkboxAll'); // 获取全选checkbox
-
-        // 当全选checkbox状态改变时触发
-        selectAllCheckbox.addEventListener('change', function() {
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = selectAllCheckbox.checked; // 根据全选checkbox的状态设置每个项的选中状态
-            });
+        checkboxes.forEach(function(checkbox) {
+            var dataId = $(checkbox).attr('data-id');
+            if(itemChechboxId[dataId]){
+                checkbox.checked = true;
+            }
         });
-    })
-    $("#checkboxAll2").click(function(){
-        var checkboxes = document.querySelectorAll('.item2'); // 获取所有带有class 'item'的checkbox
-        var selectAllCheckbox = document.getElementById('checkboxAll2'); // 获取全选checkbox
+    }
 
-        // 当全选checkbox状态改变时触发
-        selectAllCheckbox.addEventListener('change', function() {
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = selectAllCheckbox.checked; // 根据全选checkbox的状态设置每个项的选中状态
-            });
+    // 当全选checkbox状态改变时触发
+    document.getElementById('checkboxAll2').addEventListener('change', function() {
+        document.querySelectorAll('.item2').forEach(function(checkbox) {
+            checkbox.checked = document.getElementById('checkboxAll2').checked; // 根据全选checkbox的状态设置每个项的选中状态
         });
-    })
+    });
     // 确保DOM完全加载后执行
     $(document).ready(function() {
         // 添加回车键搜索功能
