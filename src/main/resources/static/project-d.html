@@ -31,17 +31,17 @@
             <div id="details-content" style="padding:15px; background:#f9f9f9; border:1px solid #ddd;"></div>
         </div>
 
-        <!-- 2. 发票申请功能 -->
-        <div style="margin-bottom:30px;">
-            <button id="invoice-btn" style="padding:10px 20px; background:#2196F3; color:white; border:none; cursor:pointer;">
-                申请开具报名系统技术服务费发票
-            </button>
-            <div id="confirm-dialog" style="display:none; margin-top:15px; padding:15px; background:#f5f5f5; border:1px solid #ddd;">
-                <p>请选择开具发票类型？</p>
-                <button id="confirm-invoice01" style="padding:5px 15px; margin-right:10px; background:#4CAF50; color:white; border:none; cursor:pointer;">专票</button>
-                <button id="confirm-invoice02" style="padding:5px 15px; background:#4CAF50; color:white; border:none; cursor:pointer;">普票</button>
-            </div>
-        </div>
+        <!-- 2. 发票申请功能 取消 -->
+        <!--<div style="margin-bottom:30px;">-->
+            <!--<button id="invoice-btn" style="padding:10px 20px; background:#2196F3; color:white; border:none; cursor:pointer;">-->
+                <!--申请开具报名系统技术服务费发票-->
+            <!--</button>-->
+            <!--<div id="confirm-dialog" style="display:none; margin-top:15px; padding:15px; background:#f5f5f5; border:1px solid #ddd;">-->
+                <!--<p>请选择开具发票类型？</p>-->
+                <!--<button id="confirm-invoice01" style="padding:5px 15px; margin-right:10px; background:#4CAF50; color:white; border:none; cursor:pointer;">专票</button>-->
+                <!--<button id="confirm-invoice02" style="padding:5px 15px; background:#4CAF50; color:white; border:none; cursor:pointer;">普票</button>-->
+            <!--</div>-->
+        <!--</div>-->
 
         <!-- 3. 下载采购文件 -->
         <div style="margin-bottom:30px;">
@@ -163,7 +163,7 @@
                                         showInfo=k+1;
                                     }
                                     if(ids[k]){
-                                        p+="       <a href=\"/file/download/"+ids[k]+"\" style=\"text-decoration: none;margin-left:8px;padding:4px 6px;font-size:13px;border-radius: 3px;color:#fff;background-color:#2196F3;"+isShow+"\">下载附件"+showInfo+"</a>\n";
+                                        p+="       <a target='_blank' href=\"/file/download/"+ids[k]+"\" style=\"text-decoration: none;margin-left:8px;padding:4px 6px;font-size:13px;border-radius: 3px;color:#fff;background-color:#2196F3;"+isShow+"\">下载附件"+showInfo+"</a>\n";
                                     }
                                 }
                                 p+=" </p>";

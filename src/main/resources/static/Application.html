@@ -63,15 +63,21 @@
 
             <!-- 上传凭证 -->
             <div style="margin-bottom:30px; border:1px solid #ddd; padding:20px; border-radius:5px;">
-                <h2 style="margin-bottom:15px;">上传付款凭证</h2>
+                <h2 style="margin-bottom:15px;">付款订单编号<span style="color:red;">*</span></h2>
                 <div style="margin-bottom:15px;">
-                    <input type="file" id="paymentProof" accept="image/*" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+                    <input type="text" id="order_num" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;box-sizing: border-box;">
+                    <p style="font-size:12px; color:#666; margin-top:5px;">付款凭证中的订单编号</p>
+                </div>
+                <h2 style="margin-bottom:15px;">上传付款凭证<span style="color:red;">*</span></h2>
+                <div style="margin-bottom:15px;">
+                    <input type="file" id="paymentProof" accept="image/*" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;box-sizing: border-box;">
                     <p style="font-size:12px; color:#666; margin-top:5px;">支持JPG/PNG格式，大小不超过5MB</p>
                 </div>
                 <div id="previewArea" style="display:none; margin-top:15px;">
                     <p>已上传凭证：<span id="fileName"></span></p>
                     <button onclick="removeFile()" style="padding:5px 10px; background:#f44336; color:white; border:none; border-radius:3px; margin-top:5px; cursor:pointer;">删除</button>
                 </div>
+
             </div>
 
             <!-- 确认报名 -->
@@ -132,6 +138,12 @@
                 return;
             }
 
+            var orderNum = $("#order_num").val();
+            if(!orderNum) {
+                alert('请填写 付款凭证中的订单编号！');
+                return;
+            }
+
             if(confirm('确认提交报名信息吗？')) {
                 // 这里可以添加实际提交逻辑
                 saveData();
@@ -140,13 +152,13 @@
 
         function saveData(){
             var fileId = $("#paymentProof").attr("data-file-id");
-            var data = {"id":new URLSearchParams(window.location.search).get("pid"),"state":0,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text().replaceAll(",","")};
+            var data = {"id":new URLSearchParams(window.location.search).get("pid"),"state":0,"paymentVoucher":fileId,"paymentMoney":$("#registrationFee").text().replaceAll(",",""),"orderNum":$("#order_num").val()};
             projectRegister(data);
         }
 
         function projectRegister(data){
             $.ajax({
-                url: "/projectRegister/update",
+                url: "/projectRegister/updateState",
                 type: "POST",
                 data: JSON.stringify(data),
                 contentType: "application/json",

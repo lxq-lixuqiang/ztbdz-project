@@ -231,8 +231,8 @@ public class ProjectServiceImpl  implements ProjectService {
 
 
     @Override
-    public List<Project> selectByIds3(List<Long> ids,String sort) throws Exception {
-        return projectMapper.selectByIds3(ids,sort);
+    public List<Project> selectByIds3(List<Long> ids,String bidOpeningDate,String enrollEndDate) throws Exception {
+        return projectMapper.selectByIds3(ids,bidOpeningDate,enrollEndDate);
     }
 
     @Override

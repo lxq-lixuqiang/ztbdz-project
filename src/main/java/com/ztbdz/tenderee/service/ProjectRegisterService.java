@@ -133,6 +133,14 @@ public interface ProjectRegisterService {
      */
     Result update(ProjectRegister projectRegister);
 
+
+    /**
+     * 更新投标状态
+     * @param projectRegister
+     * @return
+     */
+    Result updateState(ProjectRegister projectRegister);
+
     /**
      * 根据id更新投标
      * @param projectRegister
@@ -177,6 +185,15 @@ public interface ProjectRegisterService {
      * @return
      */
     Result countScore(Long id,String fileId);
+
+
+    /**
+     * 统计
+     * @param name 字段名称
+     * @param value 值
+     * @return
+     */
+    Integer count(String name,String value) throws Exception;
 
     /**
      * 更新中标状态

@@ -138,11 +138,12 @@ public interface ProjectService {
     /**
      * 查询多项目排序
      * @param ids
-     * @param sort
+     * @param bidOpeningDate
+     * @param enrollEndDate
      * @return
      * @throws Exception
      */
-    List<Project> selectByIds3(List<Long> ids,String sort) throws Exception;
+    List<Project> selectByIds3(List<Long> ids,String bidOpeningDate,String enrollEndDate) throws Exception;
 
     /**
      * 查询多项目

@@ -331,14 +331,25 @@
 				</foreach>
 			</if>
 			group by p.id) u
-		<if test="sort != null and sort.length() >0">
-			<if test="sort=='asc'">
-				order by u.enroll_end_date asc
+		<if test="(bidOpeningDate != null and bidOpeningDate.length() >0) or (enrollEndDate != null and enrollEndDate.length() >0)">
+			order by
+			<if test="bidOpeningDate=='asc'">
+				u.bid_opening_time asc
 			</if>
-			<if test="sort=='desc'">
-				order by u.enroll_end_date desc
+			<if test="bidOpeningDate=='desc'">
+				u.bid_opening_time desc
+			</if>
+			<if test="bidOpeningDate != null and bidOpeningDate.length() >0 and enrollEndDate != null and enrollEndDate.length() >0">
+				,
+			</if>
+			<if test="enrollEndDate=='asc'">
+				 u.enroll_end_date asc
+			</if>
+			<if test="enrollEndDate=='desc'">
+				u.enroll_end_date desc
 			</if>
 		</if>
+
 	</select>
 
 </mapper>

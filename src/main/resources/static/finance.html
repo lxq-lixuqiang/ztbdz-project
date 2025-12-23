@@ -102,10 +102,14 @@
                                 <button onclick="batchProcessInvoiceRequest()" style="padding:5px 10px; background:#607D8B; color:white; border:none; cursor:pointer;">批量处理</button>
                             </div>
                         </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            项目名称<input type="text" id="projectNameSearch2" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+                            <button id="searchBtn2" onclick="loadInvoiceRequests()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
+                        </div>
                         <div id="invoiceLoading" style="text-align:center; padding:20px; display:none;">正在加载发票申请列表...</div>
                         <div id="invoiceEmpty" style="text-align:center; padding:20px; display:none;">没有发票申请</div>
                         <table id="invoiceRequestsTable" style="width:100%; border-collapse:collapse; margin-bottom:30px;">
-                            <thead>
+                            <thead id="pageThead2">
                             <tr style="background:#f5f5f5;">
                                 <th style="padding:5px;border:1px solid #ddd;"><input id="checkboxAll2" type="checkbox"></th>
                                 <th style="border:1px solid #ddd;">项目名称</th>
@@ -123,6 +127,7 @@
                             <!-- 发票申请数据将通过JavaScript动态填充 -->
                             </tbody>
                         </table>
+                        <div id="pageInfo2" style="margin-top:10px; text-align: center;"></div>
                     </div>
                 </div>
                 <!-- 项目列表 -->
@@ -137,7 +142,12 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         项目名称<input type="text" id="projectNameSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
                         项目编号<input type="text" id="projectCodeSearch" style="flex:3; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                        报名截止时间排序<select id="enrollEndDate" style="padding:6px; border:1px solid #9f9696;box-sizing: border-box;margin: 0 20px 0 5px;border-radius: 4px;" >
+                        开标时间<select id="bidOpeningDate" style="padding:6px; border:1px solid #9f9696;box-sizing: border-box;margin: 0 20px 0 5px;border-radius: 4px;" >
+                                            <option value=""></option>
+                                            <option value="asc">升序</option>
+                                            <option value="desc">降序</option>
+                                        </select>
+                        报名截止时间<select id="enrollEndDate" style="padding:6px; border:1px solid #9f9696;box-sizing: border-box;margin: 0 20px 0 5px;border-radius: 4px;" >
                                             <option value=""></option>
                                             <option value="asc">升序</option>
                                             <option value="desc">降序</option>
@@ -279,7 +289,7 @@
                                     <td style="padding:10px;">${register.paymentMoney==null || parseInt(register.paymentMoney)==0?'/':parseFloat(register.paymentMoney).toLocaleString('en-US')+'元'}</td>
                                     <td style="padding:10px;${register.state==0?'color:red;':''}">${register.state==0?'未审核':register.state==1?'通过':'不通过'}</td>
                                     <td style="padding:10px;">
-                                        <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}','${register.project.bidOpeningTime}')"
+                                        <button onclick="showPaymentVoucher('${register.member.account.accountName==null?'':register.member.account.accountName}','${register.paymentVoucher==null?'':register.paymentVoucher}','${register.id}','${register.state}','${register.project.bidOpeningTime}','${register.orderNum==null?'':register.orderNum}')"
                                                 style="padding:3px 8px; background:#607D8B; color:white; border:none; cursor:pointer;">
                                             审核凭证
                                         </button>
@@ -366,13 +376,14 @@
 
 
     // 查看缴费凭证
-    function showPaymentVoucher(companyName,fileId,registerId,state,bidDate) {
+    function showPaymentVoucher(companyName,fileId,registerId,state,bidDate,orderNum) {
         $("#backButton").hide();
         $("#voucherModal").show();
         $("#voucherImage").attr("src", "");
         $("#voucherImage").attr("src", "/file/preview/"+fileId);
         $("#voucherTitle").text(companyName + " - 缴费凭证");
         $("#voucherImage").attr("data-id",registerId);
+        $("#orderNumShow").html("订单编号："+orderNum);
         if(state!=0){
             $("#buttonHide").hide();
             // 超过了 开标时间 就无法撤回审核
@@ -401,17 +412,22 @@
         $("#invoiceLoading").show();
         $("#invoiceEmpty").hide();
         $("#invoiceRequestsTable").hide();
-
+        var page = "";
+        var pageInfo = localStorage.getItem('page');
+        if(pageInfo){
+            page="?page="+pageInfo;
+        }
         $.ajax({
-            url: '/projectRegister/pageInvoice',
+            url: '/projectRegister/pageInvoice'+page,
             type: 'POST',
             contentType: "application/json",
-            data: JSON.stringify({'projectRegisters':{'isInvoice':0}}),
+            data: JSON.stringify({'projectRegisters':{'isInvoice':0},'projectName':$("#projectNameSearch2").val()}),
             success: function(e) {
                 if(e.status == 200) {
                     renderInvoiceRequests(e.data);
                     $("#invoiceLoading").hide();
                     $("#invoiceRequestsTable").show();
+                    pageButton(e.data,"pageInfo2","pageThead2");
                 } else {
                     alert('查询开具发票申请列表失败: ' + e.message);
                 }
@@ -591,22 +607,15 @@
     // 确保DOM完全加载后执行
     $(document).ready(function() {
         // 添加回车键搜索功能
-        $('#projectNameSearch').on('keypress', function(e) {
-            if(e.which === 13) { // 回车键
-                $('#searchBtn').click();
-            }
-        });
-        $('#projectCodeSearch').on('keypress', function(e) {
-            if(e.which === 13) { // 回车键
-                $('#searchBtn').click();
-            }
-        });
+        keypress13("projectNameSearch","searchBtn");
+        keypress13("projectCodeSearch","searchBtn");
+        keypress13("projectNameSearch2","searchBtn2");
     });
 
     // 查询
     function loadApplicationData(){
         localStorage.setItem('page','1');
-        var data ={projectName:$('#projectNameSearch').val().trim(),projectCode:$('#projectCodeSearch').val().trim(),ext5:$("#enrollEndDate").find("option:selected").val()};
+        var data ={projectName:$('#projectNameSearch').val().trim(),projectCode:$('#projectCodeSearch').val().trim(),ext4:$("#bidOpeningDate").find("option:selected").val(),ext5:$("#enrollEndDate").find("option:selected").val()};
         localStorage.setItem('data',JSON.stringify(data));
         loadProjects(data)
     }
@@ -706,6 +715,7 @@
                 <h3 id="voucherTitle">缴费凭证</h3>
                 <button onclick="closeVoucherModal()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
             </div>
+            <h4 style="color:red;" id="orderNumShow"></h4>
             <img id="voucherImage" src="" style="max-width:100%; max-height:70vh; display:block; margin:0 auto;">
             <div style="text-align:center; margin-top:15px;" id="buttonHide">
                 <button onclick="audit(true,false)" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;margin-right:20px;">通过</button>

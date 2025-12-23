@@ -180,6 +180,9 @@
 		left join account a on a.id=m.account_id
 		where
 		1=1
+		<if test="projectName != null and projectName.length>0">
+				and p.project_name like concat('%',#{projectName},'%')
+		</if>
 		<if test="projectRegisters != null">
 			<if test="projectRegisters.isInvoice != null and projectRegisters.isInvoice == -1">
 				and  pr.is_invoice is not null

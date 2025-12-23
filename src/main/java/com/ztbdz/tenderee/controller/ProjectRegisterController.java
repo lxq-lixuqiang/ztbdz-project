@@ -38,7 +38,7 @@ public class ProjectRegisterController {
         return projectRegisterService.create(projectRegister);
     }
 
-    @ApiOperation(value = "更新报名状态")
+    @ApiOperation(value = "更新投标报名信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
     })
@@ -46,6 +46,16 @@ public class ProjectRegisterController {
     @PostMapping("update")
     public Result update(@RequestBody ProjectRegister projectRegister) {
         return projectRegisterService.update(projectRegister);
+    }
+
+    @ApiOperation(value = "更新报名状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token", value = "token", required=true,paramType = "header", dataType = "String")
+    })
+    @CheckToken
+    @PostMapping("updateState")
+    public Result updateState(@RequestBody ProjectRegister projectRegister) {
+        return projectRegisterService.updateState(projectRegister);
     }
 
     @ApiOperation(value = "批量开具发票")

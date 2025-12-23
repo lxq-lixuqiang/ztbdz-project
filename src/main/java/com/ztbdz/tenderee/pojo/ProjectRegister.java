@@ -62,6 +62,8 @@ public class ProjectRegister extends Model<ProjectRegister> implements Serializa
     private Long paymentMoney;
     @ApiModelProperty("付款凭证")
     private String paymentVoucher;
+    @ApiModelProperty("付款凭证中订单编号")
+    private String orderNum;
     @ApiModelProperty("中标情况（0=未公布 1=已中标 2=未中标）")
     private Integer winBidState;
     @ApiModelProperty("发票状态（0=待处理 1=已开票）")

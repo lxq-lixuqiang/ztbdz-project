@@ -134,8 +134,8 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             if(projectIds.size()>0){
                 PageHelper.startPage(page, size);
                 if(state==3){
-                    if(!StringUtils.isEmpty(project.getExt5())){
-                        projectList = projectService.selectByIds3(projectIds,project.getExt5());
+                    if(!StringUtils.isEmpty(project.getExt5()) || !StringUtils.isEmpty(project.getExt4())){
+                        projectList = projectService.selectByIds3(projectIds,project.getExt4(),project.getExt5());
                     }else{
                         projectList = projectService.selectByIds(projectIds);
                     }
@@ -355,6 +355,30 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
     }
 
     @Override
+    public Result updateState(ProjectRegister projectRegister) {
+        try{
+            if(StringUtils.isEmpty(projectRegister.getPaymentVoucher())) return Result.fail("请上传付款凭证！");
+            if(StringUtils.isEmpty(projectRegister.getOrderNum())) return Result.fail("请填写订单编号！");
+            int isCount = this.count("order_num",projectRegister.getOrderNum());
+            ProjectRegister newProjectRegister = this.selectById(projectRegister.getId());
+            if(!StringUtils.isEmpty(projectRegister.getOrderNum()) &&
+                    !StringUtils.isEmpty(newProjectRegister.getOrderNum()) &&
+                    newProjectRegister.getOrderNum().equals(projectRegister.getOrderNum())){
+                if(isCount>1) return Result.fail("请勿重复提交订单编号！");
+            }else{
+                if(isCount>0) return Result.fail("请勿重复提交订单编号！");
+            }
+
+            int num = this.updateById(projectRegister);
+            if(num<=0) return Result.fail("更新失败");
+            return Result.ok("更新成功");
+        }catch (Exception e){
+            log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
+            return Result.error("更新投标异常，原因："+e.getMessage());
+        }
+    }
+
+    @Override
     public Integer updateById(ProjectRegister projectRegister) throws Exception {
         return projectRegisterMapper.updateById(projectRegister);
     }
@@ -421,6 +445,13 @@ public class ProjectRegisterServiceImpl implements ProjectRegisterService {
             log.error(this.getClass().getName()+" 中 "+new RuntimeException().getStackTrace()[0].getMethodName()+" 出现异常，原因："+e.getMessage(),e);
             return Result.error("统计投标总分数异常，原因："+e.getMessage());
         }
+    }
+
+    @Override
+    public Integer count(String name,String value) throws Exception {
+        QueryWrapper<ProjectRegister> queryWrapper = new QueryWrapper();
+        queryWrapper.eq(name,value);
+        return projectRegisterMapper.selectCount(queryWrapper);
     }
 
     @Transactional(rollbackFor = Exception.class)
