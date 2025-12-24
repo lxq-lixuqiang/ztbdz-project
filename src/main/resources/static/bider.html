@@ -512,7 +512,7 @@
                 {{#eq  projectRegisters.state 4}}<!-- 资质通过 -->
                     <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">报名缴费</button>
                 {{else}}
-                    <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
+                    <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px、、; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
                 {{/eq}}
                 {{#eq  projectRegisters.state 2}}<!-- 报名缴费不通过 -->
                     {{#gtNowDate  bidOpeningTime}}
@@ -522,7 +522,9 @@
                     <button onclick="alert('缴费不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
                 {{#eq  projectRegisters.state 5}}<!-- 资质不通过 -->
-                    <button onclick="signUp3('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新审核</button>
+                    {{#gtNowDate  enrollEndDate}}
+                        <button onclick="signUp3('{{id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; text-decoration:none;">重新审核</button>
+                    {{/gtNowDate}}
                     <button onclick="alert('材料不通过原因：{{projectRegisters.notPassInfo}}')" style="margin-top:5px;padding:5px 10px; background:red; color:white; border:none; cursor:pointer;font-size: 13px;">不通过原因</button>
                 {{/eq}}
             </td>

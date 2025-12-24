@@ -90,6 +90,8 @@
                 <div class="tab-header">
                     <div class="tab-item active" data-tab="overview">开具发票申请列表</div>
                     <div class="tab-item" data-tab="publish">审核项目列表</div>
+                    <div class="tab-item" data-tab="application2">供应商</div>
+                    <div class="tab-item" data-tab="application3">审核密码</div>
                 </div>
                 <div class="tab-content active" id="overview">
                     <!-- 发票申请列表 -->
@@ -175,6 +177,15 @@
                     </table>
                     <div id="pageInfo" style="margin-top:10px; text-align: center;"></div>
                 </div>
+
+                <div class="tab-content" id="application2">
+
+                </div>
+
+                <div class="tab-content" id="application3">
+
+                </div>
+
             </div>
         </div>
     </div>
@@ -189,8 +200,12 @@
     verifyLogin();
     manage();
 
-    function initPageShow(data){
-        loadProjects(data);
+    function initPageShow(data,name){
+        if(name=="pageInfo2"){
+            loadInvoiceRequests()
+        }else{
+            loadProjects(data);
+        }
     }
     function loadProjects(data) {
         $("#loadingMessage").show();
@@ -641,6 +656,28 @@
             // 保留原有表格结构，不覆盖内容
             loadInvoiceRequests();
         }
+        if(tabId === 'application2') {
+            // 保留原有表格结构，不覆盖内容
+            $('#application3').html("");
+            $.ajax({
+                url: '/module/tenderee/supplier.html',
+                success: function(data) {
+                    // 将获取到的HTML内容赋值给某个元素
+                    $('#application2').html(data);
+                }
+            });
+        }
+        if(tabId === 'application3') {
+            // 保留原有表格结构，不覆盖内容
+            $('#application2').html("");
+            $.ajax({
+                url: '/module/tenderee/auditPassword.html',
+                success: function(data) {
+                    // 将获取到的HTML内容赋值给某个元素
+                    $('#application3').html(data);
+                }
+            });
+        }
         // 激活对应的标签项
         document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
     }
@@ -657,7 +694,7 @@
         // 显示事务相关标签页
         document.querySelectorAll('.tab-item').forEach(item => {
             const tabId = item.dataset.tab;
-            item.style.display = (tabId === 'overview') ? 'block' : 'none';
+            item.style.display = (tabId === 'overview' || tabId === 'application2' || tabId === 'application3') ? 'block' : 'none';
         });
         showTab('overview');
     }
