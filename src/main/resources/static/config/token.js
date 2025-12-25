@@ -182,7 +182,7 @@ function uploadFileInfo(uploadName,showName){
         var fileIds = fileId.split(",");
         var fileName = $("#"+showName).html();
         for(var i=0;i<this.files.length;i++){
-            fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteUploadFileInfo(\""+fileIds[i]+"\",\""+uploadName+"\",\""+showName+"\")' class='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
+            fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display:inline-block;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）<span onclick='deleteUploadFileInfo(\""+fileIds[i]+"\",\""+uploadName+"\",\""+showName+"\")' class='delete"+fileIds[i]+"' style='background-color: red;width: 15px;height: 16px;display: inline-block;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
         }
         $("#"+showName).html(fileName);
     });

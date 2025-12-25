@@ -98,11 +98,25 @@
             }
             if(tabId === 'application2') {
                 // 保留原有表格结构，不覆盖内容
-                loadApplicationData2();
+                $('#application3').html("");
+                $.ajax({
+                    url: '/module/tenderee/supplier.html',
+                    success: function(data) {
+                        // 将获取到的HTML内容赋值给某个元素
+                        $('#application2').html(data);
+                    }
+                });
             }
             if(tabId === 'application3') {
                 // 保留原有表格结构，不覆盖内容
-                loadApplicationData3();
+                $('#application2').html("");
+                $.ajax({
+                    url: '/module/tenderee/auditPassword.html',
+                    success: function(data) {
+                        // 将获取到的HTML内容赋值给某个元素
+                        $('#application3').html(data);
+                    }
+                });
             }
             // 激活对应的标签项
             document.querySelector(`.tab-item[data-tab="${tabId}"]`).classList.add('active');
@@ -201,7 +215,7 @@
         <div style="margin-bottom:15px;">
             <label style="display:block; margin-bottom:5px;">公告文件</label>
             <button onclick="showUploadDialog2()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;vertical-align: top;">上传公告文件</button>
-            <div id="certificateFiles2"style="display: inline-block;margin-left:10px;">
+            <div id="certificateFiles2"style="display: inline-block;margin-left:10px;width: 450px;">
 
             </div>
             <input data-file-id="" id="tendereeInformField" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
@@ -229,53 +243,6 @@
             <button onclick="approveSupplier(false)" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;">不通过</button>
             <button onclick="approve2()" id="backApprove2" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;display:none;">不通过原因</button>
             <button onclick="updateApprove('3','')" id="backApprove" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;display:none;">撤回审核</button>
-        </div>
-    </div>
-</div>
-
-<div id="qualificationModal2" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
-    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:5px; width:600px; max-height:80vh; overflow-y:auto;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3>供应商审核信息 - 企业信息</h3>
-            <button onclick="$('#qualificationModal2').hide()" style="padding:5px 10px; background:#f44336; color:white; border:none; cursor:pointer; font-size:20px;">×</button>
-        </div>
-        <h4 id="gongyingshang2"></h4>
-        <div id="qualificationContent2" style="margin-bottom:20px;">
-            <div id="companyInfoDisplay" style="margin-bottom:20px;">
-                <p><strong>企业名称：</strong><span id="companyName"></span></p>
-                <p><strong>统一社会信用代码：</strong><span id="creditCode"></span></p>
-                <p><strong style="vertical-align: top;">营业执照：</strong><span id="certificateFilesShow" style="display: inline-block;"></span></p>
-                <p><strong>经办人：</strong><span id="contactPerson"></span></p>
-                <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
-                <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
-                <div id="memberType01" style="display: none;">
-                    <p><strong>法人：</strong><span id="accountUser"></span></p>
-                    <p><strong>法人证件号：</strong><span id="idCard"></span></p>
-                    <p><strong style="vertical-align: top;">法人身份证：</strong><span id="qualificationCertificate01Show" style="display: inline-block;"></span></p>
-                </div>
-                <div id="memberType02" style="display: none;">
-                    <p><strong>授权代表人：</strong><span id="accountUser2"></span></p>
-                    <p><strong>授权代表人证件号：</strong><span id="idCard2"></span></p>
-                    <p><strong style="vertical-align: top;">授权代表人身份证：</strong><span id="qualificationCertificate01_01Show" style="display: inline-block;"></span></p>
-                    <p><strong style="vertical-align: top;">法人授权函：</strong><span id="qualificationCertificate02Show" style="display: inline-block;"></span></p>
-                    <p><strong style="vertical-align: top;">社保记录：</strong><span id="qualificationCertificate03Show" style="display: inline-block;"></span></p>
-                </div>
-                <p><strong>备注：</strong><span id="contactRemark"></span></p>
-
-                <div id="memberType03" style="display: none;">
-                    <h3>提交审核信息：</h3>
-                    <p><strong>用户名：</strong><span id="username"></span></p>
-                    <p><strong style="vertical-align: top;">营业执照：</strong><span id="businessLicenseId" style="display: inline-block;"></span></p>
-                    <p><strong style="vertical-align: top;">社保记录：</strong><span id="socialSecurityCertificateId" style="display: inline-block;"></span></p>
-                    <p><strong>备注：</strong><span id="remark"></span></p>
-                </div>
-            </div>
-        </div>
-        <div id="examine2" style="text-align:center;">
-            <button onclick="bidderInfo('1')" id="bidderIsCheck01" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-right:15px;display:none;">通过审核</button>
-            <button onclick="bidderInfo('2')" id="bidderIsCheck02" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;display:none;">不通过</button>
-            <button onclick="bidderInfo('3')" id="bidderIsCheck03" style="padding:8px 20px; background:#4CAF50; color:white; border:none; cursor:pointer;display:none;">不通过原因</button>
-            <button onclick="bidderInfo('4')" id="bidderIsCheck04" style="padding:8px 20px; background:#f44336; color:white; border:none; cursor:pointer;display:none;">撤回审核</button>
         </div>
     </div>
 </div>
@@ -432,62 +399,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="tab-content" id="application2">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h3>审核企业信息</h3>
-                    <div>
-                        <button onclick="loadApplicationData2()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; ">刷新数据</button>
-                    </div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    供应商名称<input type="text" id="accountNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                    经办人<input type="text" id="accountMemberSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                    <button id="biddderSearchBtn" onclick="loadApplicationData2()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
-                </div>
-                <div id="applicationLoading2" style="text-align:center; padding:20px; display:none;">正在加载数据...</div>
-                <table id="applicationTable2" style="width:100%; border-collapse:collapse;">
-                    <thead>
-                    <tr style="background:#f5f5f5;">
-                        <th style="padding:10px; border:1px solid #ddd;">供应商名称</th>
-                        <th style="border:1px solid #ddd;">经办人</th>
-                        <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
-                        <th style="border:1px solid #ddd;">电子邮箱</th>
-                        <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
-                        <th style="border:1px solid #ddd;">审核状态</th>
-                        <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-content" id="application3">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h3>审核找回密码</h3>
-                    <div>
-                        <button onclick="loadApplicationData3()" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer; ">刷新数据</button>
-                    </div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    公司名称（用户名）<input type="text" id="accountNameSearch3" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-                    <button id="biddderSearchBtn3" onclick="loadApplicationData3()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
-                </div>
-                <div id="applicationLoading3" style="text-align:center; padding:20px; display:none;">正在加载数据...</div>
-                <table id="applicationTable3" style="width:100%; border-collapse:collapse;">
-                    <thead>
-                    <tr style="background:#f5f5f5;">
-                        <th style="padding:10px; border:1px solid #ddd;">公司名称（用户名）</th>
-                        <th style="padding:10px; border:1px solid #ddd;">提交审核时间</th>
-                        <th style="padding:10px; border:1px solid #ddd;">审核状态</th>
-                        <th style="padding:10px; border:1px solid #ddd;width:50px;">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
+            <div class="tab-content" id="application2"></div>
+            <div class="tab-content" id="application3"></div>
             <div class="tab-content" id="project1">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <h3>已发布项目管理</h3>
@@ -618,53 +531,6 @@
     {{else}}
     <tr>
         <td colspan="7" style="padding:10px; border:1px solid #ddd;">没有项目</td>
-    </tr>
-    {{/if}}
-</script>
-<script id="applicationTable2Template" type="text/x-handlebars-template">
-    {{#if list}}
-    {{#each list}}
-    <tr style="border:1px solid #ddd;">
-        <td style="padding:10px;">{{member.account.accountName}}</td>
-        <td>{{member.account.member}}</td>
-        <td style="padding:10px;">{{member.account.phone}}</td>
-        <td>{{member.account.email}}</td>
-        <td style="padding:10px;">{{submitDate}}</td>
-        <td style="{{#eq isCheck 0}}color:red;{{/eq}}">
-            {{#eq isCheck 0}}未审核{{/eq}}
-            {{#eq isCheck 1}}通过{{/eq}}
-            {{#eq isCheck 2}}不通过{{/eq}}
-        </td>
-        <td style="padding:10px;">
-            <button onclick="viewSupplierQualification2('{{id}}','{{isCheck}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq isCheck 0}}审核{{else}}查看{{/eq}}</button>
-        </td>
-    </tr>
-    {{/each}}
-    {{else}}
-    <tr>
-        <td colspan="7" style="padding:10px; border:1px solid #ddd;">没有供应商</td>
-    </tr>
-    {{/if}}
-</script>
-<script id="applicationTable3Template" type="text/x-handlebars-template">
-    {{#if list}}
-    {{#each list}}
-    <tr style="border:1px solid #ddd;">
-        <td style="padding:10px;">{{username}}</td>
-        <td style="padding:10px;">{{createDate}}</td>
-        <td style="padding:10px;{{#eq isPass 0}}color:red;{{/eq}}">
-            {{#eq isPass 0}}未审核{{/eq}}
-            {{#eq isPass 1}}通过{{/eq}}
-            {{#eq isPass 2}}不通过{{/eq}}
-        </td>
-        <td style="padding:10px;">
-            <button onclick="viewSupplierQualification2('{{id}}','{{isPass}}','isRetrievePassword')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;">{{#eq isPass 0}}审核{{else}}查看{{/eq}}</button>
-        </td>
-    </tr>
-    {{/each}}
-    {{else}}
-    <tr>
-        <td colspan="4" style="padding:10px; border:1px solid #ddd;">没有供应商</td>
     </tr>
     {{/if}}
 </script>
@@ -981,68 +847,6 @@
         });
 
     }
-
-
-    keypress13('accountMemberSearch','biddderSearchBtn');
-    keypress13('accountNameSearch','biddderSearchBtn');
-    function loadApplicationData2() {
-        $("#applicationLoading2").show();
-        $("#applicationTable2").hide();
-        var accountNameSearch = $("#accountNameSearch").val();
-        var accountMemberSearch = $("#accountMemberSearch").val();
-        var account = {};
-        if(accountNameSearch){
-            account["accountName"] = accountNameSearch;
-        }
-        if(accountMemberSearch){
-            account["member"] = accountMemberSearch;
-        }
-        var data = {member:{account:account}};
-        $.ajax({
-            url: "/bidderInfo/page",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success:function(e) {
-                if(e.status == 200){
-                    $("#applicationTable2 tbody").html(Handlebars.compile($("#applicationTable2Template").html())(e.data));
-                    $("#applicationLoading2").hide();
-                    $("#applicationTable2").show();
-                }else{
-                    alert("获取审核供应商企业信息列表失败："+e.message);
-                }
-            }
-        });
-
-    }
-
-    keypress13('accountNameSearch3','biddderSearchBtn3');
-    function loadApplicationData3() {
-        $("#applicationLoading3").show();
-        $("#applicationTable3").hide();
-        var accountNameSearch = $("#accountNameSearch3").val();
-        var data = {};
-        if(accountNameSearch){
-            data["username"] = accountNameSearch;
-        }
-        $.ajax({
-            url: "/retrievePassword/page",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success:function(e) {
-                if(e.status == 200){
-                    $("#applicationTable3 tbody").html(Handlebars.compile($("#applicationTable3Template").html())(e.data));
-                    $("#applicationLoading3").hide();
-                    $("#applicationTable3").show();
-                }else{
-                    alert("获取审核找回密码列表失败："+e.message);
-                }
-            }
-        });
-
-    }
-
 
     function initPageShow(data,pageName){
         if(pageName=="pageInfo4"){
@@ -1389,211 +1193,6 @@
                 }
             }
         });
-    }
-
-    function viewSupplierQualification2(id,isCheck,isOther) {
-        $("#memberType03").hide();
-        $("#qualificationModal2").removeAttr("data-name");
-        if(isCheck==0){
-            $("#bidderIsCheck01").show();
-            $("#bidderIsCheck02").show();
-            $("#bidderIsCheck03").hide();
-            $("#bidderIsCheck04").hide();
-        }else if(isCheck==1){
-            $("#bidderIsCheck01").hide();
-            $("#bidderIsCheck02").hide();
-            $("#bidderIsCheck03").hide();
-            $("#bidderIsCheck04").show();
-        }else{
-            $("#bidderIsCheck01").hide();
-            $("#bidderIsCheck02").hide();
-            $("#bidderIsCheck03").show();
-            $("#bidderIsCheck04").show();
-        }
-
-        var account ={};
-        var fileName = "";
-        var bidderInfo = {};
-        var otherInfo = {};
-        if(isOther == "isRetrievePassword"){
-            $("#qualificationModal2>div>div>h3").html("找回密码审核 - 企业信息");
-            $("#qualificationModal2").attr("data-name",isOther);
-            $.ajax({
-                url: "/retrievePassword/selectBidderInfo/"+id,
-                type: "GET",
-                async: false,
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status == 200){
-                        otherInfo = e.data;
-                        bidderInfo = e.data.bidderInfo;
-                        account = bidderInfo.member.account;
-                    }else{
-                        alert("获取信息失败："+e.message);
-                    }
-                }
-            });
-        }else{
-            $("#qualificationModal2>div>div>h3").html("供应商审核信息 - 企业信息");
-            $.ajax({
-                url: "/bidderInfo/get/"+id,
-                type: "GET",
-                async: false,
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status == 200){
-                        bidderInfo = e.data;
-                        account = bidderInfo.member.account;
-                    }else{
-                        alert("获取企业信息失败："+e.message);
-                    }
-                }
-            });
-        }
-
-
-        var qualificationCertificate01Name = "";
-        var qualificationCertificate02Name = "";
-        var qualificationCertificate03Name = "";
-        var ids = "";
-        if(account.accountCodeFileId !=null && account.accountCodeFileId !=""){
-            ids = account.accountCodeFileId.split(",");
-        }
-        if(bidderInfo.qualificationCertificate01 !=null && bidderInfo.qualificationCertificate01 !=""){
-            if(ids.length>0) ids+=",";
-            ids += bidderInfo.qualificationCertificate01.split(",");
-        }
-        if(bidderInfo.qualificationCertificate02 !=null && bidderInfo.qualificationCertificate02 !=""){
-            if(ids.length>0) ids+=",";
-            ids += bidderInfo.qualificationCertificate02.split(",");
-        }
-        if(bidderInfo.qualificationCertificate03 !=null && bidderInfo.qualificationCertificate03 !=""){
-            if(ids.length>0) ids+=",";
-            ids += bidderInfo.qualificationCertificate03.split(",");
-        }
-        var businessLicenseIdShow = "";
-        var socialSecurityCertificateIdShow = "";
-        if(isOther == "isRetrievePassword"){
-            if(otherInfo.businessLicenseId !=null && otherInfo.businessLicenseId !=""){
-                if(ids.length>0) ids+=",";
-                ids += otherInfo.businessLicenseId.split(",");
-            }
-            if(otherInfo.socialSecurityCertificateId !=null && otherInfo.socialSecurityCertificateId !=""){
-                if(ids.length>0) ids+=",";
-                ids += otherInfo.socialSecurityCertificateId.split(",");
-            }
-        }
-
-        if(ids){
-            $.ajax({
-                url: "/file/list2/"+ids,
-                type: "GET",
-                async: false,
-                contentType: "application/json",
-                success:function(e) {
-                    if(e.status == 200){
-                        for(var i=0;i<e.data.length;i++){
-                            var p = "<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+e.data[i].id+"'>"+e.data[i].name+"（"+e.data[i].fileSize+"）<span onclick='deleteUploadFileInfo(\""+e.data[i].id+"\",\"uploadName\")' class='delete"+e.data[i].id+"' style='background-color: red;width: 15px;height: 16px;display: none;padding: 0;text-align: center;vertical-align: middle;border-radius: 15%;line-height: 15px;'>×</span></a></p>";
-                            if(account.accountCodeFileId !=null &&
-                                account.accountCodeFileId !="" &&
-                                (","+account.accountCodeFileId+",").indexOf(","+e.data[i].id+",")>-1){
-                                fileName+=p
-                            }else if(bidderInfo.qualificationCertificate01 !=null &&
-                                bidderInfo.qualificationCertificate01 !="" &&
-                                (","+bidderInfo.qualificationCertificate01+",").indexOf(","+e.data[i].id+",")>-1){
-                                qualificationCertificate01Name+=p
-                            }else if(bidderInfo.qualificationCertificate02 !=null &&
-                                bidderInfo.qualificationCertificate02 !="" &&
-                                (","+bidderInfo.qualificationCertificate02+",").indexOf(","+e.data[i].id+",")>-1){
-                                qualificationCertificate02Name+=p
-                            }else if(bidderInfo.qualificationCertificate03 !=null &&
-                                bidderInfo.qualificationCertificate03 !="" &&
-                                (","+bidderInfo.qualificationCertificate03+",").indexOf(","+e.data[i].id+",")>-1){
-                                qualificationCertificate03Name+=p
-                            }else if(isOther == "isRetrievePassword"){
-                                if(otherInfo.businessLicenseId !=null &&
-                                    otherInfo.businessLicenseId !="" &&
-                                        (","+otherInfo.businessLicenseId+",").indexOf(","+e.data[i].id+",")>-1){
-                                    businessLicenseIdShow+=p
-                                }else if(otherInfo.socialSecurityCertificateId !=null &&
-                                    otherInfo.socialSecurityCertificateId !="" &&
-                                    (","+otherInfo.socialSecurityCertificateId+",").indexOf(","+e.data[i].id+",")>-1){
-                                    socialSecurityCertificateIdShow+=p
-                                }
-                            }
-                        }
-                    }else{
-                        alert("获取文件信息失败："+e.message);
-                    }
-                }
-            });
-        }
-
-        var data = {
-            id:id,
-            companyName:account.accountName,
-            creditCode:account.accountCode,
-            contactPerson:account.member,
-            contactPhone:account.phone,
-            contactEmail:account.email,
-            accountMoney:account.accountMoney,
-            fileName:fileName,
-            fileId:account.accountCodeFileId,
-            memberType:bidderInfo.memberType,
-            isCheck:bidderInfo.isCheck,
-            accountUser:bidderInfo.member.name,
-            idCard:bidderInfo.idCard,
-            remark:account.remark,
-            notCheckShow:bidderInfo.notCheckShow,
-            qualificationCertificate01:bidderInfo.qualificationCertificate01,
-            qualificationCertificate01Name:qualificationCertificate01Name,
-            qualificationCertificate02:bidderInfo.qualificationCertificate02,
-            qualificationCertificate02Name:qualificationCertificate02Name,
-            qualificationCertificate03:bidderInfo.qualificationCertificate03,
-            qualificationCertificate03Name:qualificationCertificate03Name
-        };
-        if(isOther == "isRetrievePassword"){
-            data["notCheckShow"]=otherInfo.notPassContent;
-            showInfoOther({username:otherInfo.username,remark:otherInfo.remark,socialSecurityCertificateId:socialSecurityCertificateIdShow,businessLicenseId:businessLicenseIdShow,userId:otherInfo.user.id})
-        }
-        showInfo(data);
-    }
-    function showInfo(data){
-        $("#qualificationModal2").attr("data-id",data.id);
-        $("#companyName").text(data.companyName);
-        $("#creditCode").text(data.creditCode);
-        $("#contactPerson").text(data.contactPerson);
-        $("#contactPhone").text(data.contactPhone);
-        $("#contactEmail").text(data.contactEmail);
-        $("#accountMoney").text(data.accountMoney);
-        $("#contactRemark").text(data.remark);
-        $("#certificateFilesShow").html(data.fileName.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-        $("#bidderIsCheck03").attr("data-info",data.notCheckShow);
-
-        $("#memberType01").hide();
-        $("#memberType02").hide();
-        if(data.memberType=="0"){
-            $("#memberType01").show();
-            $("#accountUser").text(data.accountUser);
-            $("#idCard").text(data.idCard);
-            $("#qualificationCertificate01Show").html(data.qualificationCertificate01Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-        }else if(data.memberType=="1"){
-            $("#memberType02").show();
-            $("#accountUser2").text(data.accountUser);
-            $("#idCard2").text(data.idCard);
-            $("#qualificationCertificate01_01Show").html(data.qualificationCertificate01Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-            $("#qualificationCertificate02Show").html(data.qualificationCertificate02Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-            $("#qualificationCertificate03Show").html(data.qualificationCertificate03Name.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-        }
-        $("#qualificationModal2").show();
-    }
-    function showInfoOther(data){
-        $("#memberType03").show();
-        $("#username").text(data.username);
-        $("#remark").text(data.remark);
-        $("#socialSecurityCertificateId").html(data.socialSecurityCertificateId.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-        $("#businessLicenseId").html(data.businessLicenseId.replaceAll("display: inline-block;","display: none;").replaceAll("class","data-delete"));
-        $("#qualificationModal2").attr("data-userId",data.userId);
     }
 
     // 审核供应商

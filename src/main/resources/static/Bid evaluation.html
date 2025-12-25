@@ -1291,7 +1291,7 @@
             <div style="margin-bottom:15px;">
                 <label style="display:block; margin-bottom:5px;">澄清文件</label>
                 <button onclick="showUploadDialog()" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;">上传文件</button>
-                <div id="fileId">
+                <div id="fileId" style="display: inline-block;width: 500px;vertical-align: top;">
 
                 </div>
                 <input data-file-id="" id="field" multiple type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
@@ -1705,7 +1705,7 @@
             var fileName = "";
             var fileIds = fileId.split(",");
             for(var i=0;i<this.files.length;i++){
-                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
+                fileName+="<p><a style=\"padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer; text-decoration:none;font-size: 13px;display: inline-block;\" target=\"_blank\" href='/file/preview/"+fileIds[i]+"'>"+this.files[i].name+"（"+convertSize(this.files[i].size)+"）</a></p>";
             }
             $("#fileId").html(fileName);
         });
