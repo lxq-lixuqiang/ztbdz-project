@@ -44,6 +44,12 @@ public interface RetrievePasswordService {
      */
     List<RetrievePassword> selectList(RetrievePassword retrievePassword) throws Exception;
 
+    /**
+     * 条件查询_排序
+     * @param retrievePassword
+     * @return
+     */
+    List<RetrievePassword> selectListSort(RetrievePassword retrievePassword) throws Exception;
 
     /**
      * 分页查询

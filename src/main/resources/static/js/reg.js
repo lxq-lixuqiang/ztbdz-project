@@ -22,12 +22,11 @@ $(function() {
         var password = $("input[name=password]").val();
         var userType = $("select[name=user_type]").find("option:selected").val();
         var accountCode = $("input[name=accountCode]").val();
-        var member = $("input[name=member]").val();
         var phone = $("input[name=phone]").val();
         var email = $("input[name=email]").val();
         var memberType = $("input[name=memberType]:checked").val();
         var accountCodeFileId = $("#fileUpload").attr("data-file-id");
-        if(!username || !password || !userType || !accountCode || !member || !phone || !email || !memberType || !accountCodeFileId) {
+        if(!username || !password || !userType || !accountCode || !phone || !email || !memberType || !accountCodeFileId) {
             alert("请填写带 * 字段为必填项！");
             $("button[type=submit]").removeAttr("disabled");
             return;
@@ -85,7 +84,7 @@ $(function() {
             }
         }
 
-        var account = {accountName:username.trim(),accountUser:accountUser2,accountUserId:idCard,accountType:"0",accountCode:accountCode,member:member,phone:phone,email:email,accountCodeFileId:accountCodeFileId};
+        var account = {accountName:username.trim(),accountUser:accountUser2,accountUserId:idCard,accountType:"0",accountCode:accountCode,member:accountUser,phone:phone,email:email,accountCodeFileId:accountCodeFileId};
         var role = {type:userType};
         var member = {name:accountUser,account:account,role:role};
         var data = {member:member,

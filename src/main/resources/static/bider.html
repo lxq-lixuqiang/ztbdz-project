@@ -154,7 +154,6 @@
         // 从显示区域获取当前值
         document.getElementById('editCompanyName').value = document.getElementById('companyName').textContent;
         document.getElementById('editCreditCode').value = document.getElementById('creditCode').textContent;
-        document.getElementById('editContactPerson').value = document.getElementById('contactPerson').textContent;
         document.getElementById('editContactPhone').value = document.getElementById('contactPhone').textContent;
         document.getElementById('editContactEmail').value = document.getElementById('contactEmail').textContent;
         
@@ -270,7 +269,6 @@
                         <p><strong>企业名称：</strong><span id="companyName"></span></p>
                         <p><strong>统一社会信用代码：</strong><span id="creditCode"></span></p>
                         <p><strong style="vertical-align: top;">营业执照：</strong><span id="certificateFiles" style="display: inline-block;width:700px;"></span></p>
-                        <p><strong>经办人：</strong><span id="contactPerson"></span></p>
                         <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                         <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
                         <div id="memberType01" style="display: none;">
@@ -279,9 +277,9 @@
                             <p><strong style="vertical-align: top;">法人身份证：</strong><span id="qualificationCertificate01Show" style="display: inline-block;width:700px;"></span></p>
                         </div>
                         <div id="memberType02" style="display: none;">
-                            <p><strong>授权代表人：</strong><span id="accountUser2"></span></p>
-                            <p><strong>授权代表人证件号：</strong><span id="idCard2"></span></p>
-                            <p><strong style="vertical-align: top;">授权代表人身份证：</strong><span id="qualificationCertificate01_01Show" style="display: inline-block;width:700px;"></span></p>
+                            <p><strong>授权代表：</strong><span id="accountUser2"></span></p>
+                            <p><strong>授权代表证件号：</strong><span id="idCard2"></span></p>
+                            <p><strong style="vertical-align: top;">授权代表身份证：</strong><span id="qualificationCertificate01_01Show" style="display: inline-block;width:650px;"></span></p>
                             <p><strong style="vertical-align: top;">法人授权函：</strong><span id="qualificationCertificate02Show" style="display: inline-block;width:700px;"></span></p>
                             <p><strong style="vertical-align: top;">社保记录：</strong><span id="qualificationCertificate03Show" style="display: inline-block;width:700px;"></span></p>
                         </div>
@@ -308,10 +306,6 @@
                             <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
                         </div>
                         <div style="margin-bottom:15px;">
-                            <label style="display:block; margin-bottom:5px;">经办人<span style="color:red;">*</span></label>
-                            <input type="text" id="editContactPerson" style="width:100%; padding:8px; border:1px solid #ddd;border-radius:5px;box-sizing: border-box;" required>
-                        </div>
-                        <div style="margin-bottom:15px;">
                             <label style="display:block; margin-bottom:5px;">联系电话<span style="color:red;">*</span></label>
                             <input type="tel" id="editContactPhone" style="width:100%; padding:8px; border:1px solid #ddd;border-radius:5px;box-sizing: border-box;" required>
                         </div>
@@ -325,7 +319,7 @@
                                 <input type="radio" name="memberType" value="0"> 法人
                             </label>
                             <label style="margin-right:15px;margin-left: 30px;">
-                                <input type="radio" name="memberType" value="1" > 授权代表人
+                                <input type="radio" name="memberType" value="1" > 授权代表
                             </label>
                         </div>
                         <div id="type1" style="display: none;">
@@ -349,17 +343,17 @@
 
                         <div id="type2" style="display: none;">
                             <div style="margin-bottom:20px;">
-                                <label style="display:block; margin-bottom:5px;">授权代表人姓名<span style="color:red;">*</span></label>
+                                <label style="display:block; margin-bottom:5px;">授权代表姓名<span style="color:red;">*</span></label>
                                 <input type="text" name="accountUser2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                             </div>
                             <div style="margin-bottom:20px;">
-                                <label style="display:block; margin-bottom:5px;">授权代表人证件号<span style="color:red;">*</span></label>
+                                <label style="display:block; margin-bottom:5px;">授权代表证件号<span style="color:red;">*</span></label>
                                 <input type="text" name="idCard2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                             </div>
                             <div style="margin-bottom:15px;">
-                                <label style="display:block; margin-bottom:5px;">授权代表人身份证正反面<span style="color:red;">*</span></label>
-                                <button onclick="showUploadDialog('fileUpload3')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传授权代表人身份证正反面</button>
-                                <div id="qualificationCertificate01_01" style="display: inline-block;margin-left:10px;width:600px;">
+                                <label style="display:block; margin-bottom:5px;">授权代表身份证正反面<span style="color:red;">*</span></label>
+                                <button onclick="showUploadDialog('fileUpload3')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传授权代表身份证正反面</button>
+                                <div id="qualificationCertificate01_01" style="display: inline-block;margin-left:10px;width:570px;">
 
                                 </div>
                                 <input id="fileUpload3" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
@@ -373,7 +367,7 @@
                                 <input id="fileUpload4" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
                             </div>
                             <div style="margin-bottom:15px;">
-                                <label style="display:block; margin-bottom:5px;">授权代表人在公司最近至少一个月社保<span style="color:red;">*</span></label>
+                                <label style="display:block; margin-bottom:5px;">授权代表在公司最近至少一个月社保<span style="color:red;">*</span></label>
                                 <button onclick="showUploadDialog('fileUpload5')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传社保记录</button>
                                 <div id="qualificationCertificate03" multiple style="display: inline-block;margin-left:10px;width:600px;">
 
@@ -457,7 +451,7 @@
                 <thead>
                 <tr style="background:#f5f5f5;">
                     <th style="padding:10px; border:1px solid #ddd;">投标单位</th>
-                    <th style="padding:10px; border:1px solid #ddd;">经办人</th>
+                    <th style="padding:10px; border:1px solid #ddd;">联系人</th>
                     <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
                     <th style="padding:10px; border:1px solid #ddd;">评审结果</th>
                 </tr>
@@ -504,15 +498,17 @@
             <td style="padding:10px; border:1px solid #ddd;">{{projectRegisters.createDate}}</td>
             {{#eq  projectRegisters.state 0}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">缴费审核中 </td>{{/eq}}
             {{#eq  projectRegisters.state 1}}<td style="padding:10px; border:1px solid #ddd;">报名成功 </td>{{/eq}}
-            {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;{{#gtNowDate  bidOpeningTime}}color:red;{{/gtNowDate}}">缴费不通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 2}}<td style="padding:10px; border:1px solid #ddd;{{#gtNowDate  bidOpeningTime}}color:red;{{/gtNowDate}}">{{#gtNowDate  bidOpeningTime}}缴费不通过{{else}}已超时{{/gtNowDate}}</td>{{/eq}}
             {{#eq  projectRegisters.state 3}}<td style="padding:10px; border:1px solid #ddd;color:#2196F3;">信息审核中 </td>{{/eq}}
-            {{#eq  projectRegisters.state 4}}<td style="padding:10px; border:1px solid #ddd;color:#4CAF50;">信息通过 </td>{{/eq}}
+            {{#eq  projectRegisters.state 4}}<td style="padding:10px; border:1px solid #ddd;{{#gtNowDate  bidOpeningTime}}color:#4CAF50;{{/gtNowDate}}">{{#gtNowDate  bidOpeningTime}}信息通过{{else}}已超时{{/gtNowDate}}</td>{{/eq}}
             {{#eq  projectRegisters.state 5}}<td style="padding:10px; border:1px solid #ddd;color:red;">信息不通过 </td>{{/eq}}
             <td style="padding:10px; border:1px solid #ddd;">
                 {{#eq  projectRegisters.state 4}}<!-- 资质通过 -->
-                    <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">报名缴费</button>
+                    {{#gtNowDate  bidOpeningTime}}
+                        <button onclick="application('/Application.html?id={{id}}&pid={{projectRegisters.id}}')" style="padding:5px 10px; background:#4CAF50; color:white; border:none; cursor:pointer;font-size: 13px;">报名缴费</button>
+                    {{/gtNowDate}}
                 {{else}}
-                    <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px、、; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
+                    <!-- <button onclick="showProgress('{{projectName}}','{{id}}')" style="padding:5px 10px; background:#2196F3; color:white; border:none; cursor:pointer;font-size: 13px;">报名记录</button> -->
                 {{/eq}}
                 {{#eq  projectRegisters.state 2}}<!-- 报名缴费不通过 -->
                     {{#gtNowDate  bidOpeningTime}}
@@ -713,7 +709,6 @@
                     id:bidderInfo.id,
                     companyName:account.accountName,
                     creditCode:account.accountCode,
-                    contactPerson:account.member,
                     contactPhone:account.phone,
                     contactEmail:account.email,
                     accountMoney:account.accountMoney,
@@ -871,12 +866,11 @@
         function saveAccount(){
             var editCompanyName = $("#editCompanyName").val();
             var editCreditCode = $("#editCreditCode").val();
-            var editContactPerson = $("#editContactPerson").val();
             var editContactPhone = $("#editContactPhone").val();
             var editContactEmail = $("#editContactEmail").val();
             var memberType = $("input[name=memberType]:checked").val();
             var accountCodeFileId = $("#fileUpload").attr("data-file-id");
-            if(!editCompanyName || !editCreditCode || !editContactPerson || !editContactPhone || !memberType || !accountCodeFileId) {
+            if(!editCompanyName || !editCreditCode || !editContactPhone || !memberType || !accountCodeFileId) {
                 alert("请填写带 * 字段为必填项！");
                 return ;
             }else if(!regBox.regMobilePhone.regEx.test(editContactPhone)){
@@ -909,7 +903,7 @@
                     return ;
                 }
             }else{
-                // 授权代表人
+                // 授权代表
                 accountUser = $("input[name=accountUser2]").val();
                 idCard = $("input[name=idCard2]").val();
                 qualificationCertificate01Show = $("#qualificationCertificate01_01").html();
@@ -926,7 +920,7 @@
                 }
             }
 
-            var account = {id:getMember().account.id,accountName:editCompanyName,accountUser:accountUser2,accountUserId:idCard,accountType:"0",accountCode:editCreditCode,member:editContactPerson,phone:editContactPhone,email:editContactEmail,accountCodeFileId:accountCodeFileId,ext5:$("#creditCode").text(),remark:$("#remark").val()};
+            var account = {id:getMember().account.id,accountName:editCompanyName,accountUser:accountUser2,accountUserId:idCard,accountType:"0",accountCode:editCreditCode,member:accountUser,phone:editContactPhone,email:editContactEmail,accountCodeFileId:accountCodeFileId,ext5:$("#creditCode").text(),remark:$("#remark").val()};
             var member = {id:getMember().id,name:accountUser,account:account};
             var data = {id:$("#companyInfoForm").attr("data-id"),
                 member:member,
@@ -947,7 +941,6 @@
                             id:$("#companyInfoForm").attr("data-id"),
                             companyName:account.accountName,
                             creditCode:account.accountCode,
-                            contactPerson:account.member,
                             contactPhone:account.phone,
                             contactEmail:account.email,
                             accountMoney:account.accountMoney,
@@ -983,7 +976,6 @@
             $("#companyInfoForm").attr("data-id",data.id);
             $("#companyName").text(data.companyName);
             $("#creditCode").text(data.creditCode);
-            $("#contactPerson").text(data.contactPerson);
             $("#contactPhone").text(data.contactPhone);
             $("#contactEmail").text(data.contactEmail);
             $("#accountMoney").text(data.accountMoney);
@@ -1022,7 +1014,7 @@
                 $("#fileUpload5").attr("data-file-id","");
                 $("#qualificationCertificate03Show").html("");
             }else if(data.memberType=="1"){
-                // 授权代表人
+                // 授权代表
                 $("#memberType01").hide();
                 $("input[name=memberType][value='1']")[0].checked=true;
                 $("#type1").hide();
@@ -1148,23 +1140,27 @@
                     window.open(downUrl, '_blank');
                 }
             }
-            if(confirm('请确认经办人是否在职，如不在职，应更改经办人并提交新的法定代表人授权函、授权代表身份证及社保，审核通过后才能报名！')) {
-                var account = getMember().account;
-                if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
-                    alert("请在【我的信息】中完善企业信息并审核通过后再进行报名！");
-                    $("#myInfo").click();
+            if(!getMember().account.accountUser){ // 如果时授权代表 会进行提示是否在职
+                if(!confirm('请确认授权代表是否在职，如不在职，应更改授权代表并提交新的法定代表人授权函、授权代表身份证及社保，审核通过后才能报名！')) {
+                    return;
+                }
+            }
+
+            var account = getMember().account;
+            if(!account.accountName || !account.accountCode || !account.member || !account.phone || !account.email || !account.accountCodeFileId){
+                alert("请在【我的信息】中完善企业信息并审核通过后再进行报名！");
+                $("#myInfo").click();
+                return ;
+            }
+            if(oldSuppliers){
+                //前期供应商
+                if((","+oldSuppliers+",").indexOf(","+account.accountName+",")>-1){
+                    alert("工程项目报名失败：检测到公司已参与前期工程的投入。如有疑问，请拨打"+config.consultPhone.replaceAll("&#10;","，"));
                     return ;
                 }
-                if(oldSuppliers){
-                    //前期供应商
-                    if((","+oldSuppliers+",").indexOf(","+account.accountName+",")>-1){
-                        alert("工程项目报名失败：检测到公司已参与前期工程的投入。如有疑问，请拨打"+config.consultPhone.replaceAll("&#10;","，"));
-                        return ;
-                    }
-                }
-                var data = {"project":{"id":id}};
-                projectRegister(data,1);
             }
+            var data = {"project":{"id":id}};
+            projectRegister(data,1);
         }
 
 

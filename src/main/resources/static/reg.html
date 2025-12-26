@@ -39,16 +39,12 @@
                 <input type="text" name="accountCode" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
             </div>
             <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px;">上传营业执照<span style="color:red;">*</span></label>
+                <label style="display:block; margin-bottom:5px;">营业执照<span style="color:red;">*</span></label>
                 <button onclick="showUploadDialog('fileUpload')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传营业执照</button>
-                <div id="accountCodeFileId" style="display: inline-block;margin-left:10px;">
+                <div id="accountCodeFileId" style="display: inline-block;margin-left:10px;width: 350px;">
 
                 </div>
                 <input id="fileUpload" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;">
-            </div>
-            <div style="margin-bottom:20px;">
-                <label style="display:block; margin-bottom:5px;">经办人<span style="color:red;">*</span></label>
-                <input type="text" name="member" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" required>
             </div>
             <div style="margin-bottom:20px;">
                 <label style="display:block; margin-bottom:5px;">联系电话<span style="color:red;">*</span></label>
@@ -64,7 +60,7 @@
                     <input type="radio" name="memberType" value="0" checked="checked"> 法人
                 </label>
                 <label style="margin-right:15px;margin-left: 30px;">
-                    <input type="radio" name="memberType" value="1" > 授权代表人
+                    <input type="radio" name="memberType" value="1" > 授权代表
                 </label>
             </div>
 
@@ -78,9 +74,9 @@
                     <input type="text" name="idCard" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                 </div>
                 <div style="margin-bottom:15px;">
-                    <label style="display:block; margin-bottom:5px;">上传法人身份证正反面<span style="color:red;">*</span></label>
+                    <label style="display:block; margin-bottom:5px;">法人身份证正反面<span style="color:red;">*</span></label>
                     <button onclick="showUploadDialog('fileUpload2')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传法人身份证正反面</button>
-                    <div id="qualificationCertificate01" style="display: inline-block;margin-left:10px;">
+                    <div id="qualificationCertificate01" style="display: inline-block;margin-left:10px;width: 300px;">
 
                     </div>
                     <input id="fileUpload2" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
@@ -89,17 +85,17 @@
 
             <div id="type2" style="display: none;">
                 <div style="margin-bottom:20px;">
-                    <label style="display:block; margin-bottom:5px;">授权代表人姓名<span style="color:red;">*</span></label>
+                    <label style="display:block; margin-bottom:5px;">授权代表姓名<span style="color:red;">*</span></label>
                     <input type="text" name="accountUser2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                 </div>
                 <div style="margin-bottom:20px;">
-                    <label style="display:block; margin-bottom:5px;">授权代表人证件号<span style="color:red;">*</span></label>
+                    <label style="display:block; margin-bottom:5px;">授权代表证件号<span style="color:red;">*</span></label>
                     <input type="text" name="idCard2" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:5px;box-sizing: border-box;" >
                 </div>
                 <div style="margin-bottom:15px;">
-                    <label style="display:block; margin-bottom:5px;">授权代表人身份证正反面<span style="color:red;">*</span></label>
-                    <button onclick="showUploadDialog('fileUpload3')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传授权代表人身份证正反面</button>
-                    <div id="qualificationCertificate01_01" style="display: inline-block;margin-left:10px;">
+                    <label style="display:block; margin-bottom:5px;">授权代表身份证正反面<span style="color:red;">*</span></label>
+                    <button onclick="showUploadDialog('fileUpload3')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传授权代表身份证正反面</button>
+                    <div id="qualificationCertificate01_01" style="display: inline-block;margin-left:10px;width: 260px;">
 
                     </div>
                     <input id="fileUpload3" type="file" multiple style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
@@ -107,15 +103,15 @@
                 <div style="margin-bottom:15px;">
                     <label style="display:block; margin-bottom:5px;">法人授权函<span style="color:red;">*</span></label>
                     <button onclick="showUploadDialog('fileUpload4')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传法人授权函</button>
-                    <div id="qualificationCertificate02" multiple style="display: inline-block;margin-left:10px;">
+                    <div id="qualificationCertificate02" multiple style="display: inline-block;margin-left:10px;width: 340px;">
 
                     </div>
                     <input id="fileUpload4" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >
                 </div>
                 <div style="margin-bottom:15px;">
-                    <label style="display:block; margin-bottom:5px;">授权代表人在公司最近至少一个月社保记录<span style="color:red;">*</span></label>
+                    <label style="display:block; margin-bottom:5px;">授权代表在公司最近至少一个月社保记录<span style="color:red;">*</span></label>
                     <button onclick="showUploadDialog('fileUpload5')" type="button" style="padding:8px 16px; background:#4CAF50; color:white; border:none; cursor:pointer; margin-top:10px;display: inline-block;vertical-align: top;">上传社保记录</button>
-                    <div id="qualificationCertificate03" multiple style="display: inline-block;margin-left:10px;">
+                    <div id="qualificationCertificate03" multiple style="display: inline-block;margin-left:10px;width: 350px;">
 
                     </div>
                     <input id="fileUpload5" type="file" style="width:100%; padding:8px; border:1px solid #ddd;display: none;" >

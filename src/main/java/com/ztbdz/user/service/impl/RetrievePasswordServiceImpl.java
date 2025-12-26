@@ -52,7 +52,6 @@ public class RetrievePasswordServiceImpl implements RetrievePasswordService {
     @Override
     public List<RetrievePassword> selectList(RetrievePassword retrievePassword) throws Exception {
         QueryWrapper<RetrievePassword> queryWrapper = new QueryWrapper();
-        queryWrapper.orderByAsc("is_pass");
         queryWrapper.orderByDesc("create_date");
         if(!StringUtils.isEmpty(retrievePassword.getUsername())) queryWrapper.like("username", retrievePassword.getUsername());
         if(!StringUtils.isEmpty(retrievePassword.getIsPass())) queryWrapper.like("is_pass", retrievePassword.getIsPass());
@@ -60,9 +59,14 @@ public class RetrievePasswordServiceImpl implements RetrievePasswordService {
     }
 
     @Override
+    public List<RetrievePassword> selectListSort(RetrievePassword retrievePassword) throws Exception {
+        return retrievePasswordMapper.selectListSort(retrievePassword);
+    }
+
+    @Override
     public PageInfo<RetrievePassword> selectPage(Integer page, Integer size, RetrievePassword retrievePassword) throws Exception {
         PageHelper.startPage(page, size);
-        return new PageInfo(this.selectList(retrievePassword));
+        return new PageInfo(this.selectListSort(retrievePassword));
     }
 
     @Override
@@ -95,7 +99,7 @@ public class RetrievePasswordServiceImpl implements RetrievePasswordService {
                 return Result.error("“"+retrievePassword.getUsername()+"”用户名未查询到登录信息，请核对用户名是否正确！");
             }
             retrievePassword.setIsPass(0);
-            List<RetrievePassword> retrievePasswordList = this.selectList(retrievePassword);
+            List<RetrievePassword> retrievePasswordList = this.selectListSort(retrievePassword);
             if(retrievePasswordList.size()>0){
                 return Result.error("“"+retrievePassword.getUsername()+"”用户名已进行找回密码信息审核中，请勿重复提交！");
             }
@@ -131,7 +135,7 @@ public class RetrievePasswordServiceImpl implements RetrievePasswordService {
                 if(newRetrievePassword.getIsPass()==1){ // 上一次是审核不通过，撤回审核
                     RetrievePassword selectRetrievePassword = new RetrievePassword();
                     selectRetrievePassword.setUsername(newRetrievePassword.getUsername());
-                    List<RetrievePassword> retrievePasswordList = this.selectList(selectRetrievePassword);
+                    List<RetrievePassword> retrievePasswordList = this.selectListSort(selectRetrievePassword);
                     if(retrievePasswordList.size()>1){ // 最好只能撤回 最后提交审核时间 以防混乱
                         if(!String.valueOf(retrievePassword.getId()).equals(String.valueOf(retrievePasswordList.get(0).getId()))){
                             return Result.error("只能在“最后提交审核时间”并“审核通过”状态上进行 撤回审核 操作，最后一次提交审核时间：“"+new SimpleDateFormat("yyyy年MM月dd日 HH:mm分").format(retrievePasswordList.get(0).getCreateDate())+"”");
@@ -172,13 +176,12 @@ public class RetrievePasswordServiceImpl implements RetrievePasswordService {
         try{
             RetrievePassword retrievePassword = new RetrievePassword();
             retrievePassword.setUsername(username);
-            List<RetrievePassword> retrievePasswordList = this.selectList(retrievePassword);
+            List<RetrievePassword> retrievePasswordList = this.selectListSort(retrievePassword);
             if(retrievePasswordList.size()<=0){
                 return Result.ok("“"+username+"” 用户名未查询到审核信息!");
             }
             retrievePassword = retrievePasswordList.get(0);
             if(retrievePassword.getIsPass()== 0){
-
                 return Result.ok("正在审核中，提交时间："+new SimpleDateFormat("yyyy年MM月dd日 HH:mm分").format(retrievePassword.getCreateDate()));
             }else if(retrievePassword.getIsPass()== 1){
                 return Result.ok("审核通过，请用新密码进行登录！");

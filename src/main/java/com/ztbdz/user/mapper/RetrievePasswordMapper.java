@@ -5,8 +5,12 @@ import com.ztbdz.user.pojo.RetrievePassword;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface RetrievePasswordMapper extends BaseMapper<RetrievePassword> {
 
     RetrievePassword selectBidderInfo(@Param("id")Long id);
+
+    List<RetrievePassword> selectListSort(RetrievePassword retrievePassword);
 }

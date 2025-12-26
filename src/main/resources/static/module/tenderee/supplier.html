@@ -27,7 +27,7 @@
     </div>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
         供应商名称<input type="text" id="accountNameSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
-        经办人<input type="text" id="accountMemberSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
+        联系人<input type="text" id="accountMemberSearch" style="flex:1; padding:5px;margin: 0 20px 0 5px;" placeholder="支持模糊查询">
         <button id="biddderSearchBtn" onclick="loadApplicationData2()" style="padding:5px 10px; background:#2196F3; color:#fff; border:none;cursor: pointer;">查询</button>
     </div>
     <div id="applicationLoading2" style="text-align:center; padding:20px; display:none;">正在加载数据...</div>
@@ -35,7 +35,7 @@
         <thead>
         <tr style="background:#f5f5f5;">
             <th style="padding:10px; border:1px solid #ddd;">供应商名称</th>
-            <th style="border:1px solid #ddd;">经办人</th>
+            <th style="border:1px solid #ddd;">联系人</th>
             <th style="padding:10px; border:1px solid #ddd;">联系电话</th>
             <th style="border:1px solid #ddd;">电子邮箱</th>
             <th style="padding:10px; border:1px solid #ddd;">提交时间</th>
@@ -60,7 +60,6 @@
                 <p><strong>企业名称：</strong><span id="companyName"></span></p>
                 <p><strong>统一社会信用代码：</strong><span id="creditCode"></span></p>
                 <p><strong style="vertical-align: top;">营业执照：</strong><span id="certificateFilesShow" style="display: inline-block;width: 400px;"></span></p>
-                <p><strong>经办人：</strong><span id="contactPerson"></span></p>
                 <p><strong>联系电话：</strong><span id="contactPhone"></span></p>
                 <p><strong>电子邮箱：</strong><span id="contactEmail"></span></p>
                 <div id="memberType01" style="display: none;">
@@ -69,9 +68,9 @@
                     <p><strong style="vertical-align: top;">法人身份证：</strong><span id="qualificationCertificate01Show" style="display: inline-block;width: 400px;"></span></p>
                 </div>
                 <div id="memberType02" style="display: none;">
-                    <p><strong>授权代表人：</strong><span id="accountUser2"></span></p>
-                    <p><strong>授权代表人证件号：</strong><span id="idCard2"></span></p>
-                    <p><strong style="vertical-align: top;">授权代表人身份证：</strong><span id="qualificationCertificate01_01Show" style="display: inline-block;width: 400px;"></span></p>
+                    <p><strong>授权代表：</strong><span id="accountUser2"></span></p>
+                    <p><strong>授权代表证件号：</strong><span id="idCard2"></span></p>
+                    <p><strong style="vertical-align: top;">授权代表身份证：</strong><span id="qualificationCertificate01_01Show" style="display: inline-block;width: 400px;"></span></p>
                     <p><strong style="vertical-align: top;">法人授权函：</strong><span id="qualificationCertificate02Show" style="display: inline-block;width: 400px;"></span></p>
                     <p><strong style="vertical-align: top;">社保记录：</strong><span id="qualificationCertificate03Show" style="display: inline-block;width: 400px;"></span></p>
                 </div>
@@ -300,7 +299,6 @@
             id:id,
             companyName:account.accountName,
             creditCode:account.accountCode,
-            contactPerson:account.member,
             contactPhone:account.phone,
             contactEmail:account.email,
             accountMoney:account.accountMoney,
@@ -329,7 +327,6 @@
         $("#qualificationModal2").attr("data-id",data.id);
         $("#companyName").text(data.companyName);
         $("#creditCode").text(data.creditCode);
-        $("#contactPerson").text(data.contactPerson);
         $("#contactPhone").text(data.contactPhone);
         $("#contactEmail").text(data.contactEmail);
         $("#accountMoney").text(data.accountMoney);

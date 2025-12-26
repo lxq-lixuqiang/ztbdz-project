@@ -38,7 +38,7 @@ public class TendereeExport {
         @ExcelProperty("投标单位")
         private String accountName;
 
-        @ExcelProperty("经办人")
+        @ExcelProperty("联系人")
         private String contact;
 
         @ExcelProperty("联系电话")

@@ -173,8 +173,8 @@
 	</select>
 
 	<select id="selectByIds" resultType="Project">
-		(select
-			p.*
+		(select p2.* from ((select
+			p.*,'0' pr_state
 		from
 			project p
 			left join project_register pr on pr.project_id = p.id
@@ -193,7 +193,7 @@
 		group by p.id)
 		UNION All
 		(select
-		p.*
+		p.*,'1' pr_state
 		from
 		project p
 		left join project_register pr on pr.project_id = p.id
@@ -229,7 +229,7 @@
 		group by p.id)
 		UNION All
 		(select
-		p.*
+		p.*,'2' pr_state
 		from
 		project p
 		left join project_register pr on pr.project_id = p.id
@@ -248,7 +248,7 @@
 		group by p.id)
 		UNION All
 		(select
-		p.*
+		p.*,'3' pr_state
 		from
 		project p
 		left join project_register pr on pr.project_id = p.id
@@ -264,7 +264,7 @@
 			</foreach>
 		</if>
 		and pr.state = 1
-		group by p.id)
+		group by p.id)) p2 order by pr_state,p2.update_date desc)
 	</select>
 
 	<select id="selectByIds2" resultType="Project">

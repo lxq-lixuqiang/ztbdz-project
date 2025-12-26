@@ -65,7 +65,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     SystemConfig.setSession(Common.SESSION_LOGIN_MEMBER_ID,user.getMember().getId()); // 存储当前登录人id
                     return true;
                 }catch (Exception e){
-                    if(e.getMessage().indexOf("token已过期")<0 ||
+                    if(e.getMessage().indexOf("token已过期")<0 &&
                             e.getMessage().indexOf("无token认证")<0){ // 不记录token过期的日志
                         log.error("访问地址："+httpServletRequest.getRequestURI()+"，错误原因："+e.getMessage());
                     }
